@@ -94,8 +94,12 @@
   <ItemGroup>
     <UpToDateCheckInput Include="..\resources\**\*" />
   </ItemGroup>
-  <Target Name="Build Sims 3 Package" AfterTargets="Build">
+  <Target Name="Create Package" AfterTargets="Build">
     <Exec Command="&quot;$(SolutionDir)tools\TS3BuildTool\ts3buildtool.exe&quot; -modName=&quot;ServantRoleSims&quot; -dllPath=&quot;$(TargetPath)&quot; -projectDir=&quot;$(SolutionDir)&quot; -defaultPath=&quot;$(SolutionDir)dist\&quot;" Condition="'$(OS)' == 'Windows_NT'" />
     <Exec Command="mono &quot;$(SolutionDir)tools\TS3BuildTool\ts3buildtool.exe&quot; -modName=&quot;ServantRoleSims&quot; -dllPath=&quot;$(TargetPath)&quot; -projectDir=&quot;$(SolutionDir)&quot; -defaultPath=&quot;$(SolutionDir)dist\&quot;" Condition="'$(OS)' != 'Windows_NT'" />
+  </Target>
+  <Target Name="Generate Tunable _XMLs" AfterTargets="Create Package">
+    <Exec Command="$(SolutionDir)GenerateTunables.bat" Condition="'$(OS)' == 'Windows_NT'" />
+    <Exec Command="sh &quot;$(SolutionDir)GenerateTunables.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
   </Target>
 </Project>
