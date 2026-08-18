@@ -1,3 +1,0 @@
-set times/days for working
-set routines
-general duties
