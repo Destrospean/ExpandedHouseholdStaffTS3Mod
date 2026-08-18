@@ -1,16 +1,16 @@
-﻿using Sims3.UI;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Sims3.SimIFace;
+using Sims3.UI;
 
 namespace Sims3.Gameplay.zoeoe.ServantRolesMod
 {
-    public static class Utils
+    public static class DebugUtils
     {
-        public static bool kShowDebugMsgs = true;
+        [Tunable]
+        public static bool kShowDebugMessages = true;
+
         public static void ShowDebugMessageDialog(string message)
         {
-            if (kShowDebugMsgs)
+            if (kShowDebugMessages)
             {
                 SimpleMessageDialog.Show("Servants Mod", message);
             }
