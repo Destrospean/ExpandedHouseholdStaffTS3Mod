@@ -17,38 +17,22 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\Build\Output\Debug\</OutputPath>
+    <OutputPath>..\build\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
-    <OutputPath>..\Build\Output\Release\</OutputPath>
+    <OutputPath>..\build\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\Build\Output\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>..\Build\Output\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <BaseIntermediateOutputPath>..\Build\Intermediate\</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath>..\build\obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,43 +45,43 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Reference Include="mscorlib">
-      <HintPath>..\Libraries\mscorlib.dll</HintPath>
+      <HintPath>..\libs\mscorlib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ScriptCore">
-      <HintPath>..\Libraries\ScriptCore.dll</HintPath>
+      <HintPath>..\libs\ScriptCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SimIFace">
-      <HintPath>..\Libraries\SimIFace.dll</HintPath>
+      <HintPath>..\libs\SimIFace.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Sims3GameplayObjects">
-      <HintPath>..\Libraries\Sims3GameplayObjects.dll</HintPath>
+      <HintPath>..\libs\Sims3GameplayObjects.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Sims3GameplaySystems">
-      <HintPath>..\Libraries\Sims3GameplaySystems.dll</HintPath>
+      <HintPath>..\libs\Sims3GameplaySystems.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Sims3Metadata">
-      <HintPath>..\Libraries\Sims3MetaData.dll</HintPath>
+      <HintPath>..\libs\Sims3MetaData.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Sims3StoreObjects">
-      <HintPath>..\Libraries\Sims3StoreObjects.dll</HintPath>
+      <HintPath>..\libs\Sims3StoreObjects.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System">
-      <HintPath>..\Libraries\System.dll</HintPath>
+      <HintPath>..\libs\System.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml">
-      <HintPath>..\Libraries\System.Xml.dll</HintPath>
+      <HintPath>..\libs\System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UI">
-      <HintPath>..\Libraries\UI.dll</HintPath>
+      <HintPath>..\libs\UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -107,4 +91,11 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Abstracts\" />
   </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Include="..\resources\**\*" />
+  </ItemGroup>
+  <Target Name="Build Sims 3 Package" AfterTargets="Build">
+    <Exec Command="&quot;$(SolutionDir)tools\TS3BuildTool\ts3buildtool.exe&quot; -modName=&quot;ServantRoleSims&quot; -dllPath=&quot;$(TargetPath)&quot; -projectDir=&quot;$(SolutionDir)&quot; -defaultPath=&quot;$(SolutionDir)dist\&quot;" Condition="'$(OS)' == 'Windows_NT'" />
+    <Exec Command="mono &quot;$(SolutionDir)tools\TS3BuildTool\ts3buildtool.exe&quot; -modName=&quot;ServantRoleSims&quot; -dllPath=&quot;$(TargetPath)&quot; -projectDir=&quot;$(SolutionDir)&quot; -defaultPath=&quot;$(SolutionDir)dist\&quot;" Condition="'$(OS)' != 'Windows_NT'" />
+  </Target>
 </Project>
