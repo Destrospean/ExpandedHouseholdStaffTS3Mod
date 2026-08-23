@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Include="..\resources\**\*" />
+    <UpToDateCheckInput Include="..\strings\**\*" />
   </ItemGroup>
   <Target Name="Generate STBLs" BeforeTargets="Build">
     <Exec Command="$(SolutionDir)scripts\GenerateSTBLs.bat" Condition="'$(OS)' == 'Windows_NT'" />
