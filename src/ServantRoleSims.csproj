@@ -91,10 +91,6 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Abstracts\" />
   </ItemGroup>
-  <ItemGroup>
-    <UpToDateCheckInput Include="..\resources\**\*" />
-    <UpToDateCheckInput Include="..\strings\**\*" />
-  </ItemGroup>
   <Target Name="Generate STBLs" BeforeTargets="Build">
     <Exec Command="$(SolutionDir)scripts\GenerateSTBLs.bat" Condition="'$(OS)' == 'Windows_NT'" />
     <Exec Command="sh &quot;$(SolutionDir)scripts\GenerateSTBLs.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
