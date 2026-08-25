@@ -40,7 +40,9 @@
     <Compile Include="Objects\ServantManager.cs" />
     <Compile Include="Interfaces\IServantRole.cs" />
     <Compile Include="Abstracts\ServantRoleBase.cs" />
-    <Compile Include="DebugUtils.cs" />
+    <Compile Include="Services\Housekeeper.cs" />
+    <Compile Include="CommonUtils.cs" />
+    <Compile Include="ExtensionAttribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -90,6 +92,7 @@
     <Folder Include="Objects\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Abstracts\" />
+    <Folder Include="Services\" />
   </ItemGroup>
   <Target Name="Generate STBLs" BeforeTargets="Build">
     <Exec Command="$(SolutionDir)scripts\GenerateSTBLs.bat" Condition="'$(OS)' == 'Windows_NT'" />

@@ -27,7 +27,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoe.ServantRolesMod
         public virtual void GetReadyForWork()
         {
             Sim sim = mSim.CreatedSim;
-            DebugUtils.ShowDebugMessageDialog("GetReadyForWork() starting for: " + sim.FullName);
+            CommonUtils.ShowDebugMessageDialog("GetReadyForWork() starting for: " + sim.FullName);
 
             sim.InteractionQueue.CancelAllInteractions();
             InteractionInstance changeClothes = new Sim.ClothesSpin.Definition(Sim.ClothesChangeReason.GoingToWork, SimIFace.CAS.OutfitCategories.Everyday).CreateInstance(sim, sim, new InteractionPriority(InteractionPriorityLevel.High), false, false);
