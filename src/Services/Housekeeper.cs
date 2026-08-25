@@ -22,7 +22,7 @@ namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Services
         static string kButlerBook = "HowToServeAndNotBeServed";
 
         [Tunable]
-        static ServiceTuning kServiceTuning = new ServiceTuning(7, 2, true, true, false);
+        static ServiceTuning kServiceTuning = new ServiceTuning();
 
         [Tunable]
         [TunableComment("If any of the CTYAE Sims get below this hunger value, Butler starts cooking")]
