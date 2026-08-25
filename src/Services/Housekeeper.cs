@@ -12,6 +12,7 @@ using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace;
 using System;
 using System.Collections.Generic;
+using Service = Sims3.Gameplay.Abstracts.zoeoe.ServantRolesMod.Service;
 
 namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Services
 {
@@ -19,46 +20,30 @@ namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Services
     {
         static readonly string sLocalizationKey = typeof(Housekeeper).GetLocalizationKey();
 
-        static string kButlerBook = "HowToServeAndNotBeServed";
+        static string kHousekeeperBook = "HowToServeAndNotBeServed";
 
         [Tunable]
         static ServiceTuning kServiceTuning = new ServiceTuning();
 
+        [TunableComment("How old leftovers can be out in minutes before the housekeeper will put it away")]
         [Tunable]
-        [TunableComment("If any of the CTYAE Sims get below this hunger value, Butler starts cooking")]
-        static float kMinHungerBeforeStartCooking = -20f;
-
-        [Tunable]
-        [TunableComment("How often the butler will cook in minutes. This prevents the butler from Autonomously cooking continuously. Only used when successfully cooked")]
-        static float kTimeBetweenSuccessfulCookingSessions = 40f;
-
-        [TunableComment("When you interrupt a butler while he's cooking, he'll try to continue cooking. But, if he hasn't cooked anything after this time, he'll restart the meal from scratch.")]
-        [Tunable]
-        static float kTimeBeforeRestartCooking = 20f;
-
-        [TunableComment("How old leftovers can be out in minutes before the butler will put it away")]
-        [Tunable]
-        static float kTimeWaitBeforePutawayLeftovers = 60f;
+        static float kTimeWaitBeforePutawayLeftovers = 60;
 
         [Tunable]
         [TunableComment("Multiplier for interactions in a room where a sim is sleeping")]
-        static float kUseObjectInSameRoomAsSleeperMultiplier = 0.1f;
+        static float kUseObjectInSameRoomAsSleeperMultiplier = .1f;
 
         [Tunable]
-        [TunableComment("If Butler's relationship with any YAE falls below this level, he will quit")]
-        static float kRelationshipLevelForQuit = -50f;
+        [TunableComment("If Housekeeper's relationship with any YAE falls below this level, she will quit")]
+        static float kRelationshipLevelForQuit = -50;
 
-        [TunableComment("Butler can start cooking this many hours before the target sim wakes up. This allows the butler to have food ready when the sleeping sim wakes up")]
+        [TunableComment("Chance you get the good advice moodlet when asking for advice from the housekeeper")]
         [Tunable]
-        static float kTimeCanStartCookBeforeSimWakes = 1.8f;
+        static float kChanceGetGoodAdviceMoodlet = 25;
 
-        [TunableComment("Chance you get the good advice moodlet when asking for advice from the butler")]
+        [TunableComment("Length of time (in hours) that the housekeeper waits before routing to lot")]
         [Tunable]
-        static float kChanceGetGoodAdviceMoodlet = 25f;
-
-        [TunableComment("Length of time (in hours) that the butler waits before routing to lot")]
-        [Tunable]
-        static float kDelayBeforeArriving = 0.5f;
+        static float kDelayBeforeArriving = .5f;
 
         static Housekeeper sHousekeeper = null;
 
@@ -67,30 +52,6 @@ namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Services
             get
             {
                 return kServiceTuning;
-            }
-        }
-
-        public static float MinHungerBeforeStartCooking
-        {
-            get
-            {
-                return kMinHungerBeforeStartCooking;
-            }
-        }
-
-        public static float TimeBetweenSuccessfulCookingSessions
-        {
-            get
-            {
-                return kTimeBetweenSuccessfulCookingSessions;
-            }
-        }
-
-        public static float TimeBeforeRestartCooking
-        {
-            get
-            {
-                return kTimeBeforeRestartCooking;
             }
         }
 
@@ -115,14 +76,6 @@ namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Services
             get
             {
                 return kRelationshipLevelForQuit;
-            }
-        }
-
-        public static float TimeCanStartCookBeforeSimWakes
-        {
-            get
-            {
-                return kTimeCanStartCookBeforeSimWakes;
             }
         }
 
@@ -162,14 +115,20 @@ namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Services
         {
             get
             {
-                return new List<CommodityKind>(new CommodityKind[5]
+                return new List<CommodityKind>(new CommodityKind[]
                     {
-                        CommodityKind.LookAfterBabyOrToddler,
-                        CommodityKind.LookAfterChild,
                         CommodityKind.BabysitterClean,
                         CommodityKind.BeMaid,
                         CommodityKind.BeButler
                     });
+            }
+        }
+
+        public override bool IsHomelessService
+        {
+            get
+            {
+                return true;
             }
         }
 
@@ -188,14 +147,7 @@ namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Services
 
         public Housekeeper()
         {
-            if (!GameUtils.IsInstalled(ProductVersion.EP3))
-            {
-                sHousekeeper = null;
-            }
-            else
-            {
-                sHousekeeper = this;
-            }
+            sHousekeeper = this;
         }
 
         public static void Create()
@@ -270,15 +222,13 @@ namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Services
 
         public override void UpdateCreatedSim(Sim sim)
         {
-            Skill skill = sim.SkillManager.AddElement(SkillNames.Handiness);
-            Skill skill2 = sim.SkillManager.AddElement(SkillNames.Cooking);
-            int maxSkillLevel = skill.MaxSkillLevel;
+            Skill handinessSkill = sim.SkillManager.AddElement(SkillNames.Handiness);
+            int maxSkillLevel = handinessSkill.MaxSkillLevel;
             for (int i = 0; i < maxSkillLevel; i++)
             {
-                skill2.ForceGainPointsForLevelUp();
-                skill.ForceGainPointsForLevelUp();
+                handinessSkill.ForceGainPointsForLevelUp();
             }
-            Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kButlerBook);
+            Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kHousekeeperBook);
             Inventory inventory = sim.Inventory;
             if (inventory != null)
             {
@@ -300,25 +250,27 @@ namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Services
 
         public override void SetTraits(SimDescription simDescription)
         {
-            TraitManager traitManager = simDescription.TraitManager;
-            traitManager.AddElement(TraitNames.Neat);
-            traitManager.AddElement(TraitNames.Brave);
-            traitManager.AddElement(TraitNames.FamilyOriented);
-            List<Trait> validTraits = AgingManager.GetValidTraits(simDescription, false, false, true);
+            simDescription.TraitManager.AddElement(TraitNames.Neat);
+            simDescription.TraitManager.AddElement(TraitNames.Neurotic);
+            simDescription.TraitManager.AddHiddenElement(TraitNames.MakesNoMesses);
+            simDescription.TraitManager.AddHiddenElement(TraitNames.SpeedyCleaner);
+            List<TraitNames> potentialTraits = new List<TraitNames>
+                {
+                    TraitNames.Flirty,
+                    TraitNames.Kleptomaniac,
+                    TraitNames.Charismatic
+                };
             for (int i = 0; i < 2; i++)
             {
-                if (validTraits.Count > 0)
-                {
-                    Trait randomObjectFromList = RandomUtil.GetRandomObjectFromList(validTraits);
-                    traitManager.AddElement(randomObjectFromList.Guid);
-                    validTraits.Remove(randomObjectFromList);
-                }
+                TraitNames randomObjectFromList = RandomUtil.GetRandomObjectFromList(potentialTraits);
+                simDescription.TraitManager.AddElement(randomObjectFromList);
+                potentialTraits.Remove(randomObjectFromList);
             }
         }
 
         public override string GetServiceTopic(Sim serviceSim)
         {
-            return "Butler Service";
+            return "Housekeeper Service";
         }
 
         public override bool CanRequestServiceFromPhone(Lot lot)
