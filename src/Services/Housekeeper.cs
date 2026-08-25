@@ -115,12 +115,12 @@ namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Services
         {
             get
             {
-                return new List<CommodityKind>(new CommodityKind[]
+                return new List<CommodityKind>()
                     {
                         CommodityKind.BabysitterClean,
                         CommodityKind.BeMaid,
                         CommodityKind.BeButler
-                    });
+                    };
             }
         }
 
