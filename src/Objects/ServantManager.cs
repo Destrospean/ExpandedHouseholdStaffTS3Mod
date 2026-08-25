@@ -1,12 +1,12 @@
 ﻿using Sims3.Gameplay.Abstracts;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Interactions;
-using Sims3.Gameplay.Interfaces.zoeoe.ServantRolesMod;
-using Sims3.Gameplay.zoeoe.ServantRolesMod.Roles;
+using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
+using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Roles;
 using Sims3.SimIFace;
 using System.Collections.Generic;
 
-namespace Sims3.Gameplay.Objects.zoeoe.ServantRolesMod
+namespace Sims3.Gameplay.Objects.zoeoeAndDestrospean.ServantRolesMod
 {
     public class ServantManager : GameObject
     {

@@ -2,11 +2,11 @@
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
-using Sims3.Gameplay.Interfaces.zoeoe.ServantRolesMod;
+using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.zoeoe.ServantRolesMod;
+using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 
-namespace Sims3.Gameplay.Abstracts.zoeoe.ServantRolesMod
+namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
     public abstract class ServantRoleBase : IServantRole
     {

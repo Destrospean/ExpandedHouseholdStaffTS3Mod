@@ -1,11 +1,11 @@
-﻿using Sims3.Gameplay.Abstracts.zoeoe.ServantRolesMod;
+﻿using Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Objects.Fireplaces;
 
-namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Roles
+namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Roles
 {
     public class HouseMaid : ServantRoleBase
     {

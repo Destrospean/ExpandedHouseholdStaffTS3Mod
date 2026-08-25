@@ -1,4 +1,4 @@
-﻿namespace Sims3.Gameplay.Interfaces.zoeoe.ServantRolesMod
+﻿namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
 {
     public interface IServantRole
     {

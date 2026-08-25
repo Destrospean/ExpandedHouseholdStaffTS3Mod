@@ -1,11 +1,11 @@
 ﻿using Sims3.SimIFace;
 using Sims3.UI;
 
-namespace Sims3.Gameplay.zoeoe.ServantRolesMod
+namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 {
     public static class CommonUtils
     {
-        public const string kAuthorName = "zoeoe";
+        public const string kAuthorName = "zoeoeAndDestrospean";
 
         [Tunable]
         public static bool kShowDebugMessages = true;

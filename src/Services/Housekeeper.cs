@@ -12,9 +12,9 @@ using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace;
 using System;
 using System.Collections.Generic;
-using Service = Sims3.Gameplay.Abstracts.zoeoe.ServantRolesMod.Service;
+using Service = Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod.Service;
 
-namespace Sims3.Gameplay.zoeoe.ServantRolesMod.Services
+namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
     public class Housekeeper : Service, IAmCleaningService
     {

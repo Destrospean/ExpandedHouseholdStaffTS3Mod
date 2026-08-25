@@ -6,7 +6,7 @@ using Sims3.SimIFace.CAS;
 using System;
 using System.Collections.Generic;
 
-namespace Sims3.Gameplay.Abstracts.zoeoe.ServantRolesMod
+namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
     public abstract class Service : Services.Service
     {
