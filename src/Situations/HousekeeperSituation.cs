@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
+﻿using Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
@@ -13,12 +12,13 @@ using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Tutorial;
 using Sims3.Gameplay.Utilities;
+using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.UI;
-using Service = Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod.Service;
+using System.Collections.Generic;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 {
-    public class HousekeeperSituation : BabysitterSituationBase
+    public class HousekeeperSituation : LiveInServiceSituationBase
     {
         public int mDateLastPaid;
 
@@ -44,7 +44,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         {
         }
 
-        public HousekeeperSituation(Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
+        public HousekeeperSituation(ServiceBase service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
             mDateLastPaid = SimClock.ElapsedCalendarDays();
         }
@@ -133,7 +133,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 EventTracker.SendEvent(EventTypeId.kServiceNPCFired, firer, serviceSim);
                 NPCLeavingMessage(LeavingReason.NPCSelfTerminated);
-                SetState(new LeaveLot<BabysitterSituationBase>(this));
+                SetState(new LeaveLot<LiveInServiceSituationBase>(this));
                 Service.FireSim(Worker);
             }
             else
@@ -188,10 +188,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         public override void SetMotivesAndCommodities()
         {
             Worker.Motives.MaxEverything();
-            Worker.WorkMotive = CommodityKind.BeButler;
+            Worker.WorkMotive = Housekeeper.GetServiceCommodityKind<Housekeeper>();
             Worker.Motives.CreateMotive(CommodityKind.BeButler);
             Worker.Motives.CreateMotive(CommodityKind.BeMaid);
-            Worker.Motives.CreateMotive(CommodityKind.BabysitterClean);
         }
     }
 }

@@ -43,8 +43,12 @@
     <Compile Include="Services\Housekeeper.cs" />
     <Compile Include="CommonUtils.cs" />
     <Compile Include="ExtensionAttribute.cs" />
-    <Compile Include="Abstracts\Service.cs" />
     <Compile Include="Situations\HousekeeperSituation.cs" />
+    <Compile Include="Abstracts\LiveInServiceSituationBase.cs" />
+    <Compile Include="Abstracts\ServiceBase.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Interactions\RequestService.cs" />
+    <Compile Include="Interactions\CancelService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -96,6 +100,7 @@
     <Folder Include="Abstracts\" />
     <Folder Include="Services\" />
     <Folder Include="Situations\" />
+    <Folder Include="Interactions\" />
   </ItemGroup>
   <Target Name="Generate STBLs" BeforeTargets="Build">
     <Exec Command="$(SolutionDir)scripts\GenerateSTBLs.bat" Condition="'$(OS)' == 'Windows_NT'" />

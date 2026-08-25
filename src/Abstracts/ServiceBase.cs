@@ -1,4 +1,5 @@
-﻿using Sims3.Gameplay.CAS;
+﻿using Sims3.Gameplay.Autonomy;
+using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Services;
 using Sims3.SimIFace;
@@ -8,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
-    public abstract class Service : Services.Service
+    public abstract class ServiceBase : Service
     {
         public virtual bool IsHomelessService
         {
@@ -57,7 +58,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             return simDescription;
         }
 
-        public static SimDescription CreateSimDescriptionInternal(Service service, string outfitName, CASAgeGenderFlags ageIfRandom, CASAgeGenderFlags genderIfRandom, WorldName homeWorld, out bool randomlyCreated)
+        public static SimDescription CreateSimDescriptionInternal(ServiceBase service, string outfitName, CASAgeGenderFlags ageIfRandom, CASAgeGenderFlags genderIfRandom, WorldName homeWorld, out bool randomlyCreated)
         {
             randomlyCreated = false;
             if ((service.IsHomelessService || LotManager.SelectRandomLotForNPCMoveIn(x => x.Household == null) == null) && Household.NpcHousehold == null)
@@ -102,6 +103,15 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             simDescription.CreatedByService = service;
             return simDescription;
         }
+
+        public static CommodityKind GetServiceCommodityKind(Type serviceType)
+        {
+            return (CommodityKind)ResourceUtils.HashString32("Be" + serviceType.Name);
+        }
+
+        public static CommodityKind GetServiceCommodityKind<T>() where T : ServiceBase
+        {
+            return GetServiceCommodityKind(typeof(T));
+        }
     }
 }
-

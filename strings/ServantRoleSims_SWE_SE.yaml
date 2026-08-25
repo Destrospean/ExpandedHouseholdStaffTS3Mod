@@ -1,3 +1,15 @@
 "zoeoeAndDestrospean":
     "/ServantRolesMod":
-        ":TestString": "This is a test string."
+        "/Interactions":
+            "/RequestHousekeeper":
+                "/Phone":
+                    ":CallServices": "Call Services"
+                    ":RequestService": "Request Housekeeper"
+                    "/Tooltips":
+                        ":AlreadyRequested": "This service was already requested"
+            "/CancelHousekeeper":
+                "/Phone":
+                    ":CallServices": "Call Services"
+                    ":CancelService": "Dismiss Housekeeper"
+                    "/Tooltips":
+                        ":AlreadyCancelled": "No service is active"
