@@ -13,9 +13,9 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
-    public abstract class LiveInServiceSituation : ServiceSituation
+    public abstract class ServiceSituationBase : ServiceSituation
     {
-        public class WaitToRoute : ChildSituation<LiveInServiceSituation>
+        public class WaitToRoute : ChildSituation<ServiceSituationBase>
         {
             public AlarmHandle mAlarmHandle;
 
@@ -23,18 +23,18 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             {
             }
 
-            public WaitToRoute(LiveInServiceSituation parent) : base(parent)
+            public WaitToRoute(ServiceSituationBase parent) : base(parent)
             {
             }
 
-            public override void Init(LiveInServiceSituation parent)
+            public override void Init(ServiceSituationBase parent)
             {
-                mAlarmHandle = base.AlarmManager.AddAlarm(parent.DelayBeforeArriving(), TimeUnit.Hours, TimeToRoute, "Service waiting to route", AlarmType.DeleteOnReset, parent.Worker);
+                mAlarmHandle = base.AlarmManager.AddAlarm(parent.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Service waiting to route", AlarmType.DeleteOnReset, parent.Worker);
             }
 
             public void TimeToRoute()
             {
-                RouteToLot<LiveInServiceSituation, DummySituation> routeToLot = new RouteToLot<LiveInServiceSituation, DummySituation>(Parent);
+                RouteToLot<ServiceSituationBase, DummySituation> routeToLot = new RouteToLot<ServiceSituationBase, DummySituation>(Parent);
                 routeToLot.SetRouteTime(Babysitter.DriveTime);
                 Parent.SetState(routeToLot);
             }
@@ -46,7 +46,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public class DummySituation : ChildSituation<LiveInServiceSituation>
+        public class DummySituation : ChildSituation<ServiceSituationBase>
         {
             public bool mInformedFireDepartment;
 
@@ -54,17 +54,17 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             {
             }
 
-            public DummySituation(LiveInServiceSituation parent) : base(parent)
+            public DummySituation(ServiceSituationBase parent) : base(parent)
             {
             }
 
-            public override void Init(LiveInServiceSituation parent)
+            public override void Init(ServiceSituationBase parent)
             {
                 Parent.OnArriveOnLot();
                 Parent.SetMotivesAndCommodities();
                 if (Parent.ReportsFires)
                 {
-                    parent.mCheckForTasks = Parent.Worker.AddAlarmRepeating(Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, CheckForFire, Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, "Service: Check for Tasks", AlarmType.DeleteOnReset);
+                    parent.mCheckAlarmHandle = parent.Worker.AddAlarmRepeating(Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, CheckForFire, Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, "Service: Check for Tasks", AlarmType.DeleteOnReset);
                 }
             }
 
@@ -83,9 +83,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     if (instance != null)
                     {
                         instance.MakeServiceRequest(Lot, true, Parent.Worker.ObjectId);
-                        string titleText = Localization.LocalizeString("Gameplay/Services/Babysitter:CalledFireDept");
-                        StyledNotification.Format format = new StyledNotification.Format(titleText, Parent.Worker.ObjectId, StyledNotification.NotificationStyle.kSimTalking);
-                        StyledNotification.Show(format);
+                        StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString("Gameplay/Services/Babysitter:CalledFireDept"), Parent.Worker.ObjectId, StyledNotification.NotificationStyle.kSimTalking));
                     }
                 }
                 else if (!isFireOnLot)
@@ -95,7 +93,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public class NPCIsFired : ChildSituation<LiveInServiceSituation>
+        public class NPCIsFired : ChildSituation<ServiceSituationBase>
         {
             public Sim mFirer;
 
@@ -103,12 +101,12 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             {
             }
 
-            public NPCIsFired(Sim firer, LiveInServiceSituation parent) : base(parent)
+            public NPCIsFired(Sim firer, ServiceSituationBase parent) : base(parent)
             {
                 mFirer = firer;
             }
 
-            public override void Init(LiveInServiceSituation parent)
+            public override void Init(ServiceSituationBase parent)
             {
                 Relationship relationship = Relationship.Get(parent.Worker, mFirer, true);
                 if (relationship.LTR.Liking <= 20)
@@ -130,14 +128,22 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
             public void OnFinished(Sim actor, float x)
             {
-                Parent.SetState(new LeaveLot<LiveInServiceSituation>(Parent));
+                Parent.SetState(new LeaveLot<ServiceSituationBase>(Parent));
                 Parent.Service.FireSim(actor);
             }
         }
 
-        public AlarmHandle mCheckForTasks = AlarmHandle.kInvalidHandle;
+        public AlarmHandle mCheckAlarmHandle = AlarmHandle.kInvalidHandle;
 
         public ulong LastInteractionId;
+
+        public virtual float DelayBeforeArriving
+        {
+            get
+            {
+                return Babysitter.DelayBeforeArriving;
+            }
+        }
 
         public virtual bool IsLiveInService
         {
@@ -155,26 +161,21 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public LiveInServiceSituation()
+        public ServiceSituationBase()
         {
         }
 
-        public LiveInServiceSituation(Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
+        public ServiceSituationBase(Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
             worker.AssignRole(this);
-            FreezeMotives();
             worker.Autonomy.AllowedToRunMetaAutonomy = false;
+            FreezeMotives();
             SetState(new WaitToRoute(this));
             ScheduleSwitchWorkerToServiceOutfit();
         }
 
-        public LiveInServiceSituation(object dummyObjectForBaseOfBase, Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
+        public ServiceSituationBase(object dummyObjectForBaseOfBase, Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
-        }
-
-        public virtual float DelayBeforeArriving()
-        {
-            return Babysitter.DelayBeforeArriving;
         }
 
         public virtual void OnArriveOnLot()
@@ -199,13 +200,13 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public override void SetToLeave()
         {
             NPCLeavingMessage(LeavingReason.NPCDismissed);
-            SetState(new LeaveLot<LiveInServiceSituation>(this));
+            SetState(new LeaveLot<ServiceSituationBase>(this));
         }
 
         public virtual void SetToJobDone()
         {
             NPCLeavingMessage(LeavingReason.NPCJobDone);
-            SetState(new LeaveLot<LiveInServiceSituation>(this));
+            SetState(new LeaveLot<ServiceSituationBase>(this));
         }
 
         public override void SetToFire(Sim serviceSim, Sim firer)
@@ -231,7 +232,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public override void EndService()
         {
             RestoreMotives();
-            Worker.RemoveAlarm(mCheckForTasks);
+            Worker.RemoveAlarm(mCheckAlarmHandle);
             Worker.Service = null;
             mDestroyWorkerOnExit = false;
             Exit();
@@ -255,4 +256,3 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         }
     }
 }
-

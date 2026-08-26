@@ -48,7 +48,7 @@
     <Compile Include="Interactions\DismissHousekeeper.cs" />
     <Compile Include="Interactions\RequestHousekeeper.cs" />
     <Compile Include="Abstracts\Service.cs" />
-    <Compile Include="Abstracts\LiveInServiceSituation.cs" />
+    <Compile Include="Abstracts\ServiceSituationBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

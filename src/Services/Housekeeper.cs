@@ -50,13 +50,13 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [TunableComment("Length of time (in minutes) between checks that everything is cleaned")]
         public static float kCheckTime = 5;
 
-        [Tunable]
-        [TunableComment("Extra time (in hours) to wait before leaving if the service NPC is socialized with")]
-        public static float kExtraWaitTimeAfterSocializing = .5f;
-
         [TunableComment("Length of time (in minutes) that the housekeeper takes to drive to lot")]
         [Tunable]
         public static float kDriveTime = 5;
+
+        [Tunable]
+        [TunableComment("Extra time (in hours) to wait before leaving if the service NPC is socialized with")]
+        public static float kExtraWaitTimeAfterSocializing = .5f;
 
         public static Housekeeper sHousekeeper = null;
 
@@ -116,19 +116,19 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public static float ExtraWaitTimeAfterSocializing
-        {
-            get
-            {
-                return kExtraWaitTimeAfterSocializing;
-            }
-        }
-
         public static float DriveTime
         {
             get
             {
                 return kDriveTime;
+            }
+        }
+
+        public static float ExtraWaitTimeAfterSocializing
+        {
+            get
+            {
+                return kExtraWaitTimeAfterSocializing;
             }
         }
 
