@@ -15,25 +15,28 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
         {
             public override string GetInteractionName(Sim actor, Phone target, InteractionObjectPair iop)
             {
-                return LocalizeString("/Phone:RequestService");
+                return LocalizeString(":Name");
             }
 
             public override string[] GetPath(bool isFemale)
             {
                 return new[]
                 {
-                    LocalizeString("/Phone:CallServices")
+                    LocalizeString(":Path")
                 };
             }
 
             public override bool Test(Sim actor, Phone target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
             {
+                /*
                 if (Housekeeper.Instance != null && (Housekeeper.Instance.IsServiceRequested(target.LotCurrent) || Housekeeper.Instance.IsAnySimActiveOnLot(target.LotCurrent)))
                 {
                     greyedOutTooltipCallback = () => LocalizeString("/Phone/Tooltips:AlreadyRequested");
                     return false;
                 }
-                return true;
+                */
+                return Housekeeper.Instance != null && !Housekeeper.Instance.IsServiceRequested(target.LotCurrent) && !Housekeeper.Instance.IsAnySimActiveOnLot(target.LotCurrent);
+                //return true;
             }
         }
 

@@ -17,7 +17,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         static Main()
         {
-            CommonUtils.AddEnumValue<CommodityKind>("BeHousekeeper", Housekeeper.GetServiceCommodityKind<Housekeeper>());
+            CommonUtils.AddEnumValue<CommodityKind>("BeHousekeeper", Housekeeper.BeServiceCommodityKind);
             World.sOnStartupAppEventHandler += OnStartupApp;
             World.sOnWorldLoadFinishedEventHandler += OnWorldLoadFinished;
             World.OnObjectPlacedInLotEventHandler += OnObjectPlacedInLot;
@@ -26,7 +26,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         static void AddInteractions(this GameObject gameObject)
         {
-            gameObject.AddInteraction(CancelHousekeeper.Singleton, true);
+            gameObject.AddInteraction(DismissHousekeeper.Singleton, true);
             gameObject.AddInteraction(RequestHousekeeper.Singleton, true);
         }
 
@@ -72,7 +72,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
                 {
                     if (enumerator.Current != null && enumerator.Current.CreatedSim != null)
                     {
-                        CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, Housekeeper.GetServiceCommodityKind<Housekeeper>());
+                        CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, Housekeeper.BeServiceCommodityKind);
                     }
                 }
             }

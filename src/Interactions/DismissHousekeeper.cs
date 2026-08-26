@@ -5,35 +5,39 @@ using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
+using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
 {
-    public class CancelHousekeeper : ImmediateInteraction<Sim, Phone>
+    public class DismissHousekeeper : ImmediateInteraction<Sim, Phone>
     {
         [DoesntRequireTuning]
-        public class Definition : ImmediateInteractionDefinition<Sim, Phone, CancelHousekeeper>
+        public class Definition : ImmediateInteractionDefinition<Sim, Phone, DismissHousekeeper>
         {
             public override string GetInteractionName(Sim actor, Phone target, InteractionObjectPair iop)
             {
-                return LocalizeString("/Phone:CancelService");
+                return LocalizeString(":Name");
             }
 
             public override string[] GetPath(bool isFemale)
             {
                 return new[]
                 {
-                    LocalizeString("/Phone:CallServices")
+                    LocalizeString(":Path")
                 };
             }
 
             public override bool Test(Sim actor, Phone target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
             {
+                /*
                 if (Housekeeper.Instance != null && !Housekeeper.Instance.IsServiceRequested(target.LotCurrent) && !Housekeeper.Instance.IsAnySimActiveOnLot(target.LotCurrent))
                 {
                     greyedOutTooltipCallback = () => LocalizeString("/Phone/Tooltips:AlreadyCancelled");
                     return false;
                 }
-                return true;
+                */
+                return Housekeeper.Instance != null && (Housekeeper.Instance.IsServiceRequested(target.LotCurrent) || Housekeeper.Instance.IsAnySimActiveOnLot(target.LotCurrent));
+                //return true;
             }
         }
 
@@ -41,13 +45,13 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
 
         public override bool Run()
         {
-            Housekeeper.Instance.DismissWorker();
+            Housekeeper.Instance.EndService(Housekeeper.Instance.FindSimForAssignment(Target.LotCurrent));
             return true;
         }
 
         public static string LocalizeString(string entryKey, params object[] parameters)
         {
-            return Localization.LocalizeString(typeof(CancelHousekeeper).GetLocalizationKey() + entryKey, parameters);
+            return Localization.LocalizeString(typeof(DismissHousekeeper).GetLocalizationKey() + entryKey, parameters);
         }
     }
 }

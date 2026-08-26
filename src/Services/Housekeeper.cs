@@ -17,7 +17,7 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
-    public class Housekeeper : ServiceBase, IAmCleaningService
+    public class Housekeeper : Service<Housekeeper>, IAmCleaningService
     {
         public static readonly string sLocalizationKey = typeof(Housekeeper).GetLocalizationKey();
 
@@ -35,16 +35,28 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         public static float kUseObjectInSameRoomAsSleeperMultiplier = .1f;
 
         [Tunable]
-        [TunableComment("If Housekeeper's relationship with any YAE falls below this level, she will quit")]
+        [TunableComment("If the housekeeper's relationship with any YAE falls below this level, she will quit")]
         public static float kRelationshipLevelForQuit = -50;
-
-        [TunableComment("Chance you get the good advice moodlet when asking for advice from the housekeeper")]
-        [Tunable]
-        public static float kChanceGetGoodAdviceMoodlet = 25;
 
         [TunableComment("Length of time (in hours) that the housekeeper waits before routing to lot")]
         [Tunable]
         public static float kDelayBeforeArriving = .5f;
+
+        [TunableComment("Length of time (in hours) that the housekeeper waits before leaving the lot, after her work is done")]
+        [Tunable]
+        public static float kDelayBeforeLeaving = .3f;
+
+        [Tunable]
+        [TunableComment("Length of time (in minutes) between checks that everything is cleaned")]
+        public static float kCheckTime = 5;
+
+        [Tunable]
+        [TunableComment("Extra time (in hours) to wait before leaving if the service NPC is socialized with")]
+        public static float kExtraWaitTimeAfterSocializing = .5f;
+
+        [TunableComment("Length of time (in minutes) that the housekeeper takes to drive to lot")]
+        [Tunable]
+        public static float kDriveTime = 5;
 
         public static Housekeeper sHousekeeper = null;
 
@@ -80,19 +92,43 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public static float ChanceGetGoodAdviceMoodlet
-        {
-            get
-            {
-                return kChanceGetGoodAdviceMoodlet;
-            }
-        }
-
         public static float DelayBeforeArriving
         {
             get
             {
                 return kDelayBeforeArriving;
+            }
+        }
+
+        public static float DelayBeforeLeaving
+        {
+            get
+            {
+                return kDelayBeforeLeaving;
+            }
+        }
+
+        public static float CheckTime
+        {
+            get
+            {
+                return kCheckTime;
+            }
+        }
+
+        public static float ExtraWaitTimeAfterSocializing
+        {
+            get
+            {
+                return kExtraWaitTimeAfterSocializing;
+            }
+        }
+
+        public static float DriveTime
+        {
+            get
+            {
+                return kDriveTime;
             }
         }
 
@@ -118,9 +154,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             {
                 return new List<CommodityKind>()
                 {
-                    GetServiceCommodityKind<Housekeeper>(),
                     CommodityKind.BeMaid,
-                    CommodityKind.BeButler
+                    Housekeeper.BeServiceCommodityKind
                 };
             }
         }
@@ -177,7 +212,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         static void DestroyHousekeeper()
         {
-            ServiceBase.Destroy(sHousekeeper);
+            Service<Housekeeper>.Destroy(sHousekeeper);
             sHousekeeper = null;
         }
 

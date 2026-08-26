@@ -10,6 +10,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 {
     public static class CommonUtils
     {
+        public delegate void Action();
+
         public const string kAuthorName = "zoeoeAndDestrospean";
 
         [Tunable]
@@ -17,34 +19,33 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         public static void AddEnumValue<T>(string key, object value) where T : struct
         {
-            Type typeFromHandle = typeof(T);
-            EnumParser value0;
-            if (!ParserFunctions.sCaseInsensitiveEnumParsers.TryGetValue(typeFromHandle, out value0))
+            Type enumType = typeof(T);
+            EnumParser caseInsensitiveEnumParser, caseSensitiveEnumParser;
+            if (!ParserFunctions.sCaseInsensitiveEnumParsers.TryGetValue(enumType, out caseInsensitiveEnumParser))
             {
-                value0 = new EnumParser(typeFromHandle, true);
-                ParserFunctions.sCaseInsensitiveEnumParsers.Add(typeFromHandle, value0);
+                caseInsensitiveEnumParser = new EnumParser(enumType, true);
+                ParserFunctions.sCaseInsensitiveEnumParsers.Add(enumType, caseInsensitiveEnumParser);
             }
-            EnumParser value1;
-            if (!ParserFunctions.sCaseSensitiveEnumParsers.TryGetValue(typeFromHandle, out value1))
+            if (!ParserFunctions.sCaseSensitiveEnumParsers.TryGetValue(enumType, out caseSensitiveEnumParser))
             {
-                value1 = new EnumParser(typeFromHandle, false);
-                ParserFunctions.sCaseSensitiveEnumParsers.Add(typeFromHandle, value1);
+                caseSensitiveEnumParser = new EnumParser(enumType, false);
+                ParserFunctions.sCaseSensitiveEnumParsers.Add(enumType, caseSensitiveEnumParser);
             }
-            if (!value0.mLookup.ContainsKey(key.ToLowerInvariant()) && !value1.mLookup.ContainsKey(key))
+            if (!caseInsensitiveEnumParser.mLookup.ContainsKey(key.ToLowerInvariant()) && !caseSensitiveEnumParser.mLookup.ContainsKey(key))
             {
-                value0.mLookup.Add(key.ToLowerInvariant(), value);
-                value1.mLookup.Add(key, value);
+                caseInsensitiveEnumParser.mLookup.Add(key.ToLowerInvariant(), value);
+                caseSensitiveEnumParser.mLookup.Add(key, value);
             }
         }
 
-        public static string GetLocalizationKey(this System.Type type)
+        public static string GetLocalizationKey(this Type type)
         {
             return type.Namespace.Substring(type.Namespace.IndexOf(kAuthorName)).Replace('.', '/') + "/" + type.Name;
         }
 
-        public static void LoadMotive(string xmlName)
+        public static void LoadMotive(string instanceName)
         {
-            MotiveTuning.LoadTuning(Simulator.LoadXML(xmlName));
+            MotiveTuning.LoadTuning(Simulator.LoadXML(instanceName));
         }
 
         public static void ShowDebugMessageDialog(string message)
@@ -76,6 +77,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             if (motiveTuning != null)
             {
                 sim.mMotiveTuning[(int)commodityKind] = motiveTuning;
+            }
+        }
+
+        public static bool TryGetException(Action action, out Exception exception)
+        {
+            try
+            {
+                exception = null;
+                action();
+                return false;
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+                ((IScriptErrorWindow)AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, ex);
+                return true;
             }
         }
     }

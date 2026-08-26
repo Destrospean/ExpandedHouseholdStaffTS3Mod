@@ -40,15 +40,15 @@
     <Compile Include="CommonUtils.cs" />
     <Compile Include="ExtensionAttribute.cs" />
     <Compile Include="Situations\HousekeeperSituation.cs" />
-    <Compile Include="Abstracts\LiveInServiceSituationBase.cs" />
-    <Compile Include="Abstracts\ServiceBase.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Interactions\RequestService.cs" />
-    <Compile Include="Interactions\CancelService.cs" />
     <Compile Include="Unused\Roles\HouseMaid.cs" />
     <Compile Include="Unused\Objects\ServantManager.cs" />
     <Compile Include="Unused\Abstracts\ServantRoleBase.cs" />
     <Compile Include="Unused\Interfaces\IServantRole.cs" />
+    <Compile Include="Interactions\DismissHousekeeper.cs" />
+    <Compile Include="Interactions\RequestHousekeeper.cs" />
+    <Compile Include="Abstracts\Service.cs" />
+    <Compile Include="Abstracts\LiveInServiceSituation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

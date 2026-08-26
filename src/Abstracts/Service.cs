@@ -9,13 +9,29 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
-    public abstract class ServiceBase : Service
+    public abstract class Service<T> : Service where T : Service<T>
     {
         public virtual bool IsHomelessService
         {
             get
             {
                 return false;
+            }
+        }
+
+        public static Type Type
+        {
+            get
+            {
+                return typeof(T);
+            }
+        }
+
+        public static CommodityKind BeServiceCommodityKind
+        {
+            get
+            {
+                return (CommodityKind)ResourceUtils.HashString32("Be" + Type.Name);
             }
         }
 
@@ -58,7 +74,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             return simDescription;
         }
 
-        public static SimDescription CreateSimDescriptionInternal(ServiceBase service, string outfitName, CASAgeGenderFlags ageIfRandom, CASAgeGenderFlags genderIfRandom, WorldName homeWorld, out bool randomlyCreated)
+        public static SimDescription CreateSimDescriptionInternal(Service<T> service, string outfitName, CASAgeGenderFlags ageIfRandom, CASAgeGenderFlags genderIfRandom, WorldName homeWorld, out bool randomlyCreated)
         {
             randomlyCreated = false;
             if ((service.IsHomelessService || LotManager.SelectRandomLotForNPCMoveIn(x => x.Household == null) == null) && Household.NpcHousehold == null)
@@ -102,16 +118,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             lot.MoveIn(household);
             simDescription.CreatedByService = service;
             return simDescription;
-        }
-
-        public static CommodityKind GetServiceCommodityKind(Type serviceType)
-        {
-            return (CommodityKind)ResourceUtils.HashString32("Be" + serviceType.Name);
-        }
-
-        public static CommodityKind GetServiceCommodityKind<T>() where T : ServiceBase
-        {
-            return GetServiceCommodityKind(typeof(T));
         }
     }
 }
