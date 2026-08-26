@@ -30,17 +30,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             gameObject.AddInteraction(RequestHousekeeper.Singleton, true);
         }
 
-        static void OnStartupApp(object sender, EventArgs args)
-        {
-            try
-            {
-                CommonUtils.LoadMotive("BeHousekeeperMotive");
-            }
-            catch
-            {
-            }
-        }
-
         static void OnObjectPlacedInLot(object sender, EventArgs e)
         {
             World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
@@ -54,31 +43,36 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        static void OnStartupApp(object sender, EventArgs args)
+        {
+            Exception exception;
+            CommonUtils.TryGetException(() => CommonUtils.LoadMotive("BeHousekeeperMotive"), out exception);
+        }
+
         static void OnWorldLoadFinished(object sender, EventArgs e)
         {
             foreach (Phone phone in Sims3.Gameplay.Queries.GetObjects<Phone>())
             {
                 phone.AddInteractions();
             }
-            try
-            {
-                Housekeeper.Create();
-                if (Housekeeper.Instance == null)
+            CommonUtils.ShowDebugMessageDialog(Housekeeper.BeServiceCommodityKind.ToString());
+            Exception exception;
+            CommonUtils.TryGetException(() =>
                 {
-                    return;
-                }
-                IEnumerator<SimDescription> enumerator = Housekeeper.Instance.Pool.GetEnumerator();
-                while (enumerator.MoveNext())
-                {
-                    if (enumerator.Current != null && enumerator.Current.CreatedSim != null)
+                    Housekeeper.Create();
+                    if (Housekeeper.Instance == null)
                     {
-                        CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, Housekeeper.BeServiceCommodityKind);
+                        return;
                     }
-                }
-            }
-            catch
-            {
-            }
+                    IEnumerator<SimDescription> enumerator = Housekeeper.Instance.Pool.GetEnumerator();
+                    while (enumerator.MoveNext())
+                    {
+                        if (enumerator.Current != null && enumerator.Current.CreatedSim != null)
+                        {
+                            CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, Housekeeper.BeServiceCommodityKind);
+                        }
+                    }
+                }, out exception);
         }
 
         static void OnWorldQuit(object sender, EventArgs e)

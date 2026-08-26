@@ -2,6 +2,7 @@
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Services;
+using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using System;

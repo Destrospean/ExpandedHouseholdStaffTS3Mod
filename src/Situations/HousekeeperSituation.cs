@@ -89,8 +89,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         {
             public AlarmHandle mAlarmHandle = AlarmHandle.kInvalidHandle;
 
-            public int mChecksWithNothingLeft;
-
             public Cleaning()
             {
             }
@@ -102,13 +100,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             public override void Init(HousekeeperSituation parent)
             {
                 Exception exception;
-                CommonUtils.TryGetException(() =>
-                    {
-                        parent.Worker.Autonomy.Motives.CreateMotive(CommodityKind.BeMaid);
-                        parent.Worker.Autonomy.Motives.CreateMotive(Housekeeper.BeServiceCommodityKind);
-                        parent.Worker.WorkMotive = Housekeeper.BeServiceCommodityKind;
-                        mAlarmHandle = parent.Worker.AddAlarmRepeating(Housekeeper.CheckTime, TimeUnit.Minutes, CheckIfEverythingCleaned, Housekeeper.CheckTime, TimeUnit.Minutes, "Time for Housekeeper to check if everything is cleaned", AlarmType.AlwaysPersisted);
-                    }, out exception);
+                CommonUtils.TryGetException(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(Housekeeper.CheckTime, TimeUnit.Minutes, CheckIfEverythingDone, Housekeeper.CheckTime, TimeUnit.Minutes, "Time for Housekeeper to check if everything is cleaned", AlarmType.AlwaysPersisted), out exception);
             }
 
             public override void CleanUp()
@@ -117,6 +109,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 CommonUtils.TryGetException(() =>
                     {
                         Parent.Worker.Autonomy.Motives.RemoveMotive(CommodityKind.BeMaid);
+                        Parent.Worker.Autonomy.Motives.RemoveMotive(CommodityKind.BeButler);
                         Parent.Worker.Autonomy.Motives.RemoveMotive(Housekeeper.BeServiceCommodityKind);
                         Parent.Worker.WorkMotive = CommodityKind.None;
                         base.AlarmManager.RemoveAlarm(mAlarmHandle);
@@ -124,19 +117,19 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     }, out exception);
             }
 
-            public void CheckIfEverythingCleaned()
+            public void CheckIfEverythingDone()
             {
                 Exception exception;
                 CommonUtils.TryGetException(() =>
                     {
-                        if (!CheckIfTasksToDo() && !Parent.IsLiveInService && (!Parent.Worker.BuffManager.HasElement(BuffNames.Scared) || Parent.Worker.BuffManager.GetElement(BuffNames.Scared).BuffOrigin != Origin.FromSeeingBonehilda))
+                        if (!CheckHasTasksToDo() && !Parent.IsLiveInService && (!Parent.Worker.BuffManager.HasElement(BuffNames.Scared) || Parent.Worker.BuffManager.GetElement(BuffNames.Scared).BuffOrigin != Origin.FromSeeingBonehilda))
                         {
                             Parent.SetState(new HangAroundBeforeLeaving(Parent));
                         }
                     }, out exception);
             }
 
-            public bool CheckIfTasksToDo()
+            public bool CheckHasTasksToDo()
             {
                 bool retVal = false;
                 Exception exception;
@@ -148,7 +141,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                             {
                                 Parent.Worker.BuffManager.AddElement(BuffNames.Scared, Origin.FromSeeingBonehilda);
                                 Parent.SetState(new QuitCauseOfBonehilda(Parent));
-                                retVal = false;
+                                return;
+                            }
+                        }
+                        if (Parent.Worker.CurrentInteraction != null && Parent.Worker.CurrentInteraction.GetPriority().Level <= InteractionPriorityLevel.Autonomous)
+                        {
+                            InteractionInstance interactionInstance = Parent.Worker.Autonomy.FindBestAction();
+                            if (interactionInstance != null && Parent.IsInteractionBetterThanCurrent(interactionInstance))
+                            {
+                                Parent.Worker.AddExitReason(ExitReason.CanceledByScript);
                                 return;
                             }
                         }
@@ -167,29 +168,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                                 return;
                             }
                         }
-                        if (Parent.Worker.CurrentInteraction != null)
-                        {
-                            if (Parent.Worker.CurrentInteraction.GetPriority().Level <= InteractionPriorityLevel.Autonomous)
-                            {
-                                InteractionInstance interactionInstance = Parent.Worker.Autonomy.FindBestAction();
-                                if (interactionInstance != null && Parent.IsInteractionBetterThanCurrent(interactionInstance))
-                                {
-                                    Parent.Worker.AddExitReason(ExitReason.CanceledByScript);
-                                    retVal = false;
-                                    return;
-                                }
-                            }
-                        }
-                        if (!retVal && Parent.Worker.CurrentInteraction != null)
-                        {
-                            if (Parent.Worker.CurrentInteraction.Id == Parent.LastInteractionId)
-                            {
-                                Parent.Worker.AddExitReason(ExitReason.Finished);
-                            }
-                            Parent.LastInteractionId = Parent.Worker.CurrentInteraction.Id;
-                        }
-                        retVal = false;
-                        return;
                     }, out exception);
                 return retVal;
             }
@@ -336,9 +314,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         public HousekeeperSituation(Service<Housekeeper> service, Lot lot, Sim worker, int cost) : base(null, service, lot, worker, cost)
         {
             worker.AssignRole(this);
-            worker.Autonomy.Motives.MaxEverything();
-            worker.Autonomy.Motives.FreezeDecayEverythingExcept();
             worker.Autonomy.AllowedToRunMetaAutonomy = false;
+            FreezeMotives();
             SetState(new WaitToRoute(this));
             ScheduleSwitchWorkerToServiceOutfit();
             mDateLastPaid = SimClock.ElapsedCalendarDays();
@@ -407,13 +384,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         public override void SetToLeave()
         {
             UnsetHousekeeperBed();
-            base.SetToLeave();
+            NPCLeavingMessage(LeavingReason.NPCDismissed);
+            SetState(new LeaveLot<HousekeeperSituation>(this));
         }
 
         public override void SetToJobDone()
         {
             UnsetHousekeeperBed();
-            base.SetToJobDone();
+            NPCLeavingMessage(LeavingReason.NPCJobDone);
+            SetState(new LeaveLot<HousekeeperSituation>(this));
         }
 
         public override void SetToFire(Sim serviceSim, Sim firer)
@@ -423,7 +402,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 EventTracker.SendEvent(EventTypeId.kServiceNPCFired, firer, serviceSim);
                 NPCLeavingMessage(LeavingReason.NPCSelfTerminated);
-                SetState(new LeaveLot<ServiceSituationBase>(this));
+                SetState(new LeaveLot<HousekeeperSituation>(this));
                 Service.FireSim(Worker);
             }
             else
@@ -434,8 +413,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public override void EndService()
         {
+            RestoreMotives();
             Worker.RemoveAlarm(mPayHousekeeperAlarm);
-            base.EndService();
+            Worker.Service = null;
+            mDestroyWorkerOnExit = false;
+            Exit();
         }
 
         public override bool ServiceTerminated()
@@ -476,6 +458,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             Worker.Motives.MaxEverything();
             Worker.WorkMotive = Housekeeper.BeServiceCommodityKind;
             Worker.Motives.CreateMotive(CommodityKind.BeMaid);
+            Worker.Motives.CreateMotive(CommodityKind.BeButler);
             Worker.Motives.CreateMotive(Housekeeper.BeServiceCommodityKind);
         }
     }
