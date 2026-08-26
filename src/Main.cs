@@ -55,7 +55,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             {
                 phone.AddInteractions();
             }
-            CommonUtils.ShowDebugMessageDialog(Housekeeper.BeServiceCommodityKind.ToString());
+            CommonUtils.ShowDebugMessageDialog("BeHousekeeper CommodityKind (a number if unique): " + Housekeeper.BeServiceCommodityKind);
             Exception exception;
             CommonUtils.TryGetException(() =>
                 {
