@@ -111,18 +111,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     });
             }
 
-            public void CheckIfEverythingDone()
-            {
-                CommonUtils.TryDisplayScriptError(() =>
-                    {
-                        if (!CheckHasTasksToDo() && !Parent.IsLiveInService && (!Parent.Worker.BuffManager.HasElement(BuffNames.Scared) || Parent.Worker.BuffManager.GetElement(BuffNames.Scared).BuffOrigin != Origin.FromSeeingBonehilda))
-                        {
-                            Parent.SetState(new HangAroundBeforeLeaving(Parent));
-                        }
-                    });
-            }
-
-            public bool CheckHasTasksToDo()
+            public bool CheckIfHasDuties()
             {
                 bool retVal = false;
                 CommonUtils.TryDisplayScriptError(() =>
@@ -162,6 +151,17 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                         }
                     });
                 return retVal;
+            }
+
+            public void CheckIfEverythingDone()
+            {
+                CommonUtils.TryDisplayScriptError(() =>
+                    {
+                        if (!CheckIfHasDuties() && !Parent.IsLiveInService && (!Parent.Worker.BuffManager.HasElement(BuffNames.Scared) || Parent.Worker.BuffManager.GetElement(BuffNames.Scared).BuffOrigin != Origin.FromSeeingBonehilda))
+                        {
+                            Parent.SetState(new HangAroundBeforeLeaving(Parent));
+                        }
+                    });
             }
         }
 
