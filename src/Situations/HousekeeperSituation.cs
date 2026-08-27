@@ -74,9 +74,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 CommonUtils.TryDisplayScriptError(() =>
                     {
-                        Parent.OnArriveOnLot();
-                        Parent.SetMotivesAndCommodities();
-                        Parent.SetState(new Cleaning(Parent));
+                        parent.OnArriveOnLot();
+                        CommonUtils.UpdateMotiveTunings(parent.Worker, Housekeeper.BeServiceCommodityKind);
+                        parent.Worker.Motives.CreateMotive(CommodityKind.BeMaid);
+                        parent.Worker.Motives.CreateMotive(Housekeeper.BeServiceCommodityKind);
+                        parent.Worker.WorkMotive = Housekeeper.BeServiceCommodityKind;
+                        parent.SetState(new Cleaning(parent));
                     });
             }
         }
@@ -426,15 +429,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         {
             Worker.Autonomy.Motives.MaxEverything();
             Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Energy, CommodityKind.Hygiene);
-        }
-
-        public override void SetMotivesAndCommodities()
-        {
-            CommonUtils.UpdateMotiveTunings(Worker, Housekeeper.BeServiceCommodityKind);
-            Worker.Motives.MaxEverything();
-            Worker.WorkMotive = Housekeeper.BeServiceCommodityKind;
-            Worker.Motives.CreateMotive(CommodityKind.BeMaid);
-            Worker.Motives.CreateMotive(Housekeeper.BeServiceCommodityKind);
         }
     }
 }
