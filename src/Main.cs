@@ -17,7 +17,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         static Main()
         {
-            CommonUtils.AddEnumValue<CommodityKind>("BeHousekeeper", Housekeeper.BeServiceCommodityKind);
+            CommonUtils.AddEnumValue<CommodityKind>("BeMaid", Housekeeper.BeServiceCommodityKind);
             World.sOnStartupAppEventHandler += OnStartupApp;
             World.sOnWorldLoadFinishedEventHandler += OnWorldLoadFinished;
             World.OnObjectPlacedInLotEventHandler += OnObjectPlacedInLot;
@@ -45,7 +45,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         static void OnStartupApp(object sender, EventArgs args)
         {
-            CommonUtils.TryDisplayScriptError(() => CommonUtils.LoadMotive("BeHousekeeperMotive"));
+            CommonUtils.TryDisplayScriptError(() => CommonUtils.LoadMotive("BeMaidMotive"));
         }
 
         static void OnWorldLoadFinished(object sender, EventArgs e)
@@ -54,7 +54,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             {
                 phone.AddInteractions();
             }
-            CommonUtils.ShowDebugMessageDialog("BeHousekeeper CommodityKind (a number if unique): " + Housekeeper.BeServiceCommodityKind);
+            CommonUtils.ShowDebugMessageDialog("BeMaid CommodityKind (a number if unique): " + Housekeeper.BeServiceCommodityKind);
             CommonUtils.TryDisplayScriptError(() =>
                 {
                     Housekeeper.Create();

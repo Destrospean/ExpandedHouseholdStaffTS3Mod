@@ -2,7 +2,7 @@
 <base>
   <Current_Tuning>
     <Motive>
-      <Tuning kind="BeHousekeeper" universal="False" insatiable="True" intensity="1000" ageSpecificity="All" traitSpecificity="Unknown" decayType="NoDecay" decayValue="0" initialMin="-100" initialMax="-100" timeRandomness="0" hasDefaultValue="True">
+      <Tuning kind="BeMaid" universal="False" insatiable="True" intensity="1000" ageSpecificity="All" traitSpecificity="Unknown" decayType="NoDecay" decayValue="0" initialMin="-100" initialMax="-100" timeRandomness="0" hasDefaultValue="True">
 	</Tuning>
       <Intensity>
         <Point x="-100" y="0"/>

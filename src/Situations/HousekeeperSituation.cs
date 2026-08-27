@@ -103,7 +103,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 CommonUtils.TryDisplayScriptError(() =>
                     {
                         Parent.Worker.Autonomy.Motives.RemoveMotive(CommodityKind.BeMaid);
-                        Parent.Worker.Autonomy.Motives.RemoveMotive(CommodityKind.BeButler);
                         Parent.Worker.Autonomy.Motives.RemoveMotive(Housekeeper.BeServiceCommodityKind);
                         Parent.Worker.WorkMotive = CommodityKind.None;
                         base.AlarmManager.RemoveAlarm(mAlarmHandle);
@@ -434,7 +433,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             Worker.Motives.MaxEverything();
             Worker.WorkMotive = Housekeeper.BeServiceCommodityKind;
             Worker.Motives.CreateMotive(CommodityKind.BeMaid);
-            Worker.Motives.CreateMotive(CommodityKind.BeButler);
             Worker.Motives.CreateMotive(Housekeeper.BeServiceCommodityKind);
         }
     }
