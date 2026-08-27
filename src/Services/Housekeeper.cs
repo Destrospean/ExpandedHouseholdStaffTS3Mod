@@ -26,17 +26,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [Tunable]
         public static ServiceTuning kServiceTuning = new ServiceTuning();
 
-        [TunableComment("How old leftovers can be out in minutes before the housekeeper will put it away")]
         [Tunable]
-        public static float kTimeWaitBeforePutawayLeftovers = 60;
-
-        [Tunable]
-        [TunableComment("Multiplier for interactions in a room where a sim is sleeping")]
-        public static float kUseObjectInSameRoomAsSleeperMultiplier = .1f;
-
-        [Tunable]
-        [TunableComment("If the housekeeper's relationship with any YAE falls below this level, she will quit")]
-        public static float kRelationshipLevelForQuit = -50;
+        [TunableComment("Length of time (in minutes) between checks that everything is cleaned")]
+        public static float kCheckTime = 5;
 
         [TunableComment("Length of time (in hours) that the housekeeper waits before routing to lot")]
         [Tunable]
@@ -46,10 +38,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [Tunable]
         public static float kDelayBeforeLeaving = .3f;
 
-        [Tunable]
-        [TunableComment("Length of time (in minutes) between checks that everything is cleaned")]
-        public static float kCheckTime = 5;
-
         [TunableComment("Length of time (in minutes) that the housekeeper takes to drive to lot")]
         [Tunable]
         public static float kDriveTime = 5;
@@ -57,6 +45,18 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [Tunable]
         [TunableComment("Extra time (in hours) to wait before leaving if the service NPC is socialized with")]
         public static float kExtraWaitTimeAfterSocializing = .5f;
+
+        [Tunable]
+        [TunableComment("If the housekeeper's relationship with any YAE falls below this level, she will quit")]
+        public static float kRelationshipLevelForQuit = -50;
+
+        [TunableComment("How old leftovers can be out in minutes before the housekeeper will put it away")]
+        [Tunable]
+        public static float kTimeWaitBeforePutawayLeftovers = 60;
+
+        [Tunable]
+        [TunableComment("Multiplier for interactions in a room where a sim is sleeping")]
+        public static float kUseObjectInSameRoomAsSleeperMultiplier = .1f;
 
         public static Housekeeper sHousekeeper = null;
 
@@ -68,27 +68,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public static float TimeWaitBeforePutawayLeftovers
+        public static float CheckTime
         {
             get
             {
-                return kTimeWaitBeforePutawayLeftovers;
-            }
-        }
-
-        public static float UseObjectInSameRoomAsSleeperMultiplier
-        {
-            get
-            {
-                return kUseObjectInSameRoomAsSleeperMultiplier;
-            }
-        }
-
-        public static float RelationshipLevelForQuit
-        {
-            get
-            {
-                return kRelationshipLevelForQuit;
+                return kCheckTime;
             }
         }
 
@@ -108,14 +92,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public static float CheckTime
-        {
-            get
-            {
-                return kCheckTime;
-            }
-        }
-
         public static float DriveTime
         {
             get
@@ -129,6 +105,30 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             get
             {
                 return kExtraWaitTimeAfterSocializing;
+            }
+        }
+
+        public static float RelationshipLevelForQuit
+        {
+            get
+            {
+                return kRelationshipLevelForQuit;
+            }
+        }
+
+        public static float TimeWaitBeforePutawayLeftovers
+        {
+            get
+            {
+                return kTimeWaitBeforePutawayLeftovers;
+            }
+        }
+
+        public static float UseObjectInSameRoomAsSleeperMultiplier
+        {
+            get
+            {
+                return kUseObjectInSameRoomAsSleeperMultiplier;
             }
         }
 
@@ -176,14 +176,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public static string LocalizeString(string name, params object[] parameters)
-        {
-            return Localization.LocalizeString(sLocalizationKey + ":" + name, parameters);
-        }
-
         public Housekeeper()
         {
             sHousekeeper = this;
+        }
+
+        public override bool CanRequestServiceFromPhone(Lot lot)
+        {
+            if (base.CanRequestServiceFromPhone(lot))
+            {
+                if (GameUtils.GetCurrentWorldType() != WorldType.Vacation)
+                {
+                    return !lot.IsBaseCampLotType;
+                }
+                return false;
+            }
+            return false;
         }
 
         public static void Create()
@@ -210,28 +218,20 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             DestroyHousekeeper();
         }
 
-        static void DestroyHousekeeper()
+        public static void DestroyHousekeeper()
         {
             Service<Housekeeper>.Destroy(sHousekeeper);
             sHousekeeper = null;
         }
 
-        public static void RemoveHousekeepersFromLot(Lot lot)
+        public override string GetServiceTopic(Sim serviceSim)
         {
-            Housekeeper instance = Instance;
-            if (instance == null || (!instance.IsServiceRequested(lot) && !instance.IsAnySimAssignedToLot(lot)))
-            {
-                return;
-            }
-            List<Sim> simsAssignedToLot = instance.GetSimsAssignedToLot(lot);
-            foreach (Sim item in simsAssignedToLot)
-            {
-                HousekeeperSituation housekeeperSituation = ServiceSituation.FindServiceSituationInvolving(item) as HousekeeperSituation;
-                if (housekeeperSituation != null)
-                {
-                    housekeeperSituation.SetToLeave();
-                }
-            }
+            return "Housekeeper Service";
+        }
+
+        public static string LocalizeString(string name, params object[] parameters)
+        {
+            return Localization.LocalizeString(sLocalizationKey + ":" + name, parameters);
         }
 
         public override bool NeedsAssignment(Lot lot)
@@ -256,22 +256,20 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             return new HousekeeperSituation(this, assignedLot, createdSim, cost);
         }
 
-        public override void UpdateCreatedSim(Sim sim)
+        public static void RemoveHousekeepersFromLot(Lot lot)
         {
-            Skill handinessSkill = sim.SkillManager.AddElement(SkillNames.Handiness);
-            int maxSkillLevel = handinessSkill.MaxSkillLevel;
-            for (int i = 0; i < maxSkillLevel; i++)
+            Housekeeper instance = Instance;
+            if (instance == null || (!instance.IsServiceRequested(lot) && !instance.IsAnySimAssignedToLot(lot)))
             {
-                handinessSkill.ForceGainPointsForLevelUp();
+                return;
             }
-            Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kHousekeeperBook);
-            Inventory inventory = sim.Inventory;
-            if (inventory != null)
+            List<Sim> simsAssignedToLot = instance.GetSimsAssignedToLot(lot);
+            foreach (Sim item in simsAssignedToLot)
             {
-                inventory.DestroyItems();
-                if (!inventory.TryToAdd(bookGeneralByTitle))
+                HousekeeperSituation housekeeperSituation = ServiceSituation.FindServiceSituationInvolving(item) as HousekeeperSituation;
+                if (housekeeperSituation != null)
                 {
-                    bookGeneralByTitle.Destroy();
+                    housekeeperSituation.SetToLeave();
                 }
             }
         }
@@ -305,22 +303,24 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             simDescription.TraitManager.AddRandomTrait(2);
         }
 
-        public override string GetServiceTopic(Sim serviceSim)
+        public override void UpdateCreatedSim(Sim sim)
         {
-            return "Housekeeper Service";
-        }
-
-        public override bool CanRequestServiceFromPhone(Lot lot)
-        {
-            if (base.CanRequestServiceFromPhone(lot))
+            Skill handinessSkill = sim.SkillManager.AddElement(SkillNames.Handiness);
+            int maxSkillLevel = handinessSkill.MaxSkillLevel;
+            for (int i = 0; i < maxSkillLevel; i++)
             {
-                if (GameUtils.GetCurrentWorldType() != WorldType.Vacation)
-                {
-                    return !lot.IsBaseCampLotType;
-                }
-                return false;
+                handinessSkill.ForceGainPointsForLevelUp();
             }
-            return false;
+            Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kHousekeeperBook);
+            Inventory inventory = sim.Inventory;
+            if (inventory != null)
+            {
+                inventory.DestroyItems();
+                if (!inventory.TryToAdd(bookGeneralByTitle))
+                {
+                    bookGeneralByTitle.Destroy();
+                }
+            }
         }
     }
 }

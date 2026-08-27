@@ -7,7 +7,6 @@ using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations;
 using Sims3.SimIFace;
-using System;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
 {
@@ -37,18 +36,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                     greyedOutTooltipCallback = () => LocalizeString("/Phone/Tooltips:AlreadyCancelled");
                     return false;
                 }
+                return true;
                 */
                 return Housekeeper.Instance != null && (Housekeeper.Instance.IsServiceRequested(target.LotCurrent) || Housekeeper.Instance.IsAnySimActiveOnLot(target.LotCurrent));
-                //return true;
             }
         }
 
         public static readonly InteractionDefinition Singleton = new Definition();
 
+        public static string LocalizeString(string entryKey, params object[] parameters)
+        {
+            return Localization.LocalizeString(typeof(DismissHousekeeper).GetLocalizationKey() + entryKey, parameters);
+        }
+
         public override bool Run()
         {
-            Exception exception;
-            CommonUtils.TryGetException(() =>
+            CommonUtils.TryDisplayScriptError(() =>
                 {
                     HousekeeperSituation housekeeperSituation = HousekeeperSituation.FindServiceSituationInvolving(Housekeeper.Instance.GetSimActiveOnLot(Target.LotCurrent)) as HousekeeperSituation;
                     if (housekeeperSituation != null)
@@ -59,13 +62,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                         housekeeperSituation.EndService();
                         housekeeperSituation.ForceSituationSpecificInteraction(housekeeperSituation.Lot, housekeeperSituation.Worker, new DriveAwayInServiceCar.Definition(housekeeperSituation.Car), null, null, null);
                     }
-                }, out exception);
+                });
             return true;
-        }
-
-        public static string LocalizeString(string entryKey, params object[] parameters)
-        {
-            return Localization.LocalizeString(typeof(DismissHousekeeper).GetLocalizationKey() + entryKey, parameters);
         }
     }
 }

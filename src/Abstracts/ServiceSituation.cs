@@ -7,15 +7,17 @@ using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
+using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations;
 using Sims3.UI;
+using System;
 using System.Collections.Generic;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
-    public abstract class ServiceSituationBase : ServiceSituation
+    public abstract class ServiceSituation<T> : ServiceSituation where T : ServiceSituation<T>
     {
-        public class WaitToRoute : ChildSituation<ServiceSituationBase>
+        public class WaitToRoute : ChildSituation<ServiceSituation<T>>
         {
             public AlarmHandle mAlarmHandle;
 
@@ -23,18 +25,18 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             {
             }
 
-            public WaitToRoute(ServiceSituationBase parent) : base(parent)
+            public WaitToRoute(ServiceSituation<T> parent) : base(parent)
             {
             }
 
-            public override void Init(ServiceSituationBase parent)
+            public override void Init(ServiceSituation<T> parent)
             {
                 mAlarmHandle = base.AlarmManager.AddAlarm(parent.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Service waiting to route", AlarmType.DeleteOnReset, parent.Worker);
             }
 
             public void TimeToRoute()
             {
-                RouteToLot<ServiceSituationBase, DummySituation> routeToLot = new RouteToLot<ServiceSituationBase, DummySituation>(Parent);
+                RouteToLot<ServiceSituation<T>, DummySituation> routeToLot = new RouteToLot<ServiceSituation<T>, DummySituation>(Parent);
                 routeToLot.SetRouteTime(Babysitter.DriveTime);
                 Parent.SetState(routeToLot);
             }
@@ -46,54 +48,24 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public class DummySituation : ChildSituation<ServiceSituationBase>
+        public class DummySituation : ChildSituation<ServiceSituation<T>>
         {
-            public bool mInformedFireDepartment;
-
             public DummySituation()
             {
             }
 
-            public DummySituation(ServiceSituationBase parent) : base(parent)
+            public DummySituation(ServiceSituation<T> parent) : base(parent)
             {
             }
 
-            public override void Init(ServiceSituationBase parent)
+            public override void Init(ServiceSituation<T> parent)
             {
-                Parent.OnArriveOnLot();
-                Parent.SetMotivesAndCommodities();
-                if (Parent.ReportsFires)
-                {
-                    parent.mCheckAlarmHandle = parent.Worker.AddAlarmRepeating(Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, CheckForFire, Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, "Service: Check for Tasks", AlarmType.DeleteOnReset);
-                }
-            }
-
-            public override void CleanUp()
-            {
-                base.CleanUp();
-            }
-
-            public void CheckForFire()
-            {
-                bool isFireOnLot = Parent.Lot.IsFireOnLot();
-                if (isFireOnLot && !mInformedFireDepartment)
-                {
-                    mInformedFireDepartment = true;
-                    Firefighter instance = Firefighter.Instance;
-                    if (instance != null)
-                    {
-                        instance.MakeServiceRequest(Lot, true, Parent.Worker.ObjectId);
-                        StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString("Gameplay/Services/Babysitter:CalledFireDept"), Parent.Worker.ObjectId, StyledNotification.NotificationStyle.kSimTalking));
-                    }
-                }
-                else if (!isFireOnLot)
-                {
-                    mInformedFireDepartment = false;
-                }
+                parent.OnArriveOnLot();
+                parent.SetMotivesAndCommodities();
             }
         }
 
-        public class NPCIsFired : ChildSituation<ServiceSituationBase>
+        public class NPCIsFired : ChildSituation<ServiceSituation<T>>
         {
             public Sim mFirer;
 
@@ -101,12 +73,12 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             {
             }
 
-            public NPCIsFired(Sim firer, ServiceSituationBase parent) : base(parent)
+            public NPCIsFired(Sim firer, ServiceSituation<T> parent) : base(parent)
             {
                 mFirer = firer;
             }
 
-            public override void Init(ServiceSituationBase parent)
+            public override void Init(ServiceSituation<T> parent)
             {
                 Relationship relationship = Relationship.Get(parent.Worker, mFirer, true);
                 if (relationship.LTR.Liking <= 20)
@@ -128,14 +100,16 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
             public void OnFinished(Sim actor, float x)
             {
-                Parent.SetState(new LeaveLot<ServiceSituationBase>(Parent));
+                Parent.SetState(new LeaveLot<ServiceSituation<T>>(Parent));
                 Parent.Service.FireSim(actor);
             }
         }
 
-        public AlarmHandle mCheckAlarmHandle = AlarmHandle.kInvalidHandle;
-
         public ulong LastInteractionId;
+
+        public AlarmHandle mCheckForFireAlarmHandle = AlarmHandle.kInvalidHandle;
+
+        public bool mInformedFireDepartment;
 
         public virtual float DelayBeforeArriving
         {
@@ -145,11 +119,19 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        public static Type DerivedType
+        {
+            get
+            {
+                return typeof(T);
+            }
+        }
+
         public virtual bool IsLiveInService
         {
             get
             {
-                return true;
+                return false;
             }
         }
 
@@ -161,21 +143,49 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public ServiceSituationBase()
+        public ServiceSituation()
         {
         }
 
-        public ServiceSituationBase(Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
+        public ServiceSituation(Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
             worker.AssignRole(this);
             worker.Autonomy.AllowedToRunMetaAutonomy = false;
             FreezeMotives();
-            SetState(new WaitToRoute(this));
+            SetState((Situation)Activator.CreateInstance(DerivedType.GetNestedType("WaitToRoute"), this));
             ScheduleSwitchWorkerToServiceOutfit();
+            if (ReportsFires)
+            {
+                AddCheckForFireAlarm();
+            }
         }
 
-        public ServiceSituationBase(object dummyObjectForBaseOfBase, Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
+        public ServiceSituation(DummyEnum dummyArgForBaseOfBase, Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
+        }
+
+        public void AddCheckForFireAlarm()
+        {
+            mCheckForFireAlarmHandle = Worker.AddAlarmRepeating(Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, CheckForFire, Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, "Service: Check for Fire", AlarmType.DeleteOnReset);
+        }
+
+        public void CheckForFire()
+        {
+            bool isFireOnLot = Lot.IsFireOnLot();
+            if (isFireOnLot && !mInformedFireDepartment)
+            {
+                mInformedFireDepartment = true;
+                Firefighter firefighter = Firefighter.Instance;
+                if (firefighter != null)
+                {
+                    firefighter.MakeServiceRequest(Lot, true, Worker.ObjectId);
+                    StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString("Gameplay/Services/Babysitter:CalledFireDept"), Worker.ObjectId, StyledNotification.NotificationStyle.kSimTalking));
+                }
+            }
+            else if (!isFireOnLot)
+            {
+                mInformedFireDepartment = false;
+            }
         }
 
         public virtual void OnArriveOnLot()
@@ -200,13 +210,13 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public override void SetToLeave()
         {
             NPCLeavingMessage(LeavingReason.NPCDismissed);
-            SetState(new LeaveLot<ServiceSituationBase>(this));
+            SetState(new LeaveLot<ServiceSituation<T>>(this));
         }
 
         public virtual void SetToJobDone()
         {
             NPCLeavingMessage(LeavingReason.NPCJobDone);
-            SetState(new LeaveLot<ServiceSituationBase>(this));
+            SetState(new LeaveLot<ServiceSituation<T>>(this));
         }
 
         public override void SetToFire(Sim serviceSim, Sim firer)
@@ -231,8 +241,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public override void EndService()
         {
+            if (ReportsFires)
+            {
+                Worker.RemoveAlarm(mCheckForFireAlarmHandle);
+            }
             RestoreMotives();
-            Worker.RemoveAlarm(mCheckAlarmHandle);
             Worker.Service = null;
             mDestroyWorkerOnExit = false;
             Exit();

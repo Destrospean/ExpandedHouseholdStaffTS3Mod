@@ -12,15 +12,15 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
     public abstract class Service<T> : Service where T : Service<T>
     {
-        public virtual bool IsHomelessService
+        public static CommodityKind BeServiceCommodityKind
         {
             get
             {
-                return false;
+                return (CommodityKind)ResourceUtils.HashString32("Be" + DerivedType.Name);
             }
         }
 
-        public static Type Type
+        public static Type DerivedType
         {
             get
             {
@@ -28,11 +28,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public static CommodityKind BeServiceCommodityKind
+        public virtual bool IsHomelessService
         {
             get
             {
-                return (CommodityKind)ResourceUtils.HashString32("Be" + Type.Name);
+                return false;
             }
         }
 

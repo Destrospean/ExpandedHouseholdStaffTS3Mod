@@ -34,13 +34,18 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                     greyedOutTooltipCallback = () => LocalizeString("/Phone/Tooltips:AlreadyRequested");
                     return false;
                 }
+                return true;
                 */
                 return Housekeeper.Instance != null && !Housekeeper.Instance.IsServiceRequested(target.LotCurrent) && !Housekeeper.Instance.IsAnySimActiveOnLot(target.LotCurrent);
-                //return true;
             }
         }
 
         public static readonly InteractionDefinition Singleton = new Definition();
+
+        public static string LocalizeString(string entryKey, params object[] parameters)
+        {
+            return Localization.LocalizeString(typeof(RequestHousekeeper).GetLocalizationKey() + entryKey, parameters);
+        }
 
         public override bool Run()
         {
@@ -50,11 +55,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
             }
             Housekeeper.Instance.MakeServiceRequest(Target.LotCurrent, true, Actor.ObjectId, false, 1);
             return true;
-        }
-
-        public static string LocalizeString(string entryKey, params object[] parameters)
-        {
-            return Localization.LocalizeString(typeof(RequestHousekeeper).GetLocalizationKey() + entryKey, parameters);
         }
     }
 }

@@ -8,6 +8,11 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 {
+    public enum DummyEnum
+    {
+        DummyValue
+    }
+
     public static class CommonUtils
     {
         public delegate void Action();
@@ -80,6 +85,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        public static void TryDisplayScriptError(Action action)
+        {
+            Exception exception;
+            if (TryGetException(action, out exception))
+            {
+                ((IScriptErrorWindow)AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, exception);
+            }
+        }
+
         public static bool TryGetException(Action action, out Exception exception)
         {
             try
@@ -91,7 +105,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             catch (Exception ex)
             {
                 exception = ex;
-                ((IScriptErrorWindow)AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, ex);
                 return true;
             }
         }
