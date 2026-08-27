@@ -11,3 +11,8 @@
                 ":Name": "Request Housekeeper"
                 "/Tooltips":
                     ":AlreadyRequested": "This service was already requested."
+        "/Services":
+            "/WeeklyPayment":
+                ":Housekeeper": "I'll be taking my weekly salary of {0.Money}. Good Day."
+            "/Housekeeper":
+                ":NotEnoughFunds": "You don't have enough funds to pay the Butler."
