@@ -83,18 +83,15 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 Relationship relationship = Relationship.Get(parent.Worker, mFirer, true);
                 if (relationship.LTR.Liking <= 20)
                 {
-                    SituationSocial.Definition i = new SituationSocial.Definition("Insult", new string[0], null, false);
-                    ForceSituationSpecificInteraction(mFirer, parent.Worker, i, null, OnFinished, OnFinished);
+                    ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Insult", new string[0], null, false), null, OnFinished, OnFinished);
                 }
                 else if (relationship.LTR.Liking >= 50 || LTRData.Get(relationship.LTR.CurrentLTR).IsRomantic)
                 {
-                    SituationSocial.Definition i2 = new SituationSocial.Definition("Cry on Shoulder", new string[0], null, false);
-                    ForceSituationSpecificInteraction(mFirer, parent.Worker, i2, null, OnFinished, OnFinished);
+                    ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Cry on Shoulder", new string[0], null, false), null, OnFinished, OnFinished);
                 }
                 else
                 {
-                    SituationSocial.Definition i3 = new SituationSocial.Definition("Chat", new string[0], null, false);
-                    ForceSituationSpecificInteraction(mFirer, parent.Worker, i3, null, OnFinished, OnFinished);
+                    ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Chat", new string[0], null, false), null, OnFinished, OnFinished);
                 }
             }
 
