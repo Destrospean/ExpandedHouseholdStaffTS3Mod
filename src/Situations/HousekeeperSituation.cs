@@ -430,6 +430,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public override void SetMotivesAndCommodities()
         {
+            CommonUtils.UpdateMotiveTunings(Worker, Housekeeper.BeServiceCommodityKind);
             Worker.Motives.MaxEverything();
             Worker.WorkMotive = Housekeeper.BeServiceCommodityKind;
             Worker.Motives.CreateMotive(CommodityKind.BeMaid);

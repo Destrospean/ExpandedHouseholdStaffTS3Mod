@@ -2,8 +2,8 @@
 <resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nameMap.xsd">
   <resource name="ServantRoleSims" type="0x073FAA07"/>
   <resource name="*.stbl" type="0x220557DA"/>
-  <resource name="BeMaidMotive" type="0x0333406C"/>
-  <!-- ITUN resources for the BeMaid CommodityKind -->
+  <resource name="BeHousekeeperMotive" type="0x0333406C"/>
+  <!-- ITUN resources for the BeHousekeeper CommodityKind -->
     <resource name="AutonomousRake_Sim" type="0x03B33DDF"/>
     <resource name="BakingDish_CleanUp_BakingDish" type="0x03B33DDF"/>
     <resource name="BedMakeBed_Bed" type="0x03B33DDF"/>
