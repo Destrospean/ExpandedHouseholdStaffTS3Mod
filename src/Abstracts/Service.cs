@@ -12,13 +12,20 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
     public abstract class Service<T> : Service where T : Service<T>
     {
-        public static CommodityKind BeServiceCommodityKind
+        static Dictionary<Type, CommodityKind> sServiceMotives = new Dictionary<Type, CommodityKind>();
+
+        public static CommodityKind ServiceMotive
         {
             get
             {
-                char[] hexValue = ResourceUtils.HashString32("Be" + DerivedType.Name).ToString("X8").ToCharArray();
-                hexValue[1] = '1';
-                return (CommodityKind)Convert.ToInt32(new string(hexValue), 16);
+                CommodityKind serviceMotive;
+                if (!sServiceMotives.TryGetValue(DerivedType, out serviceMotive))
+                {
+                    char[] hexValue = ResourceUtils.HashString32("Be" + DerivedType.Name).ToString("X8").ToCharArray();
+                    hexValue[1] = '1';
+                    serviceMotive = (CommodityKind)Convert.ToInt32(new string(hexValue), 16);
+                }
+                return serviceMotive;
             }
         }
 

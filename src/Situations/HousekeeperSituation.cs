@@ -75,10 +75,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 CommonUtils.TryDisplayScriptError(() =>
                     {
                         parent.OnArriveOnLot();
-                        CommonUtils.UpdateMotiveTunings(parent.Worker, Housekeeper.BeServiceCommodityKind);
+                        CommonUtils.UpdateMotiveTunings(parent.Worker, Housekeeper.ServiceMotive);
                         parent.Worker.Motives.CreateMotive(CommodityKind.BeMaid);
-                        parent.Worker.Motives.CreateMotive(Housekeeper.BeServiceCommodityKind);
-                        parent.Worker.WorkMotive = Housekeeper.BeServiceCommodityKind;
+                        parent.Worker.Motives.CreateMotive(Housekeeper.ServiceMotive);
+                        parent.Worker.WorkMotive = Housekeeper.ServiceMotive;
                         parent.SetState(new Cleaning(parent));
                     });
             }
@@ -106,7 +106,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 CommonUtils.TryDisplayScriptError(() =>
                     {
                         Parent.Worker.Autonomy.Motives.RemoveMotive(CommodityKind.BeMaid);
-                        Parent.Worker.Autonomy.Motives.RemoveMotive(Housekeeper.BeServiceCommodityKind);
+                        Parent.Worker.Autonomy.Motives.RemoveMotive(Housekeeper.ServiceMotive);
                         Parent.Worker.WorkMotive = CommodityKind.None;
                         base.AlarmManager.RemoveAlarm(mAlarmHandle);
                         base.CleanUp();
@@ -156,7 +156,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                         if (interactionQueue != null)
                         {
                             InteractionInstance headInteraction = interactionQueue.GetHeadInteraction();
-                            if (headInteraction != null && headInteraction.SatisfiesCommodity(Housekeeper.BeServiceCommodityKind))
+                            if (headInteraction != null && headInteraction.SatisfiesCommodity(Housekeeper.ServiceMotive))
                             {
                                 retVal = true;
                                 return;
