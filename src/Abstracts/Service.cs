@@ -16,7 +16,9 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             get
             {
-                return (CommodityKind)ResourceUtils.HashString32("Be" + DerivedType.Name);
+                char[] hexValue = ResourceUtils.HashString32("Be" + DerivedType.Name).ToString("X8").ToCharArray();
+                hexValue[1] = '1';
+                return (CommodityKind)Convert.ToInt32(new string(hexValue), 16);
             }
         }
 
