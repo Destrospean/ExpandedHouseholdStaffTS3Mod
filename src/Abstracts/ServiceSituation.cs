@@ -224,10 +224,9 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public float GetNewInteractionPriorityValue()
         {
             InteractionPriority interactionPriority = new InteractionPriority(InteractionPriorityLevel.Zero, 0);
-            InteractionInstance currentInteraction = Worker.CurrentInteraction;
-            if (currentInteraction != null)
+            if (Worker.CurrentInteraction != null)
             {
-                interactionPriority = currentInteraction.GetPriority();
+                interactionPriority = Worker.CurrentInteraction.GetPriority();
             }
             if (interactionPriority.Level == InteractionPriorityLevel.Zero)
             {
