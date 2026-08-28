@@ -12,7 +12,15 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
     public abstract class Service<T> : Service where T : Service<T>
     {
-        static Dictionary<Type, CommodityKind> sServiceMotives = new Dictionary<Type, CommodityKind>();
+        public static Dictionary<Type, CommodityKind> sServiceMotives = new Dictionary<Type, CommodityKind>();
+
+        public static Type DerivedType
+        {
+            get
+            {
+                return typeof(T);
+            }
+        }
 
         public static CommodityKind ServiceMotive
         {
@@ -21,19 +29,9 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 CommodityKind serviceMotive;
                 if (!sServiceMotives.TryGetValue(DerivedType, out serviceMotive))
                 {
-                    char[] hexValue = ResourceUtils.HashString32("Be" + DerivedType.Name).ToString("X8").ToCharArray();
-                    hexValue[1] = '1';
-                    serviceMotive = (CommodityKind)Convert.ToInt32(new string(hexValue), 16);
+                    serviceMotive = CommonUtils.GetCommodityKind("Be" + DerivedType.Name, CommonUtils.CommodityKindType.Motive);
                 }
                 return serviceMotive;
-            }
-        }
-
-        public static Type DerivedType
-        {
-            get
-            {
-                return typeof(T);
             }
         }
 

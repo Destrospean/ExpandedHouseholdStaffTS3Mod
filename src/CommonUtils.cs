@@ -8,13 +8,22 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 {
-    public enum DummyEnum
-    {
-        DummyValue
-    }
-
     public static class CommonUtils
     {
+        public enum CommodityKindType
+        {
+            Motive,
+            Skill,
+            Posture,
+            PostureCheck,
+            Trait
+        }
+
+        public enum DummyEnum
+        {
+            DummyValue
+        }
+
         public delegate void Action();
 
         public const string kAuthorName = "zoeoeAndDestrospean";
@@ -41,6 +50,30 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
                 caseInsensitiveEnumParser.mLookup.Add(key.ToLowerInvariant(), value);
                 caseSensitiveEnumParser.mLookup.Add(key, value);
             }
+        }
+
+        public static CommodityKind GetCommodityKind(string name, CommodityKindType type)
+        {
+            uint retVal = ResourceUtils.HashString32(name);
+            switch (type)
+            {
+                case CommodityKindType.Motive:
+                    retVal = retVal & 0xF0FFFFFF | 0x01000000;
+                    break;
+                case CommodityKindType.Skill:
+                    retVal = retVal & 0x0FFFFFFF | 0x20000000;
+                    break;
+                case CommodityKindType.Posture:
+                    retVal = retVal & 0x00FFFFFF | 0x04000000;
+                    break;
+                case CommodityKindType.PostureCheck:
+                    retVal = retVal & 0x00FFFFFF | 0x05000000;
+                    break;
+                case CommodityKindType.Trait:
+                    retVal = retVal & 0x0FFFFFFF | 0x10000000;
+                    break;
+            }
+            return (CommodityKind)retVal;
         }
 
         public static string GetLocalizationKey(this Type type)

@@ -17,37 +17,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
     public abstract class ServiceSituation<T> : ServiceSituation where T : ServiceSituation<T>
     {
-        public class WaitToRoute : ChildSituation<ServiceSituation<T>>
-        {
-            public AlarmHandle mAlarmHandle;
-
-            public WaitToRoute()
-            {
-            }
-
-            public WaitToRoute(ServiceSituation<T> parent) : base(parent)
-            {
-            }
-
-            public override void Init(ServiceSituation<T> parent)
-            {
-                mAlarmHandle = base.AlarmManager.AddAlarm(parent.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Service waiting to route", AlarmType.DeleteOnReset, parent.Worker);
-            }
-
-            public void TimeToRoute()
-            {
-                RouteToLot<ServiceSituation<T>, DummySituation> routeToLot = new RouteToLot<ServiceSituation<T>, DummySituation>(Parent);
-                routeToLot.SetRouteTime(Babysitter.DriveTime);
-                Parent.SetState(routeToLot);
-            }
-
-            public override void CleanUp()
-            {
-                base.AlarmManager.RemoveAlarm(mAlarmHandle);
-                base.CleanUp();
-            }
-        }
-
         public class DummySituation : ChildSituation<ServiceSituation<T>>
         {
             public DummySituation()
@@ -102,11 +71,42 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public ulong LastInteractionId;
+        public class WaitToRoute : ChildSituation<ServiceSituation<T>>
+        {
+            public AlarmHandle mAlarmHandle;
+
+            public WaitToRoute()
+            {
+            }
+
+            public WaitToRoute(ServiceSituation<T> parent) : base(parent)
+            {
+            }
+
+            public override void Init(ServiceSituation<T> parent)
+            {
+                mAlarmHandle = base.AlarmManager.AddAlarm(parent.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Service waiting to route", AlarmType.DeleteOnReset, parent.Worker);
+            }
+
+            public void TimeToRoute()
+            {
+                RouteToLot<ServiceSituation<T>, DummySituation> routeToLot = new RouteToLot<ServiceSituation<T>, DummySituation>(Parent);
+                routeToLot.SetRouteTime(Babysitter.DriveTime);
+                Parent.SetState(routeToLot);
+            }
+
+            public override void CleanUp()
+            {
+                base.AlarmManager.RemoveAlarm(mAlarmHandle);
+                base.CleanUp();
+            }
+        }
 
         public AlarmHandle mCheckForFireAlarmHandle = AlarmHandle.kInvalidHandle;
 
         public bool mInformedFireDepartment;
+
+        public ulong LastInteractionId;
 
         public virtual float DelayBeforeArriving
         {
@@ -140,6 +140,19 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        public virtual bool ServiceTerminated
+        {
+            get
+            {
+                if (IsLiveInService)
+                {
+                    return false;
+                }
+                SetToLeave();
+                return true;
+            }
+        }
+
         public ServiceSituation()
         {
         }
@@ -157,7 +170,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public ServiceSituation(DummyEnum dummyArgForBaseOfBase, Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
+        public ServiceSituation(CommonUtils.DummyEnum dummyArgForBaseOfBase, Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
         }
 
@@ -168,6 +181,10 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public void CheckForFire()
         {
+            if (ServiceTerminated)
+            {
+                return;
+            }
             bool isFireOnLot = Lot.IsFireOnLot();
             if (isFireOnLot && !mInformedFireDepartment)
             {
@@ -178,62 +195,12 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     firefighter.MakeServiceRequest(Lot, true, Worker.ObjectId);
                     StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString("Gameplay/Services/Babysitter:CalledFireDept"), Worker.ObjectId, StyledNotification.NotificationStyle.kSimTalking));
                 }
+                return;
             }
-            else if (!isFireOnLot)
+            if (!isFireOnLot)
             {
                 mInformedFireDepartment = false;
             }
-        }
-
-        public virtual void OnArriveOnLot()
-        {
-        }
-
-        public override string NotEnoughFundsMessage()
-        {
-            return "Gameplay/Services/Babysitter:NotEnoughFunds";
-        }
-
-        public virtual bool ServiceTerminated()
-        {
-            if (IsLiveInService)
-            {
-                return false;
-            }
-            SetToLeave();
-            return true;
-        }
-
-        public override void SetToLeave()
-        {
-            NPCLeavingMessage(LeavingReason.NPCDismissed);
-            SetState(new LeaveLot<ServiceSituation<T>>(this));
-        }
-
-        public virtual void SetToJobDone()
-        {
-            NPCLeavingMessage(LeavingReason.NPCJobDone);
-            SetState(new LeaveLot<ServiceSituation<T>>(this));
-        }
-
-        public override void SetToFire(Sim serviceSim, Sim firer)
-        {
-            base.SetToFire(serviceSim, firer);
-            NPCLeavingMessage(LeavingReason.NPCFired);
-            SetState(new NPCIsFired(firer, this));
-        }
-
-        public virtual void FreezeMotives()
-        {
-            Worker.Autonomy.Motives.MaxEverything();
-            Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Fun, CommodityKind.Social);
-        }
-
-        public virtual void SetMotivesAndCommodities()
-        {
-            Worker.Motives.MaxEverything();
-            Worker.Motives.SetValue(CommodityKind.Fun, 95);
-            Worker.Motives.SetValue(CommodityKind.Social, 0);
         }
 
         public override void EndService()
@@ -248,7 +215,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             Exit();
         }
 
-        public abstract bool IsInteractionBetterThanCurrent(InteractionInstance ii);
+        public virtual void FreezeMotives()
+        {
+            Worker.Autonomy.Motives.MaxEverything();
+            Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Fun, CommodityKind.Social);
+        }
 
         public float GetNewInteractionPriorityValue()
         {
@@ -263,6 +234,43 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 return 1;
             }
             return interactionPriority.Value + 1;
+        }
+
+        public abstract bool IsInteractionBetterThanCurrent(InteractionInstance ii);
+
+        public override string NotEnoughFundsMessage()
+        {
+            return Service.GetType().GetLocalizationKey() + ":NotEnoughFunds";
+        }
+
+        public virtual void OnArriveOnLot()
+        {
+        }
+
+        public virtual void SetMotivesAndCommodities()
+        {
+            Worker.Motives.MaxEverything();
+            Worker.Motives.SetValue(CommodityKind.Fun, 95);
+            Worker.Motives.SetValue(CommodityKind.Social, 0);
+        }
+
+        public override void SetToFire(Sim serviceSim, Sim firer)
+        {
+            base.SetToFire(serviceSim, firer);
+            NPCLeavingMessage(LeavingReason.NPCFired);
+            SetState(new NPCIsFired(firer, this));
+        }
+
+        public virtual void SetToJobDone()
+        {
+            NPCLeavingMessage(LeavingReason.NPCJobDone);
+            SetState(new LeaveLot<ServiceSituation<T>>(this));
+        }
+
+        public override void SetToLeave()
+        {
+            NPCLeavingMessage(LeavingReason.NPCDismissed);
+            SetState(new LeaveLot<ServiceSituation<T>>(this));
         }
     }
 }
