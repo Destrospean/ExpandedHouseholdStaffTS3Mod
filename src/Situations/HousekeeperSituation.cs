@@ -234,6 +234,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(HousekeeperSituation parent)
             {
+                CommonUtils.ShowDebugMessageDialog("StartCleaning");
                 CommonUtils.TryDisplayScriptError(() =>
                     {
                         parent.OnArriveOnLot();
@@ -255,22 +256,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
             }
 
-            public override void Init(HousekeeperSituation parent)
-            {
-                CommonUtils.TryDisplayScriptError(() => mAlarmHandle = base.AlarmManager.AddAlarm(Housekeeper.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to route", AlarmType.DeleteOnReset, parent.Worker));
-            }
-
-            public void TimeToRoute()
-            {
-                CommonUtils.TryDisplayScriptError(() =>
-                    {
-                        Parent.OnServiceStarting();
-                        RouteToLot<HousekeeperSituation, StartCleaning> routeToLot = new WalkToLot<HousekeeperSituation, StartCleaning>(Parent);
-                        routeToLot.SetRouteTime(Housekeeper.DriveTime);
-                        Parent.SetState(routeToLot);
-                    });
-            }
-
             public override void CleanUp()
             {
                 CommonUtils.TryDisplayScriptError(() =>
@@ -278,6 +263,35 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                         base.AlarmManager.RemoveAlarm(mAlarmHandle);
                         base.CleanUp();
                     });
+            }
+
+            public override void Init(HousekeeperSituation parent)
+            {
+                CommonUtils.TryDisplayScriptError(() => mAlarmHandle = base.AlarmManager.AddAlarm(Housekeeper.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to route", AlarmType.DeleteOnReset, parent.Worker));
+            }
+
+            public void TimeToRoute()
+            {
+                CommonUtils.ShowDebugMessageDialog("TimeToRoute BEGIN");
+                CommonUtils.TryDisplayScriptError(() =>
+                    {
+                        Parent.OnServiceStarting();
+                        /*
+                        ForceSituationSpecificInteraction(Lot, Parent.Worker, GoToLot.Singleton, null, (s, x) =>
+                            {
+                                if (Parent.Worker.LotCurrent == Lot)
+                                {
+                                    Parent.SetState(new StartCleaning(Parent));
+                                    return;
+                                }
+                                Exit();
+                            }, (s, x) => Parent.SetState(new StartCleaning(Parent)));
+                        */
+                        RouteToLot<HousekeeperSituation, StartCleaning> routeToLot = new WalkToLot<HousekeeperSituation, StartCleaning>(Parent);
+                        routeToLot.SetRouteTime(Housekeeper.DriveTime);
+                        Parent.SetState(routeToLot);
+                    });
+                CommonUtils.ShowDebugMessageDialog("TimeToRoute END");
             }
         }
 

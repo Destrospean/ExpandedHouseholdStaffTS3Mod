@@ -43,9 +43,55 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        public override SimDescription FindSimForAssignment(Lot lot)
+        {
+            CommonUtils.ShowDebugMessageDialog("Lot: " + lot?.ToString() ?? "NULL");
+            bool shouldUseServobot = false;
+            if (GameUtils.IsInstalled(ProductVersion.EP11))
+            {
+                shouldUseServobot = ServiceNPCSpecifications.ShouldUseServobot(ServiceType.ToString());
+            }
+            List<SimDescription> pool = new List<SimDescription>();
+            foreach (SimDescription simDescription in mPool)
+            {
+                if (!IsSimAssignedTask(simDescription) && CanSimBeAssignedToLot(simDescription, lot) && (shouldUseServobot && simDescription.IsEP11Bot || !shouldUseServobot && !simDescription.IsEP11Bot) && simDescription.CreatedSim == null)
+                {
+                    pool.Add(simDescription);
+                    CommonUtils.ShowDebugMessageDialog("A SimDescription: " + simDescription?.ToString() ?? "NULL");
+                }
+            }
+            if (pool.Count == 0)
+            {
+                SimDescription simDescription = CreateOrUpdateServiceNpc(null, lot);
+                if (simDescription != null)
+                {
+                    AddSimToPool(simDescription);
+                }
+                CommonUtils.ShowDebugMessageDialog("Created SimDescription: " + simDescription?.ToString() ?? "NULL");
+                return simDescription;
+            }
+            SimDescription randomObjectFromList = RandomUtil.GetRandomObjectFromList<SimDescription>(pool);
+            if (AlwaysTryToSendSameSim && lot.Household != null)
+            {
+                SimDescription simDescription = null;
+                if (mPreferredServiceNpc.TryGetValue(lot.Household.HouseholdId, out simDescription))
+                {
+                    if (pool.Contains(simDescription))
+                    {
+                        CommonUtils.ShowDebugMessageDialog("Existing SimDescription: " + simDescription?.ToString() ?? "NULL");
+                        return simDescription;
+                    }
+                }
+                else
+                {
+                    mPreferredServiceNpc[lot.Household.HouseholdId] = randomObjectFromList;
+                }
+            }
+            return randomObjectFromList;
+        }
+
         public new SimDescription CreateOrUpdateServiceNpc(SimDescription preCreatedSim, Lot lot)
         {
-            CommonUtils.ShowDebugMessageDialog("CreateOrUpdateServiceNpc START");
             SimDescription simDescription = preCreatedSim;
             CommonUtils.TryDisplayScriptError(() =>
                 {
@@ -83,7 +129,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         }
                     }
                 });
-            CommonUtils.ShowDebugMessageDialog("CreateOrUpdateServiceNpc END");
             return simDescription;
         }
 
@@ -101,7 +146,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public static SimDescription CreateSimDescriptionInternal(Service<T> service, string outfitName, CASAgeGenderFlags ageIfRandom, CASAgeGenderFlags genderIfRandom, WorldName homeWorld, out bool randomlyCreated)
         {
-            CommonUtils.ShowDebugMessageDialog("CreateSimDescriptionInternal START");
             SimDescription simDescription = null;
             bool tempRandomlyCreated = false;
             CommonUtils.TryDisplayScriptError(() =>
@@ -150,7 +194,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     return;
                 });
             randomlyCreated = tempRandomlyCreated;
-            CommonUtils.ShowDebugMessageDialog("CreateSimDescriptionInternal END - randomlyCreated: " + randomlyCreated);
             return simDescription;
         }
     }

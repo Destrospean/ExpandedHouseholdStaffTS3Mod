@@ -1,10 +1,14 @@
 ﻿using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
+using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
+using Sims3.SimIFace.CAS;
+using System.Collections.Generic;
+using Sims3.Gameplay.Services;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
 {
@@ -36,7 +40,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                 }
                 return true;
                 */
-                return Housekeeper.Instance != null && !Housekeeper.Instance.IsServiceRequested(target.LotCurrent) && !Housekeeper.Instance.IsAnySimActiveOnLot(target.LotCurrent);
+                return Housekeeper.Instance == null || !Housekeeper.Instance.IsServiceRequested(target.LotCurrent) && !Housekeeper.Instance.IsAnySimActiveOnLot(target.LotCurrent);
             }
         }
 
@@ -49,11 +53,24 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
 
         public override bool Run()
         {
-            if (Housekeeper.Instance == null)
-            {
-                Housekeeper.Create();
-            }
-            Housekeeper.Instance.MakeServiceRequest(Target.LotCurrent, true, Actor.ObjectId, false, 1);
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    if (Housekeeper.Instance == null)
+                    {
+                        Housekeeper.Create();
+                    }
+                    List<SimDescription> pool = new List<SimDescription>(Housekeeper.Instance.Pool);
+                    if (pool.Count == 0 || pool.TrueForAll(Housekeeper.Instance.mSituationsAssignedToSims.ContainsKey))
+                    {
+                        CommonUtils.ShowDebugMessageDialog("Pool check START");
+                        SimDescription createdSimDescription = Housekeeper.Instance.CreateOrUpdateServiceNpc(Housekeeper.CreateSimDescription(Housekeeper.Instance, CASAgeGenderFlags.YoungAdult | CASAgeGenderFlags.Adult, CASAgeGenderFlags.Female), Target.LotCurrent);
+                        CommonUtils.ShowDebugMessageDialog("Created SimDescription: " + createdSimDescription?.ToString() ?? "NULL");
+                        Housekeeper.Instance.AddSimToPool(createdSimDescription);
+                        Housekeeper.Instance.mPreferredServiceNpc[Target.LotCurrent.Household.HouseholdId] = createdSimDescription;
+                        CommonUtils.ShowDebugMessageDialog("Pool check END");
+                    }
+                    Housekeeper.Instance.MakeServiceRequest(Target.LotCurrent, true, Actor.ObjectId);
+                });
             return true;
         }
     }

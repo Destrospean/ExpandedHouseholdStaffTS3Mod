@@ -159,15 +159,18 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public ServiceSituation(Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
-            worker.AssignRole(this);
-            worker.Autonomy.AllowedToRunMetaAutonomy = false;
-            FreezeMotives();
-            SetState((Situation)Activator.CreateInstance(DerivedType.GetNestedType("WaitToRoute"), this));
-            ScheduleSwitchWorkerToServiceOutfit();
-            if (ReportsFires)
-            {
-                AddCheckForFireAlarm();
-            }
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    worker.AssignRole(this);
+                    worker.Autonomy.AllowedToRunMetaAutonomy = false;
+                    FreezeMotives();
+                    SetState((Situation)Activator.CreateInstance(DerivedType.GetNestedType("WaitToRoute"), this));
+                    ScheduleSwitchWorkerToServiceOutfit();
+                    if (ReportsFires)
+                    {
+                        AddCheckForFireAlarm();
+                    }
+                });
         }
 
         public ServiceSituation(CommonUtils.DummyEnum dummyArgForBaseOfBase, Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
