@@ -2,6 +2,8 @@
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Objects.Electronics;
+using Sims3.Gameplay.Socializing;
+using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
@@ -15,12 +17,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         [Tunable]
         public static bool kInstantiator;
 
+        public static bool HasBeenPreloaded = false;
+
         static Main()
         {
             CommonUtils.AddEnumValue<CommodityKind>("BeHousekeeper", Housekeeper.ServiceMotive);
+            LoadSaveManager.ObjectGroupsPreLoad += OnPreLoad;
+            World.OnObjectPlacedInLotEventHandler += OnObjectPlacedInLot;
             World.sOnStartupAppEventHandler += OnStartupApp;
             World.sOnWorldLoadFinishedEventHandler += OnWorldLoadFinished;
-            World.OnObjectPlacedInLotEventHandler += OnObjectPlacedInLot;
             World.sOnWorldQuitEventHandler += OnWorldQuit;
         }
 
@@ -41,6 +46,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
                     phone.AddInteractions();
                 }
             }
+        }
+
+        static void OnPreLoad()
+        {
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    if (!HasBeenPreloaded)
+                    {
+                        XmlDbData xmlDbData = XmlDbData.ReadData("ServantRolesMod_Housekeeper_ActiveTopic");
+                        if (xmlDbData != null)
+                        {
+                            SocialManager.ParseActiveTopic(xmlDbData);
+                        }
+                        HasBeenPreloaded = true;
+                    }
+                });
         }
 
         static void OnStartupApp(object sender, EventArgs args)

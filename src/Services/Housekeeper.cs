@@ -245,15 +245,20 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override ServiceSituation InternalCreateSituation(Lot assignedLot, Sim createdSim, int cost, ObjectGuid requestingSim)
         {
-            if (assignedLot.MoveInScenario is Rodents)
-            {
-                ServiceSituation result = assignedLot.MoveInScenario.SetupSituation(this, createdSim);
-                assignedLot.MoveInScenario = null;
-                return result;
-            }
-            createdSim.SimDescription.ShowSocialsOnSim = true;
-            createdSim.CanBeFired = true;
-            return new HousekeeperSituation(this, assignedLot, createdSim, cost);
+            ServiceSituation retValue = null;
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    if (assignedLot.MoveInScenario is Rodents)
+                    {
+                        retValue = assignedLot.MoveInScenario.SetupSituation(this, createdSim);
+                        assignedLot.MoveInScenario = null;
+                        return;
+                    }
+                    createdSim.SimDescription.ShowSocialsOnSim = true;
+                    createdSim.CanBeFired = true;
+                    retValue = new HousekeeperSituation(this, assignedLot, createdSim, cost);
+                });
+            return retValue;
         }
 
         public static void RemoveHousekeepersFromLot(Lot lot)
@@ -305,12 +310,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override void UpdateCreatedSim(Sim sim)
         {
+            /*
             Skill handinessSkill = sim.SkillManager.AddElement(SkillNames.Handiness);
             int maxSkillLevel = handinessSkill.MaxSkillLevel;
             for (int i = 0; i < maxSkillLevel; i++)
             {
                 handinessSkill.ForceGainPointsForLevelUp();
             }
+            */
             Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kHousekeeperBook);
             Inventory inventory = sim.Inventory;
             if (inventory != null)
