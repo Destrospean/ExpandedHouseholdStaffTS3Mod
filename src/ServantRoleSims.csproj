@@ -46,9 +46,9 @@
     <Compile Include="Unused\Abstracts\ServantRoleBase.cs" />
     <Compile Include="Unused\Interfaces\IServantRole.cs" />
     <Compile Include="Interactions\DismissHousekeeper.cs" />
-    <Compile Include="Interactions\RequestHousekeeper.cs" />
     <Compile Include="Abstracts\Service.cs" />
     <Compile Include="Abstracts\ServiceSituation.cs" />
+    <Compile Include="Interactions\RequestHousekeeper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

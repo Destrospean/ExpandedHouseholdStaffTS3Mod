@@ -1,6 +1,8 @@
 ﻿using Sims3.Gameplay.Abstracts;
+using Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
+using Sims3.Gameplay.Objects.Beds;
 using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
@@ -29,10 +31,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             World.sOnWorldQuitEventHandler += OnWorldQuit;
         }
 
-        static void AddInteractions(this GameObject gameObject)
+        static void AddInteractions(this Bed bed)
         {
-            gameObject.AddInteraction(DismissHousekeeper.Singleton, true);
-            gameObject.AddInteraction(RequestHousekeeper.Singleton, true);
+            bed.AddInteraction(Housekeeper.Instance.SetUnsetServiceBedSingleton, true);
+        }
+
+        static void AddInteractions(this Phone phone)
+        {
+            phone.AddInteraction(DismissHousekeeper.Singleton, true);
+            phone.AddInteraction(RequestHousekeeper.Singleton, true);
         }
 
         static void OnObjectPlacedInLot(object sender, EventArgs e)
@@ -40,10 +47,17 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
             if (onObjectPlacedInLotEventArgs != null)
             {
-                Phone phone = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId) as Phone;
+                GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
+                Bed bed = gameObject as Bed;
+                if (bed != null)
+                {
+                    bed.AddInteractions();
+                }
+                Phone phone = gameObject as Phone;
                 if (phone != null)
                 {
                     phone.AddInteractions();
+                    return;
                 }
             }
         }
@@ -71,10 +85,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         static void OnWorldLoadFinished(object sender, EventArgs e)
         {
-            foreach (Phone phone in Sims3.Gameplay.Queries.GetObjects<Phone>())
-            {
-                phone.AddInteractions();
-            }
             CommonUtils.TryDisplayScriptError(() =>
                 {
                     Housekeeper.Create();
@@ -90,6 +100,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
                             CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, Housekeeper.ServiceMotive);
                         }
                     }
+                    foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
+                    {
+                        bed.AddInteractions();
+                    }
+                    foreach (Phone phone in Sims3.Gameplay.Queries.GetObjects<Phone>())
+                    {
+                        phone.AddInteractions();
+                    }
                 });
         }
 
@@ -97,7 +115,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         {
             if (Housekeeper.Instance != null)
             {
-                Housekeeper.sHousekeeper = null;
+                Housekeeper.sInstance = null;
             }
         }
     }

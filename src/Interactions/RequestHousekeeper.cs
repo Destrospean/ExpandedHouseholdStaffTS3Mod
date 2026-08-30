@@ -52,7 +52,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
 
         public override bool Run()
         {
-            CommonUtils.TryDisplayScriptError(() =>
+            return !CommonUtils.TryDisplayScriptError(() =>
                 {
                     if (Housekeeper.Instance == null)
                     {
@@ -71,7 +71,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                     */
                     Housekeeper.Instance.MakeServiceRequest(Target.LotCurrent, true, Actor.ObjectId);
                 });
-            return true;
         }
     }
 }

@@ -26,6 +26,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         public delegate void Action();
 
+        public delegate T Func<T>();
+
         public const string kAuthorName = "zoeoeAndDestrospean";
 
         [Tunable]
@@ -118,13 +120,23 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public static void TryDisplayScriptError(Action action)
+        public static bool TryDisplayScriptError(Action action)
         {
             Exception exception;
             if (TryGetException(action, out exception))
             {
                 ((IScriptErrorWindow)AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, exception);
+                return true;
             }
+            return false;
+        }
+
+        public static bool TryDisplayScriptError<T>(Func<T> action, out T value)
+        {
+            T retVal = default(T);
+            bool errorDisplayed = TryDisplayScriptError(() => retVal = action());
+            value = retVal;
+            return errorDisplayed;
         }
 
         public static bool TryGetException(Action action, out Exception exception)

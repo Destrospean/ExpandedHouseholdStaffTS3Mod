@@ -26,8 +26,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 get
                 {
-                    bool retVal = false;
-                    CommonUtils.TryDisplayScriptError(() =>
+                    bool hasDuties;
+                    return !CommonUtils.TryDisplayScriptError(() =>
                         {
                             foreach (Sim sim in Lot.GetObjects<Sim>())
                             {
@@ -35,8 +35,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                                 {
                                     Parent.Worker.BuffManager.AddElement(BuffNames.Scared, Origin.FromSeeingBonehilda);
                                     Parent.SetState(new QuitCauseOfBonehilda(Parent));
-                                    retVal = false;
-                                    return;
+                                    return false;
                                 }
                             }
                             if (Parent.Worker.CurrentInteraction != null && Parent.Worker.CurrentInteraction.GetPriority().Level <= InteractionPriorityLevel.Autonomous)
@@ -45,14 +44,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                                 if (interactionInstance != null && Parent.IsInteractionBetterThanCurrent(interactionInstance))
                                 {
                                     Parent.Worker.AddExitReason(ExitReason.CanceledByScript);
-                                    retVal = false;
-                                    return;
+                                    return false;
                                 }
                             }
                             if (Lot.FindObjectToClean() != null || Lot.HasCleanAllAblePuddlesOrBurntTiles() || Lot.HasUnmadeBed())
                             {
-                                retVal = true;
-                                return;
+                                return true;
                             }
                             InteractionQueue interactionQueue = Parent.Worker.InteractionQueue;
                             if (interactionQueue != null)
@@ -60,12 +57,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                                 InteractionInstance headInteraction = interactionQueue.GetHeadInteraction();
                                 if (headInteraction != null && headInteraction.SatisfiesCommodity(Housekeeper.ServiceMotive))
                                 {
-                                    retVal = true;
-                                    return;
+                                    return true;
                                 }
                             }
-                        });
-                    return retVal;
+                            return false;
+                        }, out hasDuties) && hasDuties;
                 }
             }
 
@@ -89,7 +85,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                         Parent.Worker.Autonomy.Motives.RemoveMotive(CommodityKind.BeMaid);
                         Parent.Worker.Autonomy.Motives.RemoveMotive(Housekeeper.ServiceMotive);
                         Parent.Worker.WorkMotive = CommodityKind.None;
-                        base.AlarmManager.RemoveAlarm(mAlarmHandle);
+                        AlarmManager.RemoveAlarm(mAlarmHandle);
                         base.CleanUp();
                     });
             }
@@ -120,7 +116,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(HousekeeperSituation parent)
             {
-                CommonUtils.TryDisplayScriptError(() => mAlarmHandle = base.AlarmManager.AddAlarm(Housekeeper.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
+                CommonUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(Housekeeper.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public void TimeToRoute()
@@ -136,7 +132,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 CommonUtils.TryDisplayScriptError(() =>
                     {
-                        base.AlarmManager.RemoveAlarm(mAlarmHandle);
+                        AlarmManager.RemoveAlarm(mAlarmHandle);
                         base.CleanUp();
                     });
             }
@@ -145,54 +141,32 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 CommonUtils.TryDisplayScriptError(() =>
                     {
-                        float timeLeft = base.AlarmManager.GetTimeLeft(mAlarmHandle, TimeUnit.Hours);
+                        float timeLeft = AlarmManager.GetTimeLeft(mAlarmHandle, TimeUnit.Hours);
                         if (timeLeft < Housekeeper.ExtraWaitTimeAfterSocializing)
                         {
-                            base.AlarmManager.UpdateAlarmTime(mAlarmHandle, Housekeeper.ExtraWaitTimeAfterSocializing - timeLeft, TimeUnit.Hours);
+                            AlarmManager.UpdateAlarmTime(mAlarmHandle, Housekeeper.ExtraWaitTimeAfterSocializing - timeLeft, TimeUnit.Hours);
                         }
                     });
             }
         }
 
-        public new class NPCIsFired : ChildSituation<HousekeeperSituation>
+        public new class NPCIsFired : ServiceSituation<HousekeeperSituation>.NPCIsFired
         {
-            public Sim mFirer;
-
             public NPCIsFired()
             {
             }
 
-            public NPCIsFired(Sim firer, HousekeeperSituation parent) : base(parent)
+            public NPCIsFired(Sim firer, HousekeeperSituation parent) : base(firer, parent)
             {
                 mFirer = firer;
             }
 
-            public override void Init(HousekeeperSituation parent)
-            {
-                CommonUtils.TryDisplayScriptError(() =>
-                    {
-                        Relationship relationship = Relationship.Get(parent.Worker, mFirer, true);
-                        if (relationship.LTR.Liking <= 20)
-                        {
-                            ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Insult", new string[0], null, false), null, OnFinished, OnFinished);
-                        }
-                        else if (relationship.LTR.Liking >= 50 || LTRData.Get(relationship.LTR.CurrentLTR).IsRomantic)
-                        {
-                            ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Cry on Shoulder", new string[0], null, false), null, OnFinished, OnFinished);
-                        }
-                        else
-                        {
-                            ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Chat", new string[0], null, false), null, OnFinished, OnFinished);
-                        }
-                    });
-            }
-
-            public void OnFinished(Sim actor, float x)
+            public override void OnFinished(Sim actor, float x)
             {
                 CommonUtils.TryDisplayScriptError(() =>
                     {
                         Parent.NPCLeavingMessage(LeavingReason.NPCFired);
-                        Parent.SetState(new LeaveLot<HousekeeperSituation>(Parent));
+                        Parent.SetState(new LeaveLot<ServiceSituation<HousekeeperSituation>>(Parent));
                         Parent.Service.FireSim(actor);
                     });
             }
@@ -260,14 +234,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 CommonUtils.TryDisplayScriptError(() =>
                     {
-                        base.AlarmManager.RemoveAlarm(mAlarmHandle);
+                        AlarmManager.RemoveAlarm(mAlarmHandle);
                         base.CleanUp();
                     });
             }
 
             public override void Init(HousekeeperSituation parent)
             {
-                CommonUtils.TryDisplayScriptError(() => mAlarmHandle = base.AlarmManager.AddAlarm(Housekeeper.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to route", AlarmType.DeleteOnReset, parent.Worker));
+                CommonUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(Housekeeper.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to route", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public void TimeToRoute()
@@ -391,14 +365,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         {
             //Tutorialette.TriggerLesson(Lessons.Maid, null);
             mDateLastPaid = SimClock.ElapsedCalendarDays();
-            mPayHousekeeperAlarm = base.AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayHousekeeper, 1, TimeUnit.Weeks, "Housekeeper weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
+            mPayHousekeeperAlarm = AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayHousekeeper, 1, TimeUnit.Weeks, "Housekeeper weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
         }
 
         /*
         public override void OnServiceStarting()
         {
             mbServiceStarted = true;
-            mAlarmShowSim = base.AlarmManager.AddAlarm(this.kMinutesUntilNPCAppears, TimeUnit.Minutes, new AlarmTimerCallback(() =>
+            mAlarmShowSim = AlarmManager.AddAlarm(this.kMinutesUntilNPCAppears, TimeUnit.Minutes, new AlarmTimerCallback(() =>
                 {
                     MakeServiceSimVisible();
                     RouteToLot<HousekeeperSituation, StartCleaning> routeToLot = new WalkToLot<HousekeeperSituation, StartCleaning>(this);

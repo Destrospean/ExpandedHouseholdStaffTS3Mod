@@ -1,7 +1,11 @@
-﻿using Sims3.Gameplay.Autonomy;
+﻿using Sims3.Gameplay.Actors;
+using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
+using Sims3.Gameplay.Interactions;
+using Sims3.Gameplay.Objects.Beds;
 using Sims3.Gameplay.Services;
+using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
@@ -12,7 +16,82 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
     public abstract class Service<T> : Service where T : Service<T>
     {
+        public class SetUnsetServiceBed : ImmediateInteraction<Sim, Bed>
+        {
+            public class Definition : InteractionDefinition<Sim, Bed, SetUnsetServiceBed>
+            {
+                public override string GetInteractionName(Sim actor, Bed target, InteractionObjectPair iop)
+                {
+                    if (Instance == null)
+                    {
+                        return StringTable.GetLocalizedString(DerivedType.GetLocalizationKey() + ":Title");
+                    }
+                    List<Sim> simsAssignedToLot = Instance.GetSimsAssignedToLot(actor.LotHome);
+                    return Localization.LocalizeString(actor.IsFemale, DerivedType.GetLocalizationKey() + "/" + typeof(SetUnsetServiceBed).Name + (target.FindOwnedBed(simsAssignedToLot[0]) == target ? ":Unset" : ":Set") + "InteractionName", simsAssignedToLot[0].SimDescription);
+                }
+
+                public override bool Test(Sim actor, Bed target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
+                {
+                    Lot lotHome = actor.LotHome;
+                    if (lotHome != null)
+                    {
+                        if (target.LotCurrent != lotHome)
+                        {
+                            return false;
+                        }
+                        if (Instance != null)
+                        {
+                            List<Sim> simsAssignedToLot = Instance.GetSimsAssignedToLot(lotHome);
+                            if (simsAssignedToLot.Count > 0)
+                            {
+                                Sim owner = simsAssignedToLot[0];
+                                Bed bed = target.FindOwnedBed(owner);
+                                if (bed == null || bed == target)
+                                {
+                                    return target.CanBeUsedAsBed;
+                                }
+                            }
+                        }
+                    }
+                    return false;
+                }
+            }
+
+            public override bool Run()
+            {
+                if (Instance != null)
+                {
+                    Sim simActiveOnLot = Instance.GetSimActiveOnLot(Actor.LotHome);
+                    if (simActiveOnLot != null)
+                    {
+                        Bed bed = Target.FindOwnedBed(simActiveOnLot);
+                        if (bed == Target)
+                        {
+                            Target.RelinquishOwnership(simActiveOnLot);
+                            return true;
+                        }
+                        if (Target.PartComponent != null && Target.PartComponent.PartDataList != null)
+                        {
+                            foreach (BedData value in Target.PartComponent.PartDataList.Values)
+                            {
+                                if (value != null)
+                                {
+                                    Target.ClaimOwnership(simActiveOnLot, value);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+
+        public static T sInstance;
+
         public static Dictionary<Type, CommodityKind> sServiceMotives = new Dictionary<Type, CommodityKind>();
+
+        public SetUnsetServiceBed.Definition SetUnsetServiceBedSingleton = new SetUnsetServiceBed.Definition();
 
         public static Type DerivedType
         {
@@ -40,6 +119,14 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             get
             {
                 return false;
+            }
+        }
+
+        public static Service<T> Instance
+        {
+            get
+            {
+                return sInstance;
             }
         }
 

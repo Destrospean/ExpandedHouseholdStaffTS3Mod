@@ -49,25 +49,31 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
             public override void Init(ServiceSituation<T> parent)
             {
-                Relationship relationship = Relationship.Get(parent.Worker, mFirer, true);
-                if (relationship.LTR.Liking <= 20)
-                {
-                    ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Insult", new string[0], null, false), null, OnFinished, OnFinished);
-                }
-                else if (relationship.LTR.Liking >= 50 || LTRData.Get(relationship.LTR.CurrentLTR).IsRomantic)
-                {
-                    ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Cry on Shoulder", new string[0], null, false), null, OnFinished, OnFinished);
-                }
-                else
-                {
-                    ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Chat", new string[0], null, false), null, OnFinished, OnFinished);
-                }
+                CommonUtils.TryDisplayScriptError(() =>
+                    {
+                        Relationship relationship = Relationship.Get(parent.Worker, mFirer, true);
+                        if (relationship.LTR.Liking <= 20)
+                        {
+                            ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Insult", new string[0], null, false), null, OnFinished, OnFinished);
+                        }
+                        else if (relationship.LTR.Liking >= 50 || LTRData.Get(relationship.LTR.CurrentLTR).IsRomantic)
+                        {
+                            ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Cry on Shoulder", new string[0], null, false), null, OnFinished, OnFinished);
+                        }
+                        else
+                        {
+                            ForceSituationSpecificInteraction(mFirer, parent.Worker, new SituationSocial.Definition("Chat", new string[0], null, false), null, OnFinished, OnFinished);
+                        } 
+                    });
             }
 
-            public void OnFinished(Sim actor, float x)
+            public virtual void OnFinished(Sim actor, float x)
             {
-                Parent.SetState(new LeaveLot<ServiceSituation<T>>(Parent));
-                Parent.Service.FireSim(actor);
+                CommonUtils.TryDisplayScriptError(() =>
+                    {
+                        Parent.SetState(new LeaveLot<ServiceSituation<T>>(Parent));
+                        Parent.Service.FireSim(actor);
+                    });
             }
         }
 
@@ -85,7 +91,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
             public override void Init(ServiceSituation<T> parent)
             {
-                mAlarmHandle = base.AlarmManager.AddAlarm(parent.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Service waiting to route", AlarmType.DeleteOnReset, parent.Worker);
+                mAlarmHandle = AlarmManager.AddAlarm(parent.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Service waiting to route", AlarmType.DeleteOnReset, parent.Worker);
             }
 
             public void TimeToRoute()
@@ -97,7 +103,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
             public override void CleanUp()
             {
-                base.AlarmManager.RemoveAlarm(mAlarmHandle);
+                AlarmManager.RemoveAlarm(mAlarmHandle);
                 base.CleanUp();
             }
         }
@@ -260,7 +266,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             base.SetToFire(serviceSim, firer);
             NPCLeavingMessage(LeavingReason.NPCFired);
-            SetState(new NPCIsFired(firer, this));
+            SetState((Situation)Activator.CreateInstance(DerivedType.GetNestedType("NPCIsFired"), firer, this));
         }
 
         public virtual void SetToJobDone()

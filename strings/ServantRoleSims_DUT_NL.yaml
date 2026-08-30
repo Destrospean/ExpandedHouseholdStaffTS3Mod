@@ -15,4 +15,8 @@
             "/WeeklyPayment":
                 ":Housekeeper": "I'll be taking my weekly salary of {0.Money}. Good Day."
             "/Housekeeper":
-                ":NotEnoughFunds": "You don't have enough funds to pay the Butler."
+                ":Title": "Housekeeper"
+                ":NotEnoughFunds": "You don't have enough funds to pay the Housekeeper."
+                "/SetUnsetServiceBed":
+                    ":SetInteractionName": "Set as Housekeeper {0.SimFirstName}'s Bed"
+                    ":UnsetInteractionName": "Unset as Housekeeper {0.SimFirstName}'s Bed"

@@ -51,7 +51,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
 
         public override bool Run()
         {
-            CommonUtils.TryDisplayScriptError(() =>
+            return !CommonUtils.TryDisplayScriptError(() =>
                 {
                     HousekeeperSituation housekeeperSituation = HousekeeperSituation.FindServiceSituationInvolving(Housekeeper.Instance.GetSimActiveOnLot(Target.LotCurrent)) as HousekeeperSituation;
                     if (housekeeperSituation != null)
@@ -63,7 +63,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                         housekeeperSituation.ForceSituationSpecificInteraction(housekeeperSituation.Lot, housekeeperSituation.Worker, new DriveAwayInServiceCar.Definition(housekeeperSituation.Car), null, null, null);
                     }
                 });
-            return true;
         }
     }
 }

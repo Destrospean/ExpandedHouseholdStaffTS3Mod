@@ -58,8 +58,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [TunableComment("Multiplier for interactions in a room where a sim is sleeping")]
         public static float kUseObjectInSameRoomAsSleeperMultiplier = .1f;
 
-        public static Housekeeper sHousekeeper = null;
-
         public override ServiceTuning Tuning
         {
             get
@@ -132,14 +130,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public static Housekeeper Instance
-        {
-            get
-            {
-                return sHousekeeper;
-            }
-        }
-
         public override ServiceType ServiceType
         {
             get
@@ -178,7 +168,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public Housekeeper()
         {
-            sHousekeeper = this;
+            sInstance = this;
         }
 
         public override bool CanRequestServiceFromPhone(Lot lot)
@@ -198,13 +188,13 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             if (ServiceNPCSpecifications.ValidForCurrentWorld(ServiceType.Maid))
             {
-                if (sHousekeeper == null)
+                if (sInstance == null)
                 {
                     new Housekeeper();
                 }
                 else
                 {
-                    sHousekeeper.PostLoadFixup();
+                    sInstance.PostLoadFixup();
                 }
             }
             else
@@ -220,8 +210,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public static void DestroyHousekeeper()
         {
-            Service<Housekeeper>.Destroy(sHousekeeper);
-            sHousekeeper = null;
+            Destroy((Service)Instance);
+            sInstance = null;
         }
 
         public override string GetServiceTopic(Sim serviceSim)
@@ -263,12 +253,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public static void RemoveHousekeepersFromLot(Lot lot)
         {
-            Housekeeper instance = Instance;
-            if (instance == null || (!instance.IsServiceRequested(lot) && !instance.IsAnySimAssignedToLot(lot)))
+            if (Instance == null || (!Instance.IsServiceRequested(lot) && !Instance.IsAnySimAssignedToLot(lot)))
             {
                 return;
             }
-            List<Sim> simsAssignedToLot = instance.GetSimsAssignedToLot(lot);
+            List<Sim> simsAssignedToLot = Instance.GetSimsAssignedToLot(lot);
             foreach (Sim item in simsAssignedToLot)
             {
                 HousekeeperSituation housekeeperSituation = ServiceSituation.FindServiceSituationInvolving(item) as HousekeeperSituation;
