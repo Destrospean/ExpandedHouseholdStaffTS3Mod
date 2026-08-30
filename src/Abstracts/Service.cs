@@ -45,7 +45,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public override SimDescription FindSimForAssignment(Lot lot)
         {
-            CommonUtils.ShowDebugMessageDialog("Lot: " + lot?.ToString() ?? "NULL");
             bool shouldUseServobot = false;
             if (GameUtils.IsInstalled(ProductVersion.EP11))
             {
@@ -57,7 +56,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 if (!IsSimAssignedTask(simDescription) && CanSimBeAssignedToLot(simDescription, lot) && (shouldUseServobot && simDescription.IsEP11Bot || !shouldUseServobot && !simDescription.IsEP11Bot) && simDescription.CreatedSim == null)
                 {
                     pool.Add(simDescription);
-                    CommonUtils.ShowDebugMessageDialog("A SimDescription: " + simDescription?.ToString() ?? "NULL");
+                    //CommonUtils.ShowDebugMessageDialog("A SimDescription: " + simDescription?.ToString() ?? "NULL");
                 }
             }
             if (pool.Count == 0)
@@ -67,10 +66,10 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 {
                     AddSimToPool(simDescription);
                 }
-                CommonUtils.ShowDebugMessageDialog("Created SimDescription: " + simDescription?.ToString() ?? "NULL");
+                //CommonUtils.ShowDebugMessageDialog("Created SimDescription: " + simDescription?.ToString() ?? "NULL");
                 return simDescription;
             }
-            SimDescription randomObjectFromList = RandomUtil.GetRandomObjectFromList<SimDescription>(pool);
+            SimDescription randomSimDescription = RandomUtil.GetRandomObjectFromList<SimDescription>(pool);
             if (AlwaysTryToSendSameSim && lot.Household != null)
             {
                 SimDescription simDescription = null;
@@ -78,16 +77,17 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 {
                     if (pool.Contains(simDescription))
                     {
-                        CommonUtils.ShowDebugMessageDialog("Existing SimDescription: " + simDescription?.ToString() ?? "NULL");
+                        //CommonUtils.ShowDebugMessageDialog("Existing SimDescription: " + simDescription?.ToString() ?? "NULL");
                         return simDescription;
                     }
                 }
                 else
                 {
-                    mPreferredServiceNpc[lot.Household.HouseholdId] = randomObjectFromList;
+                    mPreferredServiceNpc[lot.Household.HouseholdId] = randomSimDescription;
                 }
             }
-            return randomObjectFromList;
+            //CommonUtils.ShowDebugMessageDialog("Random SimDescription: " + randomSimDescription?.ToString() ?? "NULL");
+            return randomSimDescription;
         }
 
         public new SimDescription CreateOrUpdateServiceNpc(SimDescription preCreatedSim, Lot lot)

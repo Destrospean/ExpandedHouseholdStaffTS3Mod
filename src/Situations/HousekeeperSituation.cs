@@ -234,7 +234,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(HousekeeperSituation parent)
             {
-                CommonUtils.ShowDebugMessageDialog("StartCleaning");
+                //CommonUtils.ShowDebugMessageDialog("StartCleaning");
                 CommonUtils.TryDisplayScriptError(() =>
                     {
                         parent.OnArriveOnLot();
@@ -272,7 +272,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public void TimeToRoute()
             {
-                CommonUtils.ShowDebugMessageDialog("TimeToRoute BEGIN");
+                //CommonUtils.ShowDebugMessageDialog("TimeToRoute BEGIN");
                 CommonUtils.TryDisplayScriptError(() =>
                     {
                         Parent.OnServiceStarting();
@@ -291,7 +291,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                         routeToLot.SetRouteTime(Housekeeper.DriveTime);
                         Parent.SetState(routeToLot);
                     });
-                CommonUtils.ShowDebugMessageDialog("TimeToRoute END");
+                //CommonUtils.ShowDebugMessageDialog("TimeToRoute END");
             }
         }
 
@@ -393,6 +393,20 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             mDateLastPaid = SimClock.ElapsedCalendarDays();
             mPayHousekeeperAlarm = base.AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayHousekeeper, 1, TimeUnit.Weeks, "Housekeeper weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
         }
+
+        /*
+        public override void OnServiceStarting()
+        {
+            mbServiceStarted = true;
+            mAlarmShowSim = base.AlarmManager.AddAlarm(this.kMinutesUntilNPCAppears, TimeUnit.Minutes, new AlarmTimerCallback(() =>
+                {
+                    MakeServiceSimVisible();
+                    RouteToLot<HousekeeperSituation, StartCleaning> routeToLot = new WalkToLot<HousekeeperSituation, StartCleaning>(this);
+                    routeToLot.SetRouteTime(Housekeeper.DriveTime);
+                    SetState(routeToLot);
+                }), "Make Service Sim Visible after already coming", AlarmType.DeleteOnReset, this.Worker);
+        }
+        */
 
         public void PayHousekeeper()
         {

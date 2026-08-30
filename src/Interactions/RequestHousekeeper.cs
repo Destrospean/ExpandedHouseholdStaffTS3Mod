@@ -59,16 +59,17 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                     {
                         Housekeeper.Create();
                     }
-                    List<SimDescription> pool = new List<SimDescription>(Housekeeper.Instance.Pool);
-                    if (pool.Count == 0 || pool.TrueForAll(Housekeeper.Instance.mSituationsAssignedToSims.ContainsKey))
+                    /*
+                    if (Housekeeper.Instance.mPool.Count == 0 || Housekeeper.Instance.mPool.TrueForAll(Housekeeper.Instance.mSituationsAssignedToSims.ContainsKey))
                     {
                         CommonUtils.ShowDebugMessageDialog("Pool check START");
-                        SimDescription createdSimDescription = Housekeeper.Instance.CreateOrUpdateServiceNpc(Housekeeper.CreateSimDescription(Housekeeper.Instance, CASAgeGenderFlags.YoungAdult | CASAgeGenderFlags.Adult, CASAgeGenderFlags.Female), Target.LotCurrent);
+                        SimDescription createdSimDescription = Housekeeper.Instance.CreateOrUpdateServiceNpc(Housekeeper.CreateSimDescription(Housekeeper.Instance, CASAgeGenderFlags.YoungAdult | CASAgeGenderFlags.Adult, CASAgeGenderFlags.None), Target.LotCurrent);
                         CommonUtils.ShowDebugMessageDialog("Created SimDescription: " + createdSimDescription?.ToString() ?? "NULL");
                         Housekeeper.Instance.AddSimToPool(createdSimDescription);
                         Housekeeper.Instance.mPreferredServiceNpc[Target.LotCurrent.Household.HouseholdId] = createdSimDescription;
                         CommonUtils.ShowDebugMessageDialog("Pool check END");
                     }
+                    */
                     Housekeeper.Instance.MakeServiceRequest(Target.LotCurrent, true, Actor.ObjectId);
                 });
             return true;
