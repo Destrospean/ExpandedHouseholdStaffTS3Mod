@@ -7,5 +7,5 @@ for /f "delims=" %%a in (%filename%) do (
 )
 set "path=!last_line:~52!"
 ..\tools\TuningResourceGenerator\TuningResourceGenerator.exe !path!
-del ts3buildtool.log
+del %filename%
 popd
