@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <base>
-	<Interaction name="Sims3.Gameplay.Scenarios.ScenarioRoach+StompInsect+Definition" />
-	<Object name="Sims3.Gameplay.Scenarios.ScenarioRoach" />
+	<Interaction name="Sims3.Gameplay.Objects.Fireplaces.Fireplace+LightFire+Definition" />
+	<Object name="Sims3.Gameplay.Objects.Fireplaces.Fireplace" />
 	<CodeVersion name="BaseGame" considerCodeVersion="False" />
 	<Current_Tuning>
 		<Disallow DisallowAutonomous="False" DisallowUserDirected="False" DisallowPlayerSim="False" />
 		<BaseAvailability>
-			<AgeSpeciesAvail AgeSpeciesValue="C,T,Y,A,E" />
+			<AgeSpeciesAvail AgeSpeciesValue="T,Y,A,E" />
 			<MotiveThreshold MotiveThresholdType="None" MotiveThresholdValue="0" MotiveBelowCheck="False" />
 			<MoodThreshold MoodThresholdType="None" MoodThresholdValue="0" />
 			<SkillThreshold SkillThresholdType="None" SkillThresholdValue="0" />
@@ -18,19 +18,18 @@
 			<Misc DisallowedIfPregnant="False" DisallowedFromInventory="False" />
 		</BaseAvailability>
 		<Check type="All" value="0" />
-		<Tradeoff name="StompInsect">
+		<Tradeoff name="LightFire">
 			<Localization autoGenerate="True" />
 			<Time value="1" addRoute="True" />
 			<Exit funExit="False" stressExit="False" interruptible="False" />
-			<RouteLeadIn allowed="False" />
+			<RouteLeadIn allowed="True" />
 			<AskJoinInteraction joinable="False" />
 			<AllowAutonomousReinforcement allowPraise="False" allowScold="False" />
 			<ScoringFunction alwaysChooseBest="False" name="" specificCommodity="None" />
 			<ActionTopic name="" ActionTopicUnavailableAfterActionFinishes="False" />
 			<Output>
-				<Change type="TraitNeat" advertised="200" locked="True" actual="200" updateType="ImmediateDelta" timeDependsOn="False" updateEvenOnFailure="True" updateAboveAndBelowZero="Either" />
-				<Change type="BeMaid" advertised="200" locked="True" actual="200" updateType="ContinuousFlow" timeDependsOn="False" updateEvenOnFailure="False" updateAboveAndBelowZero="Either" />
-				<Change type="BeResortMaintenance" advertised="200" locked="True" actual="200" updateType="ContinuousFlow" timeDependsOn="False" updateEvenOnFailure="False" updateAboveAndBelowZero="Either" />
+				<Change type="Temperature" advertised="10" locked="True" actual="10" updateType="ContinuousFlow" timeDependsOn="False" updateEvenOnFailure="False" updateAboveAndBelowZero="Either" />
+				<Change type="BeHousekeeper" advertised="200" locked="True" actual="200" updateType="ContinuousFlow" timeDependsOn="False" updateEvenOnFailure="False" updateAboveAndBelowZero="Either" />
 			</Output>
 		</Tradeoff>
 	<Notes Notes="" DesignerNotes="" LastChange="" />
