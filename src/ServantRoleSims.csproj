@@ -110,10 +110,10 @@
   </Target>
   <Target Name="Create Package" AfterTargets="Build">
     <Exec Command="&quot;$(SolutionDir)scripts\CreatePackage.bat&quot; &quot;ServantRoleSims&quot; &quot;$(TargetPath)&quot; &quot;$(SolutionDir)&quot; &quot;$(SolutionDir)dist\&quot;" Condition="'$(OS)' == 'Windows_NT'" />
-    <Exec Command="mono &quot;$(SolutionDir)tools\TS3BuildTool\ts3buildtool.exe&quot; -modName=&quot;ServantRoleSims&quot; -dllPath=&quot;$(TargetPath)&quot; -projectDir=&quot;$(SolutionDir)&quot; -defaultPath=&quot;$(SolutionDir)dist\&quot;" Condition="'$(OS)' != 'Windows_NT'" />
+    <Exec Command="sh &quot;$(SolutionDir)scripts\CreatePackage.sh&quot; &quot;ServantRoleSims&quot; &quot;$(TargetPath)&quot; &quot;$(SolutionDir)&quot; &quot;$(SolutionDir)dist\&quot;" Condition="'$(OS)' != 'Windows_NT'" />
   </Target>
   <Target Name="Generate Tunable _XMLs" AfterTargets="Create Package">
     <Exec Command="&quot;$(SolutionDir)scripts\GenerateTunables_Temp.bat&quot;" Condition="'$(OS)' == 'Windows_NT'" />
-    <Exec Command="sh &quot;$(SolutionDir)scripts\GenerateTunables.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
+    <Exec Command="sh &quot;$(SolutionDir)scripts\GenerateTunables_Temp.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
   </Target>
 </Project>
