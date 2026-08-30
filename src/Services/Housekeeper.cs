@@ -150,14 +150,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public override bool IsHomelessService
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         public override bool IsPaidWeekly
         {
             get

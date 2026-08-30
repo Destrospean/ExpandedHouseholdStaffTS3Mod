@@ -225,7 +225,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
