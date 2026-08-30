@@ -45,10 +45,8 @@
     <Compile Include="Unused\Objects\ServantManager.cs" />
     <Compile Include="Unused\Abstracts\ServantRoleBase.cs" />
     <Compile Include="Unused\Interfaces\IServantRole.cs" />
-    <Compile Include="Interactions\DismissHousekeeper.cs" />
     <Compile Include="Abstracts\Service.cs" />
     <Compile Include="Abstracts\ServiceSituation.cs" />
-    <Compile Include="Interactions\RequestHousekeeper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -97,7 +95,6 @@
     <Folder Include="Abstracts\" />
     <Folder Include="Services\" />
     <Folder Include="Situations\" />
-    <Folder Include="Interactions\" />
     <Folder Include="Unused\" />
     <Folder Include="Unused\Roles\" />
     <Folder Include="Unused\Objects\" />

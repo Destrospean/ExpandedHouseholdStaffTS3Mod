@@ -3,6 +3,7 @@ using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
+using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
@@ -266,19 +267,31 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             base.SetToFire(serviceSim, firer);
             NPCLeavingMessage(LeavingReason.NPCFired);
+            UnsetServiceBed();
             SetState((Situation)Activator.CreateInstance(DerivedType.GetNestedType("NPCIsFired"), firer, this));
         }
 
         public virtual void SetToJobDone()
         {
             NPCLeavingMessage(LeavingReason.NPCJobDone);
+            UnsetServiceBed();
             SetState(new LeaveLot<ServiceSituation<T>>(this));
         }
 
         public override void SetToLeave()
         {
             NPCLeavingMessage(LeavingReason.NPCDismissed);
+            UnsetServiceBed();
             SetState(new LeaveLot<ServiceSituation<T>>(this));
+        }
+
+        public void UnsetServiceBed()
+        {
+            IBed bed = Worker.Bed as IBed;
+            if (bed != null && bed.LotCurrent == Lot)
+            {
+                bed.RelinquishOwnership(Worker, null);
+            }
         }
     }
 }

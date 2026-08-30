@@ -1,21 +1,128 @@
 ﻿using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
+using Sims3.Gameplay.Controllers;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Objects.Beds;
+using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
+using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using System;
 using System.Collections.Generic;
+using Sims3.UI;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
     public abstract class Service<T> : Service where T : Service<T>
     {
+        public class CallForService : Phone.Call
+        {
+            [DoesntRequireTuning]
+            public class Definition : CallDefinition<CallForService>
+            {
+                public Definition()
+                {
+                }
+
+                public override string GetInteractionName(Sim actor, Phone target, InteractionObjectPair interaction)
+                {
+                    return Localization.LocalizeString(DerivedType.GetLocalizationKey() + ":RequestService");
+                }
+
+                public override string[] GetPath(bool isFemale)
+                {
+                    string localizationKey = DerivedType.GetLocalizationKey();
+                    return new string[]
+                    {
+                        Localization.LocalizeString(localizationKey.Remove(localizationKey.IndexOf(DerivedType.Name) - (localizationKey.IndexOf(DerivedType.Name) == 0 ? 0 : 1)) + ":Path") + Localization.Ellipsis
+                    };
+                }
+
+                public int GetTotalFunds(Sim actor)
+                {
+                    Lot lotHome = actor.LotHome;
+                    if (lotHome == null)
+                    {
+                        return 0;
+                    }
+                    if (lotHome.EffectiveHousehold != null)
+                    {
+                        return lotHome.EffectiveHousehold.FamilyFunds;
+                    }
+                    return 0;
+                }
+
+                public override bool Test(Sim actor, Phone target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
+                {
+                    if (!target.IsUsableBy(actor))
+                    {
+                        return false;
+                    }
+                    if (isAutonomous)
+                    {
+                        return false;
+                    }
+                    if (!actor.HouseholdOwnsResidentialLot(actor.LotCurrent))
+                    {
+                        greyedOutTooltipCallback = InteractionInstance.CreateTooltipCallback(Localization.LocalizeString("Gameplay/Objects/Electronics/Phone/CallForServices:ServicesOnlyOnHomeLot"));
+                        return false;
+                    }
+                    if (Instance == null)
+                    {
+                        return false;
+                    }
+                    if (Instance.IsServiceRequested(actor.LotCurrent) || Instance.IsAnySimAssignedToLot(actor.LotCurrent))
+                    {
+                        greyedOutTooltipCallback = InteractionInstance.CreateTooltipCallback(Localization.LocalizeString("Gameplay/UI/ServicesUIWindow:AlreadyActive"));
+                        return false;
+                    }
+                    if (Instance.Tuning.kCost > GetTotalFunds(actor))
+                    {
+                        greyedOutTooltipCallback = InteractionInstance.CreateTooltipCallback(Responder.Instance.LocalizationModel.LocalizeString("Gameplay/UI/ShoppingUIWindow:InsufficientFundsDialogTitle"));
+                        return false;
+                    }
+                    return base.Test(actor, target, isAutonomous, ref greyedOutTooltipCallback);
+                }
+            }
+
+            public static InteractionDefinition Singleton = new Definition();
+
+            public override DialBehavior GetDialBehavior()
+            {
+                return base.InteractionDefinition is Definition ? DialBehavior.Pickup : DialBehavior.DoNotPick;
+            }
+
+            public override ConversationBehavior OnCallConnected()
+            {
+                if (base.InteractionDefinition as Definition == null)
+                {
+                    return ConversationBehavior.JustHangUp;
+                }
+                Instance.MakeServiceRequest(Actor.LotCurrent, true, Actor.ObjectId);
+                /*
+                StyledNotification.Format format = new StyledNotification.Format(Localization.LocalizeString(DerivedType.GetLocalizationKey() + ":RequestService"), StyledNotification.NotificationStyle.kSimTalking);
+                if (Responder.Instance.ServicesModel.DoesSimHaveFuturePhone(Actor.ObjectId))
+                {
+                    StyledNotification.Show(format, "w_future_phone", null, ProductVersion.EP11, ProductVersion.EP11);
+                }
+                else if (GameUtils.IsInstalled(ProductVersion.EP9))
+                {
+                    StyledNotification.Show(format, "w_smart_phone", null, ProductVersion.EP9, ProductVersion.EP9);
+                }
+                else
+                {
+                    StyledNotification.Show(format, "glb_tns_phone_r2");
+                }
+                */
+                return ConversationBehavior.TalkBriefly;
+            }
+        }
+
         public class SetUnsetServiceBed : ImmediateInteraction<Sim, Bed>
         {
             public class Definition : InteractionDefinition<Sim, Bed, SetUnsetServiceBed>
@@ -57,6 +164,8 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 }
             }
 
+            public static InteractionDefinition Singleton = new Definition();
+
             public override bool Run()
             {
                 if (Instance != null)
@@ -90,8 +199,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public static T sInstance;
 
         public static Dictionary<Type, CommodityKind> sServiceMotives = new Dictionary<Type, CommodityKind>();
-
-        public SetUnsetServiceBed.Definition SetUnsetServiceBedSingleton = new SetUnsetServiceBed.Definition();
 
         public static Type DerivedType
         {

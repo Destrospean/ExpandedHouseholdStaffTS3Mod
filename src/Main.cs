@@ -2,11 +2,11 @@
 using Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
+using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Objects.Beds;
 using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using System;
@@ -33,13 +33,46 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         static void AddInteractions(this Bed bed)
         {
-            bed.AddInteraction(Housekeeper.Instance.SetUnsetServiceBedSingleton, true);
+            bed.AddInteraction(Housekeeper.SetUnsetServiceBed.Singleton, true);
         }
 
         static void AddInteractions(this Phone phone)
         {
-            phone.AddInteraction(DismissHousekeeper.Singleton, true);
-            phone.AddInteraction(RequestHousekeeper.Singleton, true);
+            phone.AddInteraction(Housekeeper.CallForService.Singleton, true);
+        }
+
+        static void AddInteractions(this PhoneCell phoneCell)
+        {
+            foreach (InteractionObjectPair interaction in phoneCell.Interactions)
+            {
+                if (interaction.InteractionDefinition.GetType() == Housekeeper.CallForService.Singleton.GetType())
+                {
+                    return;
+                }
+            }
+            phoneCell.AddInteraction(Housekeeper.CallForService.Singleton);
+            phoneCell.AddInventoryInteraction(Housekeeper.CallForService.Singleton);
+        }
+
+        static void InitInjection()
+        {
+            PhoneCell[] objects = Sims3.Gameplay.Queries.GetObjects<PhoneCell>();
+            for (int i = 0; i < objects.Length; i++)
+            {
+                objects[i].AddInteractions();
+            }
+            EventTracker.AddListener(EventTypeId.kInventoryObjectAdded, OnObjectChanged);
+            EventTracker.AddListener(EventTypeId.kObjectStateChanged, OnObjectChanged);
+        }
+
+        public static ListenerAction OnObjectChanged(Event e)
+        {
+            PhoneCell phoneCell = e.TargetObject as PhoneCell;
+            if (phoneCell != null)
+            {
+                phoneCell.AddInteractions();
+            }
+            return ListenerAction.Keep;
         }
 
         static void OnObjectPlacedInLot(object sender, EventArgs e)
@@ -78,6 +111,16 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
                 });
         }
 
+        public static ListenerAction OnSimSelected(Event e)
+        {
+            if (Household.ActiveHousehold != null)
+            {
+                InitInjection();
+                return ListenerAction.Remove;
+            }
+            return ListenerAction.Keep;
+        }
+
         static void OnStartupApp(object sender, EventArgs args)
         {
             CommonUtils.TryDisplayScriptError(() => CommonUtils.LoadMotive("BeHousekeeperMotive"));
@@ -99,6 +142,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
                         {
                             CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, Housekeeper.ServiceMotive);
                         }
+                    }
+                    if (Household.ActiveHousehold != null)
+                    {
+                        InitInjection();
+                    }
+                    else
+                    {
+                        EventTracker.AddListener(EventTypeId.kEventSimSelected, OnSimSelected);
                     }
                     foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
                     {

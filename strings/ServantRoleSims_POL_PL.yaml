@@ -1,22 +1,13 @@
 "zoeoeAndDestrospean":
     "/ServantRolesMod":
-        "/Interactions":
-            "/DismissHousekeeper":
-                ":Path": "Call Services..."
-                ":Name": "Dismiss Housekeeper"
-                "/Tooltips":
-                    ":AlreadyDismissed": "This service is currently inactive."
-            "/RequestHousekeeper":
-                ":Path": "Call Services..."
-                ":Name": "Request Housekeeper"
-                "/Tooltips":
-                    ":AlreadyRequested": "This service was already requested."
         "/Services":
+            ":Path": "Services"
             "/WeeklyPayment":
                 ":Housekeeper": "I'll be taking my weekly salary of {0.Money}. Good Day."
             "/Housekeeper":
                 ":Title": "Housekeeper"
                 ":NotEnoughFunds": "You don't have enough funds to pay the Housekeeper."
+                ":RequestService": "Request Housekeeper"
                 "/SetUnsetServiceBed":
                     ":SetInteractionName": "Set as Housekeeper {0.SimFirstName}'s Bed"
                     ":UnsetInteractionName": "Unset as Housekeeper {0.SimFirstName}'s Bed"

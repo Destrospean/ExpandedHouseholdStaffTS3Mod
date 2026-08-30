@@ -5,7 +5,6 @@ using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interactions;
-using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
@@ -186,7 +185,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 CommonUtils.TryDisplayScriptError(() =>
                     {
                         parent.Worker.InteractionQueue.CancelAllInteractions();
-                        RequestWalkStyle(parent.Worker, Sim.WalkStyle.Run);
+                        RequestWalkStyle(parent.Worker, Sim.WalkStyle.OnFire);
                         ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new Maid.QuitBecauseOfBonehilda.Definition(), null, null, null);
                         parent.Worker.Service.ClearServiceForLot(parent.Lot);
                         parent.Worker.Service.EndService(parent.Worker.SimDescription);
@@ -365,21 +364,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             //Tutorialette.TriggerLesson(Lessons.Maid, null);
             mDateLastPaid = SimClock.ElapsedCalendarDays();
             mPayHousekeeperAlarm = AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayHousekeeper, 1, TimeUnit.Weeks, "Housekeeper weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
+            Worker.EnableSocialsOnSim();
+            Worker.Autonomy.DecrementAutonomyDisabled();
         }
-
-        /*
-        public override void OnServiceStarting()
-        {
-            mbServiceStarted = true;
-            mAlarmShowSim = AlarmManager.AddAlarm(this.kMinutesUntilNPCAppears, TimeUnit.Minutes, new AlarmTimerCallback(() =>
-                {
-                    MakeServiceSimVisible();
-                    RouteToLot<HousekeeperSituation, StartCleaning> routeToLot = new WalkToLot<HousekeeperSituation, StartCleaning>(this);
-                    routeToLot.SetRouteTime(Housekeeper.DriveTime);
-                    SetState(routeToLot);
-                }), "Make Service Sim Visible after already coming", AlarmType.DeleteOnReset, this.Worker);
-        }
-        */
 
         public void PayHousekeeper()
         {
@@ -399,11 +386,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public override void SetToFire(Sim serviceSim, Sim firer)
         {
-            UnsetHousekeeperBed();
             if (serviceSim == firer)
             {
                 EventTracker.SendEvent(EventTypeId.kServiceNPCFired, firer, serviceSim);
                 NPCLeavingMessage(LeavingReason.NPCSelfTerminated);
+                UnsetServiceBed();
                 SetState(new LeaveLot<HousekeeperSituation>(this));
                 Service.FireSim(Worker);
             }
@@ -415,23 +402,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public override void SetToJobDone()
         {
-            UnsetHousekeeperBed();
             base.SetToJobDone();
         }
 
         public override void SetToLeave()
         {
-            UnsetHousekeeperBed();
             base.SetToLeave();
-        }
-
-        public void UnsetHousekeeperBed()
-        {
-            IBed bed = Worker.Bed as IBed;
-            if (bed != null && bed.LotCurrent == Lot)
-            {
-                bed.RelinquishOwnership(Worker, null);
-            }
         }
     }
 }
