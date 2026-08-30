@@ -158,7 +158,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public NPCIsFired(Sim firer, HousekeeperSituation parent) : base(firer, parent)
             {
-                mFirer = firer;
             }
 
             public override void OnFinished(Sim actor, float x)
