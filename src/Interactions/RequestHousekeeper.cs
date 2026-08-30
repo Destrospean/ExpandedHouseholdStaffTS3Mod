@@ -8,7 +8,6 @@ using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using System.Collections.Generic;
-using Sims3.Gameplay.Services;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
 {
