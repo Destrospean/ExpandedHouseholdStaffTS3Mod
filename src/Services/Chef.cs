@@ -5,6 +5,7 @@ using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interfaces;
+using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Scenarios;
 using Sims3.Gameplay.Services;
@@ -17,7 +18,7 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
-    public class Chef : Service<Chef>
+    public class Chef : Service<Chef>, IAmLiveInService
     {
         const string kChefBook = "HowToServeAndNotBeServed";
 

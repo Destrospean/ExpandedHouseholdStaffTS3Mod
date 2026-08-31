@@ -5,6 +5,7 @@ using Sims3.Gameplay.Controllers;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interactions;
+using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Objects.Beds;
 using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Services;
@@ -240,7 +241,13 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         static void AddInteractions(Bed bed)
         {
-            CommonUtils.TryDisplayScriptError(() => bed.AddInteraction(SetUnsetServiceBed.Singleton, true));
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    if (typeof(IAmLiveInService).IsAssignableFrom(DerivedType))
+                    {
+                        bed.AddInteraction(SetUnsetServiceBed.Singleton, true);
+                    }
+                });
         }
 
         static void AddInteractions(Phone phone)

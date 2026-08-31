@@ -4,6 +4,7 @@ using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
+using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
@@ -135,7 +136,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             get
             {
-                return false;
+                return typeof(IAmLiveInService).IsAssignableFrom(Type.GetType(typeof(CommonUtils).Namespace + ".Services." + DerivedType.Name.Remove(DerivedType.Name.LastIndexOf("Situation"))));
             }
         }
 

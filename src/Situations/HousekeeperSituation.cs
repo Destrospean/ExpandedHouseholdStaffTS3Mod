@@ -266,14 +266,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             }
         }
 
-        public override bool IsLiveInService
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         public override bool ServiceTerminated
         {
             get

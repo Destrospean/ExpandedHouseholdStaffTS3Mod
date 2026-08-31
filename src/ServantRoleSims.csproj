@@ -45,6 +45,7 @@
     <Compile Include="Services\Chef.cs" />
     <Compile Include="Situations\HousekeeperSituation.cs" />
     <Compile Include="Situations\ChefSituation.cs" />
+    <Compile Include="Interfaces\IAmLiveInService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -93,6 +94,7 @@
     <Folder Include="Abstracts\" />
     <Folder Include="Services\" />
     <Folder Include="Situations\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
   <Target Name="Generate STBLs" BeforeTargets="Build">
     <Exec Command="&quot;$(SolutionDir)scripts\GenerateSTBLs.bat&quot;" Condition="'$(OS)' == 'Windows_NT'" />
