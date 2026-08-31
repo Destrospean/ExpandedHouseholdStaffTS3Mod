@@ -8,6 +8,7 @@
                 ":Title": "Housekeeper"
                 ":NotEnoughFunds": "You don't have enough funds to pay the Housekeeper."
                 ":RequestService": "Request Housekeeper"
+                ":ServiceRequested": "Please make sure to have a bed arranged for me as I will be living at your place. Good day."
                 "/SetUnsetServiceBed":
                     ":SetInteractionName": "Set as Housekeeper {0.SimFirstName}'s Bed"
                     ":UnsetInteractionName": "Unset as Housekeeper {0.SimFirstName}'s Bed"

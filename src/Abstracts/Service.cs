@@ -104,8 +104,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     return ConversationBehavior.JustHangUp;
                 }
                 Instance.MakeServiceRequest(Actor.LotCurrent, true, Actor.ObjectId);
-                /*
-                StyledNotification.Format format = new StyledNotification.Format(Localization.LocalizeString(DerivedType.GetLocalizationKey() + ":RequestService"), StyledNotification.NotificationStyle.kSimTalking);
+                StyledNotification.Format format = new StyledNotification.Format(Localization.LocalizeString(DerivedType.GetLocalizationKey() + ":ServiceRequested"), StyledNotification.NotificationStyle.kSimTalking);
                 if (Responder.Instance.ServicesModel.DoesSimHaveFuturePhone(Actor.ObjectId))
                 {
                     StyledNotification.Show(format, "w_future_phone", null, ProductVersion.EP11, ProductVersion.EP11);
@@ -118,7 +117,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 {
                     StyledNotification.Show(format, "glb_tns_phone_r2");
                 }
-                */
                 return ConversationBehavior.TalkBriefly;
             }
         }
