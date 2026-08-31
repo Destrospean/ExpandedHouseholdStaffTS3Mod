@@ -132,7 +132,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public virtual bool IsLiveInService
+        public bool IsLiveInService
         {
             get
             {
