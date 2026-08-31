@@ -310,12 +310,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             CommonUtils.TryDisplayScriptError(() =>
                 {
+                    /*
                     Skill handinessSkill = sim.SkillManager.AddElement(SkillNames.Handiness);
                     int maxSkillLevel = handinessSkill.MaxSkillLevel;
                     for (int i = 0; i < maxSkillLevel; i++)
                     {
                         handinessSkill.ForceGainPointsForLevelUp();
                     }
+                    */
                     Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kHousekeeperBook);
                     Inventory inventory = sim.Inventory;
                     if (inventory != null)
