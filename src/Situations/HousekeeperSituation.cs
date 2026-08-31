@@ -81,9 +81,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 CommonUtils.TryDisplayScriptError(() =>
                     {
+                        Parent.Worker.WorkMotive = CommodityKind.None;
                         Parent.Worker.Autonomy.Motives.RemoveMotive(CommodityKind.BeMaid);
                         Parent.Worker.Autonomy.Motives.RemoveMotive(Housekeeper.ServiceMotive);
-                        Parent.Worker.WorkMotive = CommodityKind.None;
                         AlarmManager.RemoveAlarm(mAlarmHandle);
                         base.CleanUp();
                     });
@@ -364,8 +364,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             //Tutorialette.TriggerLesson(Lessons.Maid, null);
             mDateLastPaid = SimClock.ElapsedCalendarDays();
             mPayHousekeeperAlarm = AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayHousekeeper, 1, TimeUnit.Weeks, "Housekeeper weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
-            Worker.EnableSocialsOnSim();
-            Worker.Autonomy.DecrementAutonomyDisabled();
         }
 
         public void PayHousekeeper()
@@ -379,9 +377,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         public override void SetMotivesAndCommodities()
         {
             CommonUtils.UpdateMotiveTunings(Worker, Housekeeper.ServiceMotive);
+            Worker.Motives.MaxEverything();
+            Worker.WorkMotive = Housekeeper.ServiceMotive;
             Worker.Motives.CreateMotive(CommodityKind.BeMaid);
             Worker.Motives.CreateMotive(Housekeeper.ServiceMotive);
-            Worker.WorkMotive = Housekeeper.ServiceMotive;
         }
 
         public override void SetToFire(Sim serviceSim, Sim firer)
