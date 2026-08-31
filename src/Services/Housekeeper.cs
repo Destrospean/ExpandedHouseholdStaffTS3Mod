@@ -227,20 +227,20 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override ServiceSituation InternalCreateSituation(Lot assignedLot, Sim createdSim, int cost, ObjectGuid requestingSim)
         {
-            ServiceSituation retValue = null;
+            ServiceSituation situation = null;
             CommonUtils.TryDisplayScriptError(() =>
                 {
                     if (assignedLot.MoveInScenario is Rodents)
                     {
-                        retValue = assignedLot.MoveInScenario.SetupSituation(this, createdSim);
+                        situation = assignedLot.MoveInScenario.SetupSituation(this, createdSim);
                         assignedLot.MoveInScenario = null;
                         return;
                     }
                     createdSim.SimDescription.ShowSocialsOnSim = true;
                     createdSim.CanBeFired = true;
-                    retValue = new HousekeeperSituation(this, assignedLot, createdSim, cost);
+                    situation = new HousekeeperSituation(this, assignedLot, createdSim, cost);
                 });
-            return retValue;
+            return situation;
         }
 
         public static void RemoveHousekeepersFromLot(Lot lot)

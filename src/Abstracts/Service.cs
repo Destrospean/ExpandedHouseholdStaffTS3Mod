@@ -39,7 +39,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     string localizationKey = DerivedType.GetLocalizationKey();
                     return new string[]
                     {
-                        Localization.LocalizeString(localizationKey.Remove(localizationKey.IndexOf(DerivedType.Name) - (localizationKey.IndexOf(DerivedType.Name) == 0 ? 0 : 1)) + ":Path") + Localization.Ellipsis
+                        Localization.LocalizeString(localizationKey.Remove(localizationKey.IndexOf(DerivedType.Name) - (localizationKey.IndexOf(DerivedType.Name) < 1 ? 0 : 1)) + ":Path") + Localization.Ellipsis
                     };
                 }
 

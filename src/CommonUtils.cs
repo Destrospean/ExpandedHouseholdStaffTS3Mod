@@ -131,10 +131,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             return false;
         }
 
-        public static bool TryDisplayScriptError<T>(Func<T> action, out T value)
+        public static bool TryDisplayScriptError<T>(Func<T> callback, out T value)
         {
             T retVal = default(T);
-            bool errorDisplayed = TryDisplayScriptError(() => retVal = action());
+            bool errorDisplayed = TryDisplayScriptError(() => retVal = callback());
             value = retVal;
             return errorDisplayed;
         }
