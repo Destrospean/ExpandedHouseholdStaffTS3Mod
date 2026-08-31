@@ -1,0 +1,44 @@
+﻿<?xml version="1.0"?>
+<SocializingActionAvailability>
+  <ActiveTopic>
+    <Name></Name>
+    <PieMenuOverride></PieMenuOverride>
+    <AvailableForOtherSim>0</AvailableForOtherSim>
+    <TestFunction></TestFunction>
+    <Balloon></Balloon>
+    <AvailableWhenConversationStarts>0</AvailableWhenConversationStarts>
+    <AvailableBeforeTargetHasBeenGreeted>0</AvailableBeforeTargetHasBeenGreeted>
+    <UsedUpAfterDoneOnce>1</UsedUpAfterDoneOnce>
+    <Forgettable>1</Forgettable>
+    <CheckRecency>True</CheckRecency>
+    <StaticPriority></StaticPriority>
+    <Duration>0</Duration>
+  </ActiveTopic>
+  <ActiveTopic>
+    <Name>Chef Service</Name>
+    <AvailableForOtherSim>1</AvailableForOtherSim>
+    <AvailableWhenConversationStarts>1</AvailableWhenConversationStarts>
+    <AvailableBeforeTargetHasBeenGreeted>1</AvailableBeforeTargetHasBeenGreeted>
+    <UsedUpAfterDoneOnce>0</UsedUpAfterDoneOnce>
+    <Forgettable>0</Forgettable>
+    <StaticPriority>1000</StaticPriority>
+  </ActiveTopic>
+  <TAA>
+    <Cat></Cat>
+    <Gr></Gr>
+    <FPA></FPA>
+    <SPA></SPA>
+  </TAA>
+  <TAA>
+    <Cat>Chef Service</Cat>
+  </TAA>
+  <TAA>
+    <Gr>Default</Gr>
+  </TAA>
+  <TAA>
+    <SPA>Dismiss</SPA>
+  </TAA>
+  <TAA>
+    <SPA>Fire</SPA>
+  </TAA>
+</SocializingActionAvailability>

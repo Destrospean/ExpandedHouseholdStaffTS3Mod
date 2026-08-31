@@ -39,11 +39,12 @@
     <Compile Include="Services\Housekeeper.cs" />
     <Compile Include="CommonUtils.cs" />
     <Compile Include="ExtensionAttribute.cs" />
-    <Compile Include="Situations\HousekeeperSituation.cs" />
-    <Compile Include="Main.cs" />
     <Compile Include="Abstracts\Service.cs" />
     <Compile Include="Abstracts\ServiceSituation.cs" />
     <Compile Include="ServiceData.cs" />
+    <Compile Include="Services\Chef.cs" />
+    <Compile Include="Situations\HousekeeperSituation.cs" />
+    <Compile Include="Situations\ChefSituation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

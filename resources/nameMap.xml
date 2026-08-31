@@ -2,8 +2,12 @@
 <resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nameMap.xsd">
   <resource name="ServantRoleSims" type="0x073FAA07"/>
   <resource name="*.stbl" type="0x220557DA"/>
+  <resource name="BeChefMotive" type="0x0333406C"/>
   <resource name="BeHousekeeperMotive" type="0x0333406C"/>
+  <resource name="ServantRolesMod_Chef_ActiveTopic" type="0x0333406C"/>
   <resource name="ServantRolesMod_Housekeeper_ActiveTopic" type="0x0333406C"/>
+  <!-- ITUN resources for the BeChef CommodityKind -->
+
   <!-- ITUN resources for the BeHousekeeper CommodityKind -->
     <resource name="Bookshelf_ReadSomething_Bookshelf" type="0x03B33DDF"/>
     <resource name="ChooseBookOnTablet_Tablet" type="0x03B33DDF"/>

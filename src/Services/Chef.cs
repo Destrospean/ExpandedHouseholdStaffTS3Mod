@@ -17,11 +17,11 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
-    public class Housekeeper : Service<Housekeeper>, IAmCleaningService
+    public class Chef : Service<Chef>
     {
-        const string kHousekeeperBook = "HowToServeAndNotBeServed";
+        const string kChefBook = "HowToServeAndNotBeServed";
 
-        static readonly string sLocalizationKey = typeof(Housekeeper).GetLocalizationKey();
+        static readonly string sLocalizationKey = typeof(Chef).GetLocalizationKey();
 
         [Tunable]
         static ServiceTuning kServiceTuning = new ServiceTuning();
@@ -30,15 +30,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [TunableComment("Length of time (in minutes) between checks that everything is cleaned")]
         static float kCheckTime = 5;
 
-        [TunableComment("Length of time (in hours) that the housekeeper waits before routing to lot")]
+        [TunableComment("Length of time (in hours) that the chef waits before routing to lot")]
         [Tunable]
         static float kDelayBeforeArriving = .5f;
 
-        [TunableComment("Length of time (in hours) that the housekeeper waits before leaving the lot, after her work is done")]
+        [TunableComment("Length of time (in hours) that the chef waits before leaving the lot, after their work is done")]
         [Tunable]
         static float kDelayBeforeLeaving = .3f;
 
-        [TunableComment("Length of time (in minutes) that the housekeeper takes to drive to lot")]
+        [TunableComment("Length of time (in minutes) that the chef takes to drive to lot")]
         [Tunable]
         static float kDriveTime = 5;
 
@@ -47,15 +47,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         static float kExtraWaitTimeAfterSocializing = .5f;
 
         [Tunable]
-        [TunableComment("If the housekeeper's relationship with any YAE falls below this level, she will quit")]
+        [TunableComment("If the chef's relationship with any YAE falls below this level, they will quit")]
         static float kRelationshipLevelForQuit = -50;
 
-        [TunableComment("How old leftovers can be out in minutes before the housekeeper will put it away")]
+        [TunableComment("How old leftovers can be out in minutes before the chef will put it away")]
         [Tunable]
         static float kTimeWaitBeforePutawayLeftovers = 60;
 
         [Tunable]
-        [TunableComment("Multiplier for interactions in a room where a sim is sleeping")]
+        [TunableComment("Multiplier for interactions in a room wtheire a sim is sleeping")]
         static float kUseObjectInSameRoomAsSleeperMultiplier = .1f;
 
         public override ServiceTuning Tuning
@@ -134,7 +134,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             get
             {
-                return ServiceType.Maid;
+                return ServiceType.Butler;
             }
         }
 
@@ -144,8 +144,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             {
                 return new List<CommodityKind>()
                 {
-                    CommodityKind.BeMaid,
-                    Housekeeper.ServiceMotive
+                    Chef.ServiceMotive
                 };
             }
         }
@@ -158,12 +157,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        static Housekeeper()
+        static Chef()
         {
             Initialize();
         }
 
-        public Housekeeper()
+        public Chef()
         {
             Instance = this;
         }
@@ -177,11 +176,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             CommonUtils.TryDisplayScriptError(() =>
                 {
-                    if (ServiceNPCSpecifications.ValidForCurrentWorld(ServiceType.Maid))
+                    if (ServiceNPCSpecifications.ValidForCurrentWorld(ServiceType.Butler))
                     {
                         if (Instance == null)
                         {
-                            new Housekeeper();
+                            new Chef();
                         }
                         else
                         {
@@ -190,17 +189,17 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     }
                     else
                     {
-                        DestroyHousekeeper();
+                        DestroyChef();
                     }
                 });
         }
 
         public static void Destroy()
         {
-            DestroyHousekeeper();
+            DestroyChef();
         }
 
-        public static void DestroyHousekeeper()
+        public static void DestroyChef()
         {
             Destroy(Instance);
             Instance = null;
@@ -208,7 +207,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override string GetServiceTopic(Sim serviceSim)
         {
-            return "Housekeeper Service";
+            return "Chef Service";
         }
 
         public static string LocalizeString(string name, params object[] parameters)
@@ -242,12 +241,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     }
                     createdSim.SimDescription.ShowSocialsOnSim = true;
                     createdSim.CanBeFired = true;
-                    retVal = new HousekeeperSituation(this, assignedLot, createdSim, cost);
+                    retVal = new ChefSituation(this, assignedLot, createdSim, cost);
                 });
             return retVal;
         }
 
-        public static void RemoveHousekeepersFromLot(Lot lot)
+        public static void RemoveChefsFromLot(Lot lot)
         {
             CommonUtils.TryDisplayScriptError(() =>
                 {
@@ -258,10 +257,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     List<Sim> simsAssignedToLot = Instance.GetSimsAssignedToLot(lot);
                     foreach (Sim item in simsAssignedToLot)
                     {
-                        HousekeeperSituation housekeeperSituation = ServiceSituation.FindServiceSituationInvolving(item) as HousekeeperSituation;
-                        if (housekeeperSituation != null)
+                        ChefSituation ChefSituation = ServiceSituation.FindServiceSituationInvolving(item) as ChefSituation;
+                        if (ChefSituation != null)
                         {
-                            housekeeperSituation.SetToLeave();
+                            ChefSituation.SetToLeave();
                         }
                     }
                 });
@@ -279,15 +278,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             CommonUtils.TryDisplayScriptError(() =>
                 {
-                    simDescription.TraitManager.AddElement(TraitNames.Neat);
-                    simDescription.TraitManager.AddHiddenElement(TraitNames.MakesNoMesses);
-                    simDescription.TraitManager.AddHiddenElement(TraitNames.SpeedyCleaner);
+                    simDescription.TraitManager.AddElement(TraitNames.Artistic);
+                    simDescription.TraitManager.AddElement(TraitNames.NaturalCook);
+                    //simDescription.TraitManager.AddHiddenElement(TraitNames.BornToCook);
                     List<TraitNames> potentialTraits = new List<TraitNames>
                         {
                             TraitNames.Neurotic,
-                            TraitNames.Flirty,
-                            TraitNames.Kleptomaniac,
-                            TraitNames.Charismatic
+                            TraitNames.HotHeaded,
+                            TraitNames.Perfectionist,
                         };
                     for (int i = 0; i < 2; i++)
                     {
@@ -303,15 +301,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             CommonUtils.TryDisplayScriptError(() =>
                 {
-                    /*
-                    Skill handinessSkill = sim.SkillManager.AddElement(SkillNames.Handiness);
-                    int maxSkillLevel = handinessSkill.MaxSkillLevel;
+                    
+                    Skill cookingSkill = sim.SkillManager.AddElement(SkillNames.Cooking);
+                    int maxSkillLevel = cookingSkill.MaxSkillLevel;
                     for (int i = 0; i < maxSkillLevel; i++)
                     {
-                        handinessSkill.ForceGainPointsForLevelUp();
+                        cookingSkill.ForceGainPointsForLevelUp();
                     }
-                    */
-                    Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kHousekeeperBook);
+                    Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kChefBook);
                     Inventory inventory = sim.Inventory;
                     if (inventory != null)
                     {

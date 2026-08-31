@@ -3,10 +3,12 @@ using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Controllers;
 using Sims3.Gameplay.Core;
+using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Objects.Beds;
 using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Services;
+using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
@@ -236,51 +238,149 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public override SimDescription FindSimForAssignment(Lot lot)
+        static void AddInteractions(Bed bed)
         {
-            SimDescription retVal;
-            return CommonUtils.TryDisplayScriptError(() =>
+            CommonUtils.TryDisplayScriptError(() => bed.AddInteraction(SetUnsetServiceBed.Singleton, true));
+        }
+
+        static void AddInteractions(Phone phone)
+        {
+            CommonUtils.TryDisplayScriptError(() => phone.AddInteraction(CallForService.Singleton, true));
+        }
+
+        static void AddInteractions(PhoneCell phoneCell)
+        {
+            CommonUtils.TryDisplayScriptError(() =>
                 {
-                    bool shouldUseServobot = false;
-                    if (GameUtils.IsInstalled(ProductVersion.EP11))
+                    foreach (InteractionObjectPair interaction in phoneCell.Interactions)
                     {
-                        shouldUseServobot = ServiceNPCSpecifications.ShouldUseServobot(ServiceType.ToString());
-                    }
-                    List<SimDescription> pool = new List<SimDescription>();
-                    foreach (SimDescription simDescription in mPool)
-                    {
-                        if (!IsSimAssignedTask(simDescription) && CanSimBeAssignedToLot(simDescription, lot) && (shouldUseServobot && simDescription.IsEP11Bot || !shouldUseServobot && !simDescription.IsEP11Bot) && simDescription.CreatedSim == null)
+                        if (interaction.InteractionDefinition.GetType() == CallForService.Singleton.GetType())
                         {
-                            pool.Add(simDescription);
+                            return;
                         }
                     }
-                    if (pool.Count == 0)
+                    phoneCell.AddInteraction(CallForService.Singleton);
+                    phoneCell.AddInventoryInteraction(CallForService.Singleton);
+                });
+        }
+
+        static void InitInjection()
+        {
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    foreach (PhoneCell phoneCell in Sims3.Gameplay.Queries.GetObjects<PhoneCell>())
                     {
-                        SimDescription simDescription = CreateOrUpdateServiceNpc(null, lot);
-                        if (simDescription != null)
-                        {
-                            AddSimToPool(simDescription);
-                        }
-                        return simDescription;
+                        AddInteractions(phoneCell);
                     }
-                    SimDescription randomSimDescription = RandomUtil.GetRandomObjectFromList<SimDescription>(pool);
-                    if (AlwaysTryToSendSameSim && lot.Household != null)
+                    EventTracker.AddListener(EventTypeId.kInventoryObjectAdded, OnObjectChanged);
+                    EventTracker.AddListener(EventTypeId.kObjectStateChanged, OnObjectChanged);
+                });
+        }
+
+        static ListenerAction OnObjectChanged(Event e)
+        {
+            ListenerAction retVal;
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    PhoneCell phoneCell = e.TargetObject as PhoneCell;
+                    if (phoneCell != null)
                     {
-                        SimDescription simDescription = null;
-                        if (mPreferredServiceNpc.TryGetValue(lot.Household.HouseholdId, out simDescription))
+                        AddInteractions(phoneCell);
+                    }
+                    return ListenerAction.Keep;
+                }, out retVal);
+            return retVal;
+        }
+
+        static void OnObjectPlacedInLot(object sender, EventArgs e)
+        {
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
+                    if (onObjectPlacedInLotEventArgs != null)
+                    {
+                        GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
+                        Bed bed = gameObject as Bed;
+                        if (bed != null)
                         {
-                            if (pool.Contains(simDescription))
-                            {
-                                return simDescription;
-                            }
+                            AddInteractions(bed);
+                            return;
                         }
-                        else
+                        Phone phone = gameObject as Phone;
+                        if (phone != null)
                         {
-                            mPreferredServiceNpc[lot.Household.HouseholdId] = randomSimDescription;
+                            AddInteractions(phone);
                         }
                     }
-                    return randomSimDescription;
-                }, out retVal) ? null : retVal;
+                });
+        }
+
+        static void OnPreLoad()
+        {
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    if (!ServiceData.PreloadedServices.Contains(DerivedType))
+                    {
+                        XmlDbData xmlDbData = XmlDbData.ReadData("ServantRolesMod_" + DerivedType.Name + "_ActiveTopic");
+                        if (xmlDbData != null)
+                        {
+                            SocialManager.ParseActiveTopic(xmlDbData);
+                        }
+                        ServiceData.PreloadedServices.Add(DerivedType);
+                    }
+                });
+        }
+
+        static ListenerAction OnSimSelected(Event e)
+        {
+            ListenerAction retVal;
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    if (Household.ActiveHousehold != null)
+                    {
+                        InitInjection();
+                        return ListenerAction.Remove;
+                    }
+                    return ListenerAction.Keep;
+                }, out retVal);
+            return retVal;
+        }
+
+        static void OnStartupApp(object sender, EventArgs args)
+        {
+            CommonUtils.TryDisplayScriptError(() => CommonUtils.LoadMotive("Be" + DerivedType.Name + "Motive"));
+        }
+
+        static void OnWorldLoadFinished(object sender, EventArgs e)
+        {
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    FixUpService();
+                    if (Household.ActiveHousehold != null)
+                    {
+                        InitInjection();
+                    }
+                    else
+                    {
+                        EventTracker.AddListener(EventTypeId.kEventSimSelected, OnSimSelected);
+                    }
+                    foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
+                    {
+                        AddInteractions(bed);
+                    }
+                    foreach (Phone phone in Sims3.Gameplay.Queries.GetObjects<Phone>())
+                    {
+                        AddInteractions(phone);
+                    }
+                });
+        }
+
+        static void OnWorldQuit(object sender, EventArgs e)
+        {
+            if (Instance != null)
+            {
+                Instance = null;
+            }
         }
 
         public new SimDescription CreateOrUpdateServiceNpc(SimDescription preCreatedSim, Lot lot)
@@ -392,6 +492,80 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 });
             randomlyCreated = tempRandomlyCreated;
             return simDescription;
+        }
+
+        public override SimDescription FindSimForAssignment(Lot lot)
+        {
+            SimDescription retVal;
+            return CommonUtils.TryDisplayScriptError(() =>
+                {
+                    bool shouldUseServobot = false;
+                    if (GameUtils.IsInstalled(ProductVersion.EP11))
+                    {
+                        shouldUseServobot = ServiceNPCSpecifications.ShouldUseServobot(ServiceType.ToString());
+                    }
+                    List<SimDescription> pool = new List<SimDescription>();
+                    foreach (SimDescription simDescription in mPool)
+                    {
+                        if (!IsSimAssignedTask(simDescription) && CanSimBeAssignedToLot(simDescription, lot) && (shouldUseServobot && simDescription.IsEP11Bot || !shouldUseServobot && !simDescription.IsEP11Bot) && simDescription.CreatedSim == null)
+                        {
+                            pool.Add(simDescription);
+                        }
+                    }
+                    if (pool.Count == 0)
+                    {
+                        SimDescription simDescription = CreateOrUpdateServiceNpc(null, lot);
+                        if (simDescription != null)
+                        {
+                            AddSimToPool(simDescription);
+                        }
+                        return simDescription;
+                    }
+                    SimDescription randomSimDescription = RandomUtil.GetRandomObjectFromList<SimDescription>(pool);
+                    if (AlwaysTryToSendSameSim && lot.Household != null)
+                    {
+                        SimDescription simDescription = null;
+                        if (mPreferredServiceNpc.TryGetValue(lot.Household.HouseholdId, out simDescription))
+                        {
+                            if (pool.Contains(simDescription))
+                            {
+                                return simDescription;
+                            }
+                        }
+                        else
+                        {
+                            mPreferredServiceNpc[lot.Household.HouseholdId] = randomSimDescription;
+                        }
+                    }
+                    return randomSimDescription;
+                }, out retVal) ? null : retVal;
+        }
+
+        public static void FixUpService()
+        {
+            DerivedType.GetMethod("Create").Invoke(null, null);
+            if (Instance == null)
+            {
+                return;
+            }
+            IEnumerator<SimDescription> enumerator = Instance.Pool.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                if (enumerator.Current != null && enumerator.Current.CreatedSim != null)
+                {
+                    CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, ServiceMotive);
+                }
+            }
+        }
+
+        public static void Initialize()
+        {
+            CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);
+            LoadSaveManager.ObjectGroupsPreLoad += OnPreLoad;
+            World.OnObjectPlacedInLotEventHandler += OnObjectPlacedInLot;
+            World.sOnStartupAppEventHandler += OnStartupApp;
+            World.sOnWorldLoadFinishedEventHandler += OnWorldLoadFinished;
+            World.sOnWorldQuitEventHandler += OnWorldQuit;
         }
     }
 }
