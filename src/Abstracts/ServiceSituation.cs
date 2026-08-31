@@ -37,7 +37,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public class NPCIsFired : ChildSituation<ServiceSituation<T>>
         {
-            public Sim mFirer;
+            Sim mFirer;
 
             public NPCIsFired()
             {
@@ -80,7 +80,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public class WaitToRoute : ChildSituation<ServiceSituation<T>>
         {
-            public AlarmHandle mAlarmHandle;
+            AlarmHandle mAlarmHandle;
 
             public WaitToRoute()
             {
@@ -109,9 +109,9 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public AlarmHandle mCheckForFireAlarmHandle = AlarmHandle.kInvalidHandle;
+        AlarmHandle mCheckForFireAlarmHandle = AlarmHandle.kInvalidHandle;
 
-        public bool mInformedFireDepartment;
+        bool mInformedFireDepartment;
 
         public ulong LastInteractionId;
 

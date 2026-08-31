@@ -43,6 +43,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="Abstracts\Service.cs" />
     <Compile Include="Abstracts\ServiceSituation.cs" />
+    <Compile Include="ServiceData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

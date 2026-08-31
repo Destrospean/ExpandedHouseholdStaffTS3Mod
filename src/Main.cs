@@ -17,7 +17,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
     public static class Main
     {
         [Tunable]
-        public static bool kInstantiator;
+        internal static bool kInstantiator;
 
         public static bool HasBeenPreloaded = false;
 
@@ -33,65 +33,79 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         static void AddInteractions(this Bed bed)
         {
-            bed.AddInteraction(Housekeeper.SetUnsetServiceBed.Singleton, true);
+            CommonUtils.TryDisplayScriptError(() => bed.AddInteraction(Housekeeper.SetUnsetServiceBed.Singleton, true));
         }
 
         static void AddInteractions(this Phone phone)
         {
-            phone.AddInteraction(Housekeeper.CallForService.Singleton, true);
+            CommonUtils.TryDisplayScriptError(() => phone.AddInteraction(Housekeeper.CallForService.Singleton, true));
         }
 
         static void AddInteractions(this PhoneCell phoneCell)
         {
-            foreach (InteractionObjectPair interaction in phoneCell.Interactions)
-            {
-                if (interaction.InteractionDefinition.GetType() == Housekeeper.CallForService.Singleton.GetType())
+            CommonUtils.TryDisplayScriptError(() =>
                 {
-                    return;
-                }
-            }
-            phoneCell.AddInteraction(Housekeeper.CallForService.Singleton);
-            phoneCell.AddInventoryInteraction(Housekeeper.CallForService.Singleton);
+                    foreach (InteractionObjectPair interaction in phoneCell.Interactions)
+                    {
+                        if (interaction.InteractionDefinition.GetType() == Housekeeper.CallForService.Singleton.GetType())
+                        {
+                            return;
+                        }
+                    }
+                    phoneCell.AddInteraction(Housekeeper.CallForService.Singleton);
+                    phoneCell.AddInventoryInteraction(Housekeeper.CallForService.Singleton);
+                });
         }
 
         static void InitInjection()
         {
-            foreach (PhoneCell phoneCell in Sims3.Gameplay.Queries.GetObjects<PhoneCell>())
-            {
-                phoneCell.AddInteractions();
-            }
-            EventTracker.AddListener(EventTypeId.kInventoryObjectAdded, OnObjectChanged);
-            EventTracker.AddListener(EventTypeId.kObjectStateChanged, OnObjectChanged);
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    foreach (PhoneCell phoneCell in Sims3.Gameplay.Queries.GetObjects<PhoneCell>())
+                    {
+                        phoneCell.AddInteractions();
+                    }
+                    EventTracker.AddListener(EventTypeId.kInventoryObjectAdded, OnObjectChanged);
+                    EventTracker.AddListener(EventTypeId.kObjectStateChanged, OnObjectChanged);
+                });
         }
 
         public static ListenerAction OnObjectChanged(Event e)
         {
-            PhoneCell phoneCell = e.TargetObject as PhoneCell;
-            if (phoneCell != null)
-            {
-                phoneCell.AddInteractions();
-            }
-            return ListenerAction.Keep;
+            ListenerAction retVal;
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    PhoneCell phoneCell = e.TargetObject as PhoneCell;
+                    if (phoneCell != null)
+                    {
+                        phoneCell.AddInteractions();
+                    }
+                    return ListenerAction.Keep;
+                }, out retVal);
+            return retVal;
         }
 
         static void OnObjectPlacedInLot(object sender, EventArgs e)
         {
-            World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
-            if (onObjectPlacedInLotEventArgs != null)
-            {
-                GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
-                Bed bed = gameObject as Bed;
-                if (bed != null)
+            CommonUtils.TryDisplayScriptError(() =>
                 {
-                    bed.AddInteractions();
-                }
-                Phone phone = gameObject as Phone;
-                if (phone != null)
-                {
-                    phone.AddInteractions();
-                    return;
-                }
-            }
+                    World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
+                    if (onObjectPlacedInLotEventArgs != null)
+                    {
+                        GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
+                        Bed bed = gameObject as Bed;
+                        if (bed != null)
+                        {
+                            bed.AddInteractions();
+                            return;
+                        }
+                        Phone phone = gameObject as Phone;
+                        if (phone != null)
+                        {
+                            phone.AddInteractions();
+                        }
+                    }
+                });
         }
 
         static void OnPreLoad()
@@ -110,14 +124,19 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
                 });
         }
 
-        public static ListenerAction OnSimSelected(Event e)
+        static ListenerAction OnSimSelected(Event e)
         {
-            if (Household.ActiveHousehold != null)
-            {
-                InitInjection();
-                return ListenerAction.Remove;
-            }
-            return ListenerAction.Keep;
+            ListenerAction retVal;
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    if (Household.ActiveHousehold != null)
+                    {
+                        InitInjection();
+                        return ListenerAction.Remove;
+                    }
+                    return ListenerAction.Keep;
+                }, out retVal);
+            return retVal;
         }
 
         static void OnStartupApp(object sender, EventArgs args)
@@ -165,7 +184,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         {
             if (Housekeeper.Instance != null)
             {
-                Housekeeper.sInstance = null;
+                Housekeeper.Instance = null;
             }
         }
     }

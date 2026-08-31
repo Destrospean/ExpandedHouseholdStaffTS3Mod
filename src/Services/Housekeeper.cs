@@ -19,44 +19,44 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
     public class Housekeeper : Service<Housekeeper>, IAmCleaningService
     {
-        public static readonly string sLocalizationKey = typeof(Housekeeper).GetLocalizationKey();
+        const string kHousekeeperBook = "HowToServeAndNotBeServed";
 
-        public static string kHousekeeperBook = "HowToServeAndNotBeServed";
+        static readonly string sLocalizationKey = typeof(Housekeeper).GetLocalizationKey();
 
         [Tunable]
-        public static ServiceTuning kServiceTuning = new ServiceTuning();
+        static ServiceTuning kServiceTuning = new ServiceTuning();
 
         [Tunable]
         [TunableComment("Length of time (in minutes) between checks that everything is cleaned")]
-        public static float kCheckTime = 5;
+        static float kCheckTime = 5;
 
         [TunableComment("Length of time (in hours) that the housekeeper waits before routing to lot")]
         [Tunable]
-        public static float kDelayBeforeArriving = .5f;
+        static float kDelayBeforeArriving = .5f;
 
         [TunableComment("Length of time (in hours) that the housekeeper waits before leaving the lot, after her work is done")]
         [Tunable]
-        public static float kDelayBeforeLeaving = .3f;
+        static float kDelayBeforeLeaving = .3f;
 
         [TunableComment("Length of time (in minutes) that the housekeeper takes to drive to lot")]
         [Tunable]
-        public static float kDriveTime = 5;
+        static float kDriveTime = 5;
 
         [Tunable]
         [TunableComment("Extra time (in hours) to wait before leaving if the service NPC is socialized with")]
-        public static float kExtraWaitTimeAfterSocializing = .5f;
+        static float kExtraWaitTimeAfterSocializing = .5f;
 
         [Tunable]
         [TunableComment("If the housekeeper's relationship with any YAE falls below this level, she will quit")]
-        public static float kRelationshipLevelForQuit = -50;
+        static float kRelationshipLevelForQuit = -50;
 
         [TunableComment("How old leftovers can be out in minutes before the housekeeper will put it away")]
         [Tunable]
-        public static float kTimeWaitBeforePutawayLeftovers = 60;
+        static float kTimeWaitBeforePutawayLeftovers = 60;
 
         [Tunable]
         [TunableComment("Multiplier for interactions in a room where a sim is sleeping")]
-        public static float kUseObjectInSameRoomAsSleeperMultiplier = .1f;
+        static float kUseObjectInSameRoomAsSleeperMultiplier = .1f;
 
         public override ServiceTuning Tuning
         {
@@ -160,24 +160,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public Housekeeper()
         {
-            sInstance = this;
+            Instance = this;
         }
 
         public override bool CanRequestServiceFromPhone(Lot lot)
         {
-            bool canRequestServiceFromPhone;
-            return !CommonUtils.TryDisplayScriptError(() =>
-                {
-                    if (base.CanRequestServiceFromPhone(lot))
-                    {
-                        if (GameUtils.GetCurrentWorldType() != WorldType.Vacation)
-                        {
-                            return !lot.IsBaseCampLotType;
-                        }
-                        return false;
-                    }
-                    return false;
-                }, out canRequestServiceFromPhone) && canRequestServiceFromPhone;
+            return false;
         }
 
         public static void Create()
@@ -186,13 +174,13 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 {
                     if (ServiceNPCSpecifications.ValidForCurrentWorld(ServiceType.Maid))
                     {
-                        if (sInstance == null)
+                        if (Instance == null)
                         {
                             new Housekeeper();
                         }
                         else
                         {
-                            sInstance.PostLoadFixup();
+                            Instance.PostLoadFixup();
                         }
                     }
                     else
@@ -210,7 +198,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         public static void DestroyHousekeeper()
         {
             Destroy(Instance);
-            sInstance = null;
+            Instance = null;
         }
 
         public override string GetServiceTopic(Sim serviceSim)
@@ -225,7 +213,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override bool NeedsAssignment(Lot lot)
         {
-            bool needsAssignment;
+            bool retVal;
             return !CommonUtils.TryDisplayScriptError(() =>
                 {
                     if (IsServiceRequested(lot))
@@ -233,25 +221,25 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         return !IsAnySimAssignedToLot(lot);
                     }
                     return false;
-                }, out needsAssignment) && needsAssignment;
+                }, out retVal) && retVal;
         }
 
         public override ServiceSituation InternalCreateSituation(Lot assignedLot, Sim createdSim, int cost, ObjectGuid requestingSim)
         {
-            ServiceSituation situation = null;
+            ServiceSituation retVal = null;
             CommonUtils.TryDisplayScriptError(() =>
                 {
                     if (assignedLot.MoveInScenario is Rodents)
                     {
-                        situation = assignedLot.MoveInScenario.SetupSituation(this, createdSim);
+                        retVal = assignedLot.MoveInScenario.SetupSituation(this, createdSim);
                         assignedLot.MoveInScenario = null;
                         return;
                     }
                     createdSim.SimDescription.ShowSocialsOnSim = true;
                     createdSim.CanBeFired = true;
-                    situation = new HousekeeperSituation(this, assignedLot, createdSim, cost);
+                    retVal = new HousekeeperSituation(this, assignedLot, createdSim, cost);
                 });
-            return situation;
+            return retVal;
         }
 
         public static void RemoveHousekeepersFromLot(Lot lot)

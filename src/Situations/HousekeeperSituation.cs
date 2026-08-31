@@ -19,13 +19,13 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
     {
         public class Cleaning : ChildSituation<HousekeeperSituation>
         {
-            public AlarmHandle mAlarmHandle = AlarmHandle.kInvalidHandle;
+            AlarmHandle mAlarmHandle = AlarmHandle.kInvalidHandle;
 
             public bool HasDuties
             {
                 get
                 {
-                    bool hasDuties;
+                    bool retVal;
                     return !CommonUtils.TryDisplayScriptError(() =>
                         {
                             foreach (Sim sim in Lot.GetObjects<Sim>())
@@ -60,7 +60,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                                 }
                             }
                             return false;
-                        }, out hasDuties) && hasDuties;
+                        }, out retVal) && retVal;
                 }
             }
 
@@ -103,7 +103,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public class HangAroundBeforeLeaving : ChildSituation<HousekeeperSituation>
         {
-            public AlarmHandle mAlarmHandle;
+            AlarmHandle mAlarmHandle;
 
             public HangAroundBeforeLeaving()
             {
@@ -111,20 +111,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public HangAroundBeforeLeaving(HousekeeperSituation parent) : base(parent)
             {
-            }
-
-            public override void Init(HousekeeperSituation parent)
-            {
-                CommonUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(Housekeeper.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
-            }
-
-            public void TimeToRoute()
-            {
-                CommonUtils.TryDisplayScriptError(() =>
-                    {
-                        Parent.NPCLeavingMessage(LeavingReason.NPCJobDone);
-                        Parent.SetState(new LeaveLot<HousekeeperSituation>(Parent));
-                    });
             }
 
             public override void CleanUp()
@@ -136,6 +122,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     });
             }
 
+            public override void Init(HousekeeperSituation parent)
+            {
+                CommonUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(Housekeeper.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
+            }
+
             public override void OnSocializedWith(Sim sim)
             {
                 CommonUtils.TryDisplayScriptError(() =>
@@ -145,6 +136,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                         {
                             AlarmManager.UpdateAlarmTime(mAlarmHandle, Housekeeper.ExtraWaitTimeAfterSocializing - timeLeft, TimeUnit.Hours);
                         }
+                    });
+            }
+
+            public void TimeToRoute()
+            {
+                CommonUtils.TryDisplayScriptError(() =>
+                    {
+                        Parent.NPCLeavingMessage(LeavingReason.NPCJobDone);
+                        Parent.SetState(new LeaveLot<HousekeeperSituation>(Parent));
                     });
             }
         }
@@ -206,7 +206,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(HousekeeperSituation parent)
             {
-                //CommonUtils.ShowDebugMessageDialog("StartCleaning");
                 CommonUtils.TryDisplayScriptError(() =>
                     {
                         parent.OnArriveOnLot();
@@ -218,7 +217,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public new class WaitToRoute : ChildSituation<HousekeeperSituation>
         {
-            public AlarmHandle mAlarmHandle;
+            AlarmHandle mAlarmHandle;
 
             public WaitToRoute()
             {
@@ -244,32 +243,19 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public void TimeToRoute()
             {
-                //CommonUtils.ShowDebugMessageDialog("TimeToRoute BEGIN");
                 CommonUtils.TryDisplayScriptError(() =>
                     {
                         Parent.OnServiceStarting();
-                        /*
-                        ForceSituationSpecificInteraction(Lot, Parent.Worker, GoToLot.Singleton, null, (s, x) =>
-                            {
-                                if (Parent.Worker.LotCurrent == Lot)
-                                {
-                                    Parent.SetState(new StartCleaning(Parent));
-                                    return;
-                                }
-                                Exit();
-                            }, (s, x) => Parent.SetState(new StartCleaning(Parent)));
-                        */
                         RouteToLot<HousekeeperSituation, StartCleaning> routeToLot = new WalkToLot<HousekeeperSituation, StartCleaning>(Parent);
                         routeToLot.SetRouteTime(Housekeeper.DriveTime);
                         Parent.SetState(routeToLot);
                     });
-                //CommonUtils.ShowDebugMessageDialog("TimeToRoute END");
             }
         }
 
-        public int mDateLastPaid;
+        int mDateLastPaid;
 
-        public AlarmHandle mPayHousekeeperAlarm = AlarmHandle.kInvalidHandle;
+        AlarmHandle mPayHousekeeperAlarm = AlarmHandle.kInvalidHandle;
 
         public int DayCountSinceLastPayment
         {

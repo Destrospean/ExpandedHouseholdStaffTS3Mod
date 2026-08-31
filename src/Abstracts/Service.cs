@@ -194,10 +194,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public static T sInstance;
-
-        public static Dictionary<Type, CommodityKind> sServiceMotives = new Dictionary<Type, CommodityKind>();
-
         public static Type DerivedType
         {
             get
@@ -206,16 +202,16 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public static CommodityKind ServiceMotive
+        public static Service<T> Instance
         {
             get
             {
-                CommodityKind serviceMotive;
-                if (!sServiceMotives.TryGetValue(DerivedType, out serviceMotive))
-                {
-                    serviceMotive = CommonUtils.GetCommodityKind("Be" + DerivedType.Name, CommonUtils.CommodityKindType.Motive);
-                }
-                return serviceMotive;
+                Service service;
+                return ServiceData.Instances.TryGetValue(DerivedType, out service) ? (Service<T>)service : null;
+            }
+            set
+            {
+                ServiceData.Instances[DerivedType] = value;
             }
         }
 
@@ -227,59 +223,64 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public static Service<T> Instance
+        public static CommodityKind ServiceMotive
         {
             get
             {
-                return sInstance;
+                CommodityKind serviceMotive;
+                if (!ServiceData.ServiceMotives.TryGetValue(DerivedType, out serviceMotive))
+                {
+                    serviceMotive = CommonUtils.GetCommodityKind("Be" + DerivedType.Name, CommonUtils.CommodityKindType.Motive);
+                }
+                return serviceMotive;
             }
         }
 
         public override SimDescription FindSimForAssignment(Lot lot)
         {
-            bool shouldUseServobot = false;
-            if (GameUtils.IsInstalled(ProductVersion.EP11))
-            {
-                shouldUseServobot = ServiceNPCSpecifications.ShouldUseServobot(ServiceType.ToString());
-            }
-            List<SimDescription> pool = new List<SimDescription>();
-            foreach (SimDescription simDescription in mPool)
-            {
-                if (!IsSimAssignedTask(simDescription) && CanSimBeAssignedToLot(simDescription, lot) && (shouldUseServobot && simDescription.IsEP11Bot || !shouldUseServobot && !simDescription.IsEP11Bot) && simDescription.CreatedSim == null)
+            SimDescription retVal;
+            return CommonUtils.TryDisplayScriptError(() =>
                 {
-                    pool.Add(simDescription);
-                    //CommonUtils.ShowDebugMessageDialog("A SimDescription: " + simDescription?.ToString() ?? "NULL");
-                }
-            }
-            if (pool.Count == 0)
-            {
-                SimDescription simDescription = CreateOrUpdateServiceNpc(null, lot);
-                if (simDescription != null)
-                {
-                    AddSimToPool(simDescription);
-                }
-                //CommonUtils.ShowDebugMessageDialog("Created SimDescription: " + simDescription?.ToString() ?? "NULL");
-                return simDescription;
-            }
-            SimDescription randomSimDescription = RandomUtil.GetRandomObjectFromList<SimDescription>(pool);
-            if (AlwaysTryToSendSameSim && lot.Household != null)
-            {
-                SimDescription simDescription = null;
-                if (mPreferredServiceNpc.TryGetValue(lot.Household.HouseholdId, out simDescription))
-                {
-                    if (pool.Contains(simDescription))
+                    bool shouldUseServobot = false;
+                    if (GameUtils.IsInstalled(ProductVersion.EP11))
                     {
-                        //CommonUtils.ShowDebugMessageDialog("Existing SimDescription: " + simDescription?.ToString() ?? "NULL");
+                        shouldUseServobot = ServiceNPCSpecifications.ShouldUseServobot(ServiceType.ToString());
+                    }
+                    List<SimDescription> pool = new List<SimDescription>();
+                    foreach (SimDescription simDescription in mPool)
+                    {
+                        if (!IsSimAssignedTask(simDescription) && CanSimBeAssignedToLot(simDescription, lot) && (shouldUseServobot && simDescription.IsEP11Bot || !shouldUseServobot && !simDescription.IsEP11Bot) && simDescription.CreatedSim == null)
+                        {
+                            pool.Add(simDescription);
+                        }
+                    }
+                    if (pool.Count == 0)
+                    {
+                        SimDescription simDescription = CreateOrUpdateServiceNpc(null, lot);
+                        if (simDescription != null)
+                        {
+                            AddSimToPool(simDescription);
+                        }
                         return simDescription;
                     }
-                }
-                else
-                {
-                    mPreferredServiceNpc[lot.Household.HouseholdId] = randomSimDescription;
-                }
-            }
-            //CommonUtils.ShowDebugMessageDialog("Random SimDescription: " + randomSimDescription?.ToString() ?? "NULL");
-            return randomSimDescription;
+                    SimDescription randomSimDescription = RandomUtil.GetRandomObjectFromList<SimDescription>(pool);
+                    if (AlwaysTryToSendSameSim && lot.Household != null)
+                    {
+                        SimDescription simDescription = null;
+                        if (mPreferredServiceNpc.TryGetValue(lot.Household.HouseholdId, out simDescription))
+                        {
+                            if (pool.Contains(simDescription))
+                            {
+                                return simDescription;
+                            }
+                        }
+                        else
+                        {
+                            mPreferredServiceNpc[lot.Household.HouseholdId] = randomSimDescription;
+                        }
+                    }
+                    return randomSimDescription;
+                }, out retVal) ? null : retVal;
         }
 
         public new SimDescription CreateOrUpdateServiceNpc(SimDescription preCreatedSim, Lot lot)
@@ -326,14 +327,18 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public static SimDescription CreateSimDescription(Service<T> service, CASAgeGenderFlags ageIfRandom, CASAgeGenderFlags genderIfRandom)
         {
-            WorldName currentWorld = GameUtils.GetCurrentWorld();
-            bool randomlyCreated;
-            SimDescription simDescription = CreateSimDescriptionInternal(service, null, ageIfRandom, genderIfRandom, currentWorld, out randomlyCreated);
-            string firstName, lastName;
-            service.GetNameForNewNpc(simDescription.IsMale, currentWorld, out firstName, out lastName);
-            simDescription.FirstName = firstName;
-            simDescription.LastName = lastName;
-            return simDescription;
+            SimDescription retVal;
+            return CommonUtils.TryDisplayScriptError(() =>
+                {
+                    WorldName currentWorld = GameUtils.GetCurrentWorld();
+                    bool randomlyCreated;
+                    SimDescription simDescription = CreateSimDescriptionInternal(service, null, ageIfRandom, genderIfRandom, currentWorld, out randomlyCreated);
+                    string firstName, lastName;
+                    service.GetNameForNewNpc(simDescription.IsMale, currentWorld, out firstName, out lastName);
+                    simDescription.FirstName = firstName;
+                    simDescription.LastName = lastName;
+                    return simDescription;
+                }, out retVal) ? null : retVal;
         }
 
         public static SimDescription CreateSimDescriptionInternal(Service<T> service, string outfitName, CASAgeGenderFlags ageIfRandom, CASAgeGenderFlags genderIfRandom, WorldName homeWorld, out bool randomlyCreated)
