@@ -70,7 +70,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
                 });
         }
 
-        public static ListenerAction OnObjectChanged(Event e)
+        static ListenerAction OnObjectChanged(Event e)
         {
             ListenerAction retVal;
             CommonUtils.TryDisplayScriptError(() =>
