@@ -56,10 +56,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         static void InitInjection()
         {
-            PhoneCell[] objects = Sims3.Gameplay.Queries.GetObjects<PhoneCell>();
-            for (int i = 0; i < objects.Length; i++)
+            foreach (PhoneCell phoneCell in Sims3.Gameplay.Queries.GetObjects<PhoneCell>())
             {
-                objects[i].AddInteractions();
+                phoneCell.AddInteractions();
             }
             EventTracker.AddListener(EventTypeId.kInventoryObjectAdded, OnObjectChanged);
             EventTracker.AddListener(EventTypeId.kObjectStateChanged, OnObjectChanged);

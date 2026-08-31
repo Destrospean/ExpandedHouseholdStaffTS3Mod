@@ -202,7 +202,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public static void DestroyHousekeeper()
         {
-            Destroy((Service)Instance);
+            Destroy(Instance);
             sInstance = null;
         }
 
