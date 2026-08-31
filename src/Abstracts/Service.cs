@@ -355,7 +355,19 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             CommonUtils.TryDisplayScriptError(() =>
                 {
-                    FixUpService();
+                    DerivedType.GetMethod("Create").Invoke(null, null);
+                    if (Instance == null)
+                    {
+                        return;
+                    }
+                    IEnumerator<SimDescription> enumerator = Instance.Pool.GetEnumerator();
+                    while (enumerator.MoveNext())
+                    {
+                        if (enumerator.Current != null && enumerator.Current.CreatedSim != null)
+                        {
+                            CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, ServiceMotive);
+                        }
+                    }
                     if (Household.ActiveHousehold != null)
                     {
                         InitInjection();
@@ -539,23 +551,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     }
                     return randomSimDescription;
                 }, out retVal) ? null : retVal;
-        }
-
-        public static void FixUpService()
-        {
-            DerivedType.GetMethod("Create").Invoke(null, null);
-            if (Instance == null)
-            {
-                return;
-            }
-            IEnumerator<SimDescription> enumerator = Instance.Pool.GetEnumerator();
-            while (enumerator.MoveNext())
-            {
-                if (enumerator.Current != null && enumerator.Current.CreatedSim != null)
-                {
-                    CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, ServiceMotive);
-                }
-            }
         }
 
         public static void Initialize()
