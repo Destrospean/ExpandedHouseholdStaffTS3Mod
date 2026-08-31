@@ -41,10 +41,6 @@
     <Compile Include="ExtensionAttribute.cs" />
     <Compile Include="Situations\HousekeeperSituation.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Unused\Roles\HouseMaid.cs" />
-    <Compile Include="Unused\Objects\ServantManager.cs" />
-    <Compile Include="Unused\Abstracts\ServantRoleBase.cs" />
-    <Compile Include="Unused\Interfaces\IServantRole.cs" />
     <Compile Include="Abstracts\Service.cs" />
     <Compile Include="Abstracts\ServiceSituation.cs" />
   </ItemGroup>
@@ -95,11 +91,6 @@
     <Folder Include="Abstracts\" />
     <Folder Include="Services\" />
     <Folder Include="Situations\" />
-    <Folder Include="Unused\" />
-    <Folder Include="Unused\Roles\" />
-    <Folder Include="Unused\Objects\" />
-    <Folder Include="Unused\Abstracts\" />
-    <Folder Include="Unused\Interfaces\" />
   </ItemGroup>
   <Target Name="Generate STBLs" BeforeTargets="Build">
     <Exec Command="&quot;$(SolutionDir)scripts\GenerateSTBLs.bat&quot;" Condition="'$(OS)' == 'Windows_NT'" />
