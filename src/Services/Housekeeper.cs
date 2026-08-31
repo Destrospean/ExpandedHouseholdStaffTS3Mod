@@ -165,34 +165,41 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override bool CanRequestServiceFromPhone(Lot lot)
         {
-            if (base.CanRequestServiceFromPhone(lot))
-            {
-                if (GameUtils.GetCurrentWorldType() != WorldType.Vacation)
+            bool canRequestServiceFromPhone;
+            return !CommonUtils.TryDisplayScriptError(() =>
                 {
-                    return !lot.IsBaseCampLotType;
-                }
-                return false;
-            }
-            return false;
+                    if (base.CanRequestServiceFromPhone(lot))
+                    {
+                        if (GameUtils.GetCurrentWorldType() != WorldType.Vacation)
+                        {
+                            return !lot.IsBaseCampLotType;
+                        }
+                        return false;
+                    }
+                    return false;
+                }, out canRequestServiceFromPhone) && canRequestServiceFromPhone;
         }
 
         public static void Create()
         {
-            if (ServiceNPCSpecifications.ValidForCurrentWorld(ServiceType.Maid))
-            {
-                if (sInstance == null)
+            CommonUtils.TryDisplayScriptError(() =>
                 {
-                    new Housekeeper();
-                }
-                else
-                {
-                    sInstance.PostLoadFixup();
-                }
-            }
-            else
-            {
-                DestroyHousekeeper();
-            }
+                    if (ServiceNPCSpecifications.ValidForCurrentWorld(ServiceType.Maid))
+                    {
+                        if (sInstance == null)
+                        {
+                            new Housekeeper();
+                        }
+                        else
+                        {
+                            sInstance.PostLoadFixup();
+                        }
+                    }
+                    else
+                    {
+                        DestroyHousekeeper();
+                    }
+                });
         }
 
         public static void Destroy()
@@ -218,11 +225,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override bool NeedsAssignment(Lot lot)
         {
-            if (IsServiceRequested(lot))
-            {
-                return !IsAnySimAssignedToLot(lot);
-            }
-            return false;
+            bool needsAssignment;
+            return !CommonUtils.TryDisplayScriptError(() =>
+                {
+                    if (IsServiceRequested(lot))
+                    {
+                        return !IsAnySimAssignedToLot(lot);
+                    }
+                    return false;
+                }, out needsAssignment) && needsAssignment;
         }
 
         public override ServiceSituation InternalCreateSituation(Lot assignedLot, Sim createdSim, int cost, ObjectGuid requestingSim)
@@ -245,19 +256,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public static void RemoveHousekeepersFromLot(Lot lot)
         {
-            if (Instance == null || (!Instance.IsServiceRequested(lot) && !Instance.IsAnySimAssignedToLot(lot)))
-            {
-                return;
-            }
-            List<Sim> simsAssignedToLot = Instance.GetSimsAssignedToLot(lot);
-            foreach (Sim item in simsAssignedToLot)
-            {
-                HousekeeperSituation housekeeperSituation = ServiceSituation.FindServiceSituationInvolving(item) as HousekeeperSituation;
-                if (housekeeperSituation != null)
+            CommonUtils.TryDisplayScriptError(() =>
                 {
-                    housekeeperSituation.SetToLeave();
-                }
-            }
+                    if (Instance == null || !Instance.IsServiceRequested(lot) && !Instance.IsAnySimAssignedToLot(lot))
+                    {
+                        return;
+                    }
+                    List<Sim> simsAssignedToLot = Instance.GetSimsAssignedToLot(lot);
+                    foreach (Sim item in simsAssignedToLot)
+                    {
+                        HousekeeperSituation housekeeperSituation = ServiceSituation.FindServiceSituationInvolving(item) as HousekeeperSituation;
+                        if (housekeeperSituation != null)
+                        {
+                            housekeeperSituation.SetToLeave();
+                        }
+                    }
+                });
         }
 
         public override void SetServiceNPCProperties(SimDescription simDescription)
@@ -270,45 +284,49 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override void SetTraits(SimDescription simDescription)
         {
-            simDescription.TraitManager.AddElement(TraitNames.Neat);
-            simDescription.TraitManager.AddHiddenElement(TraitNames.MakesNoMesses);
-            simDescription.TraitManager.AddHiddenElement(TraitNames.SpeedyCleaner);
-            List<TraitNames> potentialTraits = new List<TraitNames>
+            CommonUtils.TryDisplayScriptError(() =>
                 {
-                    TraitNames.Neurotic,
-                    TraitNames.Flirty,
-                    TraitNames.Kleptomaniac,
-                    TraitNames.Charismatic
-                };
-            for (int i = 0; i < 2; i++)
-            {
-                TraitNames traitName = RandomUtil.GetRandomObjectFromList(potentialTraits);
-                simDescription.TraitManager.AddElement(traitName);
-                potentialTraits.Remove(traitName);
-            }
-            simDescription.TraitManager.AddRandomTrait(2);
+                    simDescription.TraitManager.AddElement(TraitNames.Neat);
+                    simDescription.TraitManager.AddHiddenElement(TraitNames.MakesNoMesses);
+                    simDescription.TraitManager.AddHiddenElement(TraitNames.SpeedyCleaner);
+                    List<TraitNames> potentialTraits = new List<TraitNames>
+                        {
+                            TraitNames.Neurotic,
+                            TraitNames.Flirty,
+                            TraitNames.Kleptomaniac,
+                            TraitNames.Charismatic
+                        };
+                    for (int i = 0; i < 2; i++)
+                    {
+                        TraitNames traitName = RandomUtil.GetRandomObjectFromList(potentialTraits);
+                        simDescription.TraitManager.AddElement(traitName);
+                        potentialTraits.Remove(traitName);
+                    }
+                    simDescription.TraitManager.AddRandomTrait(2);
+                });
         }
 
         public override void UpdateCreatedSim(Sim sim)
         {
-            /*
-            Skill handinessSkill = sim.SkillManager.AddElement(SkillNames.Handiness);
-            int maxSkillLevel = handinessSkill.MaxSkillLevel;
-            for (int i = 0; i < maxSkillLevel; i++)
-            {
-                handinessSkill.ForceGainPointsForLevelUp();
-            }
-            */
-            Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kHousekeeperBook);
-            Inventory inventory = sim.Inventory;
-            if (inventory != null)
-            {
-                inventory.DestroyItems();
-                if (!inventory.TryToAdd(bookGeneralByTitle))
+            CommonUtils.TryDisplayScriptError(() =>
                 {
-                    bookGeneralByTitle.Destroy();
-                }
-            }
+                    Skill handinessSkill = sim.SkillManager.AddElement(SkillNames.Handiness);
+                    int maxSkillLevel = handinessSkill.MaxSkillLevel;
+                    for (int i = 0; i < maxSkillLevel; i++)
+                    {
+                        handinessSkill.ForceGainPointsForLevelUp();
+                    }
+                    Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kHousekeeperBook);
+                    Inventory inventory = sim.Inventory;
+                    if (inventory != null)
+                    {
+                        inventory.DestroyItems();
+                        if (!inventory.TryToAdd(bookGeneralByTitle))
+                        {
+                            bookGeneralByTitle.Destroy();
+                        }
+                    }
+                });
         }
     }
 }
