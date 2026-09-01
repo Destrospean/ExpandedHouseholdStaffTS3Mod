@@ -96,30 +96,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public static void UpdateMotiveTunings(Sim sim, CommodityKind commodityKind)
-        {
-            IEnumerable<MotiveTuning> allTunings = MotiveTuning.GetAllTunings(commodityKind);
-            if (allTunings == null)
-            {
-                return;
-            }
-            MotiveTuning motiveTuning = null;
-            float score = float.MinValue;
-            foreach (MotiveTuning tuning in allTunings)
-            {
-                float tempScore = sim.ScoreMotiveTuning(tuning);
-                if (tempScore > score)
-                {
-                    score = tempScore;
-                    motiveTuning = tuning;
-                }
-            }
-            if (motiveTuning != null)
-            {
-                sim.mMotiveTuning[(int)commodityKind] = motiveTuning;
-            }
-        }
-
         public static bool TryDisplayScriptError(Action action)
         {
             Exception exception;
@@ -151,6 +127,30 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             {
                 exception = ex;
                 return true;
+            }
+        }
+
+        public static void UpdateMotiveTunings(Sim sim, CommodityKind commodityKind)
+        {
+            IEnumerable<MotiveTuning> allTunings = MotiveTuning.GetAllTunings(commodityKind);
+            if (allTunings == null)
+            {
+                return;
+            }
+            MotiveTuning motiveTuning = null;
+            float score = float.MinValue;
+            foreach (MotiveTuning tuning in allTunings)
+            {
+                float tempScore = sim.ScoreMotiveTuning(tuning);
+                if (tempScore > score)
+                {
+                    score = tempScore;
+                    motiveTuning = tuning;
+                }
+            }
+            if (motiveTuning != null)
+            {
+                sim.mMotiveTuning[(int)commodityKind] = motiveTuning;
             }
         }
     }

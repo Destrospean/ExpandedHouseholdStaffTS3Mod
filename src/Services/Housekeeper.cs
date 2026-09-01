@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
-    public class Housekeeper : Service<Housekeeper>, IAmCleaningService, IAmLiveInService, IAmQuietAroundSleepingSims, IWaitToPutAwayLeftOvers
+    public class Housekeeper : Service<Housekeeper>, IAmCleaningService, IAmLiveInService
     {
         const string kHousekeeperBook = "HowToServeAndNotBeServed";
 
@@ -159,19 +159,30 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
+        public override bool IsQuietAroundSleepingSims
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool WaitsBeforePuttingAwayLeftovers
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         static Housekeeper()
         {
-            Initialize();
+            Init();
         }
 
         public Housekeeper()
         {
             Instance = this;
-        }
-
-        public override bool CanRequestServiceFromPhone(Lot lot)
-        {
-            return false;
         }
 
         public static void Create()

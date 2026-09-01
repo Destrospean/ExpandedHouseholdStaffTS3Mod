@@ -41,13 +41,13 @@
     <Compile Include="ExtensionAttribute.cs" />
     <Compile Include="Abstracts\Service.cs" />
     <Compile Include="Abstracts\ServiceSituation.cs" />
-    <Compile Include="ServiceData.cs" />
     <Compile Include="Services\Chef.cs" />
     <Compile Include="Situations\HousekeeperSituation.cs" />
     <Compile Include="Situations\ChefSituation.cs" />
     <Compile Include="ScoringFunctions.cs" />
     <Compile Include="AutonomyUtils.cs" />
-    <Compile Include="Interfaces\Markers.cs" />
+    <Compile Include="Interfaces\IAmLiveInService.cs" />
+    <Compile Include="ServiceUtils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

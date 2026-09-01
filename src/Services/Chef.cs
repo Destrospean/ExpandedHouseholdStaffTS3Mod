@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
-    public class Chef : Service<Chef>, IAmLiveInService, IWaitToPutAwayLeftOvers
+    public class Chef : Service<Chef>, IAmLiveInService
     {
         const string kChefBook = "HowToServeAndNotBeServed";
 
@@ -146,19 +146,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
+        public override bool WaitsBeforePuttingAwayLeftovers
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         static Chef()
         {
-            Initialize();
+            Init();
         }
 
         public Chef()
         {
             Instance = this;
-        }
-
-        public override bool CanRequestServiceFromPhone(Lot lot)
-        {
-            return false;
         }
 
         public static void Create()
@@ -197,6 +200,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         public override string GetServiceTopic(Sim serviceSim)
         {
             return "Chef Service";
+        }
+
+        public override string GetUniformName(SimDescription simDescription)
+        {
+            return "career_execchef_" + (simDescription.IsFemale ? "female" : "male") + (simDescription.Elder ? "elder" : "");
         }
 
         public static string LocalizeString(string name, params object[] parameters)

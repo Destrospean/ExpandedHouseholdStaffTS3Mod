@@ -210,11 +210,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             get
             {
                 Service service;
-                return ServiceData.Instances.TryGetValue(DerivedType, out service) ? (Service<T>)service : null;
+                return ServiceUtils.Instances.TryGetValue(DerivedType, out service) ? (Service<T>)service : null;
             }
             set
             {
-                ServiceData.Instances[DerivedType] = value;
+                ServiceUtils.Instances[DerivedType] = value;
             }
         }
 
@@ -226,12 +226,28 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        public virtual bool IsQuietAroundSleepingSims
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual bool WaitsBeforePuttingAwayLeftovers
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public static CommodityKind ServiceMotive
         {
             get
             {
                 CommodityKind serviceMotive;
-                if (!ServiceData.ServiceMotives.TryGetValue(DerivedType, out serviceMotive))
+                if (!ServiceUtils.ServiceMotives.TryGetValue(DerivedType, out serviceMotive))
                 {
                     serviceMotive = CommonUtils.GetCommodityKind("Be" + DerivedType.Name, CommonUtils.CommodityKindType.Motive);
                 }
@@ -241,13 +257,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         static void AddInteractions(Bed bed)
         {
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    if (typeof(IAmLiveInService).IsAssignableFrom(DerivedType))
-                    {
-                        bed.AddInteraction(SetUnsetServiceBed.Singleton, true);
-                    }
-                });
+            CommonUtils.TryDisplayScriptError(() => bed.AddInteraction(SetUnsetServiceBed.Singleton, true));
         }
 
         static void AddInteractions(Phone phone)
@@ -307,11 +317,14 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     if (onObjectPlacedInLotEventArgs != null)
                     {
                         GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
-                        Bed bed = gameObject as Bed;
-                        if (bed != null)
+                        if (typeof(IAmLiveInService).IsAssignableFrom(DerivedType))
                         {
-                            AddInteractions(bed);
-                            return;
+                            Bed bed = gameObject as Bed;
+                            if (bed != null)
+                            {
+                                AddInteractions(bed);
+                                return;
+                            }
                         }
                         Phone phone = gameObject as Phone;
                         if (phone != null)
@@ -326,14 +339,14 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             CommonUtils.TryDisplayScriptError(() =>
                 {
-                    if (!ServiceData.PreloadedServices.Contains(DerivedType))
+                    if (!ServiceUtils.PreloadedServices.Contains(DerivedType))
                     {
                         XmlDbData xmlDbData = XmlDbData.ReadData("ServantRolesMod_" + DerivedType.Name + "_ActiveTopic");
                         if (xmlDbData != null)
                         {
                             SocialManager.ParseActiveTopic(xmlDbData);
                         }
-                        ServiceData.PreloadedServices.Add(DerivedType);
+                        ServiceUtils.PreloadedServices.Add(DerivedType);
                     }
                 });
         }
@@ -400,6 +413,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             {
                 Instance = null;
             }
+        }
+
+        public override bool CanRequestServiceFromPhone(Lot lot)
+        {
+            return false;
         }
 
         public new SimDescription CreateOrUpdateServiceNpc(SimDescription preCreatedSim, Lot lot)
@@ -560,7 +578,18 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 }, out retVal) ? null : retVal;
         }
 
-        public static void Initialize()
+        public virtual string GetUniformName(SimDescription simDescription)
+        {
+            ResourceKey uniform;
+            string uniformName;
+            if (ServiceNPCSpecifications.TryGetUniform(ServiceType.ToString(), simDescription.Gender, out uniform, out uniformName))
+            {
+                return uniformName;
+            }
+            return null;
+        }
+
+        public static void Init()
         {
             CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);
             LoadSaveManager.ObjectGroupsPreLoad += OnPreLoad;

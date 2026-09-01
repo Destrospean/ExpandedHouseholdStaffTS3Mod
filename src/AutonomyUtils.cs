@@ -7,7 +7,6 @@ using Sims3.Gameplay.ChildAndTeenUpdates;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
-using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.ObjectComponents;
 using Sims3.Gameplay.Seasons;
 using Sims3.Gameplay.Services;
@@ -257,7 +256,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
                 }
                 if (autonomy.mActor.Service != null)
                 {
-                    PropertyInfo useObjectInSameRoomAsSleeperMultiplierProperty = autonomy.mActor.Service.GetType().GetProperty("UseObjectInSameRoomAsSleeperMultiplier");
+                    Type serviceType = autonomy.mActor.Service.GetType();
+                    PropertyInfo useObjectInSameRoomAsSleeperMultiplierProperty = serviceType.GetProperty("UseObjectInSameRoomAsSleeperMultiplier");
                     if (autonomy.mActor.Service.ServiceType == ServiceType.Babysitter)
                     {
                         if ((target as GameObject).ActorsUsingMe.Count > 0)
@@ -282,13 +282,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
                             }
                         }
                     }
-                    else if (autonomy.mActor.Service is IAmQuietAroundSleepingSims && useObjectInSameRoomAsSleeperMultiplierProperty != null && useObjectInSameRoomAsSleeperMultiplierProperty.PropertyType == typeof(float) && target as IBed == null)
+                    else if (ServiceUtils.IsFromServantRolesMod(serviceType) && (bool)serviceType.GetProperty("IsQuietAroundSleepingSims").GetValue(autonomy.mActor.Service, null) && useObjectInSameRoomAsSleeperMultiplierProperty != null && useObjectInSameRoomAsSleeperMultiplierProperty.PropertyType == typeof(float) && target as IBed == null)
                     {
                         int roomId = iop.Target.RoomId;
-                        Household household = autonomy.mActor.LotCurrent.Household;
-                        if (household != null)
+                        if (autonomy.mActor.LotCurrent.Household != null)
                         {
-                            foreach (Sim sim in household.Sims)
+                            foreach (Sim sim in autonomy.mActor.LotCurrent.Household.Sims)
                             {
                                 if (sim.IsSleeping && sim.RoomId == roomId)
                                 {

@@ -12,6 +12,9 @@ using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.UI;
 using System;
 using System.Collections.Generic;
+using Sims3.Gameplay.CAS;
+using Sims3.SimIFace.CAS;
+using Sims3.SimIFace;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 {
@@ -320,6 +323,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 base.SetToFire(serviceSim, firer);
             }
+        }
+
+        public override void SwitchWorkerToServiceOutfit()
+        {
+            SimDescription simDescription = Worker.SimDescription;
+            SimOutfit uniform = new SimOutfit(ResourceKey.CreateOutfitKeyFromProductVersion("career_execchef_" + (simDescription.IsFemale ? "female" : "male") + (simDescription.Elder ? "elder" : ""), ProductVersion.BaseGame));
+            SimOutfit resultOutfit;
+            if (OutfitUtils.TryApplyUniformToOutfit(simDescription.GetOutfit(OutfitCategories.Everyday, 0), uniform, simDescription, DerivedType.Name + ".SwitchWorkerToServiceOutfit", out resultOutfit))
+            {
+                simDescription.AddOutfit(resultOutfit, OutfitCategories.Career, true);
+                for (int i = 1; i < simDescription.GetOutfitCount(OutfitCategories.Career); i++)
+                {
+                    simDescription.RemoveOutfit(OutfitCategories.Career, i, true);
+                }
+            }
+            base.SwitchWorkerToServiceOutfit();
         }
 
         public override void SetToJobDone()
