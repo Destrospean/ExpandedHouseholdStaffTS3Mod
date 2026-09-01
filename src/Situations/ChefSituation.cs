@@ -12,9 +12,6 @@ using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.UI;
 using System;
 using System.Collections.Generic;
-using Sims3.Gameplay.CAS;
-using Sims3.SimIFace.CAS;
-using Sims3.SimIFace;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 {
