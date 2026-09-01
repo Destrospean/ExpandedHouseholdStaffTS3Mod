@@ -32,7 +32,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 {
                 }
 
-                public override string GetInteractionName(Sim actor, Phone target, InteractionObjectPair interaction)
+                public override string GetInteractionName(Sim actor, Phone target, InteractionObjectPair iop)
                 {
                     return Localization.LocalizeString(DerivedType.GetLocalizationKey() + ":RequestService");
                 }

@@ -3,4 +3,12 @@
     public interface IAmLiveInService
     {
     }
+
+    public interface IAmQuietAroundSleepingSims
+    {
+    }
+
+    public interface IWaitToPutAwayLeftOvers
+    {
+    }
 }

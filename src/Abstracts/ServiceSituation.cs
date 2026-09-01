@@ -136,7 +136,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             get
             {
-                return typeof(IAmLiveInService).IsAssignableFrom(Type.GetType(typeof(CommonUtils).Namespace + ".Services." + DerivedType.Name.Remove(DerivedType.Name.LastIndexOf("Situation"))));
+                return Service is IAmLiveInService;
             }
         }
 
@@ -188,6 +188,23 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public void AddCheckForFireAlarm()
         {
             mCheckForFireAlarmHandle = Worker.AddAlarmRepeating(Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, CheckForFire, Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, "Service: Check for Fire", AlarmType.DeleteOnReset);
+        }
+
+        public virtual bool ChargeForServiceWhileActive()
+        {
+            int totalCost = CostTotal();
+            if (totalCost > 0)
+            {
+                if (Lot.Household.FamilyFunds < totalCost)
+                {
+                    SetToFire(Worker, Worker);
+                    return false;
+                }
+                Lot.Household.ModifyFamilyFunds(-totalCost);
+                Type serviceType = Service.GetType();
+                StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString(serviceType.GetLocalizationKey().Replace(serviceType.Name, "WeeklyPayment:" + serviceType.Name), totalCost), Worker.ObjectId, StyledNotification.NotificationStyle.kSimTalking));
+            }
+            return true;
         }
 
         public void CheckForFire()

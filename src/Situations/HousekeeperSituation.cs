@@ -39,9 +39,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                             }
                             if (Parent.Worker.CurrentInteraction != null && Parent.Worker.CurrentInteraction.GetPriority().Level <= InteractionPriorityLevel.Autonomous)
                             {
-                                InteractionInstance interactionInstance = Parent.Worker.Autonomy.FindBestAction();
+                                InteractionInstance interactionInstance = AutonomyUtils.FindBestAction(Parent.Worker.Autonomy);
                                 if (interactionInstance != null && Parent.IsInteractionBetterThanCurrent(interactionInstance))
                                 {
+                                    
                                     Parent.Worker.AddExitReason(ExitReason.CanceledByScript);
                                     return false;
                                 }
@@ -297,22 +298,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         public HousekeeperSituation(Service<Housekeeper> service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
             mDateLastPaid = SimClock.ElapsedCalendarDays();
-        }
-
-        public bool ChargeForServiceWhileActive()
-        {
-            int totalCost = CostTotal();
-            if (totalCost > 0)
-            {
-                if (Lot.Household.FamilyFunds < totalCost)
-                {
-                    SetToFire(Worker, Worker);
-                    return false;
-                }
-                Lot.Household.ModifyFamilyFunds(-totalCost);
-                StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString(typeof(Housekeeper).GetLocalizationKey().Replace(typeof(Housekeeper).Name, "WeeklyPayment:" + typeof(Housekeeper).Name), totalCost), Worker.ObjectId, StyledNotification.NotificationStyle.kSimTalking));
-            }
-            return true;
         }
 
         public override int CostTotal()

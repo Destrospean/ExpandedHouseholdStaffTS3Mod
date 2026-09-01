@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
-    public class Chef : Service<Chef>, IAmLiveInService
+    public class Chef : Service<Chef>, IAmLiveInService, IWaitToPutAwayLeftOvers
     {
         const string kChefBook = "HowToServeAndNotBeServed";
 
@@ -29,35 +29,31 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         [Tunable]
         [TunableComment("Length of time (in minutes) between checks that everything is cleaned")]
-        static float kCheckTime = 5;
+        static float kCheckTime = 5f;
 
         [TunableComment("Length of time (in hours) that the chef waits before routing to lot")]
         [Tunable]
-        static float kDelayBeforeArriving = .5f;
+        static float kDelayBeforeArriving = 0.5f;
 
         [TunableComment("Length of time (in hours) that the chef waits before leaving the lot, after their work is done")]
         [Tunable]
-        static float kDelayBeforeLeaving = .3f;
+        static float kDelayBeforeLeaving = 0.3f;
 
         [TunableComment("Length of time (in minutes) that the chef takes to drive to lot")]
         [Tunable]
-        static float kDriveTime = 5;
+        static float kDriveTime = 5f;
 
         [Tunable]
         [TunableComment("Extra time (in hours) to wait before leaving if the service NPC is socialized with")]
-        static float kExtraWaitTimeAfterSocializing = .5f;
+        static float kExtraWaitTimeAfterSocializing = 0.5f;
 
         [Tunable]
         [TunableComment("If the chef's relationship with any YAE falls below this level, they will quit")]
-        static float kRelationshipLevelForQuit = -50;
+        static float kRelationshipLevelForQuit = -50f;
 
         [TunableComment("How old leftovers can be out in minutes before the chef will put it away")]
         [Tunable]
-        static float kTimeWaitBeforePutawayLeftovers = 60;
-
-        [Tunable]
-        [TunableComment("Multiplier for interactions in a room wtheire a sim is sleeping")]
-        static float kUseObjectInSameRoomAsSleeperMultiplier = .1f;
+        static float kTimeWaitBeforePutawayLeftovers = 60f;
 
         public override ServiceTuning Tuning
         {
@@ -120,14 +116,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             get
             {
                 return kTimeWaitBeforePutawayLeftovers;
-            }
-        }
-
-        public static float UseObjectInSameRoomAsSleeperMultiplier
-        {
-            get
-            {
-                return kUseObjectInSameRoomAsSleeperMultiplier;
             }
         }
 

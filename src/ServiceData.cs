@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 {
-    public static class ServiceData
+    public class ServiceData
     {
         public static Dictionary<Type, Service> Instances = new Dictionary<Type, Service>();
 
