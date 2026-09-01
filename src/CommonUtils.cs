@@ -33,6 +33,16 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         [Tunable]
         public static bool kShowDebugMessages = true;
 
+        public static void AddAsChangeToOutput<InteractionDefinition, Target>(this CommodityKind commodityKind, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
+        {
+            commodityKind.AddAsChangeToOutput(typeof(InteractionDefinition), typeof(Target), advertised, locked, actual, updateType, timeDependsOn, updateEvenOnFailure, updateAboveAndBelowZero);
+        }
+
+        public static void AddAsChangeToOutput(this CommodityKind commodityKind, Type interactionDefinitionType, Type targetType, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
+        {
+            AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType).mTradeoff.mOutputs.Add(new CommodityChange(commodityKind, advertised, locked, actual, updateType, timeDependsOn, updateEvenOnFailure, updateAboveAndBelowZero));
+        }
+
         public static void AddEnumValue<T>(string key, object value) where T : struct
         {
             Type enumType = typeof(T);

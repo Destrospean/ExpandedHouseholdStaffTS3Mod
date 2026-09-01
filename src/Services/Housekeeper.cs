@@ -1,18 +1,23 @@
-﻿using Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod;
+﻿using Sims3.Gameplay.Abstracts;
+using Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
+using Sims3.Gameplay.InteractionsShared;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Objects;
+using Sims3.Gameplay.Objects.Environment;
+using Sims3.Gameplay.Objects.Fireplaces;
 using Sims3.Gameplay.Scenarios;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations;
 using Sims3.SimIFace;
+using Sims3.Store.Objects;
 using System;
 using System.Collections.Generic;
 
@@ -178,6 +183,18 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         static Housekeeper()
         {
             Init();
+            LoadSaveManager.ObjectGroupsPreLoad += () => CommonUtils.TryDisplayScriptError(() =>
+                {
+                    ServiceMotive.AddAsChangeToOutput<Bookshelf_ReadSomething.Definition, Bookshelf>(2, true, 2, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsChangeToOutput<Tablet.ChooseBookOnTablet.Definition, Tablet>(1, true, 1, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsChangeToOutput<FirePit.LightFire.Definition, FirePit>(200, true, 200, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsChangeToOutput<Fireplace.LightFire.Definition, Fireplace>(200, true, 200, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsChangeToOutput<ReadBook.Definition, Book>(1, true, 1, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsChangeToOutput<ReadBookChooser.Definition, Book>(1, true, 1, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsChangeToOutput<Tablet.ReadBookOnTablet.Definition, Book>(1, true, 1, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsChangeToOutput<Sim.ReadSomethingInInventory.Definition, Sim>(2, true, 2, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsChangeToOutput<SitAndWait.Definition, GameObject>(1, false, 1, OutputUpdateType.ImmediateDelta);
+                });
         }
 
         public Housekeeper()
