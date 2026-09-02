@@ -202,11 +202,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             return "Chef Service";
         }
 
-        public override string GetUniformName(SimDescription simDescription)
-        {
-            return "career_execchef_" + (simDescription.IsFemale ? "female" : "male") + (simDescription.Elder ? "elder" : "");
-        }
-
         public static string LocalizeString(string name, params object[] parameters)
         {
             return Localization.LocalizeString(sLocalizationKey + ":" + name, parameters);

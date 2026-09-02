@@ -565,17 +565,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 }, out retVal) ? null : retVal;
         }
 
-        public virtual string GetUniformName(SimDescription simDescription)
-        {
-            ResourceKey uniform;
-            string uniformName;
-            if (ServiceNPCSpecifications.TryGetUniform(ServiceType.ToString(), simDescription.Gender, out uniform, out uniformName))
-            {
-                return uniformName;
-            }
-            return null;
-        }
-
         public static void Init()
         {
             CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);

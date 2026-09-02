@@ -2,6 +2,7 @@
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
+using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interactions;
@@ -276,6 +277,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         {
             Worker.Autonomy.Motives.MaxEverything();
             Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Energy, CommodityKind.Hygiene);
+        }
+
+        public override string GetUniformName(SimDescription simDescription)
+        {
+            return "career_execchef_" + (simDescription.IsFemale ? "female" : "male") + (simDescription.Elder ? "elder" : "");
         }
 
         public override bool IsInteractionBetterThanCurrent(InteractionInstance ii)

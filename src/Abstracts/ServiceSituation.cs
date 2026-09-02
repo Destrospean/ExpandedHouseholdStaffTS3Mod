@@ -252,6 +252,13 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Fun, CommodityKind.Social);
         }
 
+        public virtual string GetUniformName(SimDescription simDescription)
+        {
+            ResourceKey uniform;
+            string uniformName;
+            return ServiceNPCSpecifications.TryGetUniform(simDescription.Service.ServiceType.ToString(), simDescription.Gender, out uniform, out uniformName) ? uniformName : null;
+        }
+
         public float GetNewInteractionPriorityValue()
         {
             InteractionPriority interactionPriority = new InteractionPriority(InteractionPriorityLevel.Zero, 0);
@@ -308,24 +315,23 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public override void SwitchWorkerToServiceOutfit()
         {
-            if (Worker.Service.IsFromServantRolesMod())
-            {
-                SimDescription simDescription = Worker.SimDescription;
-                SimOutfit uniform = new SimOutfit(ResourceKey.CreateOutfitKeyFromProductVersion((string)Worker.Service.GetType().GetMethod("GetUniformName").Invoke(Worker.Service, new object[]
-                    {
-                        simDescription
-                    }), ProductVersion.BaseGame));
-                SimOutfit resultOutfit;
-                if (OutfitUtils.TryApplyUniformToOutfit(simDescription.GetOutfit(OutfitCategories.Everyday, 0), uniform, simDescription, DerivedType.Name + ".SwitchWorkerToServiceOutfit", out resultOutfit))
+            CommonUtils.TryDisplayScriptError(() =>
                 {
-                    simDescription.AddOutfit(resultOutfit, OutfitCategories.Career, true);
-                    for (int i = 1; i < simDescription.GetOutfitCount(OutfitCategories.Career); i++)
+                    string uniformName = GetUniformName(Worker.SimDescription);
+                    if (uniformName != null)
                     {
-                        simDescription.RemoveOutfit(OutfitCategories.Career, i, true);
+                        SimOutfit resultOutfit;
+                        if (OutfitUtils.TryApplyUniformToOutfit(Worker.SimDescription.GetOutfit(OutfitCategories.Everyday, 0), new SimOutfit(ResourceKey.CreateOutfitKeyFromProductVersion(uniformName, ProductVersion.BaseGame)), Worker.SimDescription, DerivedType.Name + ".SwitchWorkerToServiceOutfit", out resultOutfit))
+                        {
+                            Worker.SimDescription.AddOutfit(resultOutfit, OutfitCategories.Career, true);
+                            for (int i = 1; i < Worker.SimDescription.GetOutfitCount(OutfitCategories.Career); i++)
+                            {
+                                Worker.SimDescription.RemoveOutfit(OutfitCategories.Career, i, true);
+                            }
+                        }
                     }
-                }
-            }
-            base.SwitchWorkerToServiceOutfit();
+                    base.SwitchWorkerToServiceOutfit();
+                });
         }
 
         public void UnsetServiceBed()
