@@ -7,16 +7,4 @@
   <resource name="ServantRolesMod_Chef_ActiveTopic" type="0x0333406C"/>
   <resource name="ServantRolesMod_Housekeeper_ActiveTopic" type="0x0333406C"/>
   <resource name="PutAwayLeftovers_ServingContainer" type="0x03B33DDF"/>
-  <!-- ITUN resources for the BeChef CommodityKind -->
-
-  <!-- ITUN resources for the BeHousekeeper CommodityKind -->
-    <resource name="Bookshelf_ReadSomething_Bookshelf" type="0x03B33DDF"/>
-    <resource name="ChooseBookOnTablet_Tablet" type="0x03B33DDF"/>
-    <resource name="LightFire_FirePit" type="0x03B33DDF"/>
-    <resource name="LightFire_Fireplace" type="0x03B33DDF"/>
-    <resource name="ReadBook_Book" type="0x03B33DDF"/>
-    <resource name="ReadBookChooser_Book" type="0x03B33DDF"/>
-    <resource name="ReadBookOnTablet_Book" type="0x03B33DDF"/>
-    <resource name="ReadSomethingInInventory_Sim" type="0x03B33DDF"/>
-    <resource name="SitAndWait_GameObject" type="0x03B33DDF"/>
 </resources>
