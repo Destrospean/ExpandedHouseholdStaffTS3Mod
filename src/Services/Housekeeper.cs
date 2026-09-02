@@ -183,17 +183,17 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         static Housekeeper()
         {
             Init();
-            LoadSaveManager.ObjectGroupsPreLoad += () => CommonUtils.TryDisplayScriptError(() =>
+            World.sOnWorldLoadFinishedEventHandler += (sender, e) => CommonUtils.TryDisplayScriptError(() =>
                 {
-                    ServiceMotive.AddAsChangeToOutput<Bookshelf_ReadSomething.Definition, Bookshelf>(2, true, 2, OutputUpdateType.ContinuousFlow);
-                    ServiceMotive.AddAsChangeToOutput<Tablet.ChooseBookOnTablet.Definition, Tablet>(1, true, 1, OutputUpdateType.ContinuousFlow);
-                    ServiceMotive.AddAsChangeToOutput<FirePit.LightFire.Definition, FirePit>(200, true, 200, OutputUpdateType.ContinuousFlow);
-                    ServiceMotive.AddAsChangeToOutput<Fireplace.LightFire.Definition, Fireplace>(200, true, 200, OutputUpdateType.ContinuousFlow);
-                    ServiceMotive.AddAsChangeToOutput<ReadBook.Definition, Book>(1, true, 1, OutputUpdateType.ContinuousFlow);
-                    ServiceMotive.AddAsChangeToOutput<ReadBookChooser.Definition, Book>(1, true, 1, OutputUpdateType.ContinuousFlow);
-                    ServiceMotive.AddAsChangeToOutput<Tablet.ReadBookOnTablet.Definition, Book>(1, true, 1, OutputUpdateType.ContinuousFlow);
-                    ServiceMotive.AddAsChangeToOutput<Sim.ReadSomethingInInventory.Definition, Sim>(2, true, 2, OutputUpdateType.ContinuousFlow);
-                    ServiceMotive.AddAsChangeToOutput<SitAndWait.Definition, GameObject>(1, false, 1, OutputUpdateType.ImmediateDelta);
+                    ServiceMotive.AddAsOutput<Bookshelf_ReadSomething.Definition, Bookshelf>(2, true, 2, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsOutput<Tablet.ChooseBookOnTablet.Definition, Tablet>(1, true, 1, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsOutput<FirePit.LightFirePit.Definition, FirePit>(200, true, 200, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsOutput<Fireplace.LightFire.Definition, Fireplace>(200, true, 200, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsOutput<ReadBook.Definition, Book>(1, true, 1, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsOutput<ReadBookChooser.Definition, Book>(1, true, 1, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsOutput<Tablet.ReadBookOnTablet.Definition, Book>(1, true, 1, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsOutput<Sim.ReadSomethingInInventory.Definition, Sim>(2, true, 2, OutputUpdateType.ContinuousFlow);
+                    ServiceMotive.AddAsOutput<SitAndWait.Definition, GameObject>(1, false, 1, OutputUpdateType.ImmediateDelta);
                 });
         }
 
