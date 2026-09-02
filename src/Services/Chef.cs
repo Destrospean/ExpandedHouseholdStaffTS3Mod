@@ -293,21 +293,20 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             CommonUtils.TryDisplayScriptError(() =>
                 {
-                    
                     Skill cookingSkill = sim.SkillManager.AddElement(SkillNames.Cooking);
                     int maxSkillLevel = cookingSkill.MaxSkillLevel;
                     for (int i = 0; i < maxSkillLevel; i++)
                     {
                         cookingSkill.ForceGainPointsForLevelUp();
                     }
-                    Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kChefBook);
+                    Book book = BookGeneralData.GetBookGeneralByTitle(kChefBook);
                     Inventory inventory = sim.Inventory;
                     if (inventory != null)
                     {
                         inventory.DestroyItems();
-                        if (!inventory.TryToAdd(bookGeneralByTitle))
+                        if (!inventory.TryToAdd(book))
                         {
-                            bookGeneralByTitle.Destroy();
+                            book.Destroy();
                         }
                     }
                 });

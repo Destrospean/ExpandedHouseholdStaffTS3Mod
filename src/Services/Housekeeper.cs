@@ -340,14 +340,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         handinessSkill.ForceGainPointsForLevelUp();
                     }
                     */
-                    Book bookGeneralByTitle = BookGeneralData.GetBookGeneralByTitle(kHousekeeperBook);
+                    Book book = BookGeneralData.GetBookGeneralByTitle(kHousekeeperBook);
                     Inventory inventory = sim.Inventory;
                     if (inventory != null)
                     {
                         inventory.DestroyItems();
-                        if (!inventory.TryToAdd(bookGeneralByTitle))
+                        if (!inventory.TryToAdd(book))
                         {
-                            bookGeneralByTitle.Destroy();
+                            book.Destroy();
                         }
                     }
                 });
