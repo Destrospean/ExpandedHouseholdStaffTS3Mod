@@ -18,9 +18,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         internal static Dictionary<Type, CommodityKind> ServiceMotives = new Dictionary<Type, CommodityKind>();
 
-        public static void GetServiceTitle(this Service service)
+        public static string GetServiceTitle(this Service service)
         {
-            Localization.LocalizeString(service.GetType().GetLocalizationKey() + ":Title");
+            return Localization.LocalizeString(service.GetType().GetLocalizationKey() + ":Title");
         }
 
         public static bool IsFromServantRolesMod<T>() where T : Service
