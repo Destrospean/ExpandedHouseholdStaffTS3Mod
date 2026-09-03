@@ -402,11 +402,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public override bool CanRequestServiceFromPhone(Lot lot)
-        {
-            return true;
-        }
-
         public new SimDescription CreateOrUpdateServiceNpc(SimDescription preCreatedSim, Lot lot)
         {
             SimDescription simDescription = preCreatedSim;
