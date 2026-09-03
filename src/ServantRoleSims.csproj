@@ -37,6 +37,7 @@
     <BaseIntermediateOutputPath>..\build\obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CustomInteractions\CallForServicesCustom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Housekeeper.cs" />
     <Compile Include="CommonUtils.cs" />
@@ -94,12 +95,7 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Abstracts\" />
-    <Folder Include="Services\" />
-    <Folder Include="Situations\" />
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Target Name="Generate STBLs" BeforeTargets="Build">
     <Exec Command="&quot;$(SolutionDir)scripts\GenerateSTBLs.bat&quot;" Condition="'$(OS)' == 'Windows_NT'" />
     <Exec Command="sh &quot;$(SolutionDir)scripts\GenerateSTBLs.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
