@@ -17,15 +17,6 @@ using static Sims3.Gameplay.Objects.Electronics.Phone;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.CustomInteractions
 {
-    public class ServicesPhone : PhoneTable
-    {
-        public override void OnStartup()
-        {
-            base.OnStartup();
-            AddInteraction(CallForServicesCustom.Singleton);
-        }
-    }
-
     public class CallForServicesCustom : Phone.Call
     {
         private static string LocalizeString(string name, params object[] parameters)
@@ -57,6 +48,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.CustomInteractions
                 Phone.LocalizeString("Services") + Localization.Ellipsis
                 };
             }
+            public override string GetInteractionName(ref InteractionInstanceParameters parameters)
+            {
+                return LocalizeString("InteractionName");
+            }
         }
         public override ConversationBehavior OnCallConnected()
         {
@@ -86,10 +81,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.CustomInteractions
         {
             UI.Responder.Instance.mServicesModel = new ServicesModelCustom();
             ServicesModelCustom servicesModel = UI.Responder.Instance.ServicesModel as ServicesModelCustom;
-            if(servicesModel == null)
-            {
-                SimpleMessageDialog.Show("services model custom show", "services model is null");
-            }
             servicesModel.Lot = lot;
             servicesModel.SimGuid = simGuid;
             return ServicesController.Show(simGuid);
