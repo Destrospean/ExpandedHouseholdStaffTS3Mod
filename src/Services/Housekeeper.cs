@@ -30,7 +30,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         static readonly string sLocalizationKey = typeof(Housekeeper).GetLocalizationKey();
 
         [Tunable]
-        static ServiceTuning kServiceTuning = new ServiceTuning();
+        static ServiceTuning kServiceTuning = new ServiceTuning(1, 800, false, true, true);
 
         [Tunable]
         [TunableComment("Length of time (in minutes) between checks that everything is cleaned")]

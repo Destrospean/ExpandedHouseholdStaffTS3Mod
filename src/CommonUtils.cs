@@ -38,7 +38,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         [Tunable]
         public static bool kShowDebugMessages = true;
 
-        public static void AddAsOutput<InteractionDefinition, Target>(this CommodityKind commodityKind, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either) where InteractionDefinition : Interactions.InteractionDefinition where Target : IGameObject
+        public static void AddAsOutput<InteractionDefinition, Target>(this CommodityKind commodityKind, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either) where InteractionDefinition : Gameplay.Interactions.InteractionDefinition where Target : IGameObject
         {
             commodityKind.AddAsOutput(typeof(InteractionDefinition), typeof(Target), advertised, locked, actual, updateType, timeDependsOn, updateEvenOnFailure, updateAboveAndBelowZero);
         }
@@ -113,7 +113,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             MotiveTuning.LoadTuning(Simulator.LoadXML(instanceName));
         }
 
-        public static void RefreshInteractionObjectPairs<InteractionDefinition, Target>() where InteractionDefinition : Interactions.InteractionDefinition where Target : IGameObject
+        public static void RefreshInteractionObjectPairs<InteractionDefinition, Target>() where InteractionDefinition : Gameplay.Interactions.InteractionDefinition where Target : IGameObject
         {
             RefreshInteractionObjectPairs(typeof(InteractionDefinition), typeof(Target));
         }
@@ -155,6 +155,19 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             if (kShowDebugMessages)
             {
                 SimpleMessageDialog.Show("Servants Mod", message);
+            }
+        }
+
+        public static void ShowDebugMessageNotification(string message)
+        {
+            StyledNotification.Format format = new StyledNotification.Format(message, StyledNotification.NotificationStyle.kSimTalking);
+            if (GameUtils.IsInstalled(ProductVersion.EP9))
+            {
+                StyledNotification.Show(format, "w_smart_phone", null, ProductVersion.EP9, ProductVersion.EP9);
+            }
+            else
+            {
+                StyledNotification.Show(format, "glb_tns_phone_r2");
             }
         }
 

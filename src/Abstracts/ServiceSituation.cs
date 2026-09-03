@@ -204,8 +204,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     return false;
                 }
                 Lot.Household.ModifyFamilyFunds(-totalCost);
-                Type serviceType = Service.GetType();
-                StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString(serviceType.GetLocalizationKey().Replace(serviceType.Name, "WeeklyPayment:" + serviceType.Name), totalCost), Worker.ObjectId, StyledNotification.NotificationStyle.kSimTalking));
+                StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString(Service.GetType().GetLocalizationKey() + ":WeeklyPayment", totalCost), Worker.ObjectId, StyledNotification.NotificationStyle.kSimTalking));
             }
             return true;
         }

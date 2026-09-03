@@ -25,7 +25,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         static readonly string sLocalizationKey = typeof(Chef).GetLocalizationKey();
 
         [Tunable]
-        static ServiceTuning kServiceTuning = new ServiceTuning();
+        static ServiceTuning kServiceTuning = new ServiceTuning(1, 1000, false, true, true);
 
         [Tunable]
         [TunableComment("Length of time (in minutes) between checks that everything is cleaned")]

@@ -1,13 +1,10 @@
 ﻿using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
-using Sims3.Gameplay.Controllers;
 using Sims3.Gameplay.Core;
-using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Objects.Beds;
-using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
@@ -15,102 +12,13 @@ using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
-using Sims3.UI;
 using System;
 using System.Collections.Generic;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
-    public abstract class Service<T> : Service where T : Service<T>
+    public abstract class Service<T> : Service, IService where T : Service<T>
     {
-        public class CallForService : Phone.Call
-        {
-            [DoesntRequireTuning]
-            public class Definition : CallDefinition<CallForService>
-            {
-                public Definition()
-                {
-                }
-
-                public override string GetInteractionName(Sim actor, Phone target, InteractionObjectPair iop)
-                {
-                    return Localization.LocalizeString(DerivedType.GetLocalizationKey() + ":RequestService");
-                }
-
-                public override string[] GetPath(bool isFemale)
-                {
-                    string localizationKey = DerivedType.GetLocalizationKey();
-                    return new string[]
-                    {
-                        Localization.LocalizeString(localizationKey.Remove(localizationKey.IndexOf(DerivedType.Name) - (localizationKey.IndexOf(DerivedType.Name) < 1 ? 0 : 1)) + ":Path") + Localization.Ellipsis
-                    };
-                }
-
-                public int GetTotalFunds(Sim actor)
-                {
-                    Lot lotHome = actor.LotHome;
-                    if (lotHome == null)
-                    {
-                        return 0;
-                    }
-                    if (lotHome.EffectiveHousehold != null)
-                    {
-                        return lotHome.EffectiveHousehold.FamilyFunds;
-                    }
-                    return 0;
-                }
-
-                public override bool Test(Sim actor, Phone target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
-                {
-                    if (!target.IsUsableBy(actor))
-                    {
-                        return false;
-                    }
-                    if (isAutonomous)
-                    {
-                        return false;
-                    }
-                    if (!actor.HouseholdOwnsResidentialLot(actor.LotCurrent))
-                    {
-                        greyedOutTooltipCallback = InteractionInstance.CreateTooltipCallback(Localization.LocalizeString("Gameplay/Objects/Electronics/Phone/CallForServices:ServicesOnlyOnHomeLot"));
-                        return false;
-                    }
-                    if (Instance == null)
-                    {
-                        return false;
-                    }
-                    if (Instance.IsServiceRequested(actor.LotCurrent) || Instance.IsAnySimAssignedToLot(actor.LotCurrent))
-                    {
-                        greyedOutTooltipCallback = InteractionInstance.CreateTooltipCallback(Localization.LocalizeString("Gameplay/UI/ServicesUIWindow:AlreadyActive"));
-                        return false;
-                    }
-                    if (Instance.Tuning.kCost > GetTotalFunds(actor))
-                    {
-                        greyedOutTooltipCallback = InteractionInstance.CreateTooltipCallback(Responder.Instance.LocalizationModel.LocalizeString("Gameplay/UI/ShoppingUIWindow:InsufficientFundsDialogTitle"));
-                        return false;
-                    }
-                    return base.Test(actor, target, isAutonomous, ref greyedOutTooltipCallback);
-                }
-            }
-
-            public static InteractionDefinition Singleton = new Definition();
-
-            public override DialBehavior GetDialBehavior()
-            {
-                return base.InteractionDefinition is Definition ? DialBehavior.Pickup : DialBehavior.DoNotPick;
-            }
-
-            public override ConversationBehavior OnCallConnected()
-            {
-                if (base.InteractionDefinition as Definition == null)
-                {
-                    return ConversationBehavior.JustHangUp;
-                }
-                Actor.RequestService(Instance);
-                return ConversationBehavior.TalkBriefly;
-            }
-        }
-
         public class SetUnsetServiceBed : ImmediateInteraction<Sim, Bed>
         {
             public class Definition : InteractionDefinition<Sim, Bed, SetUnsetServiceBed>
@@ -247,55 +155,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             CommonUtils.TryDisplayScriptError(() => bed.AddInteraction(SetUnsetServiceBed.Singleton, true));
         }
 
-        static void AddInteractions(Phone phone)
-        {
-            CommonUtils.TryDisplayScriptError(() => phone.AddInteraction(CallForService.Singleton, true));
-        }
-
-        static void AddInteractions(PhoneCell phoneCell)
-        {
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    foreach (InteractionObjectPair interaction in phoneCell.Interactions)
-                    {
-                        if (interaction.InteractionDefinition.GetType() == CallForService.Singleton.GetType())
-                        {
-                            return;
-                        }
-                    }
-                    phoneCell.AddInteraction(CallForService.Singleton);
-                    phoneCell.AddInventoryInteraction(CallForService.Singleton);
-                });
-        }
-
-        static void InitInjection()
-        {
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    foreach (PhoneCell phoneCell in Sims3.Gameplay.Queries.GetObjects<PhoneCell>())
-                    {
-                        AddInteractions(phoneCell);
-                    }
-                    EventTracker.AddListener(EventTypeId.kInventoryObjectAdded, OnObjectChanged);
-                    EventTracker.AddListener(EventTypeId.kObjectStateChanged, OnObjectChanged);
-                });
-        }
-
-        static ListenerAction OnObjectChanged(Event e)
-        {
-            ListenerAction retVal;
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    PhoneCell phoneCell = e.TargetObject as PhoneCell;
-                    if (phoneCell != null)
-                    {
-                        AddInteractions(phoneCell);
-                    }
-                    return ListenerAction.Keep;
-                }, out retVal);
-            return retVal;
-        }
-
         static void OnObjectPlacedInLot(object sender, EventArgs e)
         {
             CommonUtils.TryDisplayScriptError(() =>
@@ -310,13 +169,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                             if (bed != null)
                             {
                                 AddInteractions(bed);
-                                return;
                             }
-                        }
-                        Phone phone = gameObject as Phone;
-                        if (phone != null)
-                        {
-                            AddInteractions(phone);
                         }
                     }
                 });
@@ -326,31 +179,16 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             CommonUtils.TryDisplayScriptError(() =>
                 {
-                    if (!ServiceUtils.PreloadedServices.Contains(DerivedType))
+                    if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
                     {
                         XmlDbData xmlDbData = XmlDbData.ReadData("ServantRolesMod_" + DerivedType.Name + "_ActiveTopic");
                         if (xmlDbData != null)
                         {
                             SocialManager.ParseActiveTopic(xmlDbData);
                         }
-                        ServiceUtils.PreloadedServices.Add(DerivedType);
+                        ServiceUtils.PreloadedTypes.Add(DerivedType);
                     }
                 });
-        }
-
-        static ListenerAction OnSimSelected(Event e)
-        {
-            ListenerAction retVal;
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    if (Household.ActiveHousehold != null)
-                    {
-                        InitInjection();
-                        return ListenerAction.Remove;
-                    }
-                    return ListenerAction.Keep;
-                }, out retVal);
-            return retVal;
         }
 
         static void OnStartupApp(object sender, EventArgs args)
@@ -375,21 +213,9 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                             CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, ServiceMotive);
                         }
                     }
-                    if (Household.ActiveHousehold != null)
-                    {
-                        InitInjection();
-                    }
-                    else
-                    {
-                        EventTracker.AddListener(EventTypeId.kEventSimSelected, OnSimSelected);
-                    }
                     foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
                     {
                         AddInteractions(bed);
-                    }
-                    foreach (Phone phone in Sims3.Gameplay.Queries.GetObjects<Phone>())
-                    {
-                        AddInteractions(phone);
                     }
                 });
         }
