@@ -56,11 +56,19 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
 
             bool IServicesModel.MakeServiceRequest(ServiceInfo info)
             {
-                if (info as ServiceInfoEx == null)
+                if (info as ServiceInfoEx == null && info.mServiceType == 100)
                 {
-                    return base.MakeServiceRequest(info);
+                    mLot.Household.AutoBabysitter = info.mActive;
+                    return true;
                 }
                 Service service = GetServiceFromInfo(this, info);
+                if (service != null && (service.IsServiceRequested(mLot) || service.IsAnySimAssignedToLot(mLot)))
+                {
+                    foreach (Sim sim in service.GetSimsAssignedToLot(mLot))
+                    {
+                        ServiceSituation.FindServiceSituationInvolving(sim)?.SetToLeave();
+                    }
+                }
                 if (service != null && info.mActive != service.IsServiceRequested(mLot))
                 {
                     service.MakeServiceRequest(mLot, info.mActive, SimGuid);

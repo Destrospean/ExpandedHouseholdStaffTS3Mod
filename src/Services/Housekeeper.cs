@@ -276,26 +276,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             return retVal;
         }
 
-        public static void RemoveHousekeepersFromLot(Lot lot)
-        {
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    if (Instance == null || !Instance.IsServiceRequested(lot) && !Instance.IsAnySimAssignedToLot(lot))
-                    {
-                        return;
-                    }
-                    List<Sim> simsAssignedToLot = Instance.GetSimsAssignedToLot(lot);
-                    foreach (Sim item in simsAssignedToLot)
-                    {
-                        HousekeeperSituation housekeeperSituation = ServiceSituation.FindServiceSituationInvolving(item) as HousekeeperSituation;
-                        if (housekeeperSituation != null)
-                        {
-                            housekeeperSituation.SetToLeave();
-                        }
-                    }
-                });
-        }
-
         public override void SetServiceNPCProperties(SimDescription simDescription)
         {
             simDescription.CanBeKilledOnJob = true;

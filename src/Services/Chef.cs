@@ -238,26 +238,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             return retVal;
         }
 
-        public static void RemoveChefsFromLot(Lot lot)
-        {
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    if (Instance == null || !Instance.IsServiceRequested(lot) && !Instance.IsAnySimAssignedToLot(lot))
-                    {
-                        return;
-                    }
-                    List<Sim> simsAssignedToLot = Instance.GetSimsAssignedToLot(lot);
-                    foreach (Sim item in simsAssignedToLot)
-                    {
-                        ChefSituation ChefSituation = ServiceSituation.FindServiceSituationInvolving(item) as ChefSituation;
-                        if (ChefSituation != null)
-                        {
-                            ChefSituation.SetToLeave();
-                        }
-                    }
-                });
-        }
-
         public override void SetServiceNPCProperties(SimDescription simDescription)
         {
             simDescription.CanBeKilledOnJob = true;
