@@ -511,14 +511,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public override bool NeedsAssignment(Lot lot)
         {
             bool retVal;
-            return !CommonUtils.TryDisplayScriptError(() =>
-                {
-                    if (IsServiceRequested(lot))
-                    {
-                        return !IsAnySimAssignedToLot(lot);
-                    }
-                    return false;
-                }, out retVal) && retVal;
+            return !CommonUtils.TryDisplayScriptError(() => IsServiceRequested(lot) && !IsAnySimAssignedToLot(lot), out retVal) && retVal;
         }
 
         public void SetOutputs()
