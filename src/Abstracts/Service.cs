@@ -17,8 +17,47 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
+    /// <summary>
+    /// Service base class from which to derive all services for the Servant Roles Mod.
+    /// Make sure to call Init() in each derived class's static constructor.
+    /// Also add any output commodity changes associated with each derived class's service motive to the Outputs field in each derived class's instance constructor.
+    /// </summary>
     public abstract class Service<T> : Service, IService where T : Service<T>
     {
+        public struct CommodityChangeOutput
+        {
+            public Type InteractionDefinitionType;
+
+            public Type TargetType;
+
+            public float Advertised;
+
+            public bool Locked;
+
+            public float Actual;
+
+            public OutputUpdateType UpdateType;
+
+            public bool TimeDependsOn;
+
+            public bool UpdateEvenOnFailure;
+
+            public UpdateAboveAndBelowZeroType UpdateAboveAndBelowZero;
+
+            public CommodityChangeOutput(Type interactionDefinitionType, Type targetType, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
+            {
+                InteractionDefinitionType = interactionDefinitionType;
+                TargetType = targetType;
+                Advertised = advertised;
+                Locked = locked;
+                Actual = actual;
+                UpdateType = updateType;
+                TimeDependsOn = timeDependsOn;
+                UpdateEvenOnFailure = updateEvenOnFailure;
+                UpdateAboveAndBelowZero = updateAboveAndBelowZero;
+            }
+        }
+
         public class SetUnsetServiceBed : ImmediateInteraction<Sim, Bed>
         {
             public class Definition : InteractionDefinition<Sim, Bed, SetUnsetServiceBed>
@@ -129,6 +168,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        /// <summary>
+        /// Outputs for interactions and their target types that the service motive of the service is inserted into,
+        /// </summary>
+        public readonly List<CommodityChangeOutput> Outputs = new List<CommodityChangeOutput>();
+
         public virtual bool WaitsBeforePuttingAwayLeftovers
         {
             get
@@ -137,6 +181,10 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        /// <summary>
+        /// Gets the motive commodity kind for the service.
+        /// </summary>
+        /// <value>The service motive.</value>
         public static CommodityKind ServiceMotive
         {
             get
@@ -205,6 +253,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     {
                         return;
                     }
+                    Instance.SetOutputs();
                     IEnumerator<SimDescription> enumerator = Instance.Pool.GetEnumerator();
                     while (enumerator.MoveNext())
                     {
@@ -386,6 +435,9 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 }, out retVal) ? null : retVal;
         }
 
+        /// <summary>
+        /// Call this method for every class derived from this one within its static constructor.
+        /// </summary>
         public static void Init()
         {
             CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);
@@ -394,6 +446,14 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             World.sOnStartupAppEventHandler += OnStartupApp;
             World.sOnWorldLoadFinishedEventHandler += OnWorldLoadFinished;
             World.sOnWorldQuitEventHandler += OnWorldQuit;
+        }
+
+        public void SetOutputs()
+        {
+            foreach (CommodityChangeOutput output in Outputs)
+            {
+                ServiceMotive.AddAsOutput(output.InteractionDefinitionType, output.TargetType, output.Advertised, output.Locked, output.Actual, output.UpdateType, output.TimeDependsOn, output.UpdateEvenOnFailure, output.UpdateAboveAndBelowZero);
+            }
         }
     }
 }

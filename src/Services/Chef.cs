@@ -252,7 +252,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 {
                     simDescription.TraitManager.AddElement(TraitNames.Artistic);
                     simDescription.TraitManager.AddElement(TraitNames.NaturalCook);
-                    //simDescription.TraitManager.AddHiddenElement(TraitNames.BornToCook);
                     List<TraitNames> potentialTraits = new List<TraitNames>
                         {
                             TraitNames.Neurotic,

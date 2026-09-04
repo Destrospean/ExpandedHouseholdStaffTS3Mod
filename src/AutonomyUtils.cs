@@ -23,6 +23,9 @@ using System.Reflection;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 {
+    /// <summary>
+    /// Alternative methods for autonomy-related things. Use these methods instead of the originals for services and service situations from the Servant Roles Mod.
+    /// </summary>
     public class AutonomyUtils
     {
         static InteractionInstance FindBestAction(Autonomy.Autonomy autonomy, CommodityKind c, bool metaAutonomy)
@@ -381,6 +384,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             return 0f;
         }
 
+        /// <summary>
+        /// Finds the best available interaction. Use this instead of the original for service situations from the Servant Roles Mod.
+        /// </summary>
         public static InteractionInstance FindBestAction(Autonomy.Autonomy autonomy)
         {
             autonomy.SetSearchType(AutonomySearchType.Generic);

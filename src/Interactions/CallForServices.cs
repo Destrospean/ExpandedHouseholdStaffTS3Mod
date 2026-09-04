@@ -14,6 +14,9 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
 {
+    /// <summary>
+    /// Replacement interaction for calling for services.
+    /// </summary>
     public class CallForServices : Phone.Call
     {
         public class ServicesModel : UI.ServicesModel, IServicesModel
@@ -62,6 +65,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                     return true;
                 }
                 Service service = GetServiceFromInfo(this, info);
+
+                // The following code dismisses all workers of a service from a lot if said service is cancelled by phone from said lot.
                 if (service != null && (service.IsServiceRequested(mLot) || service.IsAnySimAssignedToLot(mLot)))
                 {
                     foreach (Sim sim in service.GetSimsAssignedToLot(mLot))
@@ -69,6 +74,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                         ServiceSituation.FindServiceSituationInvolving(sim)?.SetToLeave();
                     }
                 }
+
                 if (service != null && info.mActive != service.IsServiceRequested(mLot))
                 {
                     service.MakeServiceRequest(mLot, info.mActive, SimGuid);

@@ -20,6 +20,9 @@ using System.Collections.Generic;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
+    /// <summary>
+    /// Service situation base class from which to derive all service situations for the Servant Roles Mod.
+    /// </summary>
     public abstract class ServiceSituation<T> : ServiceSituation where T : ServiceSituation<T>
     {
         public class DummySituation : ChildSituation<ServiceSituation<T>>

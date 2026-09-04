@@ -33,22 +33,63 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         public delegate T Func<T>();
 
-        public const string kAuthorName = "zoeoeAndDestrospean";
+        const string kAuthorName = "zoeoeAndDestrospean";
 
         [Tunable]
         public static bool kShowDebugMessages = true;
 
+        /// <summary>
+        /// Adds the commodity kind as a commodity change output to an interaction tuning.
+        /// </summary>
+        /// <param name="commodityKind">Commodity kind.</param>
+        /// <param name="advertised">Advertised value.</param>
+        /// <param name="locked">If set to <c>true</c>, locked.</param>
+        /// <param name="actual">Actual value.</param>
+        /// <param name="updateType">Update type.</param>
+        /// <param name="timeDependsOn">If set to <c>true</c> time depends on commodity filling.</param>
+        /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
+        /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
+        /// <typeparam name="InteractionDefinition">Interaction definition type.</typeparam>
+        /// <typeparam name="Target">Target type.</typeparam>
         public static void AddAsOutput<InteractionDefinition, Target>(this CommodityKind commodityKind, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either) where InteractionDefinition : Gameplay.Interactions.InteractionDefinition where Target : IGameObject
         {
             commodityKind.AddAsOutput(typeof(InteractionDefinition), typeof(Target), advertised, locked, actual, updateType, timeDependsOn, updateEvenOnFailure, updateAboveAndBelowZero);
         }
 
+        /// <summary>
+        /// Adds the commodity kind as a commodity change output to an interaction tuning.
+        /// </summary>
+        /// <param name="commodityKind">Commodity kind.</param>
+        /// <param name="interactionDefinitionType">Interaction definition type.</param>
+        /// <param name="targetType">Target type.</param>
+        /// <param name="advertised">Advertised value.</param>
+        /// <param name="locked">If set to <c>true</c>, locked.</param>
+        /// <param name="actual">Actual value.</param>
+        /// <param name="updateType">Update type.</param>
+        /// <param name="timeDependsOn">If set to <c>true</c> time depends on commodity filling.</param>
+        /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
+        /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
         public static void AddAsOutput(this CommodityKind commodityKind, Type interactionDefinitionType, Type targetType, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
-            AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType).mTradeoff.mOutputs.Add(new CommodityChange(commodityKind, advertised, locked, actual, updateType, timeDependsOn, updateEvenOnFailure, updateAboveAndBelowZero));
+            List<CommodityChange> outputs = AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType).mTradeoff.mOutputs;
+            outputs.RemoveAll(x => x.Commodity == commodityKind);
+            outputs.Add(new CommodityChange(commodityKind, advertised, locked, actual, updateType, timeDependsOn, updateEvenOnFailure, updateAboveAndBelowZero));
             RefreshInteractionObjectPairs(interactionDefinitionType, targetType);
         }
 
+        /// <summary>
+        /// Adds the commodity kind as a commodity change output to an interaction tuning.
+        /// </summary>
+        /// <param name="commodityKind">Commodity kind.</param>
+        /// <param name="interactionDefinitionTypeFullName">Interaction definition type full name.</param>
+        /// <param name="targetTypeFullName">Target type full name.</param>
+        /// <param name="advertised">Advertised value.</param>
+        /// <param name="locked">If set to <c>true</c>, locked.</param>
+        /// <param name="actual">Actual value.</param>
+        /// <param name="updateType">Update type.</param>
+        /// <param name="timeDependsOn">If set to <c>true</c> time depends on commodity filling.</param>
+        /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
+        /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
         public static void AddAsOutput(this CommodityKind commodityKind, string interactionDefinitionTypeFullName, string targetTypeFullName, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
             Type interactionDefinitionType, targetType;
@@ -79,6 +120,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        /// <summary>
+        /// Gets a valid commodity kind value from a string.
+        /// </summary>
+        /// <returns>The commodity kind.</returns>
+        /// <param name="name">The name of the commodity kind.</param>
+        /// <param name="type">The type of commodity.</param>
         public static CommodityKind GetCommodityKind(string name, CommodityKindType type)
         {
             uint retVal = ResourceUtils.HashString32(name);
@@ -103,6 +150,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             return (CommodityKind)retVal;
         }
 
+        /// <summary>
+        /// Gets the localization key from the class name and namespace of the object type.
+        /// </summary>
+        /// <returns>The localization key.</returns>
+        /// <param name="type">Type.</param>
         public static string GetLocalizationKey(this Type type)
         {
             return type.Namespace.Substring(type.Namespace.IndexOf(kAuthorName)).Replace('.', '/') + "/" + type.Name;
@@ -113,11 +165,21 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             MotiveTuning.LoadTuning(Simulator.LoadXML(instanceName));
         }
 
+        /// <summary>
+        /// Refreshes the interaction object pairs of a specified interaction definition for all existing objects of a specified type in the world.
+        /// </summary>
+        /// <typeparam name="InteractionDefinition">Interaction definition type.</typeparam>
+        /// <typeparam name="Target">Target type.</typeparam>
         public static void RefreshInteractionObjectPairs<InteractionDefinition, Target>() where InteractionDefinition : Gameplay.Interactions.InteractionDefinition where Target : IGameObject
         {
             RefreshInteractionObjectPairs(typeof(InteractionDefinition), typeof(Target));
         }
 
+        /// <summary>
+        /// Refreshes the interaction object pairs of a specified interaction definition for all existing objects of a specified type in the world.
+        /// </summary>
+        /// <param name="interactionDefinitionType">Interaction definition type.</param>
+        /// <param name="targetType">Target type.</param>
         public static void RefreshInteractionObjectPairs(Type interactionDefinitionType, Type targetType)
         {
             foreach (GameObject gameObject in Sims3.Gameplay.Queries.GetObjects<GameObject>())
@@ -141,6 +203,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        /// <summary>
+        /// Refreshes the interaction object pairs of a specified interaction definition for all existing objects of a specified type in the world.
+        /// </summary>
+        /// <param name="interactionDefinitionTypeFullName">Interaction definition type full name.</param>
+        /// <param name="targetTypeFullName">Target type full name.</param>
         public static void RefreshInteractionObjectPairs(string interactionDefinitionTypeFullName, string targetTypeFullName)
         {
             Type interactionDefinitionType, targetType;
@@ -150,6 +217,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        /// <summary>
+        /// Shows a debug message dialog (only when kShowDebugMessages is set to <c>true</c>)
+        /// </summary>
         public static void ShowDebugMessageDialog(string message)
         {
             if (kShowDebugMessages)
@@ -158,6 +228,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        /// <summary>
+        /// Shows a debug message notification (only when kShowDebugMessages is set to <c>true</c>)
+        /// </summary>
         public static void ShowDebugMessageNotification(string message)
         {
             StyledNotification.Format format = new StyledNotification.Format(message, StyledNotification.NotificationStyle.kSimTalking);
@@ -171,6 +244,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        /// <summary>
+        /// Displays a script error in a the script error window if one is found.
+        /// </summary>
+        /// <returns><c>true</c>, if a script error was found, <c>false</c> otherwise.</returns>
+        /// <param name="action">Function to execute and check for an error.</param>
         public static bool TryDisplayScriptError(Action action)
         {
             Exception exception;
@@ -182,6 +260,13 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             return false;
         }
 
+        /// <summary>
+        /// Displays a script error in a the script error window if one is found.
+        /// </summary>
+        /// <returns><c>true</c>, if a script error was found, <c>false</c> otherwise.</returns>
+        /// <param name="callback">Function to execute and check for an error.</param>
+        /// <param name="value">Return value of the callback function.</param>
+        /// <typeparam name="T">Return value type.</typeparam>
         public static bool TryDisplayScriptError<T>(Func<T> callback, out T value)
         {
             T retVal = default(T);
