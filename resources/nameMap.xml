@@ -2,9 +2,8 @@
 <resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nameMap.xsd">
   <resource name="ServantRoleSims" type="0x073FAA07"/>
   <resource name="*.stbl" type="0x220557DA"/>
-  <resource name="BeChefMotive" type="0x0333406C"/>
-  <resource name="BeHousekeeperMotive" type="0x0333406C"/>
   <resource name="ServantRolesMod_Chef_ActiveTopic" type="0x0333406C"/>
   <resource name="ServantRolesMod_Housekeeper_ActiveTopic" type="0x0333406C"/>
+  <resource name="ServantRolesMod_ServiceMotive" type="0x0333406C"/>
   <resource name="PutAwayLeftovers_ServingContainer" type="0x03B33DDF"/>
 </resources>

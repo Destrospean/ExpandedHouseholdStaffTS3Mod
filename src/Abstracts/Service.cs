@@ -1,4 +1,5 @@
 ﻿using Sims3.Gameplay.Actors;
+using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
@@ -15,6 +16,7 @@ using Sims3.SimIFace.CAS;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
@@ -265,7 +267,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         static void OnStartupApp(object sender, EventArgs args)
         {
-            CommonUtils.TryDisplayScriptError(() => CommonUtils.LoadMotive("Be" + DerivedType.Name + "Motive"));
+            CommonUtils.TryDisplayScriptError(() => LoadTuning(Simulator.LoadXML("ServantRolesMod_ServiceMotive"), ServiceMotive));
         }
 
         static void OnWorldLoadFinished(object sender, EventArgs e)
@@ -506,6 +508,143 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             World.sOnStartupAppEventHandler += OnStartupApp;
             World.sOnWorldLoadFinishedEventHandler += OnWorldLoadFinished;
             World.sOnWorldQuitEventHandler += OnWorldQuit;
+        }
+
+        public static void LoadTuning(XmlDocument xmlDocument, CommodityKind commodityKind = CommodityKind.None)
+        {
+            XmlNodeList elementsByTagName = xmlDocument.GetElementsByTagName("Motive");
+            foreach (XmlElement motiveElement in elementsByTagName)
+            {
+                XmlNodeList tuningElements = motiveElement.GetElementsByTagName("Tuning");
+                XmlElement tuningElement = tuningElements[0] as XmlElement;
+                bool addIfUniversalOnLoadFixUp = false;
+                List<ProductVersion> codeVersions;
+                if (tuningElement.HasAttribute("codeVersions") && ParserFunctions.TryParseCommaSeparatedList<ProductVersion>(tuningElement.GetAttribute("codeVersions"), out codeVersions, ProductVersion.Undefined))
+                {
+                    addIfUniversalOnLoadFixUp = true;
+                    bool hasProduct = false;
+                    foreach (ProductVersion codeVersion in codeVersions)
+                    {
+                        if (GameUtils.IsInstalled(codeVersion))
+                        {
+                            hasProduct = true;
+                            break;
+                        }
+                    }
+                    if (!hasProduct)
+                    {
+                        continue;
+                    }
+                }
+                string commodityKindAttribute = tuningElement.GetAttribute("kind");
+                if (commodityKind != CommodityKind.None || ParserFunctions.TryParseEnum<CommodityKind>(commodityKindAttribute, out commodityKind, CommodityKind.None))
+                {
+                    string universalAttribute = tuningElement.GetAttribute("universal");
+                    bool universal = true;
+                    if (universalAttribute != "")
+                    {
+                        universal = ParserFunctions.ParseBool(universalAttribute);
+                    }
+                    string insatiableAttribute = tuningElement.GetAttribute("insatiable");
+                    bool insatiable = false;
+                    if (insatiableAttribute != "")
+                    {
+                        insatiable = ParserFunctions.ParseBool(insatiableAttribute);
+                    }
+                    string ageSpecificityAttribute = tuningElement.GetAttribute("ageSpecificity");
+                    CASAgeGenderFlags ageSpeciesSpecificity = CASAgeGenderFlags.AgeMask;
+                    if (ageSpecificityAttribute != "" && ageSpecificityAttribute != "All")
+                    {
+                        ParserFunctions.TryParseEnum<CASAgeGenderFlags>(ageSpecificityAttribute, out ageSpeciesSpecificity, CASAgeGenderFlags.AgeMask);
+                    }
+                    string speciesSpecifityAttribute = tuningElement.GetAttribute("speciesSpecificity");
+                    if (speciesSpecifityAttribute != "")
+                    {
+                        CASAgeGenderFlags speciesSpecifity = CASAgeGenderFlags.None;
+                        if (ParserFunctions.TryParseEnum<CASAgeGenderFlags>(speciesSpecifityAttribute, out speciesSpecifity, CASAgeGenderFlags.None))
+                        {
+                            ageSpeciesSpecificity |= speciesSpecifity;
+                        }
+                    }
+                    WorldRestrictionType worldRestrictionType;
+                    ParserFunctions.TryParseEnum<WorldRestrictionType>(tuningElement.GetAttribute("worldSpecificityType"), out worldRestrictionType, WorldRestrictionType.None);
+                    List<WorldType> worldRestrictionWorldTypes;
+                    ParserFunctions.TryParseCommaSeparatedList<WorldType>(tuningElement.GetAttribute("worldSpecificityWorldTypes"), out worldRestrictionWorldTypes, WorldType.Undefined);
+                    List<WorldName> worldRestrictionWorldNames;
+                    ParserFunctions.TryParseCommaSeparatedList<WorldName>(tuningElement.GetAttribute("worldSpecificityWorldNames"), out worldRestrictionWorldNames, WorldName.Undefined);
+                    string traitSpecificityAttribute = tuningElement.GetAttribute("traitSpecificity");
+                    List<TraitNames> traitSpecificity = null;
+                    if (traitSpecificityAttribute != "")
+                    {
+                        List<TraitNames> traitNames = null;
+                        ParserFunctions.TryParseCommaSeparatedList<TraitNames>(traitSpecificityAttribute, out traitNames, TraitNames.Unknown);
+                        foreach (TraitNames traitName in traitNames)
+                        {
+                            if (traitName != TraitNames.Unknown)
+                            {
+                                Lazy.Add<List<TraitNames>, TraitNames>(ref traitSpecificity, traitName);
+                            }
+                        }
+                    }
+                    string decayTypeAttribute = tuningElement.GetAttribute("decayType");
+                    DecayType decayType;
+                    ParserFunctions.TryParseEnum<DecayType>(decayTypeAttribute, out decayType, DecayType.DecayFromAutoSatisfy);
+                    float decayValue = ParserFunctions.ParseFloat(tuningElement.GetAttribute("decayValue"), 0);
+                    decayValue = MotiveTuning.HackToFixupCertainMotiveDecayRates(commodityKind, decayValue);
+                    float initialMin = ParserFunctions.ParseFloat(tuningElement.GetAttribute("initialMin"), -100);
+                    float initialMax = ParserFunctions.ParseFloat(tuningElement.GetAttribute("initialMax"), 100);
+                    float timeRandomness = ParserFunctions.ParseFloat(tuningElement.GetAttribute("timeRandomness"), 0);
+                    bool hasDefaultValue = ParserFunctions.ParseBool(tuningElement.GetAttribute("hasDefaultValue"));
+                    int intensity = ParserFunctions.ParseInt(tuningElement.GetAttribute("intensity"), 1);
+                    XmlNodeList intensityElements = motiveElement.GetElementsByTagName("Intensity");
+                    XmlElement intensityElement = intensityElements[0] as XmlElement;
+                    XmlNodeList pointElements = intensityElement.GetElementsByTagName("Point");
+                    int count = pointElements.Count;
+                    Vector2[] coordinates = new Vector2[count];
+                    int index = 0;
+                    foreach (XmlElement pointElement in pointElements)
+                    {
+                        float x = ParserFunctions.ParseFloat(pointElement.GetAttribute("x"), 0);
+                        float y = ParserFunctions.ParseFloat(pointElement.GetAttribute("y"), 0) * (float)intensity;
+                        Vector2 vector = new Vector2(x, y);
+                        coordinates[index] = vector;
+                        index++;
+                    }
+                    DesireCurve curve = new DesireCurve(coordinates);
+                    MotiveSatisfactionCurve motiveSatisfactionCurve = new MotiveSatisfactionCurve();
+                    motiveSatisfactionCurve.Loops = true;
+                    Curve autoSatisfyCurve = motiveSatisfactionCurve;
+                    MotiveTuning.ParseCurve(motiveElement, "AutoSatisfy", autoSatisfyCurve);
+                    Curve motiveDecayCurve = motiveSatisfactionCurve.GetMotiveDecayCurve();
+                    Curve moodContributionCurve = new Curve();
+                    MotiveTuning.ParseCurve(motiveElement, "MoodContribution", moodContributionCurve);
+                    List<MotiveTuning.MotiveBuffTrigger> buffTriggers = new List<MotiveTuning.MotiveBuffTrigger>();
+                    XmlNodeList motiveBuffElements = motiveElement.GetElementsByTagName("MotiveBuffs");
+                    XmlElement motiveBuffElement = motiveBuffElements[0] as XmlElement;
+                    XmlNodeList buffTriggerElements = motiveBuffElement.GetElementsByTagName("BuffTrigger");
+                    foreach (XmlElement buffTriggerElement in buffTriggerElements)
+                    {
+                        MotiveTuning.MotiveBuffTrigger motiveBuffTrigger = new MotiveTuning.MotiveBuffTrigger();
+                        motiveBuffTrigger.mTriggerValueStart = ParserFunctions.ParseFloat(buffTriggerElement.GetAttribute("TriggerValueStart"), -1000);
+                        motiveBuffTrigger.mTriggerValueEnd = ParserFunctions.ParseFloat(buffTriggerElement.GetAttribute("TriggerValueEnd"), -1000);
+                        motiveBuffTrigger.mDecay = ParserFunctions.ParseFloat(buffTriggerElement.GetAttribute("Decay"), 0);
+                        motiveBuffTrigger.mDecay = MotiveTuning.HackToFixupCertainMotiveDecayRates(commodityKind, motiveBuffTrigger.mDecay);
+                        ParserFunctions.TryParseEnum<BuffNames>(buffTriggerElement.GetAttribute("AddBuff"), out motiveBuffTrigger.mAddBuff, BuffNames.Undefined);
+                        ParserFunctions.TryParseCommaSeparatedList<BuffNames>(buffTriggerElement.GetAttribute("RemoveBuff"), out motiveBuffTrigger.mRemoveBuff, BuffNames.Undefined);
+                        string customClassAttribute = buffTriggerElement.GetAttribute("CustomClass");
+                        motiveBuffTrigger.mCustomClass = customClassAttribute.Length > 0 ? typeof(Motive).GetMethod(customClassAttribute) : null;
+                        buffTriggers.Add(motiveBuffTrigger);
+                    }
+                    MotiveTuning motiveTuning = new MotiveTuning(commodityKind, universal, insatiable, ageSpeciesSpecificity, worldRestrictionType, worldRestrictionWorldTypes, worldRestrictionWorldNames, traitSpecificity, curve, decayType, decayValue, motiveSatisfactionCurve, motiveDecayCurve, moodContributionCurve, hasDefaultValue, initialMin, initialMax, timeRandomness, buffTriggers, addIfUniversalOnLoadFixUp);
+                    List<MotiveTuning> motiveTunings = null;
+                    if (!MotiveTuning.sTuning.TryGetValue((int)commodityKind, out motiveTunings))
+                    {
+                        motiveTunings = (MotiveTuning.sTuning[(int)commodityKind] = new List<MotiveTuning>());
+                    }
+                    motiveTunings.Add(motiveTuning);
+                    Commodities.NewType(commodityKind, 1, motiveTuning.Min, motiveTuning.Max, 0, true, -100, 100);
+                }
+            }
         }
 
         public override bool NeedsAssignment(Lot lot)
