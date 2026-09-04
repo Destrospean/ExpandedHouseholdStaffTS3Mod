@@ -119,7 +119,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public override ServiceType ServiceType
+        public new static ServiceType ServiceTypeStatic
         {
             get
             {
@@ -135,14 +135,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 {
                     Chef.ServiceMotive
                 };
-            }
-        }
-
-        public override bool IsPaidWeekly
-        {
-            get
-            {
-                return true;
             }
         }
 
@@ -164,39 +156,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             Instance = this;
         }
 
-        public static void Create()
-        {
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    if (ServiceNPCSpecifications.ValidForCurrentWorld(ServiceType.Butler))
-                    {
-                        if (Instance == null)
-                        {
-                            new Chef();
-                        }
-                        else
-                        {
-                            Instance.PostLoadFixup();
-                        }
-                    }
-                    else
-                    {
-                        DestroyChef();
-                    }
-                });
-        }
-
-        public static void Destroy()
-        {
-            DestroyChef();
-        }
-
-        public static void DestroyChef()
-        {
-            Destroy(Instance);
-            Instance = null;
-        }
-
         public override string GetServiceTopic(Sim serviceSim)
         {
             return "Chef Service";
@@ -207,30 +166,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             return Localization.LocalizeString(sLocalizationKey + ":" + name, parameters);
         }
 
-        public override bool NeedsAssignment(Lot lot)
-        {
-            bool retVal;
-            return !CommonUtils.TryDisplayScriptError(() =>
-                {
-                    if (IsServiceRequested(lot))
-                    {
-                        return !IsAnySimAssignedToLot(lot);
-                    }
-                    return false;
-                }, out retVal) && retVal;
-        }
-
         public override ServiceSituation InternalCreateSituation(Lot assignedLot, Sim createdSim, int cost, ObjectGuid requestingSim)
         {
             ServiceSituation retVal = null;
             CommonUtils.TryDisplayScriptError(() =>
                 {
-                    if (assignedLot.MoveInScenario is Rodents)
-                    {
-                        retVal = assignedLot.MoveInScenario.SetupSituation(this, createdSim);
-                        assignedLot.MoveInScenario = null;
-                        return;
-                    }
                     createdSim.SimDescription.ShowSocialsOnSim = true;
                     createdSim.CanBeFired = true;
                     retVal = new ChefSituation(this, assignedLot, createdSim, cost);

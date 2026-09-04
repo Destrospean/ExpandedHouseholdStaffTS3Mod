@@ -178,7 +178,8 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     worker.AssignRole(this);
                     worker.Autonomy.AllowedToRunMetaAutonomy = false;
                     FreezeMotives();
-                    SetState((Situation)Activator.CreateInstance(DerivedType.GetNestedType("WaitToRoute"), this));
+                    Type waitToRouteType = DerivedType.GetNestedType("WaitToRoute");
+                    SetState(waitToRouteType == null ? new WaitToRoute(this) : (Situation)Activator.CreateInstance(waitToRouteType, this));
                     ScheduleSwitchWorkerToServiceOutfit();
                     if (ReportsFires)
                     {
@@ -298,7 +299,8 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             base.SetToFire(serviceSim, firer);
             NPCLeavingMessage(LeavingReason.NPCFired);
             UnsetServiceBed();
-            SetState((Situation)Activator.CreateInstance(DerivedType.GetNestedType("NPCIsFired"), firer, this));
+            Type npcIsFiredType = DerivedType.GetNestedType("NPCIsFired");
+            SetState(npcIsFiredType == null ? new NPCIsFired(firer, this) : (Situation)Activator.CreateInstance(npcIsFiredType, firer, this));
         }
 
         public virtual void SetToJobDone()

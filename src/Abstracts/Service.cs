@@ -14,6 +14,7 @@ using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
@@ -160,6 +161,14 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        public override bool IsPaidWeekly
+        {
+            get
+            {
+                return this is IAmLiveInService;
+            }
+        }
+
         public virtual bool IsQuietAroundSleepingSims
         {
             get
@@ -173,18 +182,9 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         /// </summary>
         public readonly List<CommodityChangeOutput> Outputs = new List<CommodityChangeOutput>();
 
-        public virtual bool WaitsBeforePuttingAwayLeftovers
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         /// <summary>
         /// Gets the motive commodity kind for the service.
         /// </summary>
-        /// <value>The service motive.</value>
         public static CommodityKind ServiceMotive
         {
             get
@@ -195,6 +195,30 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     serviceMotive = CommonUtils.GetCommodityKind("Be" + DerivedType.Name, CommonUtils.CommodityKindType.Motive);
                 }
                 return serviceMotive;
+            }
+        }
+
+        public override ServiceType ServiceType
+        {
+            get
+            {
+                return (ServiceType)(DerivedType.GetProperty("ServiceTypeStatic")?.GetValue(null, null) ?? ServiceTypeStatic);
+            }
+        }
+
+        public static ServiceType ServiceTypeStatic
+        {
+            get
+            {
+                return ServiceType.None;
+            }
+        }
+
+        public virtual bool WaitsBeforePuttingAwayLeftovers
+        {
+            get
+            {
+                return false;
             }
         }
 
@@ -248,7 +272,15 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             CommonUtils.TryDisplayScriptError(() =>
                 {
-                    DerivedType.GetMethod("Create").Invoke(null, null);
+                    MethodInfo createMethod = DerivedType.GetMethod("Create");
+                    if (createMethod == null)
+                    {
+                        Create();
+                    }
+                    else
+                    {
+                        createMethod.Invoke(null, null);
+                    }
                     if (Instance == null)
                     {
                         return;
@@ -275,6 +307,28 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             {
                 Instance = null;
             }
+        }
+
+        public static void Create()
+        {
+            CommonUtils.TryDisplayScriptError(() =>
+                {
+                    if (ServiceNPCSpecifications.ValidForCurrentWorld((ServiceType)(DerivedType.GetProperty("ServiceTypeStatic").GetValue(null, null) ?? ServiceTypeStatic)))
+                    {
+                        if (Instance == null)
+                        {
+                            Activator.CreateInstance(DerivedType);
+                        }
+                        else
+                        {
+                            Instance.PostLoadFixup();
+                        }
+                    }
+                    else
+                    {
+                        Destroy();
+                    }
+                });
         }
 
         public new SimDescription CreateOrUpdateServiceNpc(SimDescription preCreatedSim, Lot lot)
@@ -388,6 +442,12 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             return simDescription;
         }
 
+        public static void Destroy()
+        {
+            Destroy(Instance);
+            Instance = null;
+        }
+
         public override SimDescription FindSimForAssignment(Lot lot)
         {
             SimDescription retVal;
@@ -446,6 +506,19 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             World.sOnStartupAppEventHandler += OnStartupApp;
             World.sOnWorldLoadFinishedEventHandler += OnWorldLoadFinished;
             World.sOnWorldQuitEventHandler += OnWorldQuit;
+        }
+
+        public override bool NeedsAssignment(Lot lot)
+        {
+            bool retVal;
+            return !CommonUtils.TryDisplayScriptError(() =>
+                {
+                    if (IsServiceRequested(lot))
+                    {
+                        return !IsAnySimAssignedToLot(lot);
+                    }
+                    return false;
+                }, out retVal) && retVal;
         }
 
         public void SetOutputs()

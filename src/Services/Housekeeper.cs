@@ -136,7 +136,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public override ServiceType ServiceType
+        public new static ServiceType ServiceTypeStatic
         {
             get
             {
@@ -153,14 +153,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     CommodityKind.BeMaid,
                     Housekeeper.ServiceMotive
                 };
-            }
-        }
-
-        public override bool IsPaidWeekly
-        {
-            get
-            {
-                return true;
             }
         }
 
@@ -202,39 +194,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 });
         }
 
-        public static void Create()
-        {
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    if (ServiceNPCSpecifications.ValidForCurrentWorld(ServiceType.Maid))
-                    {
-                        if (Instance == null)
-                        {
-                            new Housekeeper();
-                        }
-                        else
-                        {
-                            Instance.PostLoadFixup();
-                        }
-                    }
-                    else
-                    {
-                        DestroyHousekeeper();
-                    }
-                });
-        }
-
-        public static void Destroy()
-        {
-            DestroyHousekeeper();
-        }
-
-        public static void DestroyHousekeeper()
-        {
-            Destroy(Instance);
-            Instance = null;
-        }
-
         public override string GetServiceTopic(Sim serviceSim)
         {
             return "Housekeeper Service";
@@ -245,30 +204,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             return Localization.LocalizeString(sLocalizationKey + ":" + name, parameters);
         }
 
-        public override bool NeedsAssignment(Lot lot)
-        {
-            bool retVal;
-            return !CommonUtils.TryDisplayScriptError(() =>
-                {
-                    if (IsServiceRequested(lot))
-                    {
-                        return !IsAnySimAssignedToLot(lot);
-                    }
-                    return false;
-                }, out retVal) && retVal;
-        }
-
         public override ServiceSituation InternalCreateSituation(Lot assignedLot, Sim createdSim, int cost, ObjectGuid requestingSim)
         {
             ServiceSituation retVal = null;
             CommonUtils.TryDisplayScriptError(() =>
                 {
-                    if (assignedLot.MoveInScenario is Rodents)
-                    {
-                        retVal = assignedLot.MoveInScenario.SetupSituation(this, createdSim);
-                        assignedLot.MoveInScenario = null;
-                        return;
-                    }
                     createdSim.SimDescription.ShowSocialsOnSim = true;
                     createdSim.CanBeFired = true;
                     retVal = new HousekeeperSituation(this, assignedLot, createdSim, cost);
