@@ -2,7 +2,7 @@ This is a the source code of the WIP Servant Roles Mod.
 
 The structure is a bit newish/unorthodox compared to most Sims 3 mod repos, so I'll explain things here:
 
-# Building
+## Building
 
 This project automatically builds a package that goes in the `dist` folder, but the destination redirects to wherever you put in your Mods folder once you put it there (meaning that you don't have to drag and drop the package :D)
 
