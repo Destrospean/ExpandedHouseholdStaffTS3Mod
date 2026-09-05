@@ -26,7 +26,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
     {
         const string kHousekeeperBook = "HowToServeAndNotBeServed";
 
-        static readonly string sLocalizationKey = typeof(Housekeeper).GetLocalizationKey();
+        static readonly string sLocalizationKey = DerivedType.GetLocalizationKey();
 
         [Tunable]
         static ServiceTuning kServiceTuning = new ServiceTuning(1, 800, false, true, true);
