@@ -21,17 +21,17 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
+namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 {
     /// <summary>
     /// Alternative methods for autonomy-related things. Use these methods instead of the originals for services and service situations from the Servant Roles Mod.
     /// </summary>
     public class AutonomyUtils
     {
-        static InteractionInstance FindBestAction(Autonomy.Autonomy autonomy, CommodityKind commodityKind, bool metaAutonomy)
+        static InteractionInstance FindBestAction(Autonomy autonomy, CommodityKind commodityKind, bool metaAutonomy)
         {
             autonomy.ClearScoring();
-            autonomy.mHasBeenScored = Autonomy.Autonomy.InteractionCheckTable.Allocate();
+            autonomy.mHasBeenScored = Autonomy.InteractionCheckTable.Allocate();
             autonomy.AddDecisionSnapshot();
             ScoreInteractionsOnObjects(autonomy, commodityKind, metaAutonomy);
             InteractionInstance result = autonomy.AssignProbabilitiesAndChooseInteraction();
@@ -40,7 +40,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             return result;
         }
 
-        static void ScoreInteractionsForLocalAutonomy(Autonomy.Autonomy autonomy, CommodityKind commodityKind)
+        static void ScoreInteractionsForLocalAutonomy(Autonomy autonomy, CommodityKind commodityKind)
         {
             Lot lot = autonomy.mActor.LotCurrent;
             if (autonomy.mOverriddenLocalAutonomyLot != null)
@@ -80,7 +80,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        static void ScoreInteractionsForSituations(Autonomy.Autonomy autonomy)
+        static void ScoreInteractionsForSituations(Autonomy autonomy)
         {
             foreach (Situation situation in autonomy.mSituationComponent.Situations)
             {
@@ -97,9 +97,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        static Autonomy.Autonomy.YieldResult ScoreInteractionsOnObjects(Autonomy.Autonomy autonomy, CommodityKind commodityKind, bool metaAutonomy)
+        static Autonomy.YieldResult ScoreInteractionsOnObjects(Autonomy autonomy, CommodityKind commodityKind, bool metaAutonomy)
         {
-            Autonomy.Autonomy.YieldResult result = Autonomy.Autonomy.YieldResult.Continue;
+            Autonomy.YieldResult result = Autonomy.YieldResult.Continue;
             autonomy.mUseCachedValues = true;
             try
             {
@@ -120,16 +120,16 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public static float CalculateScore(Autonomy.Autonomy autonomy, InteractionObjectPair iop)
+        public static float CalculateScore(Autonomy autonomy, InteractionObjectPair iop)
         {
             return TestAndCalculateScore(iop, autonomy, autonomy.CurrentSearchType, autonomy.GetInteractionFlagsForCurrentSearch());
         }
 
-        public static void CalculateScoreAndAddToCandidates(Autonomy.Autonomy autonomy, InteractionObjectPair iop)
+        public static void CalculateScoreAndAddToCandidates(Autonomy autonomy, InteractionObjectPair iop)
         {
             if (autonomy.mHasBeenScored == null)
             {
-                autonomy.mHasBeenScored = Autonomy.Autonomy.InteractionCheckTable.Allocate();
+                autonomy.mHasBeenScored = Autonomy.InteractionCheckTable.Allocate();
             }
             if (autonomy.mHasBeenScored.TryAdd(iop))
             {
@@ -138,13 +138,13 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public static float CalculateScoreForObjectInteraction(Autonomy.Autonomy autonomy, InteractionObjectPair iop)
+        public static float CalculateScoreForObjectInteraction(Autonomy autonomy, InteractionObjectPair iop)
         {
             ScoreDebugInfo tradeoffScore;
             return CalculateScoreForObjectInteraction(autonomy, iop, out tradeoffScore);
         }
 
-        public static float CalculateScoreForObjectInteraction(Autonomy.Autonomy autonomy, InteractionObjectPair iop, out ScoreDebugInfo tradeoffScore)
+        public static float CalculateScoreForObjectInteraction(Autonomy autonomy, InteractionObjectPair iop, out ScoreDebugInfo tradeoffScore)
         {
             tradeoffScore = null;
             if (iop.Tradeoff == null)
@@ -301,7 +301,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
             if (iop.Target.IsInPublicResidentialRoom && (iop.Target.LotCurrent != autonomy.mActor.LotCurrent || !autonomy.mActor.IsInPublicResidentialRoom))
             {
-                multiplier *= Autonomy.Autonomy.AutonomyPublicAreaPenaltyMultiplier;
+                multiplier *= Autonomy.AutonomyPublicAreaPenaltyMultiplier;
             }
             for (Posture posture = autonomy.mActor.Posture; posture != null; posture = posture.PreviousPosture)
             {
@@ -309,7 +309,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
             if (isOutside && autonomy.mActor.SimDescription.IsVampire && !SimClock.IsNightTime())
             {
-                multiplier *= Autonomy.Autonomy.kVampireDaylightOutdoorMultiplier;
+                multiplier *= Autonomy.kVampireDaylightOutdoorMultiplier;
             }
             if (targetSim != null && targetSim.Posture is IInBoxStallPosture && iop.InteractionDefinition as IBoxStallAllowedInteractionDefinition == null && (autonomy.mActor != targetSim || autonomy.mCurrentSearchType != AutonomySearchType.BuffAutoSolve))
             {
@@ -336,7 +336,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             }
             if (iop.Tuning.Availability.HasFlags(Availability.FlagField.AllowEvenIfNotAllowedInRoomAutonomous) && !autonomy.mActor.IsAllowedInRoom(iop.Target.RoomId))
             {
-                multiplier *= Autonomy.Autonomy.kAllowEvenIfNotAllowedInRoomAutonomousMultiplier;
+                multiplier *= Autonomy.kAllowEvenIfNotAllowedInRoomAutonomousMultiplier;
             }
             if (SeasonsManager.Enabled && (SeasonsManager.CurrentWeather == Weather.Rain || SeasonsManager.CurrentWeather == Weather.Hail) && autonomy.mCurrentSearchType == AutonomySearchType.Autonomy)
             {
@@ -372,7 +372,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         /// <summary>
         /// Finds the best available interaction. Use this instead of the original for service situations from the Servant Roles Mod.
         /// </summary>
-        public static InteractionInstance FindBestAction(Autonomy.Autonomy autonomy)
+        public static InteractionInstance FindBestAction(Autonomy autonomy)
         {
             autonomy.SetSearchType(AutonomySearchType.Generic);
             InteractionInstance result = FindBestAction(autonomy, CommodityKind.None, false);
@@ -380,7 +380,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             return result;
         }
 
-        public static float TestAndCalculateScore(InteractionObjectPair iop, Autonomy.Autonomy autonomy, AutonomySearchType autonomySearchType, InteractionFlags flags)
+        public static float TestAndCalculateScore(InteractionObjectPair iop, Autonomy autonomy, AutonomySearchType autonomySearchType, InteractionFlags flags)
         {
             if (autonomy.OverrideInteractionParameters.HasValue)
             {

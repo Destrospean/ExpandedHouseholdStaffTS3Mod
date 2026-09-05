@@ -53,8 +53,10 @@
     <Compile Include="Utils\CommonUtils.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
     <Compile Include="Utils\DebugUtils.cs" />
-    <Compile Include="Delegates.cs" />
-    <Compile Include="Enums.cs" />
+    <Compile Include="Enums\CommodityKindType.cs" />
+    <Compile Include="Enums\DummyEnum.cs" />
+    <Compile Include="Delegates\Action.cs" />
+    <Compile Include="Delegates\Func.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -114,5 +116,7 @@
   </Target>
   <ItemGroup>
     <Folder Include="Utils\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Delegates\" />
   </ItemGroup>
 </Project>

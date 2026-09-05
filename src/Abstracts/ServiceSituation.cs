@@ -17,6 +17,8 @@ using Sims3.SimIFace.CAS;
 using Sims3.UI;
 using System;
 using System.Collections.Generic;
+using zoeoeAndDestrospean.Enums;
+using zoeoeAndDestrospean.Utils;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {

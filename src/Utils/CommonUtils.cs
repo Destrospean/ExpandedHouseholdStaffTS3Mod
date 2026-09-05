@@ -9,8 +9,9 @@ using Sims3.SimIFace;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using zoeoeAndDestrospean.Enums;
 
-namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
+namespace zoeoeAndDestrospean.Utils
 {
     public static class CommonUtils
     {
@@ -29,7 +30,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
         /// <typeparam name="InteractionDefinition">Interaction definition type.</typeparam>
         /// <typeparam name="Target">Target type.</typeparam>
-        public static void AddAsOutput<InteractionDefinition, Target>(this CommodityKind commodityKind, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either) where InteractionDefinition : Gameplay.Interactions.InteractionDefinition where Target : IGameObject
+        public static void AddAsOutput<InteractionDefinition, Target>(this CommodityKind commodityKind, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either) where InteractionDefinition : Sims3.Gameplay.Interactions.InteractionDefinition where Target : IGameObject
         {
             commodityKind.AddAsOutput(typeof(InteractionDefinition), typeof(Target), constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero);
         }
@@ -148,7 +149,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         /// </summary>
         /// <typeparam name="InteractionDefinition">Interaction definition type.</typeparam>
         /// <typeparam name="Target">Target type.</typeparam>
-        public static void RefreshInteractionObjectPairs<InteractionDefinition, Target>() where InteractionDefinition : Gameplay.Interactions.InteractionDefinition where Target : IGameObject
+        public static void RefreshInteractionObjectPairs<InteractionDefinition, Target>() where InteractionDefinition : Sims3.Gameplay.Interactions.InteractionDefinition where Target : IGameObject
         {
             RefreshInteractionObjectPairs(typeof(InteractionDefinition), typeof(Target));
         }

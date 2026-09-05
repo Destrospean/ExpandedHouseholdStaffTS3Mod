@@ -1,8 +1,9 @@
 ﻿using Sims3.SimIFace;
 using Sims3.UI;
 using System;
+using zoeoeAndDestrospean.Delegates;
 
-namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
+namespace zoeoeAndDestrospean.Utils
 {
     public class DebugUtils
     {
@@ -25,7 +26,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         /// </summary>
         public static void ShowDebugMessageNotification(string message)
         {
-            StyledNotification.Show(new StyledNotification.Format(message, StyledNotification.NotificationStyle.kSystemMessage));
+            if (kShowDebugMessages)
+            {
+                StyledNotification.Show(new StyledNotification.Format(message, StyledNotification.NotificationStyle.kSystemMessage));
+            }
         }
 
         /// <summary>

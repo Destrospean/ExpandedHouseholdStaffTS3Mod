@@ -10,6 +10,7 @@ using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions;
 using Sims3.SimIFace;
 using System;
 using System.Reflection;
+using zoeoeAndDestrospean.Utils.ServantRolesMod;
 
 namespace zoeoeAndDestrospean.ServantRolesMod
 {

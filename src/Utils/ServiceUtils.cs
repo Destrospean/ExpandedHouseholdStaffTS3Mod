@@ -4,7 +4,7 @@ using Sims3.Gameplay.Services;
 using System;
 using System.Collections.Generic;
 
-namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
+namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 {
     public static class ServiceUtils
     {
@@ -14,7 +14,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 
         public static readonly Dictionary<Type, CommodityKind> ServiceMotives = new Dictionary<Type, CommodityKind>();
 
-        public static bool IsFromServantRolesMod<Service>() where Service : Gameplay.Services.Service
+        public static bool IsFromServantRolesMod<Service>() where Service : Sims3.Gameplay.Services.Service
         {
             return IsFromServantRolesMod(typeof(Service));
         }

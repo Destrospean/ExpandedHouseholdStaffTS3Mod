@@ -1,4 +1,4 @@
-﻿namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
+﻿namespace zoeoeAndDestrospean.Enums
 {
     public enum CommodityKindType
     {
@@ -7,10 +7,5 @@
         Posture,
         PostureCheck,
         Trait
-    }
-
-    public enum DummyEnum
-    {
-        DummyValue
     }
 }

@@ -11,6 +11,8 @@ using Sims3.SimIFace;
 using Sims3.UI;
 using System;
 using System.Collections.Generic;
+using zoeoeAndDestrospean.Utils;
+using zoeoeAndDestrospean.Utils.ServantRolesMod;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
 {

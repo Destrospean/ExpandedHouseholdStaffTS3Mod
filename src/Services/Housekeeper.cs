@@ -18,6 +18,7 @@ using Sims3.SimIFace;
 using Sims3.Store.Objects;
 using System;
 using System.Collections.Generic;
+using zoeoeAndDestrospean.Utils;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {

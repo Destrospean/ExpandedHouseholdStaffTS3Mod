@@ -17,6 +17,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
+using zoeoeAndDestrospean.Enums;
+using zoeoeAndDestrospean.Utils;
+using zoeoeAndDestrospean.Utils.ServantRolesMod;
 
 namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
