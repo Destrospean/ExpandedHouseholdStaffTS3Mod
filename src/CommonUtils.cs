@@ -42,18 +42,18 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         /// Adds the commodity kind as a commodity change output to an interaction tuning.
         /// </summary>
         /// <param name="commodityKind">Commodity kind.</param>
-        /// <param name="advertised">Advertised value.</param>
+        /// <param name="constantChange">Advertised value.</param>
         /// <param name="locked">If set to <c>true</c>, locked.</param>
-        /// <param name="actual">Actual value.</param>
+        /// <param name="actualValue">Actual value.</param>
         /// <param name="updateType">Update type.</param>
-        /// <param name="timeDependsOn">If set to <c>true</c> time depends on commodity filling.</param>
+        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c> time depends on commodity filling.</param>
         /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
         /// <typeparam name="InteractionDefinition">Interaction definition type.</typeparam>
         /// <typeparam name="Target">Target type.</typeparam>
-        public static void AddAsOutput<InteractionDefinition, Target>(this CommodityKind commodityKind, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either) where InteractionDefinition : Gameplay.Interactions.InteractionDefinition where Target : IGameObject
+        public static void AddAsOutput<InteractionDefinition, Target>(this CommodityKind commodityKind, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either) where InteractionDefinition : Gameplay.Interactions.InteractionDefinition where Target : IGameObject
         {
-            commodityKind.AddAsOutput(typeof(InteractionDefinition), typeof(Target), advertised, locked, actual, updateType, timeDependsOn, updateEvenOnFailure, updateAboveAndBelowZero);
+            commodityKind.AddAsOutput(typeof(InteractionDefinition), typeof(Target), constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero);
         }
 
         /// <summary>
@@ -62,18 +62,18 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         /// <param name="commodityKind">Commodity kind.</param>
         /// <param name="interactionDefinitionType">Interaction definition type.</param>
         /// <param name="targetType">Target type.</param>
-        /// <param name="advertised">Advertised value.</param>
+        /// <param name="constantChange">Advertised value.</param>
         /// <param name="locked">If set to <c>true</c>, locked.</param>
-        /// <param name="actual">Actual value.</param>
+        /// <param name="actualValue">Actual value.</param>
         /// <param name="updateType">Update type.</param>
-        /// <param name="timeDependsOn">If set to <c>true</c> time depends on commodity filling.</param>
+        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c> time depends on commodity filling.</param>
         /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
-        public static void AddAsOutput(this CommodityKind commodityKind, Type interactionDefinitionType, Type targetType, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
+        public static void AddAsOutput(this CommodityKind commodityKind, Type interactionDefinitionType, Type targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
             List<CommodityChange> outputs = AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType).mTradeoff.mOutputs;
             outputs.RemoveAll(x => x.Commodity == commodityKind);
-            outputs.Add(new CommodityChange(commodityKind, advertised, locked, actual, updateType, timeDependsOn, updateEvenOnFailure, updateAboveAndBelowZero));
+            outputs.Add(new CommodityChange(commodityKind, constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero));
             RefreshInteractionObjectPairs(interactionDefinitionType, targetType);
         }
 
@@ -83,19 +83,19 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
         /// <param name="commodityKind">Commodity kind.</param>
         /// <param name="interactionDefinitionTypeFullName">Interaction definition type full name.</param>
         /// <param name="targetTypeFullName">Target type full name.</param>
-        /// <param name="advertised">Advertised value.</param>
+        /// <param name="constantChange">Advertised value.</param>
         /// <param name="locked">If set to <c>true</c>, locked.</param>
-        /// <param name="actual">Actual value.</param>
+        /// <param name="actualValue">Actual value.</param>
         /// <param name="updateType">Update type.</param>
-        /// <param name="timeDependsOn">If set to <c>true</c> time depends on commodity filling.</param>
+        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c> time depends on commodity filling.</param>
         /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
-        public static void AddAsOutput(this CommodityKind commodityKind, string interactionDefinitionTypeFullName, string targetTypeFullName, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
+        public static void AddAsOutput(this CommodityKind commodityKind, string interactionDefinitionTypeFullName, string targetTypeFullName, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
             Type interactionDefinitionType, targetType;
             if (TryGetType(interactionDefinitionTypeFullName, out interactionDefinitionType) && TryGetType(targetTypeFullName, out targetType))
             {
-                commodityKind.AddAsOutput(interactionDefinitionType, targetType, advertised, locked, actual, updateType, timeDependsOn, updateEvenOnFailure, updateAboveAndBelowZero);
+                commodityKind.AddAsOutput(interactionDefinitionType, targetType, constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero);
             }
         }
 

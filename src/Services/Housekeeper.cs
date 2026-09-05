@@ -182,15 +182,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             Instance = this;
             Outputs.AddRange(new[]
                 {
-                    new CommodityChangeOutput(typeof(Bookshelf_ReadSomething.Definition), typeof(Bookshelf), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChangeOutput(typeof(Tablet.ChooseBookOnTablet.Definition), typeof(Tablet), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChangeOutput(typeof(FirePit.LightFirePit.Definition), typeof(FirePit), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChangeOutput(typeof(Fireplace.LightFire.Definition), typeof(Fireplace), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChangeOutput(typeof(ReadBook.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChangeOutput(typeof(ReadBookChooser.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChangeOutput(typeof(Tablet.ReadBookOnTablet.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChangeOutput(typeof(Sim.ReadSomethingInInventory.Definition), typeof(Sim), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChangeOutput(typeof(SitAndWait.Definition), typeof(GameObject), 1f, false, 1f, OutputUpdateType.ImmediateDelta)
+                    new CommodityChange(typeof(Bookshelf_ReadSomething.Definition), typeof(Bookshelf), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange(typeof(Tablet.ChooseBookOnTablet.Definition), typeof(Tablet), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange(typeof(FirePit.LightFirePit.Definition), typeof(FirePit), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange(typeof(Fireplace.LightFire.Definition), typeof(Fireplace), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange(typeof(ReadBook.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange(typeof(ReadBookChooser.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange(typeof(Tablet.ReadBookOnTablet.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange(typeof(Sim.ReadSomethingInInventory.Definition), typeof(Sim), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange(typeof(SitAndWait.Definition), typeof(GameObject), 1f, false, 1f, OutputUpdateType.ImmediateDelta)
                 });
         }
 

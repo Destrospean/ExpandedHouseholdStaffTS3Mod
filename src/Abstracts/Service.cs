@@ -27,35 +27,35 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
     /// </summary>
     public abstract class Service<T> : Service, IService where T : Service<T>
     {
-        public struct CommodityChangeOutput
+        public struct CommodityChange
         {
             public Type InteractionDefinitionType;
 
             public Type TargetType;
 
-            public float Advertised;
+            public float ConstantChange;
 
             public bool Locked;
 
-            public float Actual;
+            public float ActualValue;
 
             public OutputUpdateType UpdateType;
 
-            public bool TimeDependsOn;
+            public bool TimeDependsOnCommodityFilling;
 
             public bool UpdateEvenOnFailure;
 
             public UpdateAboveAndBelowZeroType UpdateAboveAndBelowZero;
 
-            public CommodityChangeOutput(Type interactionDefinitionType, Type targetType, float advertised, bool locked, float actual, OutputUpdateType updateType, bool timeDependsOn = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
+            public CommodityChange(Type interactionDefinitionType, Type targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
             {
                 InteractionDefinitionType = interactionDefinitionType;
                 TargetType = targetType;
-                Advertised = advertised;
+                ConstantChange = constantChange;
                 Locked = locked;
-                Actual = actual;
+                ActualValue = actualValue;
                 UpdateType = updateType;
-                TimeDependsOn = timeDependsOn;
+                TimeDependsOnCommodityFilling = timeDependsOnCommodityFilling;
                 UpdateEvenOnFailure = updateEvenOnFailure;
                 UpdateAboveAndBelowZero = updateAboveAndBelowZero;
             }
@@ -182,7 +182,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         /// <summary>
         /// Outputs for interactions and their target types that the service motive of the service is inserted into,
         /// </summary>
-        public readonly List<CommodityChangeOutput> Outputs = new List<CommodityChangeOutput>();
+        public readonly List<CommodityChange> Outputs = new List<CommodityChange>();
 
         /// <summary>
         /// Gets the motive commodity kind for the service.
@@ -227,88 +227,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         static void AddInteractions(Bed bed)
         {
             CommonUtils.TryDisplayScriptError(() => bed.AddInteraction(SetUnsetServiceBed.Singleton, true));
-        }
-
-        static void OnObjectPlacedInLot(object sender, EventArgs e)
-        {
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
-                    if (onObjectPlacedInLotEventArgs != null)
-                    {
-                        GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
-                        if (typeof(IAmLiveInService).IsAssignableFrom(DerivedType))
-                        {
-                            Bed bed = gameObject as Bed;
-                            if (bed != null)
-                            {
-                                AddInteractions(bed);
-                            }
-                        }
-                    }
-                });
-        }
-
-        static void OnPreLoad()
-        {
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
-                    {
-                        XmlDbData xmlDbData = XmlDbData.ReadData("ServantRolesMod_" + DerivedType.Name + "_ActiveTopic");
-                        if (xmlDbData != null)
-                        {
-                            SocialManager.ParseActiveTopic(xmlDbData);
-                        }
-                        ServiceUtils.PreloadedTypes.Add(DerivedType);
-                    }
-                });
-        }
-
-        static void OnStartupApp(object sender, EventArgs args)
-        {
-            CommonUtils.TryDisplayScriptError(() => LoadTuning(Simulator.LoadXML("ServantRolesMod_ServiceMotive"), ServiceMotive));
-        }
-
-        static void OnWorldLoadFinished(object sender, EventArgs e)
-        {
-            CommonUtils.TryDisplayScriptError(() =>
-                {
-                    MethodInfo createMethod = DerivedType.GetMethod("Create");
-                    if (createMethod == null)
-                    {
-                        Create();
-                    }
-                    else
-                    {
-                        createMethod.Invoke(null, null);
-                    }
-                    if (Instance == null)
-                    {
-                        return;
-                    }
-                    Instance.SetOutputs();
-                    IEnumerator<SimDescription> enumerator = Instance.Pool.GetEnumerator();
-                    while (enumerator.MoveNext())
-                    {
-                        if (enumerator.Current != null && enumerator.Current.CreatedSim != null)
-                        {
-                            CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, ServiceMotive);
-                        }
-                    }
-                    foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
-                    {
-                        AddInteractions(bed);
-                    }
-                });
-        }
-
-        static void OnWorldQuit(object sender, EventArgs e)
-        {
-            if (Instance != null)
-            {
-                Instance = null;
-            }
         }
 
         public static void Create()
@@ -503,11 +421,71 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public static void Init()
         {
             CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);
-            LoadSaveManager.ObjectGroupsPreLoad += OnPreLoad;
-            World.OnObjectPlacedInLotEventHandler += OnObjectPlacedInLot;
-            World.sOnStartupAppEventHandler += OnStartupApp;
-            World.sOnWorldLoadFinishedEventHandler += OnWorldLoadFinished;
-            World.sOnWorldQuitEventHandler += OnWorldQuit;
+            LoadSaveManager.ObjectGroupsPreLoad += () => CommonUtils.TryDisplayScriptError(() =>
+                {
+                    if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
+                    {
+                        XmlDbData xmlDbData = XmlDbData.ReadData("ServantRolesMod_" + DerivedType.Name + "_ActiveTopic");
+                        if (xmlDbData != null)
+                        {
+                            SocialManager.ParseActiveTopic(xmlDbData);
+                        }
+                        ServiceUtils.PreloadedTypes.Add(DerivedType);
+                    }
+                });
+            World.OnObjectPlacedInLotEventHandler += (sender, e) => CommonUtils.TryDisplayScriptError(() =>
+                {
+                    World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
+                    if (onObjectPlacedInLotEventArgs != null)
+                    {
+                        GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
+                        if (typeof(IAmLiveInService).IsAssignableFrom(DerivedType))
+                        {
+                            Bed bed = gameObject as Bed;
+                            if (bed != null)
+                            {
+                                AddInteractions(bed);
+                            }
+                        }
+                    }
+                });
+            World.sOnStartupAppEventHandler += (sender, e) => CommonUtils.TryDisplayScriptError(() => LoadTuning(Simulator.LoadXML("ServantRolesMod_ServiceMotive"), ServiceMotive));
+            World.sOnWorldLoadFinishedEventHandler += (sender, e) => CommonUtils.TryDisplayScriptError(() =>
+                {
+                    MethodInfo createMethod = DerivedType.GetMethod("Create");
+                    if (createMethod == null)
+                    {
+                        Create();
+                    }
+                    else
+                    {
+                        createMethod.Invoke(null, null);
+                    }
+                    if (Instance == null)
+                    {
+                        return;
+                    }
+                    Instance.SetOutputs();
+                    IEnumerator<SimDescription> enumerator = Instance.Pool.GetEnumerator();
+                    while (enumerator.MoveNext())
+                    {
+                        if (enumerator.Current != null && enumerator.Current.CreatedSim != null)
+                        {
+                            CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, ServiceMotive);
+                        }
+                    }
+                    foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
+                    {
+                        AddInteractions(bed);
+                    }
+                });
+            World.sOnWorldQuitEventHandler += (sender, e) =>
+                {
+                    if (Instance != null)
+                    {
+                        Instance = null;
+                    }
+                };
         }
 
         public static void LoadTuning(XmlDocument xmlDocument, CommodityKind commodityKind = CommodityKind.None)
@@ -655,9 +633,9 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public void SetOutputs()
         {
-            foreach (CommodityChangeOutput output in Outputs)
+            foreach (CommodityChange output in Outputs)
             {
-                ServiceMotive.AddAsOutput(output.InteractionDefinitionType, output.TargetType, output.Advertised, output.Locked, output.Actual, output.UpdateType, output.TimeDependsOn, output.UpdateEvenOnFailure, output.UpdateAboveAndBelowZero);
+                ServiceMotive.AddAsOutput(output.InteractionDefinitionType, output.TargetType, output.ConstantChange, output.Locked, output.ActualValue, output.UpdateType, output.TimeDependsOnCommodityFilling, output.UpdateEvenOnFailure, output.UpdateAboveAndBelowZero);
             }
         }
     }
