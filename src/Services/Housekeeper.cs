@@ -150,7 +150,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 return new List<CommodityKind>()
                 {
                     CommodityKind.BeMaid,
-                    Housekeeper.ServiceMotive
+                    ServiceMotive
                 };
             }
         }

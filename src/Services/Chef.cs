@@ -133,7 +133,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             {
                 return new List<CommodityKind>()
                 {
-                    Chef.ServiceMotive
+                    ServiceMotive
                 };
             }
         }
