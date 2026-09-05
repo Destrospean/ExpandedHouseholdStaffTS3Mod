@@ -57,7 +57,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
             public override void Init(ServiceSituation<T> parent)
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         Relationship relationship = Relationship.Get(parent.Worker, mFirer, true);
                         if (relationship.LTR.Liking <= 20)
@@ -77,7 +77,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
             public virtual void OnFinished(Sim actor, float x)
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         Parent.SetState(new LeaveLot<ServiceSituation<T>>(Parent));
                         Parent.Service.FireSim(actor);
@@ -173,7 +173,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public ServiceSituation(Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
-            CommonUtils.TryDisplayScriptError(() =>
+            DebugUtils.TryDisplayScriptError(() =>
                 {
                     worker.AssignRole(this);
                     worker.Autonomy.AllowedToRunMetaAutonomy = false;
@@ -188,7 +188,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 });
         }
 
-        public ServiceSituation(CommonUtils.DummyEnum dummyArgForBaseOfBase, Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
+        public ServiceSituation(DummyEnum dummyArgForBaseOfBase, Service service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
         }
 
@@ -319,7 +319,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public override void SwitchWorkerToServiceOutfit()
         {
-            CommonUtils.TryDisplayScriptError(() =>
+            DebugUtils.TryDisplayScriptError(() =>
                 {
                     string uniformName = GetUniformName(Worker.SimDescription);
                     if (uniformName != null)

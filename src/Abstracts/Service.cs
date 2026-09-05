@@ -194,7 +194,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 CommodityKind serviceMotive;
                 if (!ServiceUtils.ServiceMotives.TryGetValue(DerivedType, out serviceMotive))
                 {
-                    serviceMotive = CommonUtils.GetCommodityKind("Be" + DerivedType.Name, CommonUtils.CommodityKindType.Motive);
+                    serviceMotive = CommonUtils.GetCommodityKind("Be" + DerivedType.Name, CommodityKindType.Motive);
                 }
                 return serviceMotive;
             }
@@ -226,12 +226,12 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         static void AddInteractions(Bed bed)
         {
-            CommonUtils.TryDisplayScriptError(() => bed.AddInteraction(SetUnsetServiceBed.Singleton, true));
+            DebugUtils.TryDisplayScriptError(() => bed.AddInteraction(SetUnsetServiceBed.Singleton, true));
         }
 
         public static void Create()
         {
-            CommonUtils.TryDisplayScriptError(() =>
+            DebugUtils.TryDisplayScriptError(() =>
                 {
                     if (ServiceNPCSpecifications.ValidForCurrentWorld((ServiceType)(DerivedType.GetProperty("ServiceTypeStatic").GetValue(null, null) ?? ServiceTypeStatic)))
                     {
@@ -254,7 +254,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public new SimDescription CreateOrUpdateServiceNpc(SimDescription preCreatedSim, Lot lot)
         {
             SimDescription simDescription = preCreatedSim;
-            CommonUtils.TryDisplayScriptError(() =>
+            DebugUtils.TryDisplayScriptError(() =>
                 {
                     bool shouldUsePlumbot = false;
                     if (simDescription == null)
@@ -296,7 +296,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public static SimDescription CreateSimDescription(Service<T> service, CASAgeGenderFlags ageIfRandom, CASAgeGenderFlags genderIfRandom)
         {
             SimDescription retVal;
-            return CommonUtils.TryDisplayScriptError(() =>
+            return DebugUtils.TryDisplayScriptError(() =>
                 {
                     WorldName currentWorld = GameUtils.GetCurrentWorld();
                     bool randomlyCreated;
@@ -313,7 +313,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             SimDescription simDescription = null;
             bool tempRandomlyCreated = false;
-            CommonUtils.TryDisplayScriptError(() =>
+            DebugUtils.TryDisplayScriptError(() =>
                 {
                     tempRandomlyCreated = false;
                     if ((service.IsHomelessService || LotManager.SelectRandomLotForNPCMoveIn(x => x.Household == null) == null) && Household.NpcHousehold == null)
@@ -371,7 +371,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public override SimDescription FindSimForAssignment(Lot lot)
         {
             SimDescription retVal;
-            return CommonUtils.TryDisplayScriptError(() =>
+            return DebugUtils.TryDisplayScriptError(() =>
                 {
                     bool shouldUseServobot = false;
                     if (GameUtils.IsInstalled(ProductVersion.EP11))
@@ -421,7 +421,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public static void Init()
         {
             CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);
-            LoadSaveManager.ObjectGroupsPreLoad += () => CommonUtils.TryDisplayScriptError(() =>
+            LoadSaveManager.ObjectGroupsPreLoad += () => DebugUtils.TryDisplayScriptError(() =>
                 {
                     if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
                     {
@@ -433,7 +433,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         ServiceUtils.PreloadedTypes.Add(DerivedType);
                     }
                 });
-            World.OnObjectPlacedInLotEventHandler += (sender, e) => CommonUtils.TryDisplayScriptError(() =>
+            World.OnObjectPlacedInLotEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
                     World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
                     if (onObjectPlacedInLotEventArgs != null)
@@ -449,8 +449,8 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         }
                     }
                 });
-            World.sOnStartupAppEventHandler += (sender, e) => CommonUtils.TryDisplayScriptError(() => LoadTuning(Simulator.LoadXML("ServantRolesMod_ServiceMotive"), ServiceMotive));
-            World.sOnWorldLoadFinishedEventHandler += (sender, e) => CommonUtils.TryDisplayScriptError(() =>
+            World.sOnStartupAppEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() => LoadMotiveTuning(Simulator.LoadXML("ServantRolesMod_ServiceMotive"), ServiceMotive));
+            World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
                     MethodInfo createMethod = DerivedType.GetMethod("Create");
                     if (createMethod == null)
@@ -488,7 +488,10 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 };
         }
 
-        public static void LoadTuning(XmlDocument xmlDocument, CommodityKind commodityKind = CommodityKind.None)
+        /// <summary>
+        /// Loads a motive tuning but (optionally) with a different commodity kind from the one specified in XML.
+        /// </summary>
+        public static void LoadMotiveTuning(XmlDocument xmlDocument, CommodityKind commodityKind = CommodityKind.None)
         {
             XmlNodeList elementsByTagName = xmlDocument.GetElementsByTagName("Motive");
             foreach (XmlElement motiveElement in elementsByTagName)
@@ -628,7 +631,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public override bool NeedsAssignment(Lot lot)
         {
             bool retVal;
-            return !CommonUtils.TryDisplayScriptError(() => IsServiceRequested(lot) && !IsAnySimAssignedToLot(lot), out retVal) && retVal;
+            return !DebugUtils.TryDisplayScriptError(() => IsServiceRequested(lot) && !IsAnySimAssignedToLot(lot), out retVal) && retVal;
         }
 
         public void SetOutputs()

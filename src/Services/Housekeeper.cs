@@ -11,9 +11,7 @@ using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Objects.Environment;
 using Sims3.Gameplay.Objects.Fireplaces;
-using Sims3.Gameplay.Scenarios;
 using Sims3.Gameplay.Services;
-using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations;
 using Sims3.SimIFace;
@@ -207,7 +205,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         public override ServiceSituation InternalCreateSituation(Lot assignedLot, Sim createdSim, int cost, ObjectGuid requestingSim)
         {
             ServiceSituation retVal = null;
-            CommonUtils.TryDisplayScriptError(() =>
+            DebugUtils.TryDisplayScriptError(() =>
                 {
                     createdSim.SimDescription.ShowSocialsOnSim = true;
                     createdSim.CanBeFired = true;
@@ -226,7 +224,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override void SetTraits(SimDescription simDescription)
         {
-            CommonUtils.TryDisplayScriptError(() =>
+            DebugUtils.TryDisplayScriptError(() =>
                 {
                     simDescription.TraitManager.AddElement(TraitNames.Neat);
                     simDescription.TraitManager.AddHiddenElement(TraitNames.MakesNoMesses);
@@ -250,7 +248,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override void UpdateCreatedSim(Sim sim)
         {
-            CommonUtils.TryDisplayScriptError(() =>
+            DebugUtils.TryDisplayScriptError(() =>
                 {
                     /*
                     Skill handinessSkill = sim.SkillManager.AddElement(SkillNames.Handiness);

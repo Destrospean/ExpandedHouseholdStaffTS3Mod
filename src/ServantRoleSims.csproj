@@ -40,18 +40,21 @@
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Housekeeper.cs" />
-    <Compile Include="CommonUtils.cs" />
     <Compile Include="ExtensionAttribute.cs" />
     <Compile Include="Abstracts\Service.cs" />
     <Compile Include="Abstracts\ServiceSituation.cs" />
     <Compile Include="Services\Chef.cs" />
     <Compile Include="Situations\HousekeeperSituation.cs" />
     <Compile Include="Situations\ChefSituation.cs" />
-    <Compile Include="AutonomyUtils.cs" />
-    <Compile Include="ServiceUtils.cs" />
     <Compile Include="Interactions\CallForServices.cs" />
     <Compile Include="Interfaces\IAmLiveInService.cs" />
     <Compile Include="Interfaces\IService.cs" />
+    <Compile Include="Utils\AutonomyUtils.cs" />
+    <Compile Include="Utils\CommonUtils.cs" />
+    <Compile Include="Utils\ServiceUtils.cs" />
+    <Compile Include="Utils\DebugUtils.cs" />
+    <Compile Include="Delegates.cs" />
+    <Compile Include="Enums.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -109,4 +112,7 @@
     <Exec Command="&quot;$(SolutionDir)scripts\GenerateTunables_Temp.bat&quot;" Condition="'$(OS)' == 'Windows_NT'" />
     <Exec Command="sh &quot;$(SolutionDir)scripts\GenerateTunables_Temp.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
   </Target>
+  <ItemGroup>
+    <Folder Include="Utils\" />
+  </ItemGroup>
 </Project>

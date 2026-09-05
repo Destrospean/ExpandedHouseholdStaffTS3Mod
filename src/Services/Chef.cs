@@ -7,7 +7,6 @@ using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Objects;
-using Sims3.Gameplay.Scenarios;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Utilities;
@@ -169,7 +168,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         public override ServiceSituation InternalCreateSituation(Lot assignedLot, Sim createdSim, int cost, ObjectGuid requestingSim)
         {
             ServiceSituation retVal = null;
-            CommonUtils.TryDisplayScriptError(() =>
+            DebugUtils.TryDisplayScriptError(() =>
                 {
                     createdSim.SimDescription.ShowSocialsOnSim = true;
                     createdSim.CanBeFired = true;
@@ -188,7 +187,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override void SetTraits(SimDescription simDescription)
         {
-            CommonUtils.TryDisplayScriptError(() =>
+            DebugUtils.TryDisplayScriptError(() =>
                 {
                     simDescription.TraitManager.AddElement(TraitNames.Artistic);
                     simDescription.TraitManager.AddElement(TraitNames.NaturalCook);
@@ -210,7 +209,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override void UpdateCreatedSim(Sim sim)
         {
-            CommonUtils.TryDisplayScriptError(() =>
+            DebugUtils.TryDisplayScriptError(() =>
                 {
                     Skill cookingSkill = sim.SkillManager.AddElement(SkillNames.Cooking);
                     int maxSkillLevel = cookingSkill.MaxSkillLevel;

@@ -6,7 +6,6 @@ using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace;
-using Sims3.UI;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -15,28 +14,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
 {
     public static class CommonUtils
     {
-        public enum CommodityKindType
-        {
-            Motive,
-            Skill,
-            Posture,
-            PostureCheck,
-            Trait
-        }
-
-        public enum DummyEnum
-        {
-            DummyValue
-        }
-
-        public delegate void Action();
-
-        public delegate T Func<T>();
-
         const string kAuthorName = "zoeoeAndDestrospean";
-
-        [Tunable]
-        public static bool kShowDebugMessages = true;
 
         /// <summary>
         /// Adds the commodity kind as a commodity change output to an interaction tuning.
@@ -214,79 +192,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod
             if (TryGetType(interactionDefinitionTypeFullName, out interactionDefinitionType) && TryGetType(targetTypeFullName, out targetType))
             {
                 RefreshInteractionObjectPairs(interactionDefinitionType, targetType);
-            }
-        }
-
-        /// <summary>
-        /// Shows a debug message dialog (only when kShowDebugMessages is set to <c>true</c>)
-        /// </summary>
-        public static void ShowDebugMessageDialog(string message)
-        {
-            if (kShowDebugMessages)
-            {
-                SimpleMessageDialog.Show("Servants Mod", message);
-            }
-        }
-
-        /// <summary>
-        /// Shows a debug message notification (only when kShowDebugMessages is set to <c>true</c>)
-        /// </summary>
-        public static void ShowDebugMessageNotification(string message)
-        {
-            StyledNotification.Format format = new StyledNotification.Format(message, StyledNotification.NotificationStyle.kSimTalking);
-            if (GameUtils.IsInstalled(ProductVersion.EP9))
-            {
-                StyledNotification.Show(format, "w_smart_phone", null, ProductVersion.EP9, ProductVersion.EP9);
-            }
-            else
-            {
-                StyledNotification.Show(format, "glb_tns_phone_r2");
-            }
-        }
-
-        /// <summary>
-        /// Displays a script error in a the script error window if one is found.
-        /// </summary>
-        /// <returns><c>true</c>, if a script error was found, <c>false</c> otherwise.</returns>
-        /// <param name="action">Function to execute and check for an error.</param>
-        public static bool TryDisplayScriptError(Action action)
-        {
-            Exception exception;
-            if (TryGetException(action, out exception))
-            {
-                ((IScriptErrorWindow)AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, exception);
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Displays a script error in a the script error window if one is found.
-        /// </summary>
-        /// <returns><c>true</c>, if a script error was found, <c>false</c> otherwise.</returns>
-        /// <param name="callback">Function to execute and check for an error.</param>
-        /// <param name="value">Return value of the callback function.</param>
-        /// <typeparam name="T">Return value type.</typeparam>
-        public static bool TryDisplayScriptError<T>(Func<T> callback, out T value)
-        {
-            T retVal = default(T);
-            bool errorDisplayed = TryDisplayScriptError(() => retVal = callback());
-            value = retVal;
-            return errorDisplayed;
-        }
-
-        public static bool TryGetException(Action action, out Exception exception)
-        {
-            try
-            {
-                exception = null;
-                action();
-                return false;
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-                return true;
             }
         }
 

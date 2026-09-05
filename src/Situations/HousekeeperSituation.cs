@@ -26,7 +26,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 get
                 {
                     bool retVal;
-                    return !CommonUtils.TryDisplayScriptError(() =>
+                    return !DebugUtils.TryDisplayScriptError(() =>
                         {
                             foreach (Sim sim in Lot.GetObjects<Sim>())
                             {
@@ -75,12 +75,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(HousekeeperSituation parent)
             {
-                CommonUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(Housekeeper.CheckTime, TimeUnit.Minutes, CheckForDuties, Housekeeper.CheckTime, TimeUnit.Minutes, "Time for Housekeeper to check if everything is cleaned", AlarmType.AlwaysPersisted));
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(Housekeeper.CheckTime, TimeUnit.Minutes, CheckForDuties, Housekeeper.CheckTime, TimeUnit.Minutes, "Time for Housekeeper to check if everything is cleaned", AlarmType.AlwaysPersisted));
             }
 
             public override void CleanUp()
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         Parent.Worker.WorkMotive = CommodityKind.None;
                         Parent.Worker.Autonomy.Motives.RemoveMotive(CommodityKind.BeMaid);
@@ -92,7 +92,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public void CheckForDuties()
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         if (!Parent.ServiceTerminated && !HasDuties && !Parent.IsLiveInService && (!Parent.Worker.BuffManager.HasElement(BuffNames.Scared) || Parent.Worker.BuffManager.GetElement(BuffNames.Scared).BuffOrigin != Origin.FromSeeingBonehilda))
                         {
@@ -116,7 +116,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void CleanUp()
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         AlarmManager.RemoveAlarm(mAlarmHandle);
                         base.CleanUp();
@@ -125,12 +125,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(HousekeeperSituation parent)
             {
-                CommonUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(Housekeeper.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(Housekeeper.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public override void OnSocializedWith(Sim sim)
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         float timeLeft = AlarmManager.GetTimeLeft(mAlarmHandle, TimeUnit.Hours);
                         if (timeLeft < Housekeeper.ExtraWaitTimeAfterSocializing)
@@ -142,7 +142,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public void TimeToRoute()
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         Parent.NPCLeavingMessage(LeavingReason.NPCJobDone);
                         Parent.SetState(new LeaveLot<HousekeeperSituation>(Parent));
@@ -162,7 +162,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void OnFinished(Sim actor, float x)
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         Parent.NPCLeavingMessage(LeavingReason.NPCFired);
                         Parent.SetState(new LeaveLot<ServiceSituation<HousekeeperSituation>>(Parent));
@@ -183,7 +183,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(HousekeeperSituation parent)
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         parent.Worker.InteractionQueue.CancelAllInteractions();
                         RequestWalkStyle(parent.Worker, Sim.WalkStyle.OnFire);
@@ -207,7 +207,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(HousekeeperSituation parent)
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         parent.OnArriveOnLot();
                         parent.SetMotivesAndCommodities();
@@ -230,7 +230,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void CleanUp()
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         AlarmManager.RemoveAlarm(mAlarmHandle);
                         base.CleanUp();
@@ -239,12 +239,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(HousekeeperSituation parent)
             {
-                CommonUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(Housekeeper.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to route", AlarmType.DeleteOnReset, parent.Worker));
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(Housekeeper.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Housekeeper waiting to route", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public void TimeToRoute()
             {
-                CommonUtils.TryDisplayScriptError(() =>
+                DebugUtils.TryDisplayScriptError(() =>
                     {
                         Parent.OnServiceStarting();
                         RouteToLot<HousekeeperSituation, StartCleaning> routeToLot = new WalkToLot<HousekeeperSituation, StartCleaning>(Parent);
