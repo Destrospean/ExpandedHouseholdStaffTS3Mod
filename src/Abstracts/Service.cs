@@ -426,6 +426,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);
             LoadSaveManager.ObjectGroupsPreLoad += () => DebugUtils.TryDisplayScriptError(() =>
                 {
+                    // The following code loads the active topic for the service.
                     if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
                     {
                         XmlDbData xmlDbData = XmlDbData.ReadData("ServantRolesMod_" + DerivedType.Name + "_ActiveTopic");
@@ -477,9 +478,12 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                             CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, ServiceMotive);
                         }
                     }
-                    foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
+                    if (typeof(IAmLiveInService).IsAssignableFrom(DerivedType))
                     {
-                        AddInteractions(bed);
+                        foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
+                        {
+                            AddInteractions(bed);
+                        }
                     }
                 });
             World.sOnWorldQuitEventHandler += (sender, e) =>
