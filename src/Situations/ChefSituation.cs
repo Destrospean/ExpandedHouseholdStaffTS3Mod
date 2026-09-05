@@ -154,7 +154,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(ChefSituation parent)
             {
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(Chef.CheckTime, TimeUnit.Minutes, CheckForDuties, Chef.CheckTime, TimeUnit.Minutes, "Time for Chef to check if everything is cleaned", AlarmType.AlwaysPersisted));
+                DebugUtils.TryDisplayScriptError(() =>
+                    {
+                        parent.Worker.GreetSimOnLot(parent.Lot);
+                        mAlarmHandle = parent.Worker.AddAlarmRepeating(Chef.CheckTime, TimeUnit.Minutes, CheckForDuties, Chef.CheckTime, TimeUnit.Minutes, "Time for Chef to check if everything is cleaned", AlarmType.AlwaysPersisted);
+                    });
             }
 
             public override void CleanUp()

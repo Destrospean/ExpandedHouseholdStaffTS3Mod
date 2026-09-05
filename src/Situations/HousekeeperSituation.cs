@@ -44,7 +44,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                                 InteractionInstance interactionInstance = AutonomyUtils.FindBestAction(Parent.Worker.Autonomy);
                                 if (interactionInstance != null && Parent.IsInteractionBetterThanCurrent(interactionInstance))
                                 {
-                                    
                                     Parent.Worker.AddExitReason(ExitReason.CanceledByScript);
                                     return false;
                                 }
@@ -77,7 +76,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(HousekeeperSituation parent)
             {
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(Housekeeper.CheckTime, TimeUnit.Minutes, CheckForDuties, Housekeeper.CheckTime, TimeUnit.Minutes, "Time for Housekeeper to check if everything is cleaned", AlarmType.AlwaysPersisted));
+                DebugUtils.TryDisplayScriptError(() =>
+                    {
+                        parent.Worker.GreetSimOnLot(parent.Lot);
+                        mAlarmHandle = parent.Worker.AddAlarmRepeating(Housekeeper.CheckTime, TimeUnit.Minutes, CheckForDuties, Housekeeper.CheckTime, TimeUnit.Minutes, "Time for Housekeeper to check if everything is cleaned", AlarmType.AlwaysPersisted);
+                    });
             }
 
             public override void CleanUp()
@@ -327,6 +330,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         public override void OnArriveOnLot()
         {
             //Tutorialette.TriggerLesson(Lessons.Maid, null);
+            DebugUtils.ShowDebugMessageNotification(DerivedType + " OnArriveOnLot -- SimDescription: " + Worker.SimDescription + " SocializationDisableCount: " + Worker.mSocializationDisableCount);
+            DebugUtils.ShowDebugMessageNotification(DerivedType + " OnArriveOnLot -- SimDescription: " + Worker.SimDescription + " ShowSocialsOnSim: " + Worker.SimDescription.ShowSocialsOnSim);
             mDateLastPaid = SimClock.ElapsedCalendarDays();
             mPayHousekeeperAlarm = AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayHousekeeper, 1, TimeUnit.Weeks, "Housekeeper weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
         }

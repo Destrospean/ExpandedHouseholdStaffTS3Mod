@@ -283,6 +283,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     }
                     if (simDescription != null)
                     {
+                        DebugUtils.ShowDebugMessageNotification("CreateOrUpdateServiceNpc -- SimDescription: " + simDescription);
                         ClearAllTraits(simDescription);
                         SetServiceNPCProperties(simDescription);
                         if (!shouldUsePlumbot)
@@ -424,6 +425,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public static void Init()
         {
             CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);
+            /*
             LoadSaveManager.ObjectGroupsPreLoad += () => DebugUtils.TryDisplayScriptError(() =>
                 {
                     // The following code loads the active topic for the service.
@@ -437,6 +439,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         ServiceUtils.PreloadedTypes.Add(DerivedType);
                     }
                 });
+            */
             World.OnObjectPlacedInLotEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
                     World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
@@ -456,6 +459,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             World.sOnStartupAppEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() => LoadMotiveTuning(Simulator.LoadXML("ServantRolesMod_ServiceMotive"), ServiceMotive));
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
+                    if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
+                    {
+                        CommonUtils.LoadSocializingActionAvailability("ServantRolesMod_" + DerivedType.Name + "_ActiveTopic");
+                        ServiceUtils.PreloadedTypes.Add(DerivedType);
+                    }
                     MethodInfo createMethod = DerivedType.GetMethod("Create");
                     if (createMethod == null)
                     {

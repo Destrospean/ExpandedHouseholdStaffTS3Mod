@@ -4,11 +4,13 @@ using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
+using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml;
 using zoeoeAndDestrospean.Enums;
 
 namespace zoeoeAndDestrospean.Utils
@@ -142,6 +144,41 @@ namespace zoeoeAndDestrospean.Utils
         public static void LoadMotive(string instanceName)
         {
             MotiveTuning.LoadTuning(Simulator.LoadXML(instanceName));
+        }
+
+        public static void LoadSocialData(string instanceName)
+        {
+            XmlDocument xmlDocument = Simulator.LoadXML(instanceName);
+            bool isEp5Installed = GameUtils.IsInstalled(ProductVersion.EP5);
+            if (instanceName != null)
+            {
+                foreach (XmlElement element in new XmlElementLookup(xmlDocument)["Action"])
+                {
+                    CommodityTypes commodityTypes;
+                    ParserFunctions.TryParseEnum<CommodityTypes>(element.GetAttribute("com"), out commodityTypes, CommodityTypes.Undefined);
+                    ActionData data = new ActionData(element.GetAttribute("key"), commodityTypes, ProductVersion.BaseGame, new XmlElementLookup(element), isEp5Installed);
+                    ActionData.Add(data);
+                }
+            }
+        }
+
+        public static void LoadSocializingActionAvailability(string instanceName)
+        {
+            XmlDbData data = XmlDbData.ReadData(instanceName);
+            if (data != null)
+            {
+                DebugUtils.TryDisplayScriptError(() =>
+                    {
+                        if (data.Tables.ContainsKey("SAA"))
+                        {
+                            SocialManager.ParseStcActionAvailability(data);
+                        }
+                        if (data.Tables.ContainsKey("TAA"))
+                        {
+                            SocialManager.ParseActiveTopic(data);
+                        }
+                    });
+            }
         }
 
         /// <summary>
