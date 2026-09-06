@@ -424,21 +424,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         public static void Init()
         {
             CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);
-            /*
-            LoadSaveManager.ObjectGroupsPreLoad += () => DebugUtils.TryDisplayScriptError(() =>
-                {
-                    // The following code loads the active topic for the service.
-                    if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
-                    {
-                        XmlDbData xmlDbData = XmlDbData.ReadData("ServantRolesMod_" + DerivedType.Name + "_ActiveTopic");
-                        if (xmlDbData != null)
-                        {
-                            SocialManager.ParseActiveTopic(xmlDbData);
-                        }
-                        ServiceUtils.PreloadedTypes.Add(DerivedType);
-                    }
-                });
-            */
             World.OnObjectPlacedInLotEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
                     World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
@@ -460,6 +445,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 {
                     if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
                     {
+                        // The following code loads the active topic for the service.
                         CommonUtils.LoadSocializingActionAvailability("ServantRolesMod_" + DerivedType.Name + "_ActiveTopic");
                         ServiceUtils.PreloadedTypes.Add(DerivedType);
                     }
