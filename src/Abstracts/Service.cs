@@ -582,10 +582,9 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 });
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
-                    LoadServiceMotive();
                     if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
                     {
-                        // The following code loads the active topic for the service.
+                        LoadServiceMotive();
                         CommonUtils.LoadSocializingActionAvailability("ServantRolesMod_" + DerivedType.Name + "_ActiveTopic");
                         ServiceUtils.PreloadedTypes.Add(DerivedType);
                     }
