@@ -245,10 +245,24 @@ namespace zoeoeAndDestrospean.Utils
             Marshal.Copy(replacementByteArray, 28, new IntPtr(oldMethod.MethodHandle.Value.ToInt32() + 28), 12);
         }
 
-        public static void ReplaceMethod<OldType, NewType>(string oldMethodName, string newMethodName = null)
+        public static void ReplaceMethodsByName<OldType, NewType>(string methodName)
         {
-            MethodInfo newMethod = typeof(NewType).GetMethod(newMethodName ?? oldMethodName, (BindingFlags)0x3C);
-            CommonUtils.ReplaceMethod(typeof(OldType).GetMethod(oldMethodName, (BindingFlags)0x3C, null, Array.ConvertAll(newMethod.GetParameters(), x => x.ParameterType), null), newMethod);
+            ReplaceMethodsByName<OldType, NewType>(methodName, methodName);
+        }
+
+        public static void ReplaceMethodsByName<OldType, NewType>(string oldMethodName, string newMethodName)
+        {
+            foreach (MethodInfo method in typeof(NewType).GetMethods((BindingFlags)0x3C))
+            {
+                if (method.Name == newMethodName)
+                {
+                    MethodInfo oldMethod = typeof(OldType).GetMethod(oldMethodName, (BindingFlags)0x3C, null, Array.ConvertAll(method.GetParameters(), x => x.ParameterType), null);
+                    if (oldMethod != null)
+                    {
+                        CommonUtils.ReplaceMethod(oldMethod, method);
+                    }
+                }
+            }
         }
 
         public static bool TryGetType(string fullName, out Type type)
