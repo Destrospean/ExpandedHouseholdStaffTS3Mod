@@ -245,12 +245,26 @@ namespace zoeoeAndDestrospean.Utils
             Marshal.Copy(replacementByteArray, 28, new IntPtr(oldMethod.MethodHandle.Value.ToInt32() + 28), 12);
         }
 
-        public static void ReplaceMethodsByName<OldType, NewType>(string methodName)
+        /// <summary>
+        /// Replaces a method (and its overloads) with another method.
+        /// (Note: Only the overloads defined in the new type will replace the corresponding overloads of the old type.)
+        /// </summary>
+        /// <typeparam name="OldType">The class that holds the method to be replaced.</typeparam>
+        /// <typeparam name="NewType">The class that holds the new method. (Note: Only the overloads defined in the new type will replace the corresponding overloads of the old type.)</typeparam>
+        public static void ReplaceMethod<OldType, NewType>(string methodName)
         {
-            ReplaceMethodsByName<OldType, NewType>(methodName, methodName);
+            ReplaceMethod<OldType, NewType>(methodName, methodName);
         }
 
-        public static void ReplaceMethodsByName<OldType, NewType>(string oldMethodName, string newMethodName)
+        /// <summary>
+        /// Replaces a method (and its overloads) with another method.
+        /// (Note: Only the overloads defined in the new type will replace the corresponding overloads of the old type.)
+        /// </summary>
+        /// <param name="oldMethodName">The name of the method to be replaced.</param>
+        /// <param name="newMethodName">The name of the new method.</param>
+        /// <typeparam name="OldType">The class that holds the method to be replaced.</typeparam>
+        /// <typeparam name="NewType">The class that holds the new method. (Note: Only the overloads defined in the new type will replace the corresponding overloads of the old type.)</typeparam>
+        public static void ReplaceMethod<OldType, NewType>(string oldMethodName, string newMethodName)
         {
             foreach (MethodInfo method in typeof(NewType).GetMethods((BindingFlags)0x3C))
             {

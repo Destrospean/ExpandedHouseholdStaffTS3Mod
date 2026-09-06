@@ -26,7 +26,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
         static Main()
         {
             LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
-            CommonUtils.ReplaceMethodsByName<SocialComponent, Main>("IsInServicePreventingSocialization");
+            CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
         }
 
         [ScoringFunction]
