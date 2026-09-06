@@ -29,6 +29,11 @@ namespace zoeoeAndDestrospean.ServantRolesMod
             CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
         }
 
+        public static bool IsInServicePreventingSocialization(Sim target)
+        {
+            return target.IsPerformingAService && !VisitSituation.IsSocializing(target) && target.Service as Butler == null && target.Service as IAmSociableService == null;
+        }
+
         [ScoringFunction]
         public static float ServantRolesMod_PutAwayLeftOversScoringFunction(Sim actor, InteractionObjectPair iop)
         {
@@ -41,11 +46,6 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                 return preparedFood != null && SimClock.ElapsedTime(TimeUnit.Minutes) - preparedFood.TimeOfCreation <= (float)timeWaitBeforePutawayLeftoversProperty.GetValue(null, null) ? 0 : 1;
             }
             return CleanableComponent.CleaningScoringFunction(actor, iop);
-        }
-
-        public static bool IsInServicePreventingSocialization(Sim target)
-        {
-            return target.IsPerformingAService && !VisitSituation.IsSocializing(target) && target.Service as Butler == null && target.Service as IAmSociableService == null;
         }
     }
 }
