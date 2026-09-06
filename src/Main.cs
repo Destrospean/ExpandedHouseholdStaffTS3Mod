@@ -8,12 +8,12 @@ using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions;
+using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Replacements;
 using Sims3.SimIFace;
 using System;
 using System.Reflection;
 using zoeoeAndDestrospean.Utils;
 using zoeoeAndDestrospean.Utils.ServantRolesMod;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Replacements;
 
 namespace zoeoeAndDestrospean.ServantRolesMod
 {
