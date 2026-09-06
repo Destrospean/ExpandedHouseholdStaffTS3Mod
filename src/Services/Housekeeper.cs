@@ -208,7 +208,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             ServiceSituation retVal = null;
             DebugUtils.TryDisplayScriptError(() =>
                 {
-                    DebugUtils.ShowDebugMessageNotification(DerivedType + " InternalCreateSituation -- SimDescription: " + createdSim.SimDescription);
                     createdSim.SimDescription.ShowSocialsOnSim = true;
                     createdSim.CanBeFired = true;
                     retVal = new HousekeeperSituation(this, assignedLot, createdSim, cost);
@@ -218,7 +217,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override void SetServiceNPCProperties(SimDescription simDescription)
         {
-            DebugUtils.ShowDebugMessageNotification(DerivedType + " SetServiceNPCProperties -- SimDescription: " + simDescription);
             simDescription.CanBeKilledOnJob = true;
             simDescription.Marryable = true;
             simDescription.Contactable = true;

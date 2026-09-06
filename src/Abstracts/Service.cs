@@ -283,7 +283,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     }
                     if (simDescription != null)
                     {
-                        DebugUtils.ShowDebugMessageNotification("CreateOrUpdateServiceNpc -- SimDescription: " + simDescription);
                         ClearAllTraits(simDescription);
                         SetServiceNPCProperties(simDescription);
                         if (!shouldUsePlumbot)

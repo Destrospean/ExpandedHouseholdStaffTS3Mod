@@ -329,8 +329,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public override void OnArriveOnLot()
         {
-            //GreyedOutTooltipCallback greyedOutTooltipCallback = () => "";
-            //DebugUtils.ShowDebugMessageNotification(DerivedType + ".OnArriveOnLot -- SimDescription: " + Worker.SimDescription + "\nmSocializationDisableCount: " + Worker.mSocializationDisableCount + "\nShowSocialsOnSim: " + Worker.SimDescription.ShowSocialsOnSim + "\nCanSocializeWith: " + SocialInteractionA.Definition.CanSocializeWith("Chat", Sim.ActiveActor, Worker, false, ref greyedOutTooltipCallback));
             //Tutorialette.TriggerLesson(Lessons.Maid, null);
             mDateLastPaid = SimClock.ElapsedCalendarDays();
             mPayHousekeeperAlarm = AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayHousekeeper, 1, TimeUnit.Weeks, "Housekeeper weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
