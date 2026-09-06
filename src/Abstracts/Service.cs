@@ -440,7 +440,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         }
                     }
                 });
-            World.sOnStartupAppEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() => LoadMotiveTuning(Simulator.LoadXML("ServantRolesMod_ServiceMotive"), ServiceMotive));
+            World.sOnStartupAppEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(LoadServiceMotive);
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
                     if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
@@ -491,7 +491,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         /// <summary>
         /// Loads a motive tuning but (optionally) with a different commodity kind from the one specified in XML.
         /// </summary>
-        public static void LoadMotiveTuning(XmlDocument xmlDocument, CommodityKind commodityKind = CommodityKind.None)
+        public static void LoadMotive(XmlDocument xmlDocument, CommodityKind commodityKind = CommodityKind.None)
         {
             XmlNodeList elementsByTagName = xmlDocument.GetElementsByTagName("Motive");
             foreach (XmlElement motiveElement in elementsByTagName)
@@ -626,6 +626,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     Commodities.NewType(commodityKind, 1, motiveTuning.Min, motiveTuning.Max, 0, true, -100, 100);
                 }
             }
+        }
+
+        public static void LoadServiceMotive()
+        {
+            LoadMotive(Simulator.LoadXML("ServantRolesMod_ServiceMotive"), ServiceMotive);
         }
 
         public override bool NeedsAssignment(Lot lot)
