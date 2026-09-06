@@ -235,17 +235,6 @@ namespace zoeoeAndDestrospean.Utils
         }
 
         /// <summary>
-        /// This method was borrowed from Lazy Duchess' Mono Patcher.
-        /// </summary>
-        public static void ReplaceMethod(MethodInfo oldMethod, MethodInfo newMethod)
-        {
-            byte[] replacementByteArray = new byte[40];
-            Marshal.Copy(newMethod.MethodHandle.Value, replacementByteArray, 0, 40);
-            Marshal.Copy(replacementByteArray, 0, oldMethod.MethodHandle.Value, 24);
-            Marshal.Copy(replacementByteArray, 28, new IntPtr(oldMethod.MethodHandle.Value.ToInt32() + 28), 12);
-        }
-
-        /// <summary>
         /// Replaces a method (and its overloads) with another method.
         /// (Note: Only the overloads defined in the new type will replace the corresponding overloads of the old type.)
         /// </summary>
@@ -254,6 +243,17 @@ namespace zoeoeAndDestrospean.Utils
         public static void ReplaceMethod<OldType, NewType>(string methodName)
         {
             ReplaceMethod<OldType, NewType>(methodName, methodName);
+        }
+
+        /// <summary>
+        /// This method was borrowed from Lazy Duchess' Mono Patcher.
+        /// </summary>
+        public static void ReplaceMethod(MethodInfo oldMethod, MethodInfo newMethod)
+        {
+            byte[] replacementByteArray = new byte[40];
+            Marshal.Copy(newMethod.MethodHandle.Value, replacementByteArray, 0, 40);
+            Marshal.Copy(replacementByteArray, 0, oldMethod.MethodHandle.Value, 24);
+            Marshal.Copy(replacementByteArray, 28, new IntPtr(oldMethod.MethodHandle.Value.ToInt32() + 28), 12);
         }
 
         /// <summary>
