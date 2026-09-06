@@ -245,6 +245,12 @@ namespace zoeoeAndDestrospean.Utils
             Marshal.Copy(replacementByteArray, 28, new IntPtr(oldMethod.MethodHandle.Value.ToInt32() + 28), 12);
         }
 
+        public static void ReplaceMethod<OldType, NewType>(string oldMethodName, string newMethodName = null)
+        {
+            MethodInfo newMethod = typeof(NewType).GetMethod(newMethodName ?? oldMethodName, (BindingFlags)0x3C);
+            CommonUtils.ReplaceMethod(typeof(OldType).GetMethod(oldMethodName, (BindingFlags)0x3C, null, Array.ConvertAll(newMethod.GetParameters(), x => x.ParameterType), null), newMethod);
+        }
+
         public static bool TryGetType(string fullName, out Type type)
         {
             type = null;

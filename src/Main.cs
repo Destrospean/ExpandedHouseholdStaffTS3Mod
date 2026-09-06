@@ -1,14 +1,15 @@
 ﻿using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interfaces;
+using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.ObjectComponents;
 using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Services;
+using Sims3.Gameplay.Situations;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Replacements;
 using Sims3.SimIFace;
 using System;
 using System.Reflection;
@@ -25,7 +26,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
         static Main()
         {
             LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
-            CommonUtils.ReplaceMethod(typeof(SocialComponent).GetMethod("GetAllInteractionsForSim"), typeof(SocialComponentPatch).GetMethod("GetAllInteractionsForSim"));
+            CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
         }
 
         [ScoringFunction]
@@ -40,6 +41,11 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                 return preparedFood != null && SimClock.ElapsedTime(TimeUnit.Minutes) - preparedFood.TimeOfCreation <= (float)timeWaitBeforePutawayLeftoversProperty.GetValue(null, null) ? 0 : 1;
             }
             return CleanableComponent.CleaningScoringFunction(actor, iop);
+        }
+
+        public static bool IsInServicePreventingSocialization(Sim target)
+        {
+            return target.IsPerformingAService && !VisitSituation.IsSocializing(target) && target.Service as Butler == null && target.Service as IAmSociableService == null;
         }
     }
 }
