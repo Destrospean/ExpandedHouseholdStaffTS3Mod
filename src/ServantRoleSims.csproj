@@ -57,6 +57,8 @@
     <Compile Include="Enums\DummyEnum.cs" />
     <Compile Include="Delegates\Action.cs" />
     <Compile Include="Delegates\Func.cs" />
+    <Compile Include="Interfaces\IAmSociableService.cs" />
+    <Compile Include="Replacements\SocialComponentPatch.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -118,5 +120,6 @@
     <Folder Include="Utils\" />
     <Folder Include="Enums\" />
     <Folder Include="Delegates\" />
+    <Folder Include="Replacements\" />
   </ItemGroup>
 </Project>

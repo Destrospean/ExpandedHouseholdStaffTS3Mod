@@ -10,6 +10,7 @@ using Sims3.SimIFace;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Xml;
 using zoeoeAndDestrospean.Enums;
 
@@ -231,6 +232,17 @@ namespace zoeoeAndDestrospean.Utils
             {
                 RefreshInteractionObjectPairs(interactionDefinitionType, targetType);
             }
+        }
+
+        /// <summary>
+        /// This method was borrowed from Lazy Duchess' Mono Patcher.
+        /// </summary>
+        public static void ReplaceMethod(MethodInfo oldMethod, MethodInfo newMethod)
+        {
+            byte[] replacementByteArray = new byte[40];
+            Marshal.Copy(newMethod.MethodHandle.Value, replacementByteArray, 0, 40);
+            Marshal.Copy(replacementByteArray, 0, oldMethod.MethodHandle.Value, 24);
+            Marshal.Copy(replacementByteArray, 28, new IntPtr(oldMethod.MethodHandle.Value.ToInt32() + 28), 12);
         }
 
         public static bool TryGetType(string fullName, out Type type)

@@ -18,7 +18,7 @@ using zoeoeAndDestrospean.Utils;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
-    public class Chef : Service<Chef>, IAmLiveInService
+    public class Chef : Service<Chef>, IAmLiveInService, IAmSociableService
     {
         const string kChefBook = "HowToServeAndNotBeServed";
 

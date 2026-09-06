@@ -4,13 +4,16 @@ using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.ObjectComponents;
 using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Services;
+using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions;
 using Sims3.SimIFace;
 using System;
 using System.Reflection;
+using zoeoeAndDestrospean.Utils;
 using zoeoeAndDestrospean.Utils.ServantRolesMod;
+using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Replacements;
 
 namespace zoeoeAndDestrospean.ServantRolesMod
 {
@@ -22,6 +25,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
         static Main()
         {
             LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
+            CommonUtils.ReplaceMethod(typeof(SocialComponent).GetMethod("GetAllInteractionsForSim"), typeof(SocialComponentPatch).GetMethod("GetAllInteractionsForSim"));
         }
 
         [ScoringFunction]

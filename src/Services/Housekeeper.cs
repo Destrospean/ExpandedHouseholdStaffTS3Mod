@@ -22,7 +22,7 @@ using zoeoeAndDestrospean.Utils;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
-    public class Housekeeper : Service<Housekeeper>, IAmCleaningService, IAmLiveInService
+    public class Housekeeper : Service<Housekeeper>, IAmCleaningService, IAmLiveInService, IAmSociableService
     {
         const string kHousekeeperBook = "HowToServeAndNotBeServed";
 
