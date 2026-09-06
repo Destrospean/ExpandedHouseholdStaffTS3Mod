@@ -1,5 +1,7 @@
 #!/bin/bash
 cd "${0%/*}"
-for i in ../dist/*.package; do
-    mono ../tools/TuningResourceGenerator/TuningResourceGenerator.exe $i
-done
+filename=ts3buildtool.log
+last_line=$(tail -n 1 $filename)
+path="${last_line:52}"
+mono ../tools/TuningResourceGenerator/TuningResourceGenerator.exe "$path"
+rm $filename
