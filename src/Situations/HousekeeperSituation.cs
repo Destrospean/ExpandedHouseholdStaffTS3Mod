@@ -76,11 +76,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(HousekeeperSituation parent)
             {
-                DebugUtils.TryDisplayScriptError(() =>
-                    {
-                        parent.Worker.GreetSimOnLot(parent.Lot);
-                        mAlarmHandle = parent.Worker.AddAlarmRepeating(Housekeeper.CheckTime, TimeUnit.Minutes, CheckForDuties, Housekeeper.CheckTime, TimeUnit.Minutes, "Time for Housekeeper to check if everything is cleaned", AlarmType.AlwaysPersisted);
-                    });
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(Housekeeper.CheckTime, TimeUnit.Minutes, CheckForDuties, Housekeeper.CheckTime, TimeUnit.Minutes, "Time for Housekeeper to check if everything is done", AlarmType.AlwaysPersisted));
             }
 
             public override void CleanUp()
@@ -259,19 +255,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             }
         }
 
-        int mDateLastPaid;
-
-        AlarmHandle mPayHousekeeperAlarm = AlarmHandle.kInvalidHandle;
-
-        public int DayCountSinceLastPayment
-        {
-            get
-            {
-                int dayCountSinceLastPayment = SimClock.ElapsedCalendarDays() - mDateLastPaid;
-                return dayCountSinceLastPayment > 0 ? dayCountSinceLastPayment : 1;
-            }
-        }
-
         public override bool ServiceTerminated
         {
             get
@@ -302,18 +285,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public HousekeeperSituation(Service<Housekeeper> service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
-            mDateLastPaid = SimClock.ElapsedCalendarDays();
-        }
-
-        public override int CostTotal()
-        {
-            return Cost * DayCountSinceLastPayment / 7;
-        }
-
-        public override void EndService()
-        {
-            Worker.RemoveAlarm(mPayHousekeeperAlarm);
-            base.EndService();
         }
 
         public override void FreezeMotives()
@@ -322,25 +293,13 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Energy, CommodityKind.Hygiene);
         }
 
-        public override bool IsInteractionBetterThanCurrent(InteractionInstance ii)
-        {
-            return ii.ScoreIsConsiderablyHigher(Worker.CurrentInteraction.GetPriority().Value) && Worker.CurrentInteraction.Autonomous;
-        }
-
+        /*
         public override void OnArriveOnLot()
         {
-            //Tutorialette.TriggerLesson(Lessons.Maid, null);
-            mDateLastPaid = SimClock.ElapsedCalendarDays();
-            mPayHousekeeperAlarm = AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayHousekeeper, 1, TimeUnit.Weeks, "Housekeeper weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
+            Tutorialette.TriggerLesson(Lessons.Maid, null);
+            base.OnArriveOnLot();
         }
-
-        public void PayHousekeeper()
-        {
-            if (ChargeForServiceWhileActive())
-            {
-                mDateLastPaid = SimClock.ElapsedCalendarDays();
-            }
-        }
+        */
 
         public override void SetMotivesAndCommodities()
         {
@@ -365,16 +324,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 base.SetToFire(serviceSim, firer);
             }
-        }
-
-        public override void SetToJobDone()
-        {
-            base.SetToJobDone();
-        }
-
-        public override void SetToLeave()
-        {
-            base.SetToLeave();
         }
     }
 }

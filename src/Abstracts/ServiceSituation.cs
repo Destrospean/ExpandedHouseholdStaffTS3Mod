@@ -118,11 +118,24 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        int mDateLastPaid;
+
         AlarmHandle mCheckForFireAlarmHandle = AlarmHandle.kInvalidHandle;
+
+        AlarmHandle mPayLiveInServiceAlarm = AlarmHandle.kInvalidHandle;
 
         bool mInformedFireDepartment;
 
         public ulong LastInteractionId;
+
+        public int DayCountSinceLastPayment
+        {
+            get
+            {
+                int dayCountSinceLastPayment = SimClock.ElapsedCalendarDays() - mDateLastPaid;
+                return dayCountSinceLastPayment > 0 ? dayCountSinceLastPayment : 1;
+            }
+        }
 
         public virtual float DelayBeforeArriving
         {
@@ -177,6 +190,10 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             DebugUtils.TryDisplayScriptError(() =>
                 {
+                    if (IsLiveInService)
+                    {
+                        mDateLastPaid = SimClock.ElapsedCalendarDays();
+                    }
                     worker.AssignRole(this);
                     worker.Autonomy.AllowedToRunMetaAutonomy = false;
                     FreezeMotives();
@@ -239,8 +256,17 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        public override int CostTotal()
+        {
+            return IsLiveInService ? Cost * DayCountSinceLastPayment / 7 : base.CostTotal();
+        }
+
         public override void EndService()
         {
+            if (IsLiveInService)
+            {
+                Worker.RemoveAlarm(mPayLiveInServiceAlarm);
+            }
             if (ReportsFires)
             {
                 Worker.RemoveAlarm(mCheckForFireAlarmHandle);
@@ -278,7 +304,10 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             return interactionPriority.Value + 1;
         }
 
-        public abstract bool IsInteractionBetterThanCurrent(InteractionInstance ii);
+        public virtual bool IsInteractionBetterThanCurrent(InteractionInstance ii)
+        {
+            return ii.ScoreIsConsiderablyHigher(Worker.CurrentInteraction.GetPriority().Value) && Worker.CurrentInteraction.Autonomous;
+        }
 
         public override string NotEnoughFundsMessage()
         {
@@ -287,6 +316,19 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public virtual void OnArriveOnLot()
         {
+            if (IsLiveInService)
+            {
+                mDateLastPaid = SimClock.ElapsedCalendarDays();
+                mPayLiveInServiceAlarm = AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayLiveInService, 1, TimeUnit.Weeks, Worker.Service.GetType().Name + " weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
+            }
+        }
+
+        public void PayLiveInService()
+        {
+            if (ChargeForServiceWhileActive())
+            {
+                mDateLastPaid = SimClock.ElapsedCalendarDays();
+            }
         }
 
         public virtual void SetMotivesAndCommodities()
