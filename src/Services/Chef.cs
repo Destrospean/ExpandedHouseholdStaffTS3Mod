@@ -22,8 +22,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
     {
         const string kChefBook = "HowToServeAndNotBeServed";
 
-        static readonly string sLocalizationKey = DerivedType.GetLocalizationKey();
-
         [Tunable]
         static ServiceTuning kServiceTuning = new ServiceTuning(1, 1000, false, true, true);
 
@@ -154,11 +152,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         public Chef()
         {
             Instance = this;
-        }
-
-        public static string LocalizeString(string name, params object[] parameters)
-        {
-            return Localization.LocalizeString(sLocalizationKey + ":" + name, parameters);
         }
 
         public override ServiceSituation InternalCreateSituation(Lot assignedLot, Sim createdSim, int cost, ObjectGuid requestingSim)

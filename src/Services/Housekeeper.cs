@@ -26,8 +26,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
     {
         const string kHousekeeperBook = "HowToServeAndNotBeServed";
 
-        static readonly string sLocalizationKey = DerivedType.GetLocalizationKey();
-
         [Tunable]
         static ServiceTuning kServiceTuning = new ServiceTuning(1, 800, false, true, true);
 
@@ -191,11 +189,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     new CommodityChange(typeof(Sim.ReadSomethingInInventory.Definition), typeof(Sim), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
                     new CommodityChange(typeof(SitAndWait.Definition), typeof(GameObject), 1f, false, 1f, OutputUpdateType.ImmediateDelta)
                 });
-        }
-
-        public static string LocalizeString(string name, params object[] parameters)
-        {
-            return Localization.LocalizeString(sLocalizationKey + ":" + name, parameters);
         }
 
         public override ServiceSituation InternalCreateSituation(Lot assignedLot, Sim createdSim, int cost, ObjectGuid requestingSim)
