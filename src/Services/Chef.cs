@@ -31,16 +31,16 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [TunableComment("Length of time (in minutes) between checks that everything is done")]
         static float kCheckTime = 5f;
 
-        [TunableComment("Length of time (in hours) that the chef waits before routing to lot")]
         [Tunable]
+        [TunableComment("Length of time (in hours) that the chef waits before routing to lot")]
         static float kDelayBeforeArriving = 0.5f;
 
-        [TunableComment("Length of time (in hours) that the chef waits before leaving the lot, after their work is done")]
         [Tunable]
+        [TunableComment("Length of time (in hours) that the chef waits before leaving the lot, after their work is done")]
         static float kDelayBeforeLeaving = 0.3f;
 
-        [TunableComment("Length of time (in minutes) that the chef takes to drive to lot")]
         [Tunable]
+        [TunableComment("Length of time (in minutes) that the chef takes to drive to lot")]
         static float kDriveTime = 5f;
 
         [Tunable]
@@ -51,8 +51,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [TunableComment("If the chef's relationship with any YAE falls below this level, they will quit")]
         static float kRelationshipLevelForQuit = -50f;
 
-        [TunableComment("How old leftovers can be out in minutes before the chef will put it away")]
         [Tunable]
+        [TunableComment("How old leftovers can be out in minutes before the chef will put it away")]
         static float kTimeWaitBeforePutawayLeftovers = 60f;
 
         public override ServiceTuning Tuning
