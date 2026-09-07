@@ -101,7 +101,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
             public override void Init(ServiceSituation<T> parent)
             {
-                mAlarmHandle = AlarmManager.AddAlarm(parent.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "Service waiting to route", AlarmType.DeleteOnReset, parent.Worker);
+                mAlarmHandle = AlarmManager.AddAlarm(parent.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, Parent.Worker.Service.GetType().Name + " waiting to route", AlarmType.DeleteOnReset, parent.Worker);
             }
 
             public void TimeToRoute()
@@ -141,7 +141,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             get
             {
-                return Babysitter.DelayBeforeArriving;
+                return (float)(Worker.Service.GetType().GetProperty("DelayBeforeArriving")?.GetValue(null, null) ?? Babysitter.DelayBeforeArriving);
             }
         }
 

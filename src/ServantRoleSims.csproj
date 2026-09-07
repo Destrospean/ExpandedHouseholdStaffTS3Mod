@@ -58,6 +58,8 @@
     <Compile Include="Delegates\Action.cs" />
     <Compile Include="Delegates\Func.cs" />
     <Compile Include="Interfaces\IAmSociableService.cs" />
+    <Compile Include="Services\CustomService.cs" />
+    <Compile Include="Situations\CustomServiceSituation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
