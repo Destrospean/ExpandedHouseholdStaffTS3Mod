@@ -193,11 +193,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 });
         }
 
-        public override string GetServiceTopic(Sim serviceSim)
-        {
-            return "Housekeeper Service";
-        }
-
         public static string LocalizeString(string name, params object[] parameters)
         {
             return Localization.LocalizeString(sLocalizationKey + ":" + name, parameters);

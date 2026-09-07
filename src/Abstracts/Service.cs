@@ -13,6 +13,7 @@ using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
+using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -558,6 +559,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 }, out retVal) ? null : retVal;
         }
 
+        public override string GetServiceTopic(Sim serviceSim)
+        {
+            return DerivedType.Name + " Service";
+        }
+
         /// <summary>
         /// Call this method for every class derived from this one within its static constructor.
         /// </summary>
@@ -585,7 +591,12 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
                     {
                         LoadServiceMotive();
-                        CommonUtils.LoadSocializingActionAvailability("ServantRolesMod_" + DerivedType.Name + "_ActiveTopic");
+                        string activeTopic = DerivedType.Name + " Service";
+                        if (!ActiveTopicData.Exists(activeTopic))
+                        {
+                            ActiveTopicData.Add(new ActiveTopicData(activeTopic, false, 1000, "", true, true, false, true, null, 0, "", false));
+                        }
+                        CommonUtils.AddActions(activeTopic, LongTermRelationshipTypes.Default, false, "Dismiss", "Fire");
                         ServiceUtils.PreloadedTypes.Add(DerivedType);
                     }
                     MethodInfo createMethod = DerivedType.GetMethod("Create");

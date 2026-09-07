@@ -156,11 +156,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             Instance = this;
         }
 
-        public override string GetServiceTopic(Sim serviceSim)
-        {
-            return "Chef Service";
-        }
-
         public static string LocalizeString(string name, params object[] parameters)
         {
             return Localization.LocalizeString(sLocalizationKey + ":" + name, parameters);

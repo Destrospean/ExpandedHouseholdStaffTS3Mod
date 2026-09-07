@@ -7,6 +7,7 @@ using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace;
+using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -19,6 +20,36 @@ namespace zoeoeAndDestrospean.Utils
     public static class CommonUtils
     {
         const string kAuthorName = "zoeoeAndDestrospean";
+
+        /// <summary>
+        /// Adds actions to an active topic (which this method creates if it doesn't exist).
+        /// </summary>
+        /// <param name="activeTopic">Active topic.</param>
+        /// <param name="grouping">Grouping.</param>
+        /// <param name="isActive">If set to <c>true</c> it's an FPA, otherwise it's an SPA.</param>
+        /// <param name="newActions">New actions.</param>
+        public static void AddActions(string activeTopic, LongTermRelationshipTypes grouping, bool isActive, params string[] newActions)
+        {
+            Dictionary<LongTermRelationshipTypes, Dictionary<bool, List<string>>> groups;
+            if (!ActionAvailabilityData.sActiveTopicInteractions.TryGetValue(activeTopic, out groups))
+            {
+                groups = new Dictionary<LongTermRelationshipTypes, Dictionary<bool, List<string>>>();
+                ActionAvailabilityData.sActiveTopicInteractions.Add(activeTopic, groups);
+            }
+            Dictionary<bool, List<string>> group;
+            if (!groups.TryGetValue(grouping, out group))
+            {
+                group = new Dictionary<bool, List<string>>();
+                groups.Add(grouping, group);
+            }
+            List<string> actions;
+            if (!group.TryGetValue(isActive, out actions))
+            {
+                actions = new List<string>();
+                group.Add(isActive, actions);
+            }
+            actions.AddRange(newActions);
+        }
 
         /// <summary>
         /// Adds the commodity kind as a commodity change output to an interaction tuning.
