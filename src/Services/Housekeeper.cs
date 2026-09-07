@@ -238,7 +238,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         simDescription.TraitManager.AddElement(traitName);
                         potentialTraits.Remove(traitName);
                     }
-                    simDescription.TraitManager.AddRandomTrait(2);
                 });
         }
 
