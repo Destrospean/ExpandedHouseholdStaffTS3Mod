@@ -638,9 +638,9 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 };
         }
 
-        public static void LoadServiceMotive()
+        public static void LoadServiceMotive(CommodityKind? serviceMotive = null)
         {
-            LoadMotive(Simulator.LoadXML("ServantRolesMod_ServiceMotive"), ServiceMotive);
+            LoadMotive(Simulator.LoadXML("ServantRolesMod_ServiceMotive"), serviceMotive ?? ServiceMotive);
         }
 
         public override bool NeedsAssignment(Lot lot)
