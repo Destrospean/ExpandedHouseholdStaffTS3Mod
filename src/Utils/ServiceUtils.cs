@@ -8,6 +8,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 {
     public static class ServiceUtils
     {
+        public static readonly Dictionary<string, Service> CustomServices = new Dictionary<string, Service>();
+
         public static readonly Dictionary<Type, Service> Instances = new Dictionary<Type, Service>();
 
         public static readonly List<Type> PreloadedTypes = new List<Type>();

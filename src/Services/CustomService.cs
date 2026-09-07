@@ -32,11 +32,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
             public string Name;
 
-            public CustomService Parent;
-
             public int PotentialTraitCount;
 
             public readonly List<TraitNames> PotentialTraits = new List<TraitNames>();
+
+            public CommodityKind ServiceMotive;
 
             public readonly List<SkillNames> Skills = new List<SkillNames>();
 
@@ -44,16 +44,16 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
             public readonly List<TraitNames> Traits = new List<TraitNames>();
 
-            public ServiceProfile(CustomService parent, string name, string title, List<CommodityKind> motives = null, List<TraitNames> traits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
+            public ServiceProfile(string name, string title, CommodityKind? serviceMotive, List<CommodityKind> motives = null, List<TraitNames> traits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
             {
                 Name = name;
-                Parent = parent;
                 Title = title;
-                parent.mServiceMotive = CommonUtils.GetCommodityKind("Be" + name, CommodityKindType.Motive);
-                Motives = motives ?? new List<CommodityKind>
-                    {
-                        parent.mServiceMotive.Value
-                    };
+                ServiceMotive = serviceMotive ?? CommonUtils.GetCommodityKind("Be" + name, CommodityKindType.Motive);
+                Motives = motives ?? new List<CommodityKind>();
+                if (!Motives.Contains(ServiceMotive))
+                {
+                    Motives.Add(ServiceMotive);
+                }
                 Traits = traits ?? new List<TraitNames>();
                 PotentialTraits = potentialTraits ?? new List<TraitNames>();
                 PotentialTraitCount = potentialTraitCount;
@@ -93,8 +93,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [Tunable]
         [TunableComment("How old leftovers can be out in minutes before the custom service NPC will put it away")]
         static float kTimeWaitBeforePutawayLeftovers = 60f;
-
-        public CommodityKind? mServiceMotive;
 
         public override ServiceTuning Tuning
         {
@@ -169,11 +167,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             get
             {
-                if (mServiceMotive == null)
-                {
-                    mServiceMotive = CommonUtils.GetCommodityKind("Be" + Profile.Name, CommodityKindType.Motive);
-                }
-                return mServiceMotive.Value;
+                return Profile.ServiceMotive;
             }
         }
 
@@ -201,34 +195,44 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        static CustomService()
+        public CustomService(ServiceProfile profile)
         {
-            Init();
+            Profile = profile;
+            ServiceUtils.CustomServices[profile.Name] = this;
         }
 
-        public CustomService()
+        public static void Create(ServiceProfile profile)
         {
-            Instance = this;
+            DebugUtils.TryDisplayScriptError(() =>
+                {
+                    if (ServiceNPCSpecifications.ValidForCurrentWorld(ServiceTypeStatic))
+                    {
+                        if (ServiceUtils.CustomServices.ContainsKey(profile.Name) && ServiceUtils.CustomServices[profile.Name] != null)
+                        {
+                            ServiceUtils.CustomServices[profile.Name].PostLoadFixup();
+                        }
+                        else
+                        {
+                            new CustomService(profile);
+                        }
+                    }
+                    else
+                    {
+                        Destroy();
+                    }
+                });
         }
 
         /// <summary>
         /// Call this method for every class derived from this one within its static constructor.
         /// </summary>
-        public static new void Init()
+        public static void Init(ServiceProfile profile)
         {
             World.OnObjectPlacedInLotEventHandler += OnObjectPlacedInLot;
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
-                    MethodInfo createMethod = DerivedType.GetMethod("Create");
-                    if (createMethod == null)
-                    {
-                        Create();
-                    }
-                    else
-                    {
-                        createMethod.Invoke(null, null);
-                    }
-                    if (Instance == null)
+                    Create(profile);
+                    if (!ServiceUtils.CustomServices.ContainsKey(profile.Name) || ServiceUtils.CustomServices[profile.Name] == null)
                     {
                         return;
                     }

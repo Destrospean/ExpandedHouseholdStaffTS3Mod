@@ -43,7 +43,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(Chef.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, "Chef waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(CustomService.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, parent.Worker.Service.GetType().Name + " waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public override void OnSocializedWith(Sim sim)
@@ -51,9 +51,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 DebugUtils.TryDisplayScriptError(() =>
                     {
                         float timeLeft = AlarmManager.GetTimeLeft(mAlarmHandle, TimeUnit.Hours);
-                        if (timeLeft < Chef.ExtraWaitTimeAfterSocializing)
+                        if (timeLeft < CustomService.ExtraWaitTimeAfterSocializing)
                         {
-                            AlarmManager.UpdateAlarmTime(mAlarmHandle, Chef.ExtraWaitTimeAfterSocializing - timeLeft, TimeUnit.Hours);
+                            AlarmManager.UpdateAlarmTime(mAlarmHandle, CustomService.ExtraWaitTimeAfterSocializing - timeLeft, TimeUnit.Hours);
                         }
                     });
             }
@@ -89,28 +89,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             }
         }
 
-        public class StartWaitingToCook : ChildSituation<CustomServiceSituation>
-        {
-            public StartWaitingToCook()
-            {
-            }
-
-            public StartWaitingToCook(CustomServiceSituation parent) : base(parent)
-            {
-            }
-
-            public override void Init(CustomServiceSituation parent)
-            {
-                DebugUtils.TryDisplayScriptError(() =>
-                    {
-                        parent.OnArriveOnLot();
-                        parent.SetMotivesAndCommodities();
-                        parent.SetState(new WaitToCook(parent));
-                    });
-            }
-        }
-
-        public class WaitToCook : ChildSituation<CustomServiceSituation>
+        public class PerformDuties : ChildSituation<CustomServiceSituation>
         {
             AlarmHandle mAlarmHandle = AlarmHandle.kInvalidHandle;
 
@@ -134,7 +113,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                             if (interactionQueue != null)
                             {
                                 InteractionInstance headInteraction = interactionQueue.GetHeadInteraction();
-                                if (headInteraction != null && headInteraction.SatisfiesCommodity(Chef.ServiceMotive))
+                                if (headInteraction != null && headInteraction.SatisfiesCommodity(((CustomService)Parent.Worker.Service).ServiceMotive))
                                 {
                                     return true;
                                 }
@@ -144,17 +123,17 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 }
             }
 
-            public WaitToCook()
+            public PerformDuties()
             {
             }
 
-            public WaitToCook(CustomServiceSituation parent) : base(parent)
+            public PerformDuties(CustomServiceSituation parent) : base(parent)
             {
             }
 
             public override void Init(CustomServiceSituation parent)
             {
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(Chef.CheckTime, TimeUnit.Minutes, CheckForDuties, Chef.CheckTime, TimeUnit.Minutes, "Time for Chef to check if everything is done", AlarmType.AlwaysPersisted));
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(CustomService.CheckTime, TimeUnit.Minutes, CheckForDuties, CustomService.CheckTime, TimeUnit.Minutes, "Time for " + parent.Worker.Service.GetType().Name + " to check if everything is done", AlarmType.AlwaysPersisted));
             }
 
             public override void CleanUp()
@@ -162,7 +141,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 DebugUtils.TryDisplayScriptError(() =>
                     {
                         Parent.Worker.WorkMotive = CommodityKind.None;
-                        Parent.Worker.Autonomy.Motives.RemoveMotive(Chef.ServiceMotive);
+                        Parent.Worker.Autonomy.Motives.RemoveMotive(((CustomService)Parent.Worker.Service).ServiceMotive);
                         AlarmManager.RemoveAlarm(mAlarmHandle);
                         base.CleanUp();
                     });
@@ -176,6 +155,27 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                         {
                             Parent.SetState(new HangAroundBeforeLeaving(Parent));
                         }
+                    });
+            }
+        }
+
+        public class StartPerformingDuties : ChildSituation<CustomServiceSituation>
+        {
+            public StartPerformingDuties()
+            {
+            }
+
+            public StartPerformingDuties(CustomServiceSituation parent) : base(parent)
+            {
+            }
+
+            public override void Init(CustomServiceSituation parent)
+            {
+                DebugUtils.TryDisplayScriptError(() =>
+                    {
+                        parent.OnArriveOnLot();
+                        parent.SetMotivesAndCommodities();
+                        parent.SetState(new PerformDuties(parent));
                     });
             }
         }
@@ -203,7 +203,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(Chef.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, "CustomService waiting to route", AlarmType.DeleteOnReset, parent.Worker));
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(CustomService.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, parent.Worker.Service.GetType().Name + " waiting to route", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public void TimeToRoute()
@@ -211,8 +211,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 DebugUtils.TryDisplayScriptError(() =>
                     {
                         Parent.OnServiceStarting();
-                        RouteToLot<CustomServiceSituation, StartWaitingToCook> routeToLot = new WalkToLot<CustomServiceSituation, StartWaitingToCook>(Parent);
-                        routeToLot.SetRouteTime(Chef.DriveTime);
+                        RouteToLot<CustomServiceSituation, StartPerformingDuties> routeToLot = new WalkToLot<CustomServiceSituation, StartPerformingDuties>(Parent);
+                        routeToLot.SetRouteTime(CustomService.DriveTime);
                         Parent.SetState(routeToLot);
                     });
             }
@@ -231,7 +231,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     if (sim.SimDescription.YoungAdultOrAbove)
                     {
                         Relationship relationship = Relationship.Get(Worker, sim, true);
-                        if (relationship.LTR.Liking < Chef.RelationshipLevelForQuit)
+                        if (relationship.LTR.Liking < CustomService.RelationshipLevelForQuit)
                         {
                             SetToFire(Worker, Worker);
                             return true;
@@ -258,23 +258,24 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public override string GetUniformName(SimDescription simDescription)
         {
-            return "career_execchef_" + (simDescription.IsFemale ? "female" : "male") + (simDescription.Elder ? "elder" : "");
+            return base.GetUniformName(simDescription);
         }
 
         /*
         public override void OnArriveOnLot()
         {
-            Tutorialette.TriggerLesson(Lessons.Butler, null);
+            Tutorialette.TriggerLesson(Lessons.Maid, null);
             base.OnArriveOnLot();
         }
         */
 
         public override void SetMotivesAndCommodities()
         {
-            CommonUtils.UpdateMotiveTunings(Worker, Chef.ServiceMotive);
+            CommodityKind serviceMotive = ((CustomService)Worker.Service).ServiceMotive;
+            CommonUtils.UpdateMotiveTunings(Worker, serviceMotive);
             Worker.Motives.MaxEverything();
-            Worker.WorkMotive = Chef.ServiceMotive;
-            Worker.Motives.CreateMotive(Chef.ServiceMotive);
+            Worker.WorkMotive = serviceMotive;
+            Worker.Motives.CreateMotive(serviceMotive);
         }
 
         public override void SetToFire(Sim serviceSim, Sim firer)
