@@ -32,14 +32,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         static ServiceTuning kServiceTuning = new ServiceTuning(1, 800, false, true, true);
 
         [Tunable]
-        [TunableComment("Length of time (in minutes) between checks that everything is cleaned")]
+        [TunableComment("Length of time (in minutes) between checks that everything is done")]
         static float kCheckTime = 5f;
 
         [TunableComment("Length of time (in hours) that the housekeeper waits before routing to lot")]
         [Tunable]
         static float kDelayBeforeArriving = 0.5f;
 
-        [TunableComment("Length of time (in hours) that the housekeeper waits before leaving the lot, after her work is done")]
+        [TunableComment("Length of time (in hours) that the housekeeper waits before leaving the lot, after their work is done")]
         [Tunable]
         static float kDelayBeforeLeaving = 0.3f;
 
@@ -52,7 +52,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         static float kExtraWaitTimeAfterSocializing = 0.5f;
 
         [Tunable]
-        [TunableComment("If the housekeeper's relationship with any YAE falls below this level, she will quit")]
+        [TunableComment("If the housekeeper's relationship with any YAE falls below this level, they will quit")]
         static float kRelationshipLevelForQuit = -50f;
 
         [TunableComment("How old leftovers can be out in minutes before the housekeeper will put it away")]

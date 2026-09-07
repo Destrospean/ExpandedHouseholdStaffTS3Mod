@@ -28,7 +28,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         static ServiceTuning kServiceTuning = new ServiceTuning(1, 1000, false, true, true);
 
         [Tunable]
-        [TunableComment("Length of time (in minutes) between checks that everything is cleaned")]
+        [TunableComment("Length of time (in minutes) between checks that everything is done")]
         static float kCheckTime = 5f;
 
         [TunableComment("Length of time (in hours) that the chef waits before routing to lot")]
