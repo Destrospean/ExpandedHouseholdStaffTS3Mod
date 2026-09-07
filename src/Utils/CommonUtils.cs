@@ -22,11 +22,11 @@ namespace zoeoeAndDestrospean.Utils
         const string kAuthorName = "zoeoeAndDestrospean";
 
         /// <summary>
-        /// Adds actions to an active topic (which this method creates if it doesn't exist).
+        /// Adds actions to an active topic.
         /// </summary>
         /// <param name="activeTopic">Active topic.</param>
         /// <param name="grouping">Grouping.</param>
-        /// <param name="isActive">If set to <c>true</c> it's an FPA, otherwise it's an SPA.</param>
+        /// <param name="isActive">If set to <c>true</c>, it's an FPA, otherwise it's an SPA.</param>
         /// <param name="newActions">New actions.</param>
         public static void AddActions(string activeTopic, LongTermRelationshipTypes grouping, bool isActive, params string[] newActions)
         {
