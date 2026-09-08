@@ -1,6 +1,7 @@
 ﻿using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Services;
+using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +9,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 {
     public static class ServiceUtils
     {
-        public static readonly Dictionary<string, Service> CustomServices = new Dictionary<string, Service>();
+        public static readonly Dictionary<string, CustomService> CustomServices = new Dictionary<string, CustomService>();
 
         public static readonly Dictionary<Type, Service> Instances = new Dictionary<Type, Service>();
 

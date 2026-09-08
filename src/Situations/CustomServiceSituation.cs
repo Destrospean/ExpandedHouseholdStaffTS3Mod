@@ -1,4 +1,5 @@
-﻿using Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod;
+﻿using Sims3.Gameplay.Abstracts;
+using Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
@@ -43,17 +44,18 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(CustomService.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, parent.Worker.Service.GetType().Name + " waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(((CustomService)Parent.Worker.Service).DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, parent.Worker.Service.GetType().Name + " waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public override void OnSocializedWith(Sim sim)
             {
                 DebugUtils.TryDisplayScriptError(() =>
                     {
+                        CustomService service = (CustomService)Parent.Worker.Service;
                         float timeLeft = AlarmManager.GetTimeLeft(mAlarmHandle, TimeUnit.Hours);
-                        if (timeLeft < CustomService.ExtraWaitTimeAfterSocializing)
+                        if (timeLeft < service.ExtraWaitTimeAfterSocializing)
                         {
-                            AlarmManager.UpdateAlarmTime(mAlarmHandle, CustomService.ExtraWaitTimeAfterSocializing - timeLeft, TimeUnit.Hours);
+                            AlarmManager.UpdateAlarmTime(mAlarmHandle, service.ExtraWaitTimeAfterSocializing - timeLeft, TimeUnit.Hours);
                         }
                     });
             }
@@ -133,7 +135,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(CustomService.CheckTime, TimeUnit.Minutes, CheckForDuties, CustomService.CheckTime, TimeUnit.Minutes, "Time for " + parent.Worker.Service.GetType().Name + " to check if everything is done", AlarmType.AlwaysPersisted));
+                CustomService service = (CustomService)Parent.Worker.Service;
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(service.CheckTime, TimeUnit.Minutes, CheckForDuties, service.CheckTime, TimeUnit.Minutes, "Time for " + parent.Worker.Service.GetType().Name + " to check if everything is done", AlarmType.AlwaysPersisted));
             }
 
             public override void CleanUp()
@@ -203,7 +206,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(CustomService.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, parent.Worker.Service.GetType().Name + " waiting to route", AlarmType.DeleteOnReset, parent.Worker));
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(((CustomService)Parent.Worker.Service).DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, parent.Worker.Service.GetType().Name + " waiting to route", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public void TimeToRoute()
@@ -212,7 +215,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     {
                         Parent.OnServiceStarting();
                         RouteToLot<CustomServiceSituation, StartPerformingDuties> routeToLot = new WalkToLot<CustomServiceSituation, StartPerformingDuties>(Parent);
-                        routeToLot.SetRouteTime(CustomService.DriveTime);
+                        routeToLot.SetRouteTime(((CustomService)Parent.Worker.Service).DriveTime);
                         Parent.SetState(routeToLot);
                     });
             }
@@ -231,7 +234,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     if (sim.SimDescription.YoungAdultOrAbove)
                     {
                         Relationship relationship = Relationship.Get(Worker, sim, true);
-                        if (relationship.LTR.Liking < CustomService.RelationshipLevelForQuit)
+                        if (relationship.LTR.Liking < ((CustomService)Worker.Service).RelationshipLevelForQuit)
                         {
                             SetToFire(Worker, Worker);
                             return true;
@@ -248,6 +251,34 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public CustomServiceSituation(Service<CustomService> service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
+        }
+
+        public override void ChargeForService(Callback callbackOnCompletion)
+        {
+            int totalCost = CostTotal();
+            if (totalCost > 0 && Lot.EffectiveHousehold != null && !mbHasCharged && Lot.EffectiveHousehold.IsActive)
+            {
+                if (Lot.EffectiveHousehold.FamilyFunds < totalCost)
+                {
+                    string entryKey = NotEnoughFundsMessage();
+                    if (entryKey != null)
+                    {
+                        string titleText = Localization.LocalizeString(entryKey, ((CustomService)Worker.Service).Profile.Title);
+                        StyledNotification.Show(new StyledNotification.Format(titleText, StyledNotification.NotificationStyle.kGameMessageNegative));
+                    }
+                    mNumStealAttempts = 0;
+                    mObjectsFailedToSteal = new List<GameObject>();
+                    mCallbackOnStealCompletion = callbackOnCompletion;
+                    ForceSituationSpecificInteraction(Worker, Worker, new ServiceNPCSteal.Definition(this), null, mCallbackOnStealCompletion, StealFailed, new InteractionPriority(InteractionPriorityLevel.High));
+                    return;
+                }
+                Lot.EffectiveHousehold.ModifyFamilyFunds(-totalCost);
+            }
+            mbHasCharged = true;
+            if (callbackOnCompletion != null)
+            {
+                callbackOnCompletion(Worker, 0f);
+            }
         }
 
         public override void FreezeMotives()

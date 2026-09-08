@@ -138,6 +138,8 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        readonly List<CommodityChange> mOutputs = new List<CommodityChange>();
+
         public static Type DerivedType
         {
             get
@@ -186,7 +188,13 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         /// <summary>
         /// Outputs for interactions and their target types that the service motive of the service is inserted into,
         /// </summary>
-        public readonly List<CommodityChange> Outputs = new List<CommodityChange>();
+        public virtual List<CommodityChange> Outputs
+        {
+            get
+            {
+                return mOutputs;
+            }
+        }
 
         /// <summary>
         /// Gets the motive commodity kind for the service.
@@ -656,7 +664,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             return !DebugUtils.TryDisplayScriptError(() => IsServiceRequested(lot) && !IsAnySimAssignedToLot(lot), out retVal) && retVal;
         }
 
-        public void SetOutputs()
+        public virtual void SetOutputs()
         {
             foreach (CommodityChange output in Outputs)
             {

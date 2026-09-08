@@ -7,6 +7,7 @@ using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Tutorial;
 using Sims3.Gameplay.Utilities;
+using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.UI;
 using System;
@@ -49,6 +50,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                         PerformanceArtist.Instance
                     };
                 services.AddRange(ServiceUtils.Instances.Values);
+                foreach (Service service in ServiceUtils.CustomServices.Values)
+                {
+                    services.Add(service);
+                }
                 foreach (Service service in services)
                 {
                     if (service != null && service.CanRequestServiceFromPhone(Lot))
@@ -98,14 +103,16 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                 {
                     return servicesModel.GetServiceInfo(service);
                 }
+                CustomService customService = service as CustomService;
                 string entryKey = service.GetType().GetLocalizationKey();
                 ServiceInfoEx serviceInfo = new ServiceInfoEx();
-                serviceInfo.mName = Localization.LocalizeString(entryKey + ":Title");
+                serviceInfo.mName = customService?.Profile.Title ?? Localization.LocalizeString(entryKey + ":Title");
                 serviceInfo.mAlreadyActiveToolTip = Localization.LocalizeString("Gameplay/UI/ServicesUIWindow:AlreadyActive");
                 if (service.IsRecurrent())
                 {
                     serviceInfo.mAlreadyActiveToolTip = Localization.LocalizeString("Gameplay/UI/ServicesUIWindow:RecurrentAlreadyActive");
-                    serviceInfo.mCancelledTns = Localization.LocalizeString(entryKey + ":ServiceCancelled" + (service as IAmLiveInService == null && service.IsAnySimAssignedToLot(servicesModel.Lot) ? "WhileActive" : ""));
+                    bool isNonLiveInServiceActiveOnLot = service as IAmLiveInService == null && service.IsAnySimAssignedToLot(servicesModel.Lot);
+                    serviceInfo.mCancelledTns = Localization.LocalizeString(entryKey + ":ServiceCancelled" + (isNonLiveInServiceActiveOnLot ? "WhileActive" : ""), isNonLiveInServiceActiveOnLot ? customService?.Profile.Title : customService?.Profile.CancelledServiceTitle);
                 }
                 serviceInfo.mRequestedTns = Localization.LocalizeString(entryKey + ":ServiceRequested");
                 serviceInfo.mServiceType = (int)service.ServiceType;
