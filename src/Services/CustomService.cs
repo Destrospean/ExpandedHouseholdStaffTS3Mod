@@ -30,17 +30,17 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [Persistable]
         public class ServiceProfile
         {
-            List<ulong> mHiddenTraits;
+            public List<ulong> mHiddenTraits;
 
-            List<int> mMotives;
+            public List<int> mMotives;
 
-            List<ulong> mPotentialTraits;
+            public List<ulong> mPotentialTraits;
 
-            int mServiceMotive;
+            public int mServiceMotive;
 
-            List<ulong> mSkills;
+            public List<ulong> mSkills;
 
-            List<ulong> mTraits;
+            public List<ulong> mTraits;
 
             public string CancelledServiceTitle;
 
