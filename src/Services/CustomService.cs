@@ -30,17 +30,17 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [Persistable]
         public class ServiceProfile
         {
-            public List<ulong> mHiddenTraits;
+            List<ulong> mHiddenTraits;
 
-            public List<int> mMotives;
+            List<int> mMotives;
 
-            public List<ulong> mPotentialTraits;
+            List<ulong> mPotentialTraits;
 
-            public int mServiceMotive;
+            int mServiceMotive;
 
-            public List<ulong> mSkills;
+            List<ulong> mSkills;
 
-            public List<ulong> mTraits;
+            List<ulong> mTraits;
 
             public string CancelledServiceTitle;
 
@@ -196,6 +196,111 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 PotentialTraits = potentialTraits ?? new List<TraitNames>();
                 PotentialTraitCount = potentialTraitCount;
                 Skills = skills ?? new List<SkillNames>();
+            }
+
+            public void AddHiddenTraits(params TraitNames[] traits)
+            {
+                foreach (TraitNames trait in traits)
+                {
+                    mHiddenTraits.Add((ulong)trait);
+                }
+            }
+
+            public void AddMotives(params CommodityKind[] motives)
+            {
+                foreach (CommodityKind motive in motives)
+                {
+                    mMotives.Add((int)motive);
+                }
+            }
+
+            public void AddPotentialTraits(params TraitNames[] traits)
+            {
+                foreach (TraitNames trait in traits)
+                {
+                    mPotentialTraits.Add((ulong)trait);
+                }
+            }
+
+            public void AddSkills(params SkillNames[] skills)
+            {
+                foreach (SkillNames skill in skills)
+                {
+                    mSkills.Add((ulong)skill);
+                }
+            }
+
+            public void AddTraits(params TraitNames[] traits)
+            {
+                foreach (TraitNames trait in traits)
+                {
+                    mTraits.Add((ulong)trait);
+                }
+            }
+
+            public void RemoveHiddenTraits(Predicate<TraitNames> predicate)
+            {
+                mHiddenTraits.RemoveAll(x => predicate((TraitNames)x));
+            }
+
+            public void RemoveHiddenTraits(params TraitNames[] traits)
+            {
+                foreach (TraitNames trait in traits)
+                {
+                    mHiddenTraits.Remove((ulong)trait);
+                }
+            }
+
+            public void RemoveMotives(params CommodityKind[] motives)
+            {
+                foreach (CommodityKind motive in motives)
+                {
+                    mMotives.Remove((int)motive);
+                }
+            }
+
+            public void RemoveMotives(Predicate<CommodityKind> predicate)
+            {
+                mMotives.RemoveAll(x => predicate((CommodityKind)x));
+            }
+
+            public void RemovePotentialTraits(Predicate<TraitNames> predicate)
+            {
+                mPotentialTraits.RemoveAll(x => predicate((TraitNames)x));
+            }
+
+            public void RemovePotentialTraits(params TraitNames[] traits)
+            {
+                foreach (TraitNames trait in traits)
+                {
+                    mPotentialTraits.Remove((ulong)trait);
+                }
+            }
+
+            public void RemoveSkills(Predicate<SkillNames> predicate)
+            {
+                mSkills.RemoveAll(x => predicate((SkillNames)x));
+            }
+
+            public void RemoveSkills(params SkillNames[] skills)
+            {
+                foreach (SkillNames skill in skills)
+                {
+                    mSkills.Remove((ulong)skill);
+                }
+            }
+
+            public void RemoveTraits(Predicate<TraitNames> predicate)
+            {
+                mTraits.RemoveAll(x => predicate((TraitNames)x));
+            }
+
+            public void RemoveTraits(params TraitNames[] traits)
+            {
+                foreach (TraitNames trait in traits)
+                {
+                    mTraits.Remove((ulong)trait);
+                }
             }
         }
 
