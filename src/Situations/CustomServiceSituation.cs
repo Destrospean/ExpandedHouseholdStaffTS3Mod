@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using zoeoeAndDestrospean.Utils;
 using zoeoeAndDestrospean.Utils.ServantRolesMod;
+using Sims3.SimIFace.CAS;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 {
@@ -298,11 +299,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Energy, CommodityKind.Hygiene);
         }
 
-        public override string GetUniformName(SimDescription simDescription)
-        {
-            return base.GetUniformName(simDescription);
-        }
-
         /*
         public override void OnArriveOnLot()
         {
@@ -337,6 +333,29 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 base.SetToFire(serviceSim, firer);
             }
+        }
+
+        public override void SwitchWorkerToServiceOutfit()
+        {
+            DebugUtils.TryDisplayScriptError(() =>
+                {
+                    CustomService service = (CustomService)Worker.Service;
+                    OutfitAssignmentUtils.AssignedOutfit assignedOutfit;
+                    OutfitAssignmentUtils.OutfitAssignment outfitAssignment;
+                    if (Worker.SimDescription.TryGetOutfitAssignment(service.Profile, out outfitAssignment) && OutfitAssignmentUtils.AssignedOutfits.TryGetValue(outfitAssignment.SpecialOutfitKey, out assignedOutfit))
+                    {
+                        Worker.SimDescription.AddAssignedOutfit(assignedOutfit, outfitAssignment.SpecialOutfitKey);
+                        Worker.SimDescription.AddOutfit(new SimOutfit(Worker.SimDescription.GetSpecialOutfit(outfitAssignment.SpecialOutfitKey).Key), OutfitCategories.Career, true);
+                        for (int i = 1; i < Worker.SimDescription.GetOutfitCount(OutfitCategories.Career); i++)
+                        {
+                            Worker.SimDescription.RemoveOutfit(OutfitCategories.Career, i, true);
+                        }
+                    }
+                    else
+                    {
+                        base.SwitchWorkerToServiceOutfit();
+                    }
+                });
         }
     }
 }
