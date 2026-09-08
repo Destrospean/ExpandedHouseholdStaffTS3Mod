@@ -27,8 +27,8 @@ namespace zoeoeAndDestrospean.Utils
         /// <param name="activeTopic">Active topic.</param>
         /// <param name="grouping">Grouping.</param>
         /// <param name="isActive">If set to <c>true</c>, it's an FPA, otherwise it's an SPA.</param>
-        /// <param name="newActions">New actions.</param>
-        public static void AddActions(string activeTopic, LongTermRelationshipTypes grouping, bool isActive, params string[] newActions)
+        /// <param name="actionsToAdd">Actions to add.</param>
+        public static void AddActions(string activeTopic, LongTermRelationshipTypes grouping, bool isActive, params string[] actionsToAdd)
         {
             Dictionary<LongTermRelationshipTypes, Dictionary<bool, List<string>>> groups;
             if (!ActionAvailabilityData.sActiveTopicInteractions.TryGetValue(activeTopic, out groups))
@@ -48,7 +48,7 @@ namespace zoeoeAndDestrospean.Utils
                 actions = new List<string>();
                 group.Add(isActive, actions);
             }
-            actions.AddRange(newActions);
+            actions.AddRange(actionsToAdd);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace zoeoeAndDestrospean.Utils
         public static void AddAsOutput(this CommodityKind commodityKind, Type interactionDefinitionType, Type targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
             List<CommodityChange> outputs = AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType).mTradeoff.mOutputs;
-            outputs.RemoveAll(x => x.Commodity == commodityKind);
+            outputs.RemoveAll(x => x.Commodity == commodityKind && x.ConstantChange == constantChange && x.mLocked == locked && x.mActualValue == actualValue && x.mTimeDependsOnCommodityFilling == timeDependsOnCommodityFilling && x.mUpdateEvenOnFailure == updateEvenOnFailure && x.mUpdateAboveAndBelowZero == updateAboveAndBelowZero);
             outputs.Add(new CommodityChange(commodityKind, constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero));
             RefreshInteractionObjectPairs(interactionDefinitionType, targetType);
         }
@@ -264,6 +264,85 @@ namespace zoeoeAndDestrospean.Utils
             if (interactionDefinitionTypeIndex > -1 && targetTypeIndex > -1)
             {
                 RefreshInteractionObjectPairs(InteractionObjectTypeUtils.InteractionDefinitionTypes[interactionDefinitionTypeIndex], InteractionObjectTypeUtils.GameObjectTypes[targetTypeIndex]);
+            }
+        }
+
+        /// <summary>
+        /// Removes actions from an active topic.
+        /// </summary>
+        /// <param name="activeTopic">Active topic.</param>
+        /// <param name="grouping">Grouping.</param>
+        /// <param name="isActive">If set to <c>true</c>, it's an FPA, otherwise it's an SPA.</param>
+        /// <param name="actionsToRemove">Actions to remove.</param>
+        public static void RemoveActions(string activeTopic, LongTermRelationshipTypes grouping, bool isActive, params string[] actionsToRemove)
+        {
+            List<string> actions;
+            Dictionary<bool, List<string>> group;
+            Dictionary<LongTermRelationshipTypes, Dictionary<bool, List<string>>> groups;
+            if (ActionAvailabilityData.sActiveTopicInteractions.TryGetValue(activeTopic, out groups) && groups.TryGetValue(grouping, out group) && group.TryGetValue(isActive, out actions))
+            {
+                actions.RemoveAll(x => Array.Exists(actionsToRemove, y => y == x));
+            }
+        }
+
+        /// <summary>
+        /// Removes the commodity kind as a commodity change output from an interaction tuning.
+        /// </summary>
+        /// <param name="commodityKind">Commodity kind.</param>
+        /// <param name="constantChange">Advertised value.</param>
+        /// <param name="locked">If set to <c>true</c>, locked.</param>
+        /// <param name="actualValue">Actual value.</param>
+        /// <param name="updateType">Update type.</param>
+        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c> time depends on commodity filling.</param>
+        /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
+        /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
+        /// <typeparam name="InteractionDefinition">Interaction definition type.</typeparam>
+        /// <typeparam name="Target">Target type.</typeparam>
+        public static void RemoveAsOutput<InteractionDefinition, Target>(this CommodityKind commodityKind, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either) where InteractionDefinition : Sims3.Gameplay.Interactions.InteractionDefinition where Target : IGameObject
+        {
+            commodityKind.RemoveAsOutput(typeof(InteractionDefinition), typeof(Target), constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero);
+        }
+
+        /// <summary>
+        /// Removes the commodity kind as a commodity change output from an interaction tuning.
+        /// </summary>
+        /// <param name="commodityKind">Commodity kind.</param>
+        /// <param name="interactionDefinitionType">Interaction definition type.</param>
+        /// <param name="targetType">Target type.</param>
+        /// <param name="constantChange">Advertised value.</param>
+        /// <param name="locked">If set to <c>true</c>, locked.</param>
+        /// <param name="actualValue">Actual value.</param>
+        /// <param name="updateType">Update type.</param>
+        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c> time depends on commodity filling.</param>
+        /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
+        /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
+        public static void RemoveAsOutput(this CommodityKind commodityKind, Type interactionDefinitionType, Type targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
+        {
+            List<CommodityChange> outputs = AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType).mTradeoff.mOutputs;
+            outputs.RemoveAll(x => x.Commodity == commodityKind && x.ConstantChange == constantChange && x.mLocked == locked && x.mActualValue == actualValue && x.mTimeDependsOnCommodityFilling == timeDependsOnCommodityFilling && x.mUpdateEvenOnFailure == updateEvenOnFailure && x.mUpdateAboveAndBelowZero == updateAboveAndBelowZero);
+            RefreshInteractionObjectPairs(interactionDefinitionType, targetType);
+        }
+
+        /// <summary>
+        /// Removes the commodity kind as a commodity change output from an interaction tuning.
+        /// </summary>
+        /// <param name="commodityKind">Commodity kind.</param>
+        /// <param name="interactionDefinitionType">Interaction definition type full name.</param>
+        /// <param name="targetType">Target type full name.</param>
+        /// <param name="constantChange">Advertised value.</param>
+        /// <param name="locked">If set to <c>true</c>, locked.</param>
+        /// <param name="actualValue">Actual value.</param>
+        /// <param name="updateType">Update type.</param>
+        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c> time depends on commodity filling.</param>
+        /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
+        /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
+        public static void RemoveAsOutput(this CommodityKind commodityKind, string interactionDefinitionType, string targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
+        {
+            int interactionDefinitionTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => x.FullName == interactionDefinitionType);
+            int targetTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.GameObjectTypes, x => x.FullName == targetType);
+            if (interactionDefinitionTypeIndex > -1 && targetTypeIndex > -1)
+            {
+                commodityKind.RemoveAsOutput(InteractionObjectTypeUtils.InteractionDefinitionTypes[interactionDefinitionTypeIndex], InteractionObjectTypeUtils.GameObjectTypes[targetTypeIndex], constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero);
             }
         }
 

@@ -442,6 +442,14 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        public virtual void AddOutputs()
+        {
+            foreach (CommodityChange output in Outputs)
+            {
+                ServiceMotive.AddAsOutput(output.InteractionDefinitionType, output.TargetType, output.ConstantChange, output.Locked, output.ActualValue, output.UpdateType, output.TimeDependsOnCommodityFilling, output.UpdateEvenOnFailure, output.UpdateAboveAndBelowZero);
+            }
+        }
+
         public static void Create()
         {
             DebugUtils.TryDisplayScriptError(() =>
@@ -666,7 +674,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     {
                         return;
                     }
-                    Instance.SetOutputs();
+                    Instance.AddOutputs();
                     IEnumerator<SimDescription> enumerator = Instance.Pool.GetEnumerator();
                     while (enumerator.MoveNext())
                     {
@@ -697,11 +705,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             return !DebugUtils.TryDisplayScriptError(() => IsServiceRequested(lot) && !IsAnySimAssignedToLot(lot), out retVal) && retVal;
         }
 
-        public virtual void SetOutputs()
+        public virtual void RemoveOutputs()
         {
             foreach (CommodityChange output in Outputs)
             {
-                ServiceMotive.AddAsOutput(output.InteractionDefinitionType, output.TargetType, output.ConstantChange, output.Locked, output.ActualValue, output.UpdateType, output.TimeDependsOnCommodityFilling, output.UpdateEvenOnFailure, output.UpdateAboveAndBelowZero);
+                ServiceMotive.RemoveAsOutput(output.InteractionDefinitionType, output.TargetType, output.ConstantChange, output.Locked, output.ActualValue, output.UpdateType, output.TimeDependsOnCommodityFilling, output.UpdateEvenOnFailure, output.UpdateAboveAndBelowZero);
             }
         }
     }

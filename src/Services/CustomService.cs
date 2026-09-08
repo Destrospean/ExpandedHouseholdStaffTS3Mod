@@ -519,6 +519,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 });
         }
 
+        public override void AddOutputs()
+        {
+            foreach (CommodityChange output in Outputs)
+            {
+                ServiceMotive.AddAsOutput(output.InteractionDefinitionType, output.TargetType, output.ConstantChange, output.Locked, output.ActualValue, output.UpdateType, output.TimeDependsOnCommodityFilling, output.UpdateEvenOnFailure, output.UpdateAboveAndBelowZero);
+            }
+        }
+
         public static void Create(ServiceProfile profile)
         {
             DebugUtils.TryDisplayScriptError(() =>
@@ -550,7 +558,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public static void Init(ServiceProfile profile)
         {
-            CustomService service;
             DebugUtils.TryDisplayScriptError(() =>
                 {
                     if (!profile.IsLoaded)
@@ -566,6 +573,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         profile.IsLoaded = true;
                     }
                     Create(profile);
+                    CustomService service;
                     if (ServiceUtils.CustomServices.TryGetValue(profile.Name, out service) && service != null)
                     {
                         if (profile.IsLiveInService)
@@ -576,7 +584,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                             }
                         }
                         World.OnObjectPlacedInLotEventHandler += service.OnObjectPlacedInLot;
-                        service.SetOutputs();
+                        service.AddOutputs();
                         IEnumerator<SimDescription> enumerator = service.Pool.GetEnumerator();
                         while (enumerator.MoveNext())
                         {
@@ -589,8 +597,16 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 });
             World.sOnWorldQuitEventHandler += (sender, e) =>
                 {
-                    if (ServiceUtils.CustomServices.ContainsKey(profile.Name))
+                    CustomService service;
+                    if (ServiceUtils.CustomServices.TryGetValue(profile.Name, out service) && service != null)
                     {
+                        service.RemoveOutputs();
+                        string activeTopic = service.GetServiceTopic(null);
+                        CommonUtils.RemoveActions(activeTopic, LongTermRelationshipTypes.Default, false, "Dismiss", "Fire");
+                        if (ActiveTopicData.Exists(activeTopic))
+                        {
+                            ActiveTopicData.sData.Remove(activeTopic);
+                        }
                         ServiceUtils.CustomServices.Remove(profile.Name);
                     }
                 };
@@ -608,11 +624,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             return retVal;
         }
 
-        public override void SetOutputs()
+        public override void RemoveOutputs()
         {
             foreach (CommodityChange output in Outputs)
             {
-                ServiceMotive.AddAsOutput(output.InteractionDefinitionType, output.TargetType, output.ConstantChange, output.Locked, output.ActualValue, output.UpdateType, output.TimeDependsOnCommodityFilling, output.UpdateEvenOnFailure, output.UpdateAboveAndBelowZero);
+                ServiceMotive.RemoveAsOutput(output.InteractionDefinitionType, output.TargetType, output.ConstantChange, output.Locked, output.ActualValue, output.UpdateType, output.TimeDependsOnCommodityFilling, output.UpdateEvenOnFailure, output.UpdateAboveAndBelowZero);
             }
         }
 
