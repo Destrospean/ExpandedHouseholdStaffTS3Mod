@@ -66,6 +66,8 @@
     <Compile Include="UI\Columns\TextColumn.cs" />
     <Compile Include="UI\Columns\TypeColumn.cs" />
     <Compile Include="Utils\InteractionObjectTypeUtils.cs" />
+    <Compile Include="Utils\OutfitExtensions.cs" />
+    <Compile Include="Utils\OutfitAssignmentUtils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
