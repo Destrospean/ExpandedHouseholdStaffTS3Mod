@@ -27,35 +27,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
     public class CustomService : Service<CustomService>, IAmSociableService
     {
+        [Persistable]
         public class ServiceProfile
         {
+            List<ulong> mHiddenTraits;
+
+            List<int> mMotives;
+
+            List<ulong> mPotentialTraits;
+
+            int mServiceMotive;
+
+            List<ulong> mSkills;
+
+            List<ulong> mTraits;
+
             public string CancelledServiceTitle;
-
-            public List<TraitNames> HiddenTraits;
-
-            public List<CommodityKind> Motives;
-
-            public string Name;
-
-            public List<CommodityChange> Outputs;
-
-            public int PotentialTraitCount;
-
-            public List<TraitNames> PotentialTraits;
-
-            public CommodityKind ServiceMotive;
-
-            public List<SkillNames> Skills;
-
-            public string Title;
-
-            public List<TraitNames> Traits;
-
-            public bool IsLiveInService = false;
-
-            public bool IsLoaded = false;
-
-            public ServiceTuning ServiceTuning = new ServiceTuning();
 
             /// <summary>
             /// Length of time (in minutes) between checks that everything is done.
@@ -82,15 +69,115 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             /// </summary>
             public float ExtraWaitTimeAfterSocializing = 0.5f;
 
+            public List<TraitNames> HiddenTraits
+            {
+                get
+                {
+                    return mHiddenTraits.ConvertAll(x => (TraitNames)x);
+                }
+                set
+                {
+                    mHiddenTraits = value.ConvertAll(x => (ulong)x);
+                }
+            }
+
+            public bool IsLiveInService = false;
+
+            public bool IsLoaded = false;
+
+            public bool IsQuietAroundSleepingSims = false;
+
+            public List<CommodityKind> Motives
+            {
+                get
+                {
+                    return mMotives.ConvertAll(x => (CommodityKind)x);
+                }
+                set
+                {
+                    mMotives = value.ConvertAll(x => (int)x);
+                }
+            }
+
+            public string Name;
+
+            public List<CommodityChange> Outputs;
+
+            public int PotentialTraitCount;
+
+            public List<TraitNames> PotentialTraits
+            {
+                get
+                {
+                    return mPotentialTraits.ConvertAll(x => (TraitNames)x);
+                }
+                set
+                {
+                    mPotentialTraits = value.ConvertAll(x => (ulong)x);
+                }
+            }
+
             /// <summary>
             /// If the custom service NPC's relationship with any YAE falls below this level, they will quit.
             /// </summary>
             public float RelationshipLevelForQuit = -50f;
 
+            public CommodityKind ServiceMotive
+            {
+                get
+                {
+                    return (CommodityKind)mServiceMotive;
+                }
+                set
+                {
+                    mServiceMotive = (int)value;
+                }
+            }
+
+            [Persistable]
+            public ServiceTuning ServiceTuning = new ServiceTuning();
+
+            public List<SkillNames> Skills
+            {
+                get
+                {
+                    return mSkills.ConvertAll(x => (SkillNames)x);
+                }
+                set
+                {
+                    mSkills = value.ConvertAll(x => (ulong)x);
+                }
+            }
+
             /// <summary>
             /// How old leftovers can be out in minutes before the custom service NPC will put it away.
             /// </summary>
             public float TimeWaitBeforePutawayLeftovers = 60f;
+
+            public string Title;
+
+            public List<TraitNames> Traits
+            {
+                get
+                {
+                    return mTraits.ConvertAll(x => (TraitNames)x);
+                }
+                set
+                {
+                    mTraits = value.ConvertAll(x => (ulong)x);
+                }
+            }
+
+            /// <summary>
+            /// Multiplier for interactions in a room where a sim is sleeping.
+            /// </summary>
+            public float UseObjectInSameRoomAsSleeperMultiplier = 0.1f;
+
+            public bool WaitsBeforePuttingAwayLeftovers = false;
+
+            public ServiceProfile()
+            {
+            }
 
             public ServiceProfile(string name, string title, string cancelledServiceTitle = null, CommodityKind? serviceMotive = null, List<CommodityKind> motives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
             {
@@ -100,9 +187,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 ServiceMotive = serviceMotive ?? CommonUtils.GetCommodityKind("Be" + name, CommodityKindType.Motive);
                 Motives = motives ?? new List<CommodityKind>();
                 Outputs = outputs ?? new List<CommodityChange>();
-                if (!Motives.Contains(ServiceMotive))
+                if (!mMotives.Contains(mServiceMotive))
                 {
-                    Motives.Add(ServiceMotive);
+                    mMotives.Add(mServiceMotive);
                 }
                 Traits = traits ?? new List<TraitNames>();
                 HiddenTraits = hiddenTraits ?? new List<TraitNames>();
@@ -165,14 +252,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         const string kCustomServiceBook = "HowToServeAndNotBeServed";
 
-        public override ServiceTuning Tuning
-        {
-            get
-            {
-                return Profile.ServiceTuning;
-            }
-        }
-
         public float CheckTime
         {
             get
@@ -213,25 +292,13 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public float RelationshipLevelForQuit
+        public override bool IsQuietAroundSleepingSims
         {
             get
             {
-                return Profile.RelationshipLevelForQuit;
+                return Profile.IsQuietAroundSleepingSims;
             }
         }
-
-        public float TimeWaitBeforePutawayLeftovers
-        {
-            get
-            {
-                return Profile.TimeWaitBeforePutawayLeftovers;
-            }
-        }
-
-        public ServiceProfile Profile;
-
-        public SetUnsetServiceBed.Definition SetUnsetServiceBedInstance;
 
         /// <summary>
         /// Outputs for interactions and their target types that the service motive of the service is inserted into,
@@ -241,6 +308,16 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             get
             {
                 return Profile.Outputs;
+            }
+        }
+
+        public ServiceProfile Profile;
+
+        public float RelationshipLevelForQuit
+        {
+            get
+            {
+                return Profile.RelationshipLevelForQuit;
             }
         }
 
@@ -271,11 +348,37 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
+        public SetUnsetServiceBed.Definition SetUnsetServiceBedInstance;
+
+        public float TimeWaitBeforePutawayLeftovers
+        {
+            get
+            {
+                return Profile.TimeWaitBeforePutawayLeftovers;
+            }
+        }
+
+        public override ServiceTuning Tuning
+        {
+            get
+            {
+                return Profile.ServiceTuning;
+            }
+        }
+
+        public float UseObjectInSameRoomAsSleeperMultiplier
+        {
+            get
+            {
+                return Profile.UseObjectInSameRoomAsSleeperMultiplier;
+            }
+        }
+
         public override bool WaitsBeforePuttingAwayLeftovers
         {
             get
             {
-                return true;
+                return Profile.WaitsBeforePuttingAwayLeftovers;
             }
         }
 

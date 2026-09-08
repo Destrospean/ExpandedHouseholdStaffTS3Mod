@@ -69,7 +69,9 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                             }, 2)
                             {
                                 IsLiveInService = true,
-                                ServiceTuning = new Service.ServiceTuning(1, 800, false, true, true)
+                                IsQuietAroundSleepingSims = true,
+                                ServiceTuning = new Service.ServiceTuning(1, 800, false, true, true),
+                                WaitsBeforePuttingAwayLeftovers = true
                             });
                     };
             }
