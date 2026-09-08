@@ -1,21 +1,16 @@
-﻿using Sims3.Gameplay.Abstracts;
-using Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod;
+﻿using Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
-using Sims3.Gameplay.InteractionsShared;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Objects;
-using Sims3.Gameplay.Objects.Environment;
-using Sims3.Gameplay.Objects.Fireplaces;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations;
 using Sims3.SimIFace;
-using Sims3.Store.Objects;
 using System;
 using System.Collections.Generic;
 using zoeoeAndDestrospean.Utils;
@@ -179,15 +174,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             Instance = this;
             Outputs.AddRange(new[]
                 {
-                    new CommodityChange(typeof(Bookshelf_ReadSomething.Definition), typeof(Bookshelf), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChange(typeof(Tablet.ChooseBookOnTablet.Definition), typeof(Tablet), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChange(typeof(FirePit.LightFirePit.Definition), typeof(FirePit), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChange(typeof(Fireplace.LightFire.Definition), typeof(Fireplace), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChange(typeof(ReadBook.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChange(typeof(ReadBookChooser.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChange(typeof(Tablet.ReadBookOnTablet.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChange(typeof(Sim.ReadSomethingInInventory.Definition), typeof(Sim), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
-                    new CommodityChange(typeof(SitAndWait.Definition), typeof(GameObject), 1f, false, 1f, OutputUpdateType.ImmediateDelta)
+                    new CommodityChange("Sims3.Gameplay.Actors.Sim+ReadSomethingInInventory+Definition", "Sims3.Gameplay.Actors.Sim", 2f, true, 2f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange("Sims3.Gameplay.InteractionsShared.SitAndWait+Definition", "Sims3.Gameplay.Abstracts.GameObject", 1f, false, 1f, OutputUpdateType.ImmediateDelta),
+                    new CommodityChange("Sims3.Gameplay.Objects.Bookshelf_ReadSomething+Definition", "Sims3.Gameplay.Objects.Bookshelf", 2f, true, 2f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange("Sims3.Gameplay.Objects.Environment.FirePit+LightFirePit+Definition", "Sims3.Gameplay.Objects.Environment.FirePit", 200f, true, 200f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange("Sims3.Gameplay.Objects.Fireplaces.Fireplace+LightFire+Definition", "Sims3.Gameplay.Objects.Fireplaces.Fireplace", 200f, true, 200f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange("Sims3.Gameplay.Objects.ReadBook+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange("Sims3.Gameplay.Objects.ReadBookChooser+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange("Sims3.Store.Objects.Tablet+ChooseBookOnTablet+Definition", "Sims3.Store.Objects.Tablet", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                    new CommodityChange("Sims3.Store.Objects.Tablet+ReadBookOnTablet+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow)
                 });
         }
 

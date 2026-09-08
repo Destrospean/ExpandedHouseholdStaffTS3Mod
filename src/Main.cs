@@ -31,6 +31,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
 
         static Main()
         {
+            InteractionObjectTypeUtils.InitTypes();
             LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
             CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
             if (kInitTestServices)
@@ -42,15 +43,15 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                 CommodityKind.BeMaid
                             }, new List<CustomService.CommodityChange>
                             {
-                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.Objects.Bookshelf_ReadSomething.Definition), typeof(Sims3.Gameplay.Objects.Bookshelf), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(Sims3.Store.Objects.Tablet.ChooseBookOnTablet.Definition), typeof(Sims3.Store.Objects.Tablet), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.Objects.Environment.FirePit.LightFirePit.Definition), typeof(Sims3.Gameplay.Objects.Environment.FirePit), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.Objects.Fireplaces.Fireplace.LightFire.Definition), typeof(Sims3.Gameplay.Objects.Fireplaces.Fireplace), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.Objects.ReadBook.Definition), typeof(Sims3.Gameplay.Objects.Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.Objects.ReadBookChooser.Definition), typeof(Sims3.Gameplay.Objects.Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(Sims3.Store.Objects.Tablet.ReadBookOnTablet.Definition), typeof(Sims3.Gameplay.Objects.Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(Sim.ReadSomethingInInventory.Definition), typeof(Sim), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.InteractionsShared.SitAndWait.Definition), typeof(Sims3.Gameplay.Abstracts.GameObject), 1f, false, 1f, OutputUpdateType.ImmediateDelta)
+                                new CustomService.CommodityChange("Sims3.Gameplay.Actors.Sim+ReadSomethingInInventory+Definition", "Sims3.Gameplay.Actors.Sim", 2f, true, 2f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange("Sims3.Gameplay.InteractionsShared.SitAndWait+Definition", "Sims3.Gameplay.Abstracts.GameObject", 1f, false, 1f, OutputUpdateType.ImmediateDelta),
+                                new CustomService.CommodityChange("Sims3.Gameplay.Objects.Bookshelf_ReadSomething+Definition", "Sims3.Gameplay.Objects.Bookshelf", 2f, true, 2f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange("Sims3.Gameplay.Objects.Environment.FirePit+LightFirePit+Definition", "Sims3.Gameplay.Objects.Environment.FirePit", 200f, true, 200f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange("Sims3.Gameplay.Objects.Fireplaces.Fireplace+LightFire+Definition", "Sims3.Gameplay.Objects.Fireplaces.Fireplace", 200f, true, 200f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange("Sims3.Gameplay.Objects.ReadBook+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange("Sims3.Gameplay.Objects.ReadBookChooser+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange("Sims3.Store.Objects.Tablet+ChooseBookOnTablet+Definition", "Sims3.Store.Objects.Tablet", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange("Sims3.Store.Objects.Tablet+ReadBookOnTablet+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow)
                             }, new List<TraitNames>
                             {
                                 TraitNames.Neat

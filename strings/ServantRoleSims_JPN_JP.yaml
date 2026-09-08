@@ -12,6 +12,16 @@
                     ":SetInteractionName": "Set as Chef {0.SimFirstName}'s Bed"
                     ":UnsetInteractionName": "Unset as Chef {0.SimFirstName}'s Bed"
                 ":WeeklyPayment": "I'll be taking my weekly salary of {0.Money}. Good Day."
+            "/CustomService":
+                ":NotEnoughFunds": "You don't have enough funds to pay the {0.String}."
+                ":RequestService": "Hire {0.String}"
+                ":ServiceCancelled": "The {0.String} service has been cancelled."
+                ":ServiceCancelledWhileActive": "We have already sent a {0.String} over today, but we have cancelled your recurring service."
+                ":ServiceRequested": "Please make sure to have a bed arranged for me as I will be living at your place. Good day."
+                "/SetUnsetServiceBed":
+                    ":SetInteractionName": "Set as {1.String} {0.SimFirstName}'s Bed"
+                    ":UnsetInteractionName": "Unset as {1.String} {0.SimFirstName}'s Bed"
+                ":WeeklyPayment": "I'll be taking my weekly salary of {0.Money}. Good Day."
             "/Housekeeper":
                 ":Title": "Housekeeper"
                 ":NotEnoughFunds": "You don't have enough funds to pay the Housekeeper."

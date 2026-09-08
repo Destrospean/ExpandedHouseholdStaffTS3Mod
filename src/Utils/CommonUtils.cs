@@ -94,8 +94,8 @@ namespace zoeoeAndDestrospean.Utils
         /// Adds the commodity kind as a commodity change output to an interaction tuning.
         /// </summary>
         /// <param name="commodityKind">Commodity kind.</param>
-        /// <param name="interactionDefinitionTypeFullName">Interaction definition type full name.</param>
-        /// <param name="targetTypeFullName">Target type full name.</param>
+        /// <param name="interactionDefinitionType">Interaction definition type full name.</param>
+        /// <param name="targetType">Target type full name.</param>
         /// <param name="constantChange">Advertised value.</param>
         /// <param name="locked">If set to <c>true</c>, locked.</param>
         /// <param name="actualValue">Actual value.</param>
@@ -103,12 +103,13 @@ namespace zoeoeAndDestrospean.Utils
         /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c> time depends on commodity filling.</param>
         /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
-        public static void AddAsOutput(this CommodityKind commodityKind, string interactionDefinitionTypeFullName, string targetTypeFullName, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
+        public static void AddAsOutput(this CommodityKind commodityKind, string interactionDefinitionType, string targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
-            Type interactionDefinitionType, targetType;
-            if (TryGetType(interactionDefinitionTypeFullName, out interactionDefinitionType) && TryGetType(targetTypeFullName, out targetType))
+            int interactionDefinitionTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => x.FullName == interactionDefinitionType);
+            int targetTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.GameObjectTypes, x => x.FullName == targetType);
+            if (interactionDefinitionTypeIndex > -1 && targetTypeIndex > -1)
             {
-                commodityKind.AddAsOutput(interactionDefinitionType, targetType, constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero);
+                commodityKind.AddAsOutput(InteractionObjectTypeUtils.InteractionDefinitionTypes[interactionDefinitionTypeIndex], InteractionObjectTypeUtils.GameObjectTypes[targetTypeIndex], constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero);
             }
         }
 
@@ -254,14 +255,15 @@ namespace zoeoeAndDestrospean.Utils
         /// <summary>
         /// Refreshes the interaction object pairs of a specified interaction definition for all existing objects of a specified type in the world.
         /// </summary>
-        /// <param name="interactionDefinitionTypeFullName">Interaction definition type full name.</param>
-        /// <param name="targetTypeFullName">Target type full name.</param>
-        public static void RefreshInteractionObjectPairs(string interactionDefinitionTypeFullName, string targetTypeFullName)
+        /// <param name="interactionDefinitionType">Interaction definition type full name.</param>
+        /// <param name="targetType">Target type full name.</param>
+        public static void RefreshInteractionObjectPairs(string interactionDefinitionType, string targetType)
         {
-            Type interactionDefinitionType, targetType;
-            if (TryGetType(interactionDefinitionTypeFullName, out interactionDefinitionType) && TryGetType(targetTypeFullName, out targetType))
+            int interactionDefinitionTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => x.FullName == interactionDefinitionType);
+            int targetTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.GameObjectTypes, x => x.FullName == targetType);
+            if (interactionDefinitionTypeIndex > -1 && targetTypeIndex > -1)
             {
-                RefreshInteractionObjectPairs(interactionDefinitionType, targetType);
+                RefreshInteractionObjectPairs(InteractionObjectTypeUtils.InteractionDefinitionTypes[interactionDefinitionTypeIndex], InteractionObjectTypeUtils.GameObjectTypes[targetTypeIndex]);
             }
         }
 

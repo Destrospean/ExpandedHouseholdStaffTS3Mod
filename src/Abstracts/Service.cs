@@ -31,11 +31,16 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
     /// </summary>
     public abstract class Service<T> : Service, IService where T : Service<T>
     {
-        public struct CommodityChange
+        [Persistable]
+        public class CommodityChange
         {
-            public Type InteractionDefinitionType;
+            int mUpdateType;
 
-            public Type TargetType;
+            int mUpdateAboveAndBelowZero;
+
+            public string InteractionDefinitionType;
+
+            public string TargetType;
 
             public float ConstantChange;
 
@@ -43,15 +48,35 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
             public float ActualValue;
 
-            public OutputUpdateType UpdateType;
+            public OutputUpdateType UpdateType
+            {
+                get
+                {
+                    return (OutputUpdateType)mUpdateType;
+                }
+                set
+                {
+                    mUpdateType = (int)value;
+                }
+            }
 
             public bool TimeDependsOnCommodityFilling;
 
             public bool UpdateEvenOnFailure;
 
-            public UpdateAboveAndBelowZeroType UpdateAboveAndBelowZero;
+            public UpdateAboveAndBelowZeroType UpdateAboveAndBelowZero
+            {
+                get
+                {
+                    return (UpdateAboveAndBelowZeroType)mUpdateAboveAndBelowZero;
+                }
+                set
+                {
+                    mUpdateAboveAndBelowZero = (int)value;
+                }
+            }
 
-            public CommodityChange(Type interactionDefinitionType, Type targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
+            public CommodityChange(string interactionDefinitionType, string targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
             {
                 InteractionDefinitionType = interactionDefinitionType;
                 TargetType = targetType;
@@ -62,6 +87,10 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 TimeDependsOnCommodityFilling = timeDependsOnCommodityFilling;
                 UpdateEvenOnFailure = updateEvenOnFailure;
                 UpdateAboveAndBelowZero = updateAboveAndBelowZero;
+            }
+
+            public CommodityChange(Type interactionDefinitionType, Type targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either) : this(interactionDefinitionType.FullName, targetType.FullName, constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero)
+            {
             }
         }
 
