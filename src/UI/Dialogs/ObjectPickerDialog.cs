@@ -1,7 +1,8 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using Sims3.SimIFace;
 using Sims3.UI;
+using zoeoeAndDestrospean.Utils;
 
 namespace zoeoeAndDestrospean.UI.Dialogs
 {
@@ -109,25 +110,21 @@ namespace zoeoeAndDestrospean.UI.Dialogs
 
         void OnTabSelect(TabControl oldTab, TabControl newTab)
         {
-            try
-            {
-                if (mTable.mSortedTab == (int)newTab.Tag)
+            DebugUtils.TryDisplayScriptError(() =>
                 {
-                    return;
-                }
-                mTable.mSortedTab = (int)newTab.Tag;
-                mTable.mSortText.Caption = mTable.mItems[mTable.mSortedTab].TabText;
-                mTable.mTable.mPopulationCompletedCallback += mTable.OnPopulationComplete;
-                mTable.mTable.mPopulationCompletedCallback += OnComplete;
-                if (mTable.RepopulateTable())
-                {
-                    OnComplete();
-                }
-            }
-            catch (Exception ex)
-            {
-                ((IScriptErrorWindow)AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, ex);
-            }
+                    if (mTable.mSortedTab == (int)newTab.Tag)
+                    {
+                        return;
+                    }
+                    mTable.mSortedTab = (int)newTab.Tag;
+                    mTable.mSortText.Caption = mTable.mItems[mTable.mSortedTab].TabText;
+                    mTable.mTable.mPopulationCompletedCallback += mTable.OnPopulationComplete;
+                    mTable.mTable.mPopulationCompletedCallback += OnComplete;
+                    if (mTable.RepopulateTable())
+                    {
+                        OnComplete();
+                    }
+                });
         }
 
         void ResizeWindow(bool center)
@@ -151,14 +148,7 @@ namespace zoeoeAndDestrospean.UI.Dialogs
 
         public void OnComplete()
         {
-            try
-            {
-                ResizeWindow(true);
-            }
-            catch (Exception ex)
-            {
-                ((IScriptErrorWindow)AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, ex);
-            }
+            DebugUtils.TryDisplayScriptError(() => ResizeWindow(true));
         }
 
         public override bool OnEnd(uint endID)
