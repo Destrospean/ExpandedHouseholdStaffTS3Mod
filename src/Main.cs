@@ -18,12 +18,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using zoeoeAndDestrospean.Utils;
 using zoeoeAndDestrospean.Utils.ServantRolesMod;
-using Sims3.Gameplay.Objects;
-using Sims3.Store.Objects;
-using Sims3.Gameplay.Objects.Environment;
-using Sims3.Gameplay.Objects.Fireplaces;
-using Sims3.Gameplay.InteractionsShared;
-using Sims3.Gameplay.Abstracts;
 
 namespace zoeoeAndDestrospean.ServantRolesMod
 {
@@ -43,23 +37,28 @@ namespace zoeoeAndDestrospean.ServantRolesMod
             {
                 World.sOnWorldLoadFinishedEventHandler += (sender, e) =>
                     {
-                        CustomService.ServiceProfile profile = new CustomService.ServiceProfile("TestHousekeeper", "Test Housekeeper", "test housekeeping", null, new List<CommodityKind>
+                        CustomService.Init(new CustomService.ServiceProfile("TestHousekeeper", "Test Housekeeper", "test housekeeping", null, new List<CommodityKind>
                             {
                                 CommodityKind.BeMaid
                             }, new List<CustomService.CommodityChange>
                             {
-                                new CustomService.CommodityChange(typeof(Bookshelf_ReadSomething.Definition), typeof(Bookshelf), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(Tablet.ChooseBookOnTablet.Definition), typeof(Tablet), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(FirePit.LightFirePit.Definition), typeof(FirePit), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(Fireplace.LightFire.Definition), typeof(Fireplace), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(ReadBook.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(ReadBookChooser.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(Tablet.ReadBookOnTablet.Definition), typeof(Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.Objects.Bookshelf_ReadSomething.Definition), typeof(Sims3.Gameplay.Objects.Bookshelf), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange(typeof(Sims3.Store.Objects.Tablet.ChooseBookOnTablet.Definition), typeof(Sims3.Store.Objects.Tablet), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.Objects.Environment.FirePit.LightFirePit.Definition), typeof(Sims3.Gameplay.Objects.Environment.FirePit), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.Objects.Fireplaces.Fireplace.LightFire.Definition), typeof(Sims3.Gameplay.Objects.Fireplaces.Fireplace), 200f, true, 200f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.Objects.ReadBook.Definition), typeof(Sims3.Gameplay.Objects.Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.Objects.ReadBookChooser.Definition), typeof(Sims3.Gameplay.Objects.Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                                new CustomService.CommodityChange(typeof(Sims3.Store.Objects.Tablet.ReadBookOnTablet.Definition), typeof(Sims3.Gameplay.Objects.Book), 1f, true, 1f, OutputUpdateType.ContinuousFlow),
                                 new CustomService.CommodityChange(typeof(Sim.ReadSomethingInInventory.Definition), typeof(Sim), 2f, true, 2f, OutputUpdateType.ContinuousFlow),
-                                new CustomService.CommodityChange(typeof(SitAndWait.Definition), typeof(GameObject), 1f, false, 1f, OutputUpdateType.ImmediateDelta)
+                                new CustomService.CommodityChange(typeof(Sims3.Gameplay.InteractionsShared.SitAndWait.Definition), typeof(Sims3.Gameplay.Abstracts.GameObject), 1f, false, 1f, OutputUpdateType.ImmediateDelta)
                             }, new List<TraitNames>
                             {
                                 TraitNames.Neat
+                            },
+                            new List<TraitNames>
+                            {
+                                TraitNames.MakesNoMesses,
+                                TraitNames.SpeedyCleaner
                             }, new List<TraitNames>
                             {
                                 TraitNames.Neurotic,
@@ -70,8 +69,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                             {
                                 IsLiveInService = true,
                                 ServiceTuning = new Service.ServiceTuning(1, 800, false, true, true)
-                            };
-                        CustomService.Init(profile);
+                            });
                     };
             }
         }

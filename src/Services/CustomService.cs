@@ -11,6 +11,7 @@ using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Objects.Beds;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
+using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations;
 using Sims3.SimIFace;
@@ -24,18 +25,13 @@ using zoeoeAndDestrospean.Utils.ServantRolesMod;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 {
-    public class CustomLiveInService : CustomService, IAmLiveInService
-    {
-        public CustomLiveInService(ServiceProfile profile) : base(profile)
-        {
-        }
-    }
-
     public class CustomService : Service<CustomService>, IAmSociableService
     {
         public class ServiceProfile
         {
             public string CancelledServiceTitle;
+
+            public List<TraitNames> HiddenTraits;
 
             public List<CommodityKind> Motives;
 
@@ -56,6 +52,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             public List<TraitNames> Traits;
 
             public bool IsLiveInService = false;
+
+            public bool IsLoaded = false;
 
             public ServiceTuning ServiceTuning = new ServiceTuning();
 
@@ -94,7 +92,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             /// </summary>
             public float TimeWaitBeforePutawayLeftovers = 60f;
 
-            public ServiceProfile(string name, string title, string cancelledServiceTitle = null, CommodityKind? serviceMotive = null, List<CommodityKind> motives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
+            public ServiceProfile(string name, string title, string cancelledServiceTitle = null, CommodityKind? serviceMotive = null, List<CommodityKind> motives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
             {
                 Name = name;
                 Title = title;
@@ -107,6 +105,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     Motives.Add(ServiceMotive);
                 }
                 Traits = traits ?? new List<TraitNames>();
+                HiddenTraits = hiddenTraits ?? new List<TraitNames>();
                 PotentialTraits = potentialTraits ?? new List<TraitNames>();
                 PotentialTraitCount = potentialTraitCount;
                 Skills = skills ?? new List<SkillNames>();
@@ -117,21 +116,49 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             public new class Definition : Service<CustomService>.SetUnsetServiceBed.Definition
             {
-                string mServiceTitle;
+                ServiceProfile mServiceProfile;
 
-                public Definition(string serviceTitle)
+                public Definition(ServiceProfile serviceProfile)
                 {
-                    mServiceTitle = serviceTitle;
+                    mServiceProfile = serviceProfile;
                 }
 
                 public override string GetInteractionName(Sim actor, Bed target, InteractionObjectPair iop)
                 {
-                    if (Instance == null)
+                    CustomService service;
+                    if (!ServiceUtils.CustomServices.TryGetValue(mServiceProfile.Name, out service) || service == null)
                     {
-                        return mServiceTitle;
+                        return mServiceProfile.Title;
                     }
-                    List<Sim> simsAssignedToLot = Instance.GetSimsAssignedToLot(actor.LotHome);
-                    return Localization.LocalizeString(actor.IsFemale, DerivedType.GetLocalizationKey() + "/" + typeof(SetUnsetServiceBed).Name + (target.FindOwnedBed(simsAssignedToLot[0]) == target ? ":Unset" : ":Set") + "InteractionName", simsAssignedToLot[0].SimDescription, mServiceTitle);
+                    List<Sim> simsAssignedToLot = service.GetSimsAssignedToLot(actor.LotHome);
+                    return Localization.LocalizeString(actor.IsFemale, DerivedType.GetLocalizationKey() + "/" + typeof(SetUnsetServiceBed).Name + (target.FindOwnedBed(simsAssignedToLot[0]) == target ? ":Unset" : ":Set") + "InteractionName", simsAssignedToLot[0].SimDescription, mServiceProfile.Title);
+                }
+
+                public override bool Test(Sim actor, Bed target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
+                {
+                    Lot lotHome = actor.LotHome;
+                    if (lotHome != null)
+                    {
+                        if (target.LotCurrent != lotHome)
+                        {
+                            return false;
+                        }
+                        CustomService service;
+                        if (ServiceUtils.CustomServices.TryGetValue(mServiceProfile.Name, out service) && service != null)
+                        {
+                            List<Sim> simsAssignedToLot = service.GetSimsAssignedToLot(lotHome);
+                            if (simsAssignedToLot.Count > 0)
+                            {
+                                Sim owner = simsAssignedToLot[0];
+                                Bed bed = target.FindOwnedBed(owner);
+                                if (bed == null || bed == target)
+                                {
+                                    return target.CanBeUsedAsBed;
+                                }
+                            }
+                        }
+                    }
+                    return false;
                 }
             }
         }
@@ -256,7 +283,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             Profile = profile;
             ServiceUtils.CustomServices[profile.Name] = this;
-            SetUnsetServiceBedInstance = new SetUnsetServiceBed.Definition(profile.Title);
+            SetUnsetServiceBedInstance = new SetUnsetServiceBed.Definition(profile);
         }
 
         protected new void AddInteractions(Bed bed)
@@ -272,7 +299,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     if (onObjectPlacedInLotEventArgs != null)
                     {
                         GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
-                        if (typeof(IAmLiveInService).IsAssignableFrom(DerivedType))
+                        if (Profile.IsLiveInService)
                         {
                             Bed bed = gameObject as Bed;
                             if (bed != null)
@@ -295,10 +322,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         {
                             service.PostLoadFixup();
                         }
-                        else if (profile.IsLiveInService)
-                        {
-                            new CustomLiveInService(profile);
-                        }
                         else
                         {
                             new CustomService(profile);
@@ -312,6 +335,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 });
         }
 
+        public override string GetServiceTopic(Sim serviceSim)
+        {
+            return Profile.Title + " Service";
+        }
+
         /// <summary>
         /// Call this method for every class derived from this one within its static constructor.
         /// </summary>
@@ -320,6 +348,18 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             CustomService service;
             DebugUtils.TryDisplayScriptError(() =>
                 {
+                    if (!profile.IsLoaded)
+                    {
+                        CommonUtils.AddEnumValue<CommodityKind>("Be" + profile.Name, profile.ServiceMotive);
+                        LoadServiceMotive(profile.ServiceMotive);
+                        string activeTopic = profile.Title + " Service";
+                        if (!ActiveTopicData.Exists(activeTopic))
+                        {
+                            ActiveTopicData.Add(new ActiveTopicData(activeTopic, false, 1000, "", true, true, false, true, null, 0, "", false));
+                        }
+                        CommonUtils.AddActions(activeTopic, LongTermRelationshipTypes.Default, false, "Dismiss", "Fire");
+                        profile.IsLoaded = true;
+                    }
                     Create(profile);
                     if (ServiceUtils.CustomServices.TryGetValue(profile.Name, out service) && service != null)
                     {
@@ -386,6 +426,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     foreach (TraitNames traitName in Profile.Traits)
                     {
                         simDescription.TraitManager.AddElement(traitName);
+                    }
+                    foreach (TraitNames traitName in Profile.HiddenTraits)
+                    {
+                        simDescription.TraitManager.AddHiddenElement(traitName);
                     }
                     List<TraitNames> potentialTraits = new List<TraitNames>(Profile.PotentialTraits);
                     for (int i = 0; i < Profile.PotentialTraitCount; i++)

@@ -101,7 +101,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
             public override void Init(ServiceSituation<T> parent)
             {
-                mAlarmHandle = AlarmManager.AddAlarm(parent.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, Parent.Worker.Service.GetType().Name + " waiting to route", AlarmType.DeleteOnReset, parent.Worker);
+                mAlarmHandle = AlarmManager.AddAlarm(parent.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, Parent.Service.GetType().Name + " waiting to route", AlarmType.DeleteOnReset, parent.Worker);
             }
 
             public void TimeToRoute()
@@ -141,7 +141,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             get
             {
-                return (float)(Worker.Service.GetType().GetProperty("DelayBeforeArriving")?.GetValue(null, null) ?? Babysitter.DelayBeforeArriving);
+                return (float)(Service.GetType().GetProperty("DelayBeforeArriving")?.GetValue(null, null) ?? Babysitter.DelayBeforeArriving);
             }
         }
 
@@ -153,7 +153,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public bool IsLiveInService
+        public virtual bool IsLiveInService
         {
             get
             {
@@ -272,7 +272,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 Worker.RemoveAlarm(mCheckForFireAlarmHandle);
             }
             RestoreMotives();
-            Worker.Service = null;
+            Service = null;
             mDestroyWorkerOnExit = false;
             Exit();
         }
@@ -319,7 +319,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             if (IsLiveInService)
             {
                 mDateLastPaid = SimClock.ElapsedCalendarDays();
-                mPayLiveInServiceAlarm = AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayLiveInService, 1, TimeUnit.Weeks, Worker.Service.GetType().Name + " weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
+                mPayLiveInServiceAlarm = AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayLiveInService, 1, TimeUnit.Weeks, Service.GetType().Name + " weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
             }
         }
 
