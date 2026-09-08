@@ -548,9 +548,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             return Profile.Title + " Service";
         }
 
-        /// <summary>
-        /// Call this method for every class derived from this one within its static constructor.
-        /// </summary>
         public static void Init(ServiceProfile profile)
         {
             CustomService service;
