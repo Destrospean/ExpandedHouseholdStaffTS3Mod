@@ -41,15 +41,15 @@ namespace zoeoeAndDestrospean.Utils
         public static void InitTypes()
         {
             List<Type> gameObjectTypes = new List<Type>();
-            List<Type> interactionInstanceTypes = new List<Type>();
+            List<Type> interactionDefinitionTypes = new List<Type>();
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 Type[] types = assembly.GetTypes();
                 gameObjectTypes.AddRange(Array.FindAll(types, x => typeof(IGameObject).IsAssignableFrom(x) && x.IsClass));
-                interactionInstanceTypes.AddRange(Array.FindAll(types, x => typeof(InteractionDefinition).IsAssignableFrom(x) && x.IsClass));
+                interactionDefinitionTypes.AddRange(Array.FindAll(types, x => typeof(InteractionDefinition).IsAssignableFrom(x) && x.IsClass));
             }
             sGameObjectTypes = gameObjectTypes.ToArray();
-            sInteractionDefinitionTypes = interactionInstanceTypes.ToArray();
+            sInteractionDefinitionTypes = interactionDefinitionTypes.ToArray();
         }
 
         public static bool TryGetSelectedTypes(out Type[] selectedTypes, Type[] allTypes = null, string namespaceListTitle = null, string typeListTitle = null)
