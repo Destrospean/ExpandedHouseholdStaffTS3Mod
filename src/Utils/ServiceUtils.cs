@@ -138,8 +138,6 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             public List<ActiveTopicAction> Actions = new List<ActiveTopicAction>();
 
-            public string CancelledServiceTitle;
-
             /// <summary>
             /// Length of time (in minutes) between checks that everything is done.
             /// </summary>
@@ -183,6 +181,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             public bool IsQuietAroundSleepingSims = false;
 
+            public bool IsScaredOfBonehilda = false;
+
             public List<CommodityKind> Motives
             {
                 get
@@ -217,6 +217,10 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             /// If the custom service NPC's relationship with any YAE falls below this level, they will quit.
             /// </summary>
             public float RelationshipLevelForQuit = -50f;
+
+            public string CancelledMessage;
+
+            public string CancelledWhileActiveMessage;
 
             public CommodityKind ServiceMotive
             {
@@ -313,15 +317,16 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             {
             }
 
-            public ServiceProfile(string name, string title, string cancelledServiceTitle = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null) : this(name, title, cancelledServiceTitle, null, additionalMotives, outputs, traits, hiddenTraits, potentialTraits, potentialTraitCount, skills)
+            public ServiceProfile(string name, string title, string cancelledMessage = null, string cancelledWhileActiveMessage = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null) : this(name, title, cancelledMessage, cancelledWhileActiveMessage, null, additionalMotives, outputs, traits, hiddenTraits, potentialTraits, potentialTraitCount, skills)
             {
             }
 
-            public ServiceProfile(string name, string title, string cancelledServiceTitle = null, CommodityKind? serviceMotive = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
+            public ServiceProfile(string name, string title, string cancelledMessage = null, string cancelledWhileActiveMessage = null, CommodityKind? serviceMotive = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
             {
                 Name = name;
                 Title = title;
-                CancelledServiceTitle = cancelledServiceTitle ?? title;
+                CancelledMessage = cancelledMessage ?? title;
+                CancelledWhileActiveMessage = cancelledWhileActiveMessage ?? title;
                 ServiceMotive = serviceMotive ?? CommonUtils.GetCommodityKind("Be" + name, CommodityKindType.Motive);
                 Motives = additionalMotives ?? new List<CommodityKind>();
                 Outputs = outputs ?? new List<CommodityChange>();

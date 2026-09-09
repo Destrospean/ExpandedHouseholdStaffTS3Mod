@@ -119,6 +119,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
+        public override bool IsPaidWeekly
+        {
+            get
+            {
+                return Profile.IsLiveInService;
+            }
+        }
+
         public override bool IsQuietAroundSleepingSims
         {
             get

@@ -26,7 +26,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
     public class Main
     {
         [Tunable]
-        protected static bool kInitializeTestServices = true;
+        protected static bool kInitializeIncludedServices = true;
 
         [Tunable]
         protected static bool kIntegrateNRaasMasterController = true;
@@ -44,11 +44,12 @@ namespace zoeoeAndDestrospean.ServantRolesMod
             {
                 NRaasCompatibility.IntegrateNRaasMasterController();
             }
-            if (kInitializeTestServices)
+            if (kInitializeIncludedServices)
             {
                 World.sOnWorldLoadFinishedEventHandler += (sender, e) =>
                     {
-                        CustomService.Init(new ServiceUtils.ServiceProfile("TestHousekeeper", "Test Housekeeper", "test housekeeping", new List<CommodityKind>
+                        string entryKey = typeof(CustomService).GetLocalizationKey().Replace("CustomService", "");
+                        CustomService.Init(new ServiceUtils.ServiceProfile("Housekeeper", Localization.LocalizeString(entryKey + "Housekeeper:Title"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelled"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelledWhileActive"), new List<CommodityKind>
                             {
                                 CommodityKind.BeMaid
                             }, new List<ServiceUtils.CommodityChange>
@@ -76,6 +77,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                     },
                                 IsLiveInService = true,
                                 IsQuietAroundSleepingSims = true,
+                                IsScaredOfBonehilda = true,
                                 PotentialTraitCount = 2,
                                 PotentialTraits = new List<TraitNames>
                                     {

@@ -15,8 +15,8 @@
             "/CustomService":
                 ":NotEnoughFunds": "You don't have enough funds to pay the {0.String}."
                 ":RequestService": "Hire {0.String}"
-                ":ServiceCancelled": "The {0.String} service has been cancelled."
-                ":ServiceCancelledWhileActive": "We have already sent a {0.String} over today, but we have cancelled your recurring service."
+                ":ServiceCancelled": "{0.String}"
+                ":ServiceCancelledWhileActive": "{0.String}"
                 ":ServiceRequested": "Please make sure to have a bed arranged for me as I will be living at your place. Good day."
                 "/SetUnsetServiceBed":
                     ":SetInteractionName": "Set as {1.String} {0.SimFirstName}'s Bed"

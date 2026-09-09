@@ -103,6 +103,18 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     bool retVal;
                     return !DebugUtils.TryDisplayScriptError(() =>
                         {
+                            if ((Parent.Worker.Service as CustomService)?.Profile.IsScaredOfBonehilda ?? false)
+                            {
+                                foreach (Sim sim in Lot.GetObjects<Sim>())
+                                {
+                                    if (sim.SimDescription.IsBonehilda && sim.RoomId == Parent.Worker.RoomId)
+                                    {
+                                        Parent.Worker.BuffManager.AddElement(BuffNames.Scared, Origin.FromSeeingBonehilda);
+                                        Parent.SetState(new QuitCauseOfBonehilda(Parent));
+                                        return false;
+                                    }
+                                }
+                            }
                             if (Parent.Worker.CurrentInteraction != null && Parent.Worker.CurrentInteraction.GetPriority().Level <= InteractionPriorityLevel.Autonomous)
                             {
                                 InteractionInstance interactionInstance = AutonomyUtils.FindBestAction(Parent.Worker.Autonomy);
@@ -136,7 +148,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 DebugUtils.TryDisplayScriptError(() =>
                     {
                         Parent.Worker.WorkMotive = CommodityKind.None;
-                        foreach (CommodityKind motive in Parent.Worker.Service.ServiceMotives)
+                        foreach (CommodityKind motive in Parent.Worker.Service?.ServiceMotives ?? new List<CommodityKind>())
                         {
                             Parent.Worker.Autonomy.Motives.RemoveMotive(motive);
                         }
@@ -153,6 +165,30 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                         {
                             Parent.SetState(new HangAroundBeforeLeaving(Parent));
                         }
+                    });
+            }
+        }
+
+        public class QuitCauseOfBonehilda : ChildSituation<CustomServiceSituation>
+        {
+            public QuitCauseOfBonehilda()
+            {
+            }
+
+            public QuitCauseOfBonehilda(CustomServiceSituation parent) : base(parent)
+            {
+            }
+
+            public override void Init(CustomServiceSituation parent)
+            {
+                DebugUtils.TryDisplayScriptError(() =>
+                    {
+                        parent.Worker.InteractionQueue.CancelAllInteractions();
+                        RequestWalkStyle(parent.Worker, Sim.WalkStyle.OnFire);
+                        ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new Maid.QuitBecauseOfBonehilda.Definition(), null, null, null);
+                        parent.Worker.Service.ClearServiceForLot(parent.Lot);
+                        parent.Worker.Service.EndService(parent.Worker.SimDescription);
+                        ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new DriveAwayInServiceCar.Definition(parent.Car), null, null, null);
                     });
             }
         }
@@ -220,7 +256,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         {
             get
             {
-                return ((CustomService)Worker.Service).Profile.IsLiveInService;
+                return (Worker.Service as CustomService)?.Profile.IsLiveInService ?? false;
             }
         }
 
@@ -266,7 +302,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     string entryKey = NotEnoughFundsMessage();
                     if (entryKey != null)
                     {
-                        string titleText = Localization.LocalizeString(entryKey, ((CustomService)Worker.Service).Profile.Title);
+                        string titleText = Localization.LocalizeString(entryKey, (Worker.Service as CustomService)?.Profile.Title);
                         StyledNotification.Show(new StyledNotification.Format(titleText, StyledNotification.NotificationStyle.kGameMessageNegative));
                     }
                     mNumStealAttempts = 0;
