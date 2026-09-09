@@ -24,35 +24,13 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         const string kChefBook = "HowToServeAndNotBeServed";
 
         [Tunable]
+        static AgeTuning kAgeTuning = new AgeTuning();
+
+        [Tunable]
+        static GenderTuning kGenderTuning = new GenderTuning();
+
+        [Tunable]
         static ServiceTuning kServiceTuning = new ServiceTuning(1, 1000, false, true, true);
-
-        [Tunable]
-        [TunableComment("Allows the service role to be filled by male Sims")]
-        static bool kAllowMale = true;
-
-        [Tunable]
-        [TunableComment("Allows the service role to be filled by female Sims")]
-        static bool kAllowFemale = true;
-
-        [Tunable]
-        [TunableComment("Allows the service role to be filled by children")]
-        static bool kAllowChild = false;
-
-        [Tunable]
-        [TunableComment("Allows the service role to be filled by teenagers")]
-        static bool kAllowTeen = false;
-
-        [Tunable]
-        [TunableComment("Allows the service role to be filled by young adults")]
-        static bool kAllowYoungAdult = true;
-
-        [Tunable]
-        [TunableComment("Allows the service role to be filled by adults")]
-        static bool kAllowAdult = true;
-
-        [Tunable]
-        [TunableComment("Allows the service role to be filled by elders")]
-        static bool kAllowElder = false;
 
         [Tunable]
         [TunableComment("Length of time (in minutes) between checks that everything is done")]
@@ -81,6 +59,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         [Tunable]
         [TunableComment("How old leftovers can be out in minutes before the chef will put it away")]
         static float kTimeWaitBeforePutawayLeftovers = 60f;
+
+        public override AgeTuning AgeSettings
+        {
+            get
+            {
+                return kAgeTuning;
+            }
+        }
+
+        public override GenderTuning GenderSettings
+        {
+            get
+            {
+                return kGenderTuning;
+            }
+        }
 
         public override ServiceTuning Tuning
         {
@@ -162,52 +156,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 {
                     ServiceMotive
                 };
-            }
-        }
-
-        public override CASAgeGenderFlags ValidAges
-        {
-            get
-            {
-                CASAgeGenderFlags retVal = CASAgeGenderFlags.None;
-                if (kAllowChild)
-                {
-                    retVal |= CASAgeGenderFlags.Child;
-                }
-                if (kAllowTeen)
-                {
-                    retVal |= CASAgeGenderFlags.Teen;
-                }
-                if (kAllowYoungAdult)
-                {
-                    retVal |= CASAgeGenderFlags.YoungAdult;
-                }
-                if (kAllowAdult)
-                {
-                    retVal |= CASAgeGenderFlags.Adult;
-                }
-                if (kAllowElder)
-                {
-                    retVal |= CASAgeGenderFlags.Elder;
-                }
-                return retVal;
-            }
-        }
-
-        public override CASAgeGenderFlags ValidGenders
-        {
-            get
-            {
-                CASAgeGenderFlags retVal = CASAgeGenderFlags.None;
-                if (kAllowFemale)
-                {
-                    retVal |= CASAgeGenderFlags.Female;
-                }
-                if (kAllowMale)
-                {
-                    retVal |= CASAgeGenderFlags.Male;
-                }
-                return retVal;
             }
         }
 
