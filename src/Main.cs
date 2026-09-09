@@ -92,7 +92,6 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                         TraitNames.Neat
                                     },
                                 UseServiceTypeOutfit = true,
-                                ValidAges = CASAgeGenderFlags.YoungAdult,
                                 WaitsBeforePuttingAwayLeftovers = true
                             });
                     };
