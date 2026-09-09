@@ -13,6 +13,7 @@ using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
+using Sims3.SimIFace.CAS;
 using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
@@ -88,6 +89,8 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                     {
                                         TraitNames.Neat
                                     },
+                                UseServiceTypeOutfit = true,
+                                ValidAges = CASAgeGenderFlags.YoungAdult,
                                 WaitsBeforePuttingAwayLeftovers = true
                             });
                     };

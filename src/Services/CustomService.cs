@@ -15,6 +15,7 @@ using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations;
 using Sims3.SimIFace;
+using Sims3.SimIFace.CAS;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -166,11 +167,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public new static ServiceType ServiceTypeStatic
+        public override ServiceType ServiceType
         {
             get
             {
-                return ServiceType.Maid;
+                return Profile?.ServiceType ?? ServiceType.Maid;
             }
         }
 
@@ -252,7 +253,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             DebugUtils.TryDisplayScriptError(() =>
                 {
-                    if (ServiceNPCSpecifications.ValidForCurrentWorld(ServiceTypeStatic))
+                    if (ServiceNPCSpecifications.ValidForCurrentWorld(profile.ServiceType))
                     {
                         CustomService service;
                         if (ServiceUtils.CustomServices.TryGetValue(profile.Name, out service) && service != null)
@@ -270,6 +271,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         ServiceUtils.CustomServices.Remove(profile.Name);
                     }
                 });
+        }
+
+        public override CASAgeGenderFlags GetGenderForNewNpc(Lot lot)
+        {
+            return Profile.ValidGenders;
         }
 
         public override string GetServiceTopic(Sim serviceSim)
@@ -387,6 +393,27 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         potentialTraits.Remove(traitName);
                     }
                 });
+        }
+
+        public override bool ShouldSimBeRemovedFromService(SimDescription sim)
+        {
+            if (AgingManager.NumDaysBeforeAging(sim) <= (float)kNumDaysBeforeBirthdayToRemoveSim)
+            {
+                return true;
+            }
+            if ((sim.AgeAfterInstantiation & Profile.ValidAges) == 0)
+            {
+                return true;
+            }
+            if (sim.Household == null || !sim.Household.IsServiceNpcHousehold)
+            {
+                return true;
+            }
+            if (sim.DeathStyle != 0)
+            {
+                return true;
+            }
+            return false;
         }
 
         public override void UpdateCreatedSim(Sim sim)

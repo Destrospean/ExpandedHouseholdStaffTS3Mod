@@ -5,6 +5,7 @@ using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
+using Sims3.SimIFace.CAS;
 using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
@@ -125,9 +126,15 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             int mServiceMotive = 0;
 
+            ulong mServiceType = 1uL;
+
             List<ulong> mSkills = new List<ulong>();
 
             List<ulong> mTraits = new List<ulong>();
+
+            uint mValidAges = (uint)(CASAgeGenderFlags.YoungAdult | CASAgeGenderFlags.Adult);
+
+            uint mValidGenders = (uint)CASAgeGenderFlags.GenderMask;
 
             public List<ActiveTopicAction> Actions = new List<ActiveTopicAction>();
 
@@ -226,6 +233,18 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             [Persistable]
             public Service.ServiceTuning ServiceTuning = new Service.ServiceTuning();
 
+            public ServiceType ServiceType
+            {
+                get
+                {
+                    return (ServiceType)mServiceType;
+                }
+                set
+                {
+                    mServiceType = (ulong)value;
+                }
+            }
+
             public List<SkillNames> Skills
             {
                 get
@@ -261,6 +280,32 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             /// Multiplier for interactions in a room where a sim is sleeping.
             /// </summary>
             public float UseObjectInSameRoomAsSleeperMultiplier = 0.1f;
+
+            public bool UseServiceTypeOutfit = false;
+
+            public CASAgeGenderFlags ValidAges
+            {
+                get
+                {
+                    return (CASAgeGenderFlags)mValidAges;
+                }
+                set
+                {
+                    mValidAges = (uint)value;
+                }
+            }
+
+            public CASAgeGenderFlags ValidGenders
+            {
+                get
+                {
+                    return (CASAgeGenderFlags)mValidGenders;
+                }
+                set
+                {
+                    mValidGenders = (uint)value;
+                }
+            }
 
             public bool WaitsBeforePuttingAwayLeftovers = false;
 

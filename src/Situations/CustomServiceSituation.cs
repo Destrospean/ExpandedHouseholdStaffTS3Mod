@@ -340,7 +340,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                             Worker.SimDescription.RemoveOutfit(OutfitCategories.Career, i, true);
                         }
                     }
-                    else
+                    else if (service.Profile.UseServiceTypeOutfit)
                     {
                         base.SwitchWorkerToServiceOutfit();
                     }

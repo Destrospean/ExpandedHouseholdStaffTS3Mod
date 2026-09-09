@@ -405,11 +405,17 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 });
         }
 
+        public override SimDescription CreateNewNPCForPool(Lot lot)
+        {
+            return CreateOrUpdateServiceNpc(null, lot);
+        }
+
         public new SimDescription CreateOrUpdateServiceNpc(SimDescription preCreatedSim, Lot lot)
         {
             SimDescription simDescription = preCreatedSim;
             DebugUtils.TryDisplayScriptError(() =>
                 {
+                    CustomService customService = this as CustomService;
                     bool shouldUsePlumbot = false;
                     if (simDescription == null)
                     {
@@ -423,8 +429,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         }
                         else
                         {
-                            CASAgeGenderFlags age = ServiceNPCSpecifications.GetAge(ServiceType.ToString());
-                            simDescription = CreateSimDescription(this, age, GetGenderForNewNpc(lot));
+                            simDescription = CreateSimDescription(this, customService?.Profile.ValidAges ?? ServiceNPCSpecifications.GetAge(ServiceType.ToString()), customService?.Profile.ValidGenders ?? GetGenderForNewNpc(lot));
                         }
                         simDescription.FindSuitableVirtualHome();
                     }
@@ -440,7 +445,10 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         {
                             SetTraits(simDescription);
                             SetRandomTraits(simDescription);
-                            OverlayUniform(simDescription, ServiceType.ToString());
+                            if (customService == null || customService.Profile.UseServiceTypeOutfit)
+                            {
+                                OverlayUniform(simDescription, ServiceType.ToString());
+                            }
                         }
                     }
                 });
@@ -542,7 +550,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     }
                     if (pool.Count == 0)
                     {
-                        SimDescription simDescription = CreateOrUpdateServiceNpc(null, lot);
+                        SimDescription simDescription = CreateNewNPCForPool(lot);
                         if (simDescription != null)
                         {
                             AddSimToPool(simDescription);
