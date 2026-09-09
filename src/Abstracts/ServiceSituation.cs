@@ -372,7 +372,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         if (OutfitUtils.TryApplyUniformToOutfit(Worker.SimDescription.GetOutfit(OutfitCategories.Everyday, 0), new SimOutfit(ResourceKey.CreateOutfitKeyFromProductVersion(uniformName, ProductVersion.BaseGame)), Worker.SimDescription, DerivedType.Name + ".SwitchWorkerToServiceOutfit", out resultOutfit))
                         {
                             Worker.SimDescription.AddOutfit(resultOutfit, OutfitCategories.Career, true);
-                            for (int i = 1; i < Worker.SimDescription.GetOutfitCount(OutfitCategories.Career); i++)
+                            for (int i = Worker.SimDescription.GetOutfitCount(OutfitCategories.Career) - 1; i > 0; i--)
                             {
                                 Worker.SimDescription.RemoveOutfit(OutfitCategories.Career, i, true);
                             }

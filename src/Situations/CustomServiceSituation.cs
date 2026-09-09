@@ -344,7 +344,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     if (Worker.SimDescription.TryGetOutfitAssignment(service.Profile, out outfitAssignment) && Worker.AddAssignedOutfit(outfitAssignment.SpecialOutfitKey))
                     {
                         Worker.SimDescription.AddOutfit(new SimOutfit(Worker.SimDescription.GetSpecialOutfit(outfitAssignment.SpecialOutfitKey).Key), OutfitCategories.Career, true);
-                        for (int i = 1; i < Worker.SimDescription.GetOutfitCount(OutfitCategories.Career); i++)
+                        for (int i = Worker.SimDescription.GetOutfitCount(OutfitCategories.Career) - 1; i > 0; i--)
                         {
                             Worker.SimDescription.RemoveOutfit(OutfitCategories.Career, i, true);
                         }
