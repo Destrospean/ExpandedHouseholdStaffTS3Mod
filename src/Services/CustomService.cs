@@ -28,19 +28,54 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
     public class CustomService : Service<CustomService>, IAmSociableService
     {
         [Persistable]
+        public class ActiveTopicAction
+        {
+            short mGrouping;
+
+            public LongTermRelationshipTypes Grouping
+            {
+                get
+                {
+                    return (LongTermRelationshipTypes)mGrouping;
+                }
+                set
+                {
+                    mGrouping = (short)value;
+                }
+            }
+
+            public bool IsActive;
+
+            public string Name;
+
+            public ActiveTopicAction()
+            {
+            }
+
+            public ActiveTopicAction(string name, LongTermRelationshipTypes grouping, bool isActive)
+            {
+                Name = name;
+                Grouping = grouping;
+                IsActive = isActive;
+            }
+        }
+
+        [Persistable]
         public class ServiceProfile
         {
-            List<ulong> mHiddenTraits;
+            List<ulong> mHiddenTraits = new List<ulong>();
 
-            List<int> mMotives;
+            List<int> mMotives = new List<int>();
 
-            List<ulong> mPotentialTraits;
+            List<ulong> mPotentialTraits = new List<ulong>();
 
-            int mServiceMotive;
+            int mServiceMotive = 0;
 
-            List<ulong> mSkills;
+            List<ulong> mSkills = new List<ulong>();
 
-            List<ulong> mTraits;
+            List<ulong> mTraits = new List<ulong>();
+
+            public List<ActiveTopicAction> Actions = new List<ActiveTopicAction>();
 
             public string CancelledServiceTitle;
 
@@ -101,9 +136,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
             public string Name;
 
-            public List<CommodityChange> Outputs;
+            public List<CommodityChange> Outputs = new List<CommodityChange>();
 
-            public int PotentialTraitCount;
+            public int PotentialTraitCount = 0;
 
             public List<TraitNames> PotentialTraits
             {
@@ -569,7 +604,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         {
                             ActiveTopicData.Add(new ActiveTopicData(activeTopic, false, 1000, "", true, true, false, true, null, 0f, "", false));
                         }
-                        CommonUtils.AddActions(activeTopic, LongTermRelationshipTypes.Default, false, "Dismiss", "Fire");
+                        foreach (ActiveTopicAction action in profile.Actions)
+                        {
+                            CommonUtils.AddActions(activeTopic, action.Grouping, action.IsActive, action.Name);
+                        }
                         profile.IsLoaded = true;
                     }
                     Create(profile);
@@ -602,7 +640,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     {
                         service.RemoveOutputs();
                         string activeTopic = service.GetServiceTopic(null);
-                        CommonUtils.RemoveActions(activeTopic, LongTermRelationshipTypes.Default, false, "Dismiss", "Fire");
+                        foreach (ActiveTopicAction action in profile.Actions)
+                        {
+                            CommonUtils.RemoveActions(activeTopic, action.Grouping, action.IsActive, action.Name);
+                        }
                         if (ActiveTopicData.Exists(activeTopic))
                         {
                             ActiveTopicData.sData.Remove(activeTopic);

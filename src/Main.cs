@@ -13,6 +13,7 @@ using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
+using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -76,6 +77,11 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                 TraitNames.Charismatic
                             }, 2)
                             {
+                                Actions = new List<CustomService.ActiveTopicAction>
+                                    {
+                                        new CustomService.ActiveTopicAction("Dismiss", LongTermRelationshipTypes.Default, false),
+                                        new CustomService.ActiveTopicAction("Fire", LongTermRelationshipTypes.Default, false)
+                                    },
                                 IsLiveInService = true,
                                 IsQuietAroundSleepingSims = true,
                                 ServiceTuning = new Service.ServiceTuning(1, 800, false, true, true),
