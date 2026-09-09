@@ -51,35 +51,21 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         [Persistable]
         public class CommodityChange
         {
-            int mUpdateType;
-
             int mUpdateAboveAndBelowZero;
 
-            public string InteractionDefinitionType;
-
-            public string TargetType;
-
-            public float ConstantChange;
-
-            public bool Locked;
+            int mUpdateType;
 
             public float ActualValue;
 
-            public OutputUpdateType UpdateType
-            {
-                get
-                {
-                    return (OutputUpdateType)mUpdateType;
-                }
-                set
-                {
-                    mUpdateType = (int)value;
-                }
-            }
+            public float ConstantChange;
+
+            public string InteractionDefinitionType;
+
+            public bool Locked;
+
+            public string TargetType;
 
             public bool TimeDependsOnCommodityFilling;
-
-            public bool UpdateEvenOnFailure;
 
             public UpdateAboveAndBelowZeroType UpdateAboveAndBelowZero
             {
@@ -90,6 +76,20 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 set
                 {
                     mUpdateAboveAndBelowZero = (int)value;
+                }
+            }
+
+            public bool UpdateEvenOnFailure;
+
+            public OutputUpdateType UpdateType
+            {
+                get
+                {
+                    return (OutputUpdateType)mUpdateType;
+                }
+                set
+                {
+                    mUpdateType = (int)value;
                 }
             }
 
