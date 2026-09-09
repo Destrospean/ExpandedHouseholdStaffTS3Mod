@@ -194,22 +194,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public virtual CASAgeGenderFlags ValidAges
-        {
-            get
-            {
-                return ServiceNPCSpecifications.GetAge(ServiceType.ToString());
-            }
-        }
-
-        public virtual CASAgeGenderFlags ValidGenders
-        {
-            get
-            {
-                return CASAgeGenderFlags.None;
-            }
-        }
-
         public virtual bool WaitsBeforePuttingAwayLeftovers
         {
             get
@@ -431,6 +415,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             SimDescription simDescription = preCreatedSim;
             DebugUtils.TryDisplayScriptError(() =>
                 {
+                    CustomService customService = this as CustomService;
                     bool shouldUsePlumbot = false;
                     if (simDescription == null)
                     {
@@ -444,7 +429,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         }
                         else
                         {
-                            simDescription = CreateSimDescription(this, ValidAges, GetGenderForNewNpc(lot));
+                            simDescription = CreateSimDescription(this, customService?.Profile.ValidAges ?? ServiceNPCSpecifications.GetAge(ServiceType.ToString()), customService?.Profile.ValidGenders ?? GetGenderForNewNpc(lot));
                         }
                         simDescription.FindSuitableVirtualHome();
                     }
@@ -460,7 +445,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         {
                             SetTraits(simDescription);
                             SetRandomTraits(simDescription);
-                            if ((this as CustomService)?.Profile.UseServiceTypeOutfit ?? true)
+                            if (customService == null || customService.Profile.UseServiceTypeOutfit)
                             {
                                 OverlayUniform(simDescription, ServiceType.ToString());
                             }
@@ -590,11 +575,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     }
                     return randomSimDescription;
                 }, out retVal) ? null : retVal;
-        }
-
-        public override CASAgeGenderFlags GetGenderForNewNpc(Lot lot)
-        {
-            return ValidGenders;
         }
 
         public override string GetServiceTopic(Sim serviceSim)

@@ -26,13 +26,13 @@ namespace zoeoeAndDestrospean.ServantRolesMod
     public class Main
     {
         [Tunable]
-        static bool kInitializeTestServices = true;
+        protected static bool kInitializeTestServices = true;
 
         [Tunable]
-        static bool kIntegrateNRaasMasterController = true;
+        protected static bool kIntegrateNRaasMasterController = true;
 
         [Tunable]
-        static bool kShowDebugMessages = true;
+        protected static bool kShowDebugMessages = true;
 
         static Main()
         {
