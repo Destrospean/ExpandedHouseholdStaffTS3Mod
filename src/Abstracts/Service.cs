@@ -31,73 +31,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
     /// </summary>
     public abstract class Service<T> : Service, IService where T : Service<T>
     {
-        [Persistable]
-        public class CommodityChange
-        {
-            int mUpdateType;
-
-            int mUpdateAboveAndBelowZero;
-
-            public string InteractionDefinitionType;
-
-            public string TargetType;
-
-            public float ConstantChange;
-
-            public bool Locked;
-
-            public float ActualValue;
-
-            public OutputUpdateType UpdateType
-            {
-                get
-                {
-                    return (OutputUpdateType)mUpdateType;
-                }
-                set
-                {
-                    mUpdateType = (int)value;
-                }
-            }
-
-            public bool TimeDependsOnCommodityFilling;
-
-            public bool UpdateEvenOnFailure;
-
-            public UpdateAboveAndBelowZeroType UpdateAboveAndBelowZero
-            {
-                get
-                {
-                    return (UpdateAboveAndBelowZeroType)mUpdateAboveAndBelowZero;
-                }
-                set
-                {
-                    mUpdateAboveAndBelowZero = (int)value;
-                }
-            }
-
-            protected CommodityChange()
-            {
-            }
-
-            public CommodityChange(string interactionDefinitionType, string targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
-            {
-                InteractionDefinitionType = interactionDefinitionType;
-                TargetType = targetType;
-                ConstantChange = constantChange;
-                Locked = locked;
-                ActualValue = actualValue;
-                UpdateType = updateType;
-                TimeDependsOnCommodityFilling = timeDependsOnCommodityFilling;
-                UpdateEvenOnFailure = updateEvenOnFailure;
-                UpdateAboveAndBelowZero = updateAboveAndBelowZero;
-            }
-
-            public CommodityChange(Type interactionDefinitionType, Type targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either) : this(interactionDefinitionType.FullName, targetType.FullName, constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero)
-            {
-            }
-        }
-
         public class SetUnsetServiceBed : ImmediateInteraction<Sim, Bed>
         {
             public class Definition : InteractionDefinition<Sim, Bed, SetUnsetServiceBed>
@@ -171,7 +104,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        readonly List<CommodityChange> mOutputs = new List<CommodityChange>();
+        readonly List<ServiceUtils.CommodityChange> mOutputs = new List<ServiceUtils.CommodityChange>();
 
         public static Type DerivedType
         {
@@ -221,7 +154,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         /// <summary>
         /// Outputs for interactions and their target types that the service motive of the service is inserted into,
         /// </summary>
-        public virtual List<CommodityChange> Outputs
+        public virtual List<ServiceUtils.CommodityChange> Outputs
         {
             get
             {
@@ -444,7 +377,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public virtual void AddOutputs()
         {
-            foreach (CommodityChange output in Outputs)
+            foreach (ServiceUtils.CommodityChange output in Outputs)
             {
                 ServiceMotive.AddAsOutput(output.InteractionDefinitionType, output.TargetType, output.ConstantChange, output.Locked, output.ActualValue, output.UpdateType, output.TimeDependsOnCommodityFilling, output.UpdateEvenOnFailure, output.UpdateAboveAndBelowZero);
             }
@@ -707,7 +640,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public virtual void RemoveOutputs()
         {
-            foreach (CommodityChange output in Outputs)
+            foreach (ServiceUtils.CommodityChange output in Outputs)
             {
                 ServiceMotive.RemoveAsOutput(output.InteractionDefinitionType, output.TargetType, output.ConstantChange, output.Locked, output.ActualValue, output.UpdateType, output.TimeDependsOnCommodityFilling, output.UpdateEvenOnFailure, output.UpdateAboveAndBelowZero);
             }

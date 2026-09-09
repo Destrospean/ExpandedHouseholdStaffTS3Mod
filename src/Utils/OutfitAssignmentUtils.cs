@@ -1,9 +1,8 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.CAS;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using Sims3.UI;
@@ -77,7 +76,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             {
             }
 
-            public OutfitAssignment(SimDescription simDescription, string specialOutfitKey, CustomService.ServiceProfile serviceProfile)
+            public OutfitAssignment(SimDescription simDescription, string specialOutfitKey, ServiceUtils.ServiceProfile serviceProfile)
             {
                 ServiceName = serviceProfile.Name;
                 SimDescription = simDescription;
@@ -196,7 +195,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             return AssignedOutfits.TryGetValue(assignedSpecialOutfitKey, out assignedOutfit) && sim.SimDescription.AddAssignedOutfit(assignedOutfit, simSpecialOutfitKey ?? assignedSpecialOutfitKey);
         }
 
-        public static void AssignOutfitToService(this SimDescription simDescription, string specialOutfitKey, CustomService.ServiceProfile serviceProfile, SimDescription fallbackSimDescription)
+        public static void AssignOutfitToService(this SimDescription simDescription, string specialOutfitKey, ServiceUtils.ServiceProfile serviceProfile, SimDescription fallbackSimDescription)
         {
             if (simDescription == null)
             {
@@ -374,17 +373,17 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
         }
 
-        public static bool TryGetGlobalOutfitAssignment(this SimDescription simDescription, CustomService.ServiceProfile serviceProfile, out OutfitAssignment outfitAssignment)
+        public static bool TryGetGlobalOutfitAssignment(this SimDescription simDescription, ServiceUtils.ServiceProfile serviceProfile, out OutfitAssignment outfitAssignment)
         {
             return IndexedOutfitAssignments.TryGetValue(OutfitUtils.GetAgePrefix(simDescription.Age, true) + OutfitUtils.GetGenderPrefix(simDescription.Gender) + "_" + serviceProfile.Name, out outfitAssignment);
         }
 
-        public static bool TryGetOutfitAssignment(this SimDescription simDescription, CustomService.ServiceProfile serviceProfile, out OutfitAssignment outfitAssignment, SimDescription fallbackSimDescription = null)
+        public static bool TryGetOutfitAssignment(this SimDescription simDescription, ServiceUtils.ServiceProfile serviceProfile, out OutfitAssignment outfitAssignment, SimDescription fallbackSimDescription = null)
         {
             return simDescription == null ? fallbackSimDescription.TryGetGlobalOutfitAssignment(serviceProfile, out outfitAssignment) : IndexedOutfitAssignments.TryGetValue(serviceProfile.Name + "_" + simDescription.SimDescriptionId, out outfitAssignment);
         }
 
-        public static void UnassignGlobalOutfitToService(this SimDescription simDescription, CustomService.ServiceProfile serviceProfile)
+        public static void UnassignGlobalOutfitToService(this SimDescription simDescription, ServiceUtils.ServiceProfile serviceProfile)
         {
             OutfitAssignment outfitAssignment;
             if (simDescription.TryGetGlobalOutfitAssignment(serviceProfile, out outfitAssignment))
@@ -394,7 +393,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
         }
 
-        public static void UnassignOutfitToService(this SimDescription simDescription, CustomService.ServiceProfile serviceProfile)
+        public static void UnassignOutfitToService(this SimDescription simDescription, ServiceUtils.ServiceProfile serviceProfile)
         {
             OutfitAssignment outfitAssignment;
             if (simDescription.TryGetOutfitAssignment(serviceProfile, out outfitAssignment))
