@@ -112,16 +112,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                                     return false;
                                 }
                             }
-                            InteractionQueue interactionQueue = Parent.Worker.InteractionQueue;
-                            if (interactionQueue != null)
-                            {
-                                InteractionInstance headInteraction = interactionQueue.GetHeadInteraction();
-                                if (headInteraction != null && headInteraction.SatisfiesCommodity(((CustomService)Parent.Worker.Service).ServiceMotive))
-                                {
-                                    return true;
-                                }
-                            }
-                            return false;
+                            return true;
                         }, out retVal) && retVal;
                 }
             }
