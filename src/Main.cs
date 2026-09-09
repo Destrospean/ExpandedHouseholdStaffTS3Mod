@@ -24,21 +24,21 @@ namespace zoeoeAndDestrospean.ServantRolesMod
     public class Main
     {
         [Tunable]
-        protected static bool kEnableMasterControllerIntegration = true;
+        protected static bool kInitializeTestServices = true;
 
         [Tunable]
-        protected static bool kInitTestServices = true;
+        protected static bool kIntegrateNRaasMasterController = true;
 
         static Main()
         {
             InteractionObjectTypeUtils.InitTypes();
             LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
             CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
-            if (kEnableMasterControllerIntegration && Array.Exists(AppDomain.CurrentDomain.GetAssemblies(), x => x.GetName().Name == "NRaasMasterController"))
+            if (kIntegrateNRaasMasterController && Array.Exists(AppDomain.CurrentDomain.GetAssemblies(), x => x.GetName().Name == "NRaasMasterController"))
             {
-                NRaasCompatibility.LoadNRaasMasterControllerModule();
+                NRaasCompatibility.IntegrateNRaasMasterController();
             }
-            if (kInitTestServices)
+            if (kInitializeTestServices)
             {
                 World.sOnWorldLoadFinishedEventHandler += (sender, e) =>
                     {

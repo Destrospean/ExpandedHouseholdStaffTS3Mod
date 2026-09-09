@@ -12,7 +12,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 {
     public class NRaasCompatibility
     {
-        public static void LoadNRaasMasterControllerModule()
+        public static void IntegrateNRaasMasterController()
         {
             OutfitExtensions.EditSpecialOutfit = (sim, specialOutfitKey) =>
                 {
