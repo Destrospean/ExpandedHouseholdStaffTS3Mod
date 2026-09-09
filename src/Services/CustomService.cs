@@ -567,7 +567,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         string activeTopic = profile.Title + " Service";
                         if (!ActiveTopicData.Exists(activeTopic))
                         {
-                            ActiveTopicData.Add(new ActiveTopicData(activeTopic, false, 1000, "", true, true, false, true, null, 0, "", false));
+                            ActiveTopicData.Add(new ActiveTopicData(activeTopic, false, 1000, "", true, true, false, true, null, 0f, "", false));
                         }
                         CommonUtils.AddActions(activeTopic, LongTermRelationshipTypes.Default, false, "Dismiss", "Fire");
                         profile.IsLoaded = true;

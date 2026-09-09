@@ -31,7 +31,7 @@ namespace zoeoeAndDestrospean.Utils
                 GameStates.TransitionToCASStylistMode();
                 while (GameStates.NextInWorldStateId != 0)
                 {
-                    Simulator.Sleep(0);
+                    Simulator.Sleep(0u);
                 }
                 CASChangeReporter.Instance.SendChangedEvents(sim);
                 casLogic.ShowUI -= OnShowUI;

@@ -7,39 +7,12 @@ using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using Sims3.UI;
+using zoeoeAndDestrospean.UI.Columns;
 
 namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 {
     public static class OutfitAssignmentUtils
     {
-        static Dictionary<string, OutfitAssignment> sIndexedOutfitAssignments;
-
-        public static Dictionary<string, AssignedOutfit> AssignedOutfits = new Dictionary<string, AssignedOutfit>();
-
-        public static Dictionary<string, OutfitAssignment> IndexedOutfitAssignments
-        {
-            get
-            {
-                if (sIndexedOutfitAssignments == null)
-                {
-                    IndexOutfitAssignments();
-                }
-                return sIndexedOutfitAssignments;
-            }
-        }
-
-        public const string OutfitAssignmentCategoryPrefix = "ServantRolesMod_OutfitAssignment_Category_";
-
-        public const string OutfitAssignmentGlobalPrefix = "ServantRolesMod_OutfitAssignment_Global_";
-
-        [PersistableStatic(true)]
-        public static List<OutfitAssignment> OutfitAssignments = new List<OutfitAssignment>();
-
-        public static readonly BodyTypes[] OverridableBodyTypes;
-
-        [PersistableStatic(true)]
-        public static List<Outfit> PreviousOutfits = new List<Outfit>();
-
         [Persistable]
         public class AssignedOutfit
         {
@@ -94,7 +67,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         [Persistable]
         public class OutfitAssignment
         {
-            public string ServiceName, SpecialOutfitKey;
+            public string ServiceName;
+
+            public string SpecialOutfitKey;
 
             public SimDescription SimDescription;
 
@@ -109,6 +84,34 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 SpecialOutfitKey = specialOutfitKey;
             }
         }
+
+        static Dictionary<string, OutfitAssignment> sIndexedOutfitAssignments;
+
+        public static Dictionary<string, AssignedOutfit> AssignedOutfits = new Dictionary<string, AssignedOutfit>();
+
+        public static Dictionary<string, OutfitAssignment> IndexedOutfitAssignments
+        {
+            get
+            {
+                if (sIndexedOutfitAssignments == null)
+                {
+                    IndexOutfitAssignments();
+                }
+                return sIndexedOutfitAssignments;
+            }
+        }
+
+        public const string OutfitAssignmentCategoryPrefix = "ServantRolesMod_OutfitAssignment_Category_";
+
+        public const string OutfitAssignmentGlobalPrefix = "ServantRolesMod_OutfitAssignment_Global_";
+
+        [PersistableStatic(true)]
+        public static List<OutfitAssignment> OutfitAssignments = new List<OutfitAssignment>();
+
+        public static readonly BodyTypes[] OverridableBodyTypes;
+
+        [PersistableStatic(true)]
+        public static List<Outfit> PreviousOutfits = new List<Outfit>();
 
         static OutfitAssignmentUtils()
         {
@@ -283,8 +286,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<BodyTypes>(OverridableBodyTypes).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<UI.Dialogs.ObjectPickerDialog.CommonHeaderInfo<BodyTypes>>
                             {
-                                new UI.Columns.BodyTypeColumn(localizationPath),
-                                new UI.Columns.PartOverrideEnabledColumn(localizationPath, partOverrideList.ToArray())
+                                new BodyTypeColumn(localizationPath),
+                                new PartOverrideEnabledColumn(localizationPath, partOverrideList.ToArray())
                             }, 1, out confirmed, out cancelled, true);
                         if (cancelled)
                         {

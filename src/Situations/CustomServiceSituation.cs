@@ -340,11 +340,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             DebugUtils.TryDisplayScriptError(() =>
                 {
                     CustomService service = (CustomService)Worker.Service;
-                    OutfitAssignmentUtils.AssignedOutfit assignedOutfit;
                     OutfitAssignmentUtils.OutfitAssignment outfitAssignment;
-                    if (Worker.SimDescription.TryGetOutfitAssignment(service.Profile, out outfitAssignment) && OutfitAssignmentUtils.AssignedOutfits.TryGetValue(outfitAssignment.SpecialOutfitKey, out assignedOutfit))
+                    if (Worker.SimDescription.TryGetOutfitAssignment(service.Profile, out outfitAssignment) && Worker.AddAssignedOutfit(outfitAssignment.SpecialOutfitKey))
                     {
-                        Worker.SimDescription.AddAssignedOutfit(assignedOutfit, outfitAssignment.SpecialOutfitKey);
                         Worker.SimDescription.AddOutfit(new SimOutfit(Worker.SimDescription.GetSpecialOutfit(outfitAssignment.SpecialOutfitKey).Key), OutfitCategories.Career, true);
                         for (int i = 1; i < Worker.SimDescription.GetOutfitCount(OutfitCategories.Career); i++)
                         {
