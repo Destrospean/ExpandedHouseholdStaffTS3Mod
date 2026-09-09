@@ -29,11 +29,15 @@ namespace zoeoeAndDestrospean.ServantRolesMod
         [Tunable]
         protected static bool kIntegrateNRaasMasterController = true;
 
+        [Tunable]
+        protected static bool kShowDebugMessages = true;
+
         static Main()
         {
             InteractionObjectTypeUtils.InitTypes();
             LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
             CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
+            DebugUtils.ShowDebugMessages = kShowDebugMessages;
             if (kIntegrateNRaasMasterController && Array.Exists(AppDomain.CurrentDomain.GetAssemblies(), x => x.GetName().Name == "NRaasMasterController"))
             {
                 NRaasCompatibility.IntegrateNRaasMasterController();

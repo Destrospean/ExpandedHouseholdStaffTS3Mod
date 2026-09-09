@@ -7,15 +7,14 @@ namespace zoeoeAndDestrospean.Utils
 {
     public class DebugUtils
     {
-        [Tunable]
-        static bool kShowDebugMessages = true;
+        public static bool ShowDebugMessages = false;
 
         /// <summary>
         /// Shows a debug message dialog (only when kShowDebugMessages is set to <c>true</c>).
         /// </summary>
         public static void ShowDebugMessageDialog(string message)
         {
-            if (kShowDebugMessages)
+            if (ShowDebugMessages)
             {
                 SimpleMessageDialog.Show("Servant Roles Mod", message);
             }
@@ -26,7 +25,7 @@ namespace zoeoeAndDestrospean.Utils
         /// </summary>
         public static void ShowDebugMessageNotification(string message)
         {
-            if (kShowDebugMessages)
+            if (ShowDebugMessages)
             {
                 StyledNotification.Show(new StyledNotification.Format(message, StyledNotification.NotificationStyle.kSystemMessage));
             }
