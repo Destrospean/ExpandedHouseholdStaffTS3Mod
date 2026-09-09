@@ -201,6 +201,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
+        public override CASAgeGenderFlags ValidAges
+        {
+            get
+            {
+                return Profile.ValidAges;
+            }
+        }
+
+        public override CASAgeGenderFlags ValidGenders
+        {
+            get
+            {
+                return Profile.ValidGenders;
+            }
+        }
+
         public override bool WaitsBeforePuttingAwayLeftovers
         {
             get
@@ -271,11 +287,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         ServiceUtils.CustomServices.Remove(profile.Name);
                     }
                 });
-        }
-
-        public override CASAgeGenderFlags GetGenderForNewNpc(Lot lot)
-        {
-            return Profile.ValidGenders;
         }
 
         public override string GetServiceTopic(Sim serviceSim)
