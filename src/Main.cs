@@ -79,8 +79,8 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                             {
                                 Actions = new List<CustomService.ActiveTopicAction>
                                     {
-                                        new CustomService.ActiveTopicAction("Dismiss", LongTermRelationshipTypes.Default, false),
-                                        new CustomService.ActiveTopicAction("Fire", LongTermRelationshipTypes.Default, false)
+                                        new CustomService.ActiveTopicAction("Dismiss"),
+                                        new CustomService.ActiveTopicAction("Fire")
                                     },
                                 IsLiveInService = true,
                                 IsQuietAroundSleepingSims = true,

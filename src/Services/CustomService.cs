@@ -52,7 +52,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             {
             }
 
-            public ActiveTopicAction(string name, LongTermRelationshipTypes grouping, bool isActive)
+            public ActiveTopicAction(string name, LongTermRelationshipTypes grouping = LongTermRelationshipTypes.Default, bool isActive = false)
             {
                 Name = name;
                 Grouping = grouping;
