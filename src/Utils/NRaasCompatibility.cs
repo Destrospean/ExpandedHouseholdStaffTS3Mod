@@ -1,4 +1,5 @@
-﻿using NRaas.CommonSpace.Options;
+﻿using NRaas;
+using NRaas.CommonSpace.Options;
 using NRaas.MasterControllerSpace.Sims;
 using Sims3.Gameplay;
 using Sims3.Gameplay.Abstracts;
@@ -30,7 +31,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     casLogic.ShowUI += OutfitExtensions.OnShowUI;
                     while (GameStates.NextInWorldStateId != 0)
                     {
-                        NRaas.SpeedTrap.Sleep();
+                        SpeedTrap.Sleep();
                     }
                     casLogic.ShowUI -= OutfitExtensions.OnShowUI;
                     simDescription.AddSpecialOutfit(simDescription.GetOutfit(OutfitCategories.Everyday, 0), specialOutfitKey);
