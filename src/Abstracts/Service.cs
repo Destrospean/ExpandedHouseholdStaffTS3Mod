@@ -296,7 +296,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 {
                     retVal |= CASAgeGenderFlags.Male;
                 }
-                return retVal;
+                return retVal ^ CASAgeGenderFlags.GenderMask;
             }
         }
 
