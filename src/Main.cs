@@ -47,7 +47,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
             {
                 World.sOnWorldLoadFinishedEventHandler += (sender, e) =>
                     {
-                        CustomService.Init(new CustomService.ServiceProfile("TestHousekeeper", "Test Housekeeper", "test housekeeping", null, new List<CommodityKind>
+                        CustomService.Init(new CustomService.ServiceProfile("TestHousekeeper", "Test Housekeeper", "test housekeeping", new List<CommodityKind>
                             {
                                 CommodityKind.BeMaid
                             }, new List<CustomService.CommodityChange>
@@ -61,30 +61,33 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                 new CustomService.CommodityChange("Sims3.Gameplay.Objects.ReadBookChooser+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
                                 new CustomService.CommodityChange("Sims3.Store.Objects.Tablet+ChooseBookOnTablet+Definition", "Sims3.Store.Objects.Tablet", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
                                 new CustomService.CommodityChange("Sims3.Store.Objects.Tablet+ReadBookOnTablet+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow)
-                            }, new List<TraitNames>
-                            {
-                                TraitNames.Neat
-                            },
-                            new List<TraitNames>
-                            {
-                                TraitNames.MakesNoMesses,
-                                TraitNames.SpeedyCleaner
-                            }, new List<TraitNames>
-                            {
-                                TraitNames.Neurotic,
-                                TraitNames.Flirty,
-                                TraitNames.Kleptomaniac,
-                                TraitNames.Charismatic
-                            }, 2)
+                            })
                             {
                                 Actions = new List<CustomService.ActiveTopicAction>
                                     {
                                         new CustomService.ActiveTopicAction("Dismiss"),
                                         new CustomService.ActiveTopicAction("Fire")
                                     },
+                                HiddenTraits = new List<TraitNames>
+                                    {
+                                        TraitNames.MakesNoMesses,
+                                        TraitNames.SpeedyCleaner
+                                    },
                                 IsLiveInService = true,
                                 IsQuietAroundSleepingSims = true,
+                                PotentialTraitCount = 2,
+                                PotentialTraits = new List<TraitNames>
+                                    {
+                                        TraitNames.Neurotic,
+                                        TraitNames.Flirty,
+                                        TraitNames.Kleptomaniac,
+                                        TraitNames.Charismatic
+                                    },
                                 ServiceTuning = new Service.ServiceTuning(1, 800, false, true, true),
+                                Traits = new List<TraitNames>
+                                    {
+                                        TraitNames.Neat
+                                    },
                                 WaitsBeforePuttingAwayLeftovers = true
                             });
                     };

@@ -48,7 +48,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
             public string Name;
 
-            public ActiveTopicAction()
+            protected ActiveTopicAction()
             {
             }
 
@@ -210,17 +210,21 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
             public bool WaitsBeforePuttingAwayLeftovers = false;
 
-            public ServiceProfile()
+            protected ServiceProfile()
             {
             }
 
-            public ServiceProfile(string name, string title, string cancelledServiceTitle = null, CommodityKind? serviceMotive = null, List<CommodityKind> motives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
+            public ServiceProfile(string name, string title, string cancelledServiceTitle = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null) : this(name, title, cancelledServiceTitle, null, additionalMotives, outputs, traits, hiddenTraits, potentialTraits, potentialTraitCount, skills)
+            {
+            }
+
+            public ServiceProfile(string name, string title, string cancelledServiceTitle = null, CommodityKind? serviceMotive = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
             {
                 Name = name;
                 Title = title;
                 CancelledServiceTitle = cancelledServiceTitle ?? title;
                 ServiceMotive = serviceMotive ?? CommonUtils.GetCommodityKind("Be" + name, CommodityKindType.Motive);
-                Motives = motives ?? new List<CommodityKind>();
+                Motives = additionalMotives ?? new List<CommodityKind>();
                 Outputs = outputs ?? new List<CommodityChange>();
                 if (!mMotives.Contains(mServiceMotive))
                 {

@@ -76,7 +76,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 }
             }
 
-            public CommodityChange()
+            protected CommodityChange()
             {
             }
 
