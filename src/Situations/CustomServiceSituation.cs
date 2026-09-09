@@ -11,12 +11,12 @@ using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
+using Sims3.SimIFace.CAS;
 using Sims3.UI;
 using System;
 using System.Collections.Generic;
 using zoeoeAndDestrospean.Utils;
 using zoeoeAndDestrospean.Utils.ServantRolesMod;
-using Sims3.SimIFace.CAS;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 {
