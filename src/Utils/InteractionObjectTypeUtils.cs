@@ -4,6 +4,7 @@ using Sims3.UI;
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using zoeoeAndDestrospean.UI.Columns;
 using ObjectPickerDialog = zoeoeAndDestrospean.UI.Dialogs.ObjectPickerDialog;
 
 namespace zoeoeAndDestrospean.Utils
@@ -79,7 +80,7 @@ namespace zoeoeAndDestrospean.Utils
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), namespaces.ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<string>>
                             {
-                                new UI.Columns.TextColumn(namespaceListDialogLocalizationPath)
+                                new TextColumn(namespaceListDialogLocalizationPath)
                             }, 1, out confirmed, out cancelled);
                         if (cancelled)
                         {
@@ -91,7 +92,7 @@ namespace zoeoeAndDestrospean.Utils
                                 new ObjectPicker.TabInfo("shop_all_r2", selectedNamespaces[0], new List<Type>(allTypes).FindAll(x => x.Namespace == selectedNamespaces[0]).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<Type>>
                             {
-                                new UI.Columns.TypeColumn(typeListDialogLocalizationPath)
+                                new TypeColumn(typeListDialogLocalizationPath)
                             }, int.MaxValue, out confirmed, out cancelled) ?? new List<Type>()).ToArray();
                         if (confirmed)
                         {
