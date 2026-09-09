@@ -132,9 +132,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             List<ulong> mTraits = new List<ulong>();
 
-            uint mValidAges = 0x30u;
+            uint mValidAges = (uint)(CASAgeGenderFlags.YoungAdult | CASAgeGenderFlags.Adult);
 
-            uint mValidGenders = 0u;
+            uint mValidGenders = (uint)CASAgeGenderFlags.GenderMask;
 
             public List<ActiveTopicAction> Actions = new List<ActiveTopicAction>();
 

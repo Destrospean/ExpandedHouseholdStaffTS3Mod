@@ -31,56 +31,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
     /// </summary>
     public abstract class Service<T> : Service, IService where T : Service<T>
     {
-        public class AgeTuning
-        {
-            [TunableComment("Allows the service role to be filled by children")]
-            public bool kAllowChild = false;
-
-            [TunableComment("Allows the service role to be filled by teenagers")]
-            public bool kAllowTeen = false;
-
-            [TunableComment("Allows the service role to be filled by young adults")]
-            public bool kAllowYoungAdult = true;
-
-            [TunableComment("Allows the service role to be filled by adults")]
-            public bool kAllowAdult = true;
-
-            [TunableComment("Allows the service role to be filled by elders")]
-            public bool kAllowElder = false;
-
-            public AgeTuning()
-            {
-            }
-
-            public AgeTuning(bool allowChild, bool allowTeen, bool allowYoungAdult, bool allowAdult, bool allowElder)
-            {
-                kAllowChild = allowChild;
-                kAllowTeen = allowTeen;
-                kAllowYoungAdult = allowYoungAdult;
-                kAllowAdult = allowAdult;
-                kAllowElder = allowElder;
-            }
-        }
-
-        public class GenderTuning
-        {
-            [TunableComment("Allows the service role to be filled by male Sims")]
-            public bool kAllowMale = true;
-
-            [TunableComment("Allows the service role to be filled by female Sims")]
-            public bool kAllowFemale = true;
-
-            public GenderTuning()
-            {
-            }
-
-            public GenderTuning(bool allowMale, bool allowFemale)
-            {
-                kAllowMale = allowMale;
-                kAllowFemale = allowFemale;
-            }
-        }
-
         public class SetUnsetServiceBed : ImmediateInteraction<Sim, Bed>
         {
             public class Definition : InteractionDefinition<Sim, Bed, SetUnsetServiceBed>
@@ -156,22 +106,12 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         readonly List<ServiceUtils.CommodityChange> mOutputs = new List<ServiceUtils.CommodityChange>();
 
-        public abstract AgeTuning AgeSettings
-        {
-            get;
-        }
-
         public static Type DerivedType
         {
             get
             {
                 return typeof(T);
             }
-        }
-
-        public abstract GenderTuning GenderSettings
-        {
-            get;
         }
 
         public static Service<T> Instance
@@ -258,28 +198,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             get
             {
-                CASAgeGenderFlags retVal = CASAgeGenderFlags.None;
-                if (AgeSettings.kAllowChild)
-                {
-                    retVal |= CASAgeGenderFlags.Child;
-                }
-                if (AgeSettings.kAllowTeen)
-                {
-                    retVal |= CASAgeGenderFlags.Teen;
-                }
-                if (AgeSettings.kAllowYoungAdult)
-                {
-                    retVal |= CASAgeGenderFlags.YoungAdult;
-                }
-                if (AgeSettings.kAllowAdult)
-                {
-                    retVal |= CASAgeGenderFlags.Adult;
-                }
-                if (AgeSettings.kAllowElder)
-                {
-                    retVal |= CASAgeGenderFlags.Elder;
-                }
-                return retVal;
+                return ServiceNPCSpecifications.GetAge(ServiceType.ToString());
             }
         }
 
@@ -287,16 +206,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         {
             get
             {
-                CASAgeGenderFlags retVal = CASAgeGenderFlags.None;
-                if (GenderSettings.kAllowFemale)
-                {
-                    retVal |= CASAgeGenderFlags.Female;
-                }
-                if (GenderSettings.kAllowMale)
-                {
-                    retVal |= CASAgeGenderFlags.Male;
-                }
-                return retVal ^ CASAgeGenderFlags.GenderMask;
+                return CASAgeGenderFlags.None;
             }
         }
 

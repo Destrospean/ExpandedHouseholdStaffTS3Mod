@@ -79,14 +79,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         const string kCustomServiceBook = "HowToServeAndNotBeServed";
 
-        public override AgeTuning AgeSettings
-        {
-            get
-            {
-                return null;
-            }
-        }
-
         public float CheckTime
         {
             get
@@ -124,14 +116,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             get
             {
                 return Profile.ExtraWaitTimeAfterSocializing;
-            }
-        }
-
-        public override GenderTuning GenderSettings
-        {
-            get
-            {
-                return null;
             }
         }
 
