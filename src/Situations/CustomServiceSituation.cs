@@ -154,6 +154,17 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(service.CheckTime, TimeUnit.Minutes, CheckForDuties, service.CheckTime, TimeUnit.Minutes, "Time for " + Parent.Worker.Service.GetType().Name + " to check if everything is done", AlarmType.AlwaysPersisted));
             }
 
+            public void CheckForDuties()
+            {
+                DebugUtils.TryDisplayScriptError(() =>
+                    {
+                        if (!Parent.ServiceTerminated && !HasDuties && !Parent.IsLiveInService && (!Parent.Worker.BuffManager.HasElement(BuffNames.Scared) || Parent.Worker.BuffManager.GetElement(BuffNames.Scared).BuffOrigin != Origin.FromSeeingBonehilda))
+                        {
+                            Parent.SetState(new HangAroundBeforeLeaving(Parent));
+                        }
+                    });
+            }
+
             public override void CleanUp()
             {
                 DebugUtils.TryDisplayScriptError(() =>
@@ -165,17 +176,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                         }
                         AlarmManager.RemoveAlarm(mAlarmHandle);
                         base.CleanUp();
-                    });
-            }
-
-            public void CheckForDuties()
-            {
-                DebugUtils.TryDisplayScriptError(() =>
-                    {
-                        if (!Parent.ServiceTerminated && !HasDuties && !Parent.IsLiveInService && (!Parent.Worker.BuffManager.HasElement(BuffNames.Scared) || Parent.Worker.BuffManager.GetElement(BuffNames.Scared).BuffOrigin != Origin.FromSeeingBonehilda))
-                        {
-                            Parent.SetState(new HangAroundBeforeLeaving(Parent));
-                        }
                     });
             }
         }
