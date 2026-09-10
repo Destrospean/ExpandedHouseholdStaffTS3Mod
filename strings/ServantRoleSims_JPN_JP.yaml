@@ -3,33 +3,18 @@
         "/Services":
             "/Chef":
                 ":Title": "Personal Chef"
-                ":NotEnoughFunds": "You don't have enough funds to pay the Chef."
-                ":RequestService": "Hire Personal Chef"
                 ":ServiceCancelled": "The personal chef service has been cancelled."
                 ":ServiceCancelledWhileActive": "We have already sent a personal chef over today, but we have cancelled your recurring service."
                 ":ServiceRequested": "Please make sure to have a bed arranged for me as I will be living at your place. Good day."
-                "/SetUnsetServiceBed":
-                    ":SetInteractionName": "Set as Chef {0.SimFirstName}'s Bed"
-                    ":UnsetInteractionName": "Unset as Chef {0.SimFirstName}'s Bed"
-                ":WeeklyPayment": "I'll be taking my weekly salary of {0.Money}. Good Day."
             "/CustomService":
                 ":NotEnoughFunds": "You don't have enough funds to pay the {0.String}."
                 ":RequestService": "Hire {0.String}"
-                ":ServiceCancelled": "{0.String}"
-                ":ServiceCancelledWhileActive": "{0.String}"
-                ":ServiceRequested": "Please make sure to have a bed arranged for me as I will be living at your place. Good day."
                 "/SetUnsetServiceBed":
                     ":SetInteractionName": "Set as {1.String} {0.SimFirstName}'s Bed"
                     ":UnsetInteractionName": "Unset as {1.String} {0.SimFirstName}'s Bed"
                 ":WeeklyPayment": "I'll be taking my weekly salary of {0.Money}. Good Day."
             "/Housekeeper":
                 ":Title": "Housekeeper"
-                ":NotEnoughFunds": "You don't have enough funds to pay the Housekeeper."
-                ":RequestService": "Hire Housekeeper"
                 ":ServiceCancelled": "The housekeeping service has been cancelled."
                 ":ServiceCancelledWhileActive": "We have already sent a housekeeper over today, but we have cancelled your recurring service."
                 ":ServiceRequested": "Please make sure to have a bed arranged for me as I will be living at your place. Good day."
-                "/SetUnsetServiceBed":
-                    ":SetInteractionName": "Set as Housekeeper {0.SimFirstName}'s Bed"
-                    ":UnsetInteractionName": "Unset as Housekeeper {0.SimFirstName}'s Bed"
-                ":WeeklyPayment": "I'll be taking my weekly salary of {0.Money}. Good Day."

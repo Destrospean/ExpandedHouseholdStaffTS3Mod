@@ -49,7 +49,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                 World.sOnWorldLoadFinishedEventHandler += (sender, e) =>
                     {
                         string entryKey = typeof(CustomService).GetLocalizationKey().Replace("CustomService", "");
-                        CustomService.Init(new ServiceUtils.ServiceProfile("Housekeeper", Localization.LocalizeString(entryKey + "Housekeeper:Title"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelled"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelledWhileActive"), new List<CommodityKind>
+                        CustomService.Init(new ServiceUtils.ServiceProfile("Housekeeper", Localization.LocalizeString(entryKey + "Housekeeper:Title"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceRequested"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelled"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelledWhileActive"), new List<CommodityKind>
                             {
                                 CommodityKind.BeMaid
                             }, new List<ServiceUtils.CommodityChange>
@@ -70,6 +70,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                         new ServiceUtils.ActiveTopicAction("Dismiss"),
                                         new ServiceUtils.ActiveTopicAction("Fire")
                                     },
+                                GetUniformFromName = true,
                                 HiddenTraits = new List<TraitNames>
                                     {
                                         TraitNames.MakesNoMesses,
@@ -91,8 +92,31 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                     {
                                         TraitNames.Neat
                                     },
-                                UseServiceTypeOutfit = true,
-                                ValidAges = CASAgeGenderFlags.YoungAdult,
+                                WaitsBeforePuttingAwayLeftovers = true
+                            });
+                        CustomService.Init(new ServiceUtils.ServiceProfile("Chef", Localization.LocalizeString(entryKey + "Chef:Title"), Localization.LocalizeString(entryKey + "Chef:ServiceRequested"), Localization.LocalizeString(entryKey + "Chef:ServiceCancelled"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelledWhileActive"), null)
+                            {
+                                Actions = new List<ServiceUtils.ActiveTopicAction>
+                                    {
+                                        new ServiceUtils.ActiveTopicAction("Dismiss"),
+                                        new ServiceUtils.ActiveTopicAction("Fire")
+                                    },
+                                GetUniformFromName = true,
+                                GetUniformNameCallback = (simDescription) => "career_execchef_" + (simDescription.IsFemale ? "female" : "male") + (simDescription.Elder ? "elder" : ""),
+                                IsLiveInService = true,
+                                PotentialTraitCount = 2,
+                                PotentialTraits = new List<TraitNames>
+                                    {
+                                        TraitNames.Neurotic,
+                                        TraitNames.Perfectionist,
+                                        TraitNames.HotHeaded,
+                                    },
+                                ServiceTuning = new Service.ServiceTuning(1, 1000, false, true, true),
+                                Traits = new List<TraitNames>
+                                    {
+                                        TraitNames.Artistic,
+                                        TraitNames.NaturalCook
+                                    },
                                 WaitsBeforePuttingAwayLeftovers = true
                             });
                     };

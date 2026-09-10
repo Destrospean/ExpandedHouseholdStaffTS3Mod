@@ -1,5 +1,6 @@
 ﻿using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
+using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
@@ -15,6 +16,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 {
     public static class ServiceUtils
     {
+        public delegate string GetUniformNameDelegate(SimDescription simDescription);
+
         [Persistable]
         public class ActiveTopicAction
         {
@@ -167,6 +170,10 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             /// </summary>
             public float ExtraWaitTimeAfterSocializing = 0.5f;
 
+            public GetUniformNameDelegate GetUniformNameCallback = null;
+
+            public bool GetUniformFromName = false;
+
             public List<TraitNames> HiddenTraits
             {
                 get
@@ -223,6 +230,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             public float RelationshipLevelForQuit = -50f;
 
             public bool ReportsFires = false;
+
+            public string RequestedMessage;
 
             public CommodityKind ServiceMotive
             {
@@ -287,8 +296,6 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             /// </summary>
             public float UseObjectInSameRoomAsSleeperMultiplier = 0.1f;
 
-            public bool UseServiceTypeOutfit = false;
-
             public CASAgeGenderFlags ValidAges
             {
                 get
@@ -319,14 +326,15 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             {
             }
 
-            public ServiceProfile(string name, string title, string cancelledMessage = null, string cancelledWhileActiveMessage = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null) : this(name, title, cancelledMessage, cancelledWhileActiveMessage, null, additionalMotives, outputs, traits, hiddenTraits, potentialTraits, potentialTraitCount, skills)
+            public ServiceProfile(string name, string title, string requestedMessage = null, string cancelledMessage = null, string cancelledWhileActiveMessage = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null) : this(name, title, requestedMessage, cancelledMessage, cancelledWhileActiveMessage, null, additionalMotives, outputs, traits, hiddenTraits, potentialTraits, potentialTraitCount, skills)
             {
             }
 
-            public ServiceProfile(string name, string title, string cancelledMessage = null, string cancelledWhileActiveMessage = null, CommodityKind? serviceMotive = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
+            public ServiceProfile(string name, string title, string requestedMessage = null, string cancelledMessage = null, string cancelledWhileActiveMessage = null, CommodityKind? serviceMotive = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
             {
                 Name = name;
                 Title = title;
+                RequestedMessage = requestedMessage ?? title;
                 CancelledMessage = cancelledMessage ?? title;
                 CancelledWhileActiveMessage = cancelledWhileActiveMessage ?? title;
                 ServiceMotive = serviceMotive ?? CommonUtils.GetCommodityKind("Be" + name, CommodityKindType.Motive);

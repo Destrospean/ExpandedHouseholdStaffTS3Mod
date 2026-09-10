@@ -429,7 +429,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         }
                         else
                         {
-                            simDescription = CreateSimDescription(this, customService?.Profile.ValidAges ?? ServiceNPCSpecifications.GetAge(ServiceType.ToString()), customService?.Profile.ValidGenders ?? GetGenderForNewNpc(lot));
+                            simDescription = CreateSimDescription(this, customService == null ? ServiceNPCSpecifications.GetAge(ServiceType.ToString()) : ServiceNPCSpecifications.ChooseRandomAge(customService.Profile.ValidAges), GetGenderForNewNpc(lot));
                         }
                         simDescription.FindSuitableVirtualHome();
                     }
@@ -445,7 +445,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         {
                             SetTraits(simDescription);
                             SetRandomTraits(simDescription);
-                            if (customService == null || customService.Profile.UseServiceTypeOutfit)
+                            if (customService == null || customService.Profile.GetUniformFromName)
                             {
                                 OverlayUniform(simDescription, ServiceType.ToString());
                             }

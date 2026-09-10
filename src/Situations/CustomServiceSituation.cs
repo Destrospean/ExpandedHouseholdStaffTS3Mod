@@ -11,6 +11,7 @@ using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
+using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using Sims3.UI;
 using System;
@@ -260,14 +261,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             }
         }
 
-        public override bool ReportsFires
-        {
-            get
-            {
-                return (Worker.Service as CustomService)?.Profile.ReportsFires ?? false;
-            }
-        }
-
         public override bool ServiceTerminated
         {
             get
@@ -334,6 +327,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Energy, CommodityKind.Hygiene);
         }
 
+        public override string GetUniformName(SimDescription simDescription)
+        {
+            ServiceUtils.ServiceProfile profile = (Worker.Service as CustomService)?.Profile;
+            return profile?.GetUniformNameCallback == null ? base.GetUniformName(Worker.SimDescription) : profile.GetUniformNameCallback(Worker.SimDescription);
+        }
+
         /*
         public override void OnArriveOnLot()
         {
@@ -384,7 +383,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                             Worker.SimDescription.RemoveOutfit(OutfitCategories.Career, i, true);
                         }
                     }
-                    else if (service.Profile.UseServiceTypeOutfit)
+                    else if (service.Profile.GetUniformFromName)
                     {
                         base.SwitchWorkerToServiceOutfit();
                     }
