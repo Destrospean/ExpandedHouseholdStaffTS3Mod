@@ -122,6 +122,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         [Persistable]
         public class ServiceProfile
         {
+            ulong mFlags = 0uL;
+
             List<ulong> mHiddenTraits = new List<ulong>();
 
             List<int> mMotives = new List<int>();
@@ -187,13 +189,64 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             public List<IGameObject> Inventory = new List<IGameObject>();
 
-            public bool IsLiveInService = false;
+            public bool IsLiveInService
+            {
+                get
+                {
+                    return (mFlags & (ulong)ServiceProfileFlags.LiveInService) != 0uL;
+                }
+                set
+                {
+                    if (value)
+                    {
+                        mFlags |= (ulong)ServiceProfileFlags.LiveInService;
+                    }
+                    else
+                    {
+                        mFlags &= (ulong.MaxValue ^ (ulong)ServiceProfileFlags.LiveInService);
+                    }
+                }
+            }
 
             public bool IsLoaded = false;
 
-            public bool IsQuietAroundSleepingSims = false;
+            public bool IsQuietAroundSleepingSims
+            {
+                get
+                {
+                    return (mFlags & (ulong)ServiceProfileFlags.QuietAroundSleepingSims) != 0uL;
+                }
+                set
+                {
+                    if (value)
+                    {
+                        mFlags |= (ulong)ServiceProfileFlags.QuietAroundSleepingSims;
+                    }
+                    else
+                    {
+                        mFlags &= (ulong.MaxValue ^ (ulong)ServiceProfileFlags.QuietAroundSleepingSims);
+                    }
+                }
+            }
 
-            public bool IsScaredOfBonehilda = false;
+            public bool IsScaredOfBonehilda
+            {
+                get
+                {
+                    return (mFlags & (ulong)ServiceProfileFlags.ScaredOfBonehilda) != 0uL;
+                }
+                set
+                {
+                    if (value)
+                    {
+                        mFlags |= (ulong)ServiceProfileFlags.ScaredOfBonehilda;
+                    }
+                    else
+                    {
+                        mFlags &= (ulong.MaxValue ^ (ulong)ServiceProfileFlags.ScaredOfBonehilda);
+                    }
+                }
+            }
 
             public List<CommodityKind> Motives
             {
@@ -230,7 +283,24 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             /// </summary>
             public float RelationshipLevelForQuit = -50f;
 
-            public bool ReportsFires = false;
+            public bool ReportsFires
+            {
+                get
+                {
+                    return (mFlags & (ulong)ServiceProfileFlags.ReportsFires) != 0uL;
+                }
+                set
+                {
+                    if (value)
+                    {
+                        mFlags |= (ulong)ServiceProfileFlags.ReportsFires;
+                    }
+                    else
+                    {
+                        mFlags &= (ulong.MaxValue ^ (ulong)ServiceProfileFlags.ReportsFires);
+                    }
+                }
+            }
 
             public string RequestedMessage;
 
@@ -311,7 +381,24 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public bool WaitsBeforePuttingAwayLeftovers = false;
+            public bool WaitsBeforePuttingAwayLeftovers
+            {
+                get
+                {
+                    return (mFlags & (ulong)ServiceProfileFlags.WaitsBeforePuttingAwayLeftovers) != 0uL;
+                }
+                set
+                {
+                    if (value)
+                    {
+                        mFlags |= (ulong)ServiceProfileFlags.WaitsBeforePuttingAwayLeftovers;
+                    }
+                    else
+                    {
+                        mFlags &= (ulong.MaxValue ^ (ulong)ServiceProfileFlags.WaitsBeforePuttingAwayLeftovers);
+                    }
+                }
+            }
 
             protected ServiceProfile()
             {

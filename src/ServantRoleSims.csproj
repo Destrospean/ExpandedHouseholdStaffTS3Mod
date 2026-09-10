@@ -66,6 +66,7 @@
     <Compile Include="Interfaces\ServantRolesMod\IService.cs" />
     <Compile Include="Services\CustomService.cs" />
     <Compile Include="Interactions\CallForServices.cs" />
+    <Compile Include="Enums\ServantRolesMod\EmptyEnumeration.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -127,4 +128,7 @@
     <Exec Command="&quot;$(SolutionDir)scripts\GenerateTunables.bat&quot;" Condition="'$(OS)' == 'Windows_NT'" />
     <Exec Command="sh &quot;$(SolutionDir)scripts\GenerateTunables.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
   </Target>
+  <ItemGroup>
+    <Folder Include="Enums\ServantRolesMod\" />
+  </ItemGroup>
 </Project>
