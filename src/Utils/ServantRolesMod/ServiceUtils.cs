@@ -124,6 +124,10 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         {
             ulong mFlags = 0uL;
 
+            #pragma warning disable 414
+            ulong mFlagsExtended = 0uL;
+            #pragma warning restore 414
+
             List<ulong> mHiddenTraits = new List<ulong>();
 
             List<int> mMotives = new List<int>();

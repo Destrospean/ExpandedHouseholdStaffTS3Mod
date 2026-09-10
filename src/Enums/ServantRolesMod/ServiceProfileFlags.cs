@@ -12,4 +12,10 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         ScaredOfBonehilda = 0x8uL,
         WaitsBeforePuttingAwayLeftovers = 0x10uL
     }
+
+    [Flags]
+    public enum ServiceProfileFlagsExtended : ulong
+    {
+        None = 0x0uL,
+    }
 }
