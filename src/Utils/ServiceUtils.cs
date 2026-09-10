@@ -138,10 +138,6 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             public List<ActiveTopicAction> Actions = new List<ActiveTopicAction>();
 
-            public string CancelledMessage;
-
-            public string CancelledWhileActiveMessage;
-
             /// <summary>
             /// Length of time (in minutes) between checks that everything is done.
             /// </summary>
@@ -222,7 +218,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             /// </summary>
             public float RelationshipLevelForQuit = -50f;
 
-            public bool ReportsFires = false;
+            public string CancelledMessage;
+
+            public string CancelledWhileActiveMessage;
 
             public CommodityKind ServiceMotive
             {

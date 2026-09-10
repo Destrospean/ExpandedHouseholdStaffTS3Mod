@@ -260,14 +260,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             }
         }
 
-        public override bool ReportsFires
-        {
-            get
-            {
-                return (Worker.Service as CustomService)?.Profile.ReportsFires ?? false;
-            }
-        }
-
         public override bool ServiceTerminated
         {
             get
