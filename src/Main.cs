@@ -44,9 +44,13 @@ namespace zoeoeAndDestrospean.ServantRolesMod
             {
                 NRaasCompatibility.IntegrateNRaasMasterController();
             }
-            if (kInitializeIncludedServices)
-            {
-                World.sOnWorldLoadFinishedEventHandler += (sender, e) =>
+            World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
+                {
+                    foreach (ServiceUtils.ServiceProfile profile in ServiceUtils.ServiceProfiles)
+                    {
+                        CustomService.Init(profile);
+                    }
+                    if (kInitializeIncludedServices)
                     {
                         string entryKey = typeof(CustomService).GetLocalizationKey().Replace("CustomService", "");
                         CustomService.Init(new ServiceUtils.ServiceProfile("Housekeeper", Localization.LocalizeString(entryKey + "Housekeeper:Title"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceRequested"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelled"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelledWhileActive"), new List<CommodityKind>
@@ -119,8 +123,8 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                     },
                                 WaitsBeforePuttingAwayLeftovers = true
                             });
-                    };
-            }
+                    }
+                });
         }
 
         public static bool IsInServicePreventingSocialization(Sim target)
