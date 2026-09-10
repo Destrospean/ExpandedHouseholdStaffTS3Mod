@@ -36,14 +36,14 @@ namespace zoeoeAndDestrospean.ServantRolesMod
 
         static Main()
         {
-            InteractionObjectTypeUtils.InitTypes();
-            LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
-            CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
             DebugUtils.ShowDebugMessages = kShowDebugMessages;
+            InteractionObjectTypeUtils.InitTypes();
+            CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
             if (kIntegrateNRaasMasterController && Array.Exists(AppDomain.CurrentDomain.GetAssemblies(), x => x.GetName().Name == "NRaasMasterController"))
             {
                 NRaasCompatibility.IntegrateNRaasMasterController();
             }
+            LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
                     foreach (ServiceUtils.ServiceProfile profile in ServiceUtils.ServiceProfiles)
