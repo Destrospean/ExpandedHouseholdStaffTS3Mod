@@ -66,6 +66,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                         new ServiceUtils.ActiveTopicAction("Dismiss"),
                                         new ServiceUtils.ActiveTopicAction("Fire")
                                     },
+                                CarInstanceName = "CarServiceMaid",
                                 CancelledMessage = Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelled"),
                                 CancelledWhileActiveMessage = Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelledWhileActive"),
                                 GetUniformFromName = true,

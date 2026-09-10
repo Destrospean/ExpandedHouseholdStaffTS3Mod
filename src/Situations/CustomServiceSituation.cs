@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using zoeoeAndDestrospean.Utils;
 using zoeoeAndDestrospean.Utils.ServantRolesMod;
+using Sims3.Gameplay.Objects.Vehicles;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 {
@@ -197,11 +198,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                         parent.Worker.InteractionQueue.CancelAllInteractions();
                         RequestWalkStyle(parent.Worker, Sim.WalkStyle.Run);
                         ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new Maid.QuitBecauseOfBonehilda.Definition(), null, null, null);
-                        parent.Worker.Service.ClearServiceForLot(parent.Lot);
-                        parent.Worker.Service.EndService(parent.Worker.SimDescription);
                         parent.Worker.RequestWalkStyle(Sim.WalkStyle.OnFire);
-                        ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new DriveAwayInServiceCar.Definition(parent.Car), null, null, null);
+                        ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new DriveAwayInServiceCar.Definition(parent.Car), null, OnFinished, OnFinished);
                     });
+            }
+
+            public void OnFinished(Sim actor, float x)
+            {
+                actor.Service.ClearServiceForLot(Parent.Lot);
+                actor.Service.EndService(actor.SimDescription);
             }
         }
 
@@ -257,8 +262,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 DebugUtils.TryDisplayScriptError(() =>
                     {
                         Parent.OnServiceStarting();
-                        RouteToLot<CustomServiceSituation, StartPerformingDuties> routeToLot = new WalkToLot<CustomServiceSituation, StartPerformingDuties>(Parent);
-                        routeToLot.SetRouteTime(((CustomService)Parent.Worker.Service).DriveTime);
+                        CustomService service = (CustomService)Parent.Worker.Service;
+                        RouteToLot<CustomServiceSituation, StartPerformingDuties> routeToLot = service.Profile.CarInstanceName == null ? new WalkToLot<CustomServiceSituation, StartPerformingDuties>(Parent) : new RouteToLot<CustomServiceSituation, StartPerformingDuties>(Parent);
+                        routeToLot.SetRouteTime(service.DriveTime);
                         Parent.SetState(routeToLot);
                     });
             }
@@ -378,6 +384,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 base.SetToFire(serviceSim, firer);
             }
+        }
+
+        public override CarService CreateServiceCar()
+        {
+            CustomService service = (CustomService)Worker.Service;
+            return GlobalFunctions.CreateObjectOutOfWorld(service.Profile.CarInstanceName, service.Profile.CarProductVersion, typeof(CarServiceMaidVan).FullName, null) as CarService;
         }
 
         public override void SwitchWorkerToServiceOutfit()

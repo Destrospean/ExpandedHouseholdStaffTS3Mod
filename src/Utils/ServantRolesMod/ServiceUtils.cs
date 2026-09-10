@@ -122,6 +122,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         [Persistable]
         public class ServiceProfile
         {
+            uint mCarProductVersion = 0u;
+
             ulong mFlags = 0uL;
 
             #pragma warning disable 414
@@ -171,6 +173,31 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 set
                 {
                     mStrings["CancelledWhileActiveMessage"] = value;
+                }
+            }
+
+            public string CarInstanceName
+            {
+                get
+                {
+                    string value;
+                    return mStrings.TryGetValue("CarInstanceName", out value) ? value : null;
+                }
+                set
+                {
+                    mStrings["CarInstanceName"] = value;
+                }
+            }
+
+            public ProductVersion CarProductVersion
+            {
+                get
+                {
+                    return (ProductVersion)mCarProductVersion;
+                }
+                set
+                {
+                    mCarProductVersion = (uint)value;
                 }
             }
 
