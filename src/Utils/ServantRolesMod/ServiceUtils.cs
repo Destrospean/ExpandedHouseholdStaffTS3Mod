@@ -231,7 +231,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     }
                     else
                     {
-                        mFlags &= (ulong.MaxValue ^ (ulong)ServiceProfileFlags.LiveInService);
+                        mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.LiveInService;
                     }
                 }
             }
@@ -250,7 +250,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     }
                     else
                     {
-                        mFlags &= (ulong.MaxValue ^ (ulong)ServiceProfileFlags.QuietAroundSleepingSims);
+                        mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.QuietAroundSleepingSims;
                     }
                 }
             }
@@ -269,7 +269,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     }
                     else
                     {
-                        mFlags &= (ulong.MaxValue ^ (ulong)ServiceProfileFlags.ScaredOfBonehilda);
+                        mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.ScaredOfBonehilda;
                     }
                 }
             }
@@ -334,7 +334,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     }
                     else
                     {
-                        mFlags &= (ulong.MaxValue ^ (ulong)ServiceProfileFlags.ReportsFires);
+                        mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.ReportsFires;
                     }
                 }
             }
@@ -454,7 +454,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     }
                     else
                     {
-                        mFlags &= (ulong.MaxValue ^ (ulong)ServiceProfileFlags.WaitsBeforePuttingAwayLeftovers);
+                        mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.WaitsBeforePuttingAwayLeftovers;
                     }
                 }
             }
