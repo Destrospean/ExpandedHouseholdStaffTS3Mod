@@ -195,10 +195,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 DebugUtils.TryDisplayScriptError(() =>
                     {
                         parent.Worker.InteractionQueue.CancelAllInteractions();
-                        RequestWalkStyle(parent.Worker, Sim.WalkStyle.OnFire);
+                        RequestWalkStyle(parent.Worker, Sim.WalkStyle.Run);
                         ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new Maid.QuitBecauseOfBonehilda.Definition(), null, null, null);
                         parent.Worker.Service.ClearServiceForLot(parent.Lot);
                         parent.Worker.Service.EndService(parent.Worker.SimDescription);
+                        parent.Worker.RequestWalkStyle(Sim.WalkStyle.OnFire);
                         ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new DriveAwayInServiceCar.Definition(parent.Car), null, null, null);
                     });
             }

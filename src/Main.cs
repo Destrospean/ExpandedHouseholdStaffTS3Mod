@@ -99,7 +99,6 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                         TraitNames.Charismatic,
                                         TraitNames.Flirty,
                                         TraitNames.Kleptomaniac,
-                                        TraitNames.Neurotic
                                     },
                                 RequestedMessage = Localization.LocalizeString(entryKey + "Housekeeper:ServiceRequested"),
                                 ServiceTuning = new Service.ServiceTuning(1, 800, false, true, true),
