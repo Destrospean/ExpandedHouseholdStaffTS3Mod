@@ -8,11 +8,11 @@ using Sims3.Gameplay.CAS;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 
-namespace zoeoeAndDestrospean.Utils.ServantRolesMod
+namespace zoeoeAndDestrospean.Utils
 {
-    public class NRaasCompatibility
+    public class NRaasMasterControllerIntegration
     {
-        public static void IntegrateNRaasMasterController()
+        public static void Init()
         {
             OutfitExtensions.EditSpecialOutfit = (sim, specialOutfitKey) =>
                 {

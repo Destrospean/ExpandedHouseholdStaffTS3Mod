@@ -7,7 +7,6 @@ using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
-using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Objects.Beds;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
@@ -19,6 +18,7 @@ using Sims3.SimIFace.CAS;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using zoeoeAndDestrospean.Misc;
 using zoeoeAndDestrospean.Utils;
 using zoeoeAndDestrospean.Utils.ServantRolesMod;
 
@@ -50,21 +50,19 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
                 public override bool Test(Sim actor, Bed target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
                 {
-                    Lot lotHome = actor.LotHome;
-                    if (lotHome != null)
+                    if (actor.LotHome != null)
                     {
-                        if (target.LotCurrent != lotHome)
+                        if (target.LotCurrent != actor.LotHome)
                         {
                             return false;
                         }
                         CustomService service;
                         if (ServiceUtils.CustomServices.TryGetValue(mServiceProfile.Name, out service) && service != null)
                         {
-                            List<Sim> simsAssignedToLot = service.GetSimsAssignedToLot(lotHome);
+                            List<Sim> simsAssignedToLot = service.GetSimsAssignedToLot(actor.LotHome);
                             if (simsAssignedToLot.Count > 0)
                             {
-                                Sim owner = simsAssignedToLot[0];
-                                Bed bed = target.FindOwnedBed(owner);
+                                Bed bed = target.FindOwnedBed(simsAssignedToLot[0]);
                                 if (bed == null || bed == target)
                                 {
                                     return target.CanBeUsedAsBed;
@@ -76,8 +74,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 }
             }
         }
-
-        const string kCustomServiceBook = "HowToServeAndNotBeServed";
 
         public float CheckTime
         {
@@ -396,7 +392,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override bool ShouldSimBeRemovedFromService(SimDescription sim)
         {
-            if (AgingManager.NumDaysBeforeAging(sim) <= (float)kNumDaysBeforeBirthdayToRemoveSim)
+            if (AgingManager.NumDaysBeforeAging(sim) <= kNumDaysBeforeBirthdayToRemoveSim)
             {
                 return true;
             }
@@ -419,22 +415,23 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             DebugUtils.TryDisplayScriptError(() =>
                 {
-                    foreach (SkillNames skillName in Profile.Skills)
+                    foreach (SkillLevelPair skillLevelPair in Profile.Skills)
                     {
-                        Skill skill = sim.SkillManager.AddElement(skillName);
-                        int maxSkillLevel = skill.MaxSkillLevel;
-                        for (int i = 0; i < maxSkillLevel; i++)
+                        Skill skill = sim.SkillManager.AddElement(skillLevelPair.SkillName);
+                        for (int i = 0; i < (skillLevelPair.SkillLevel < 0 ? skill.MaxSkillLevel : skillLevelPair.SkillLevel); i++)
                         {
                             skill.ForceGainPointsForLevelUp();
                         }
                     }
-                    Book book = BookGeneralData.GetBookGeneralByTitle(kCustomServiceBook);
                     if (sim.Inventory != null)
                     {
                         sim.Inventory.DestroyItems();
-                        if (!sim.Inventory.TryToAdd(book))
+                        foreach (IGameObject item in Profile.Inventory)
                         {
-                            book.Destroy();
+                            if (!sim.Inventory.TryToAdd(item))
+                            {
+                                item.Destroy();
+                            }
                         }
                     }
                 });

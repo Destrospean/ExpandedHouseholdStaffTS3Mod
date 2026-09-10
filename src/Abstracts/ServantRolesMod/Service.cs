@@ -26,8 +26,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 {
     /// <summary>
     /// Service base class from which to derive all services for the Servant Roles Mod.
-    /// Make sure to call Init() in each derived class's static constructor.
-    /// Also add any output commodity changes associated with each derived class's service motive to the Outputs field in each derived class's instance constructor.
     /// </summary>
     public abstract class Service<T> : Service, IService where T : Service<T>
     {

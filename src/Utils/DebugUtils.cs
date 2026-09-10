@@ -10,7 +10,7 @@ namespace zoeoeAndDestrospean.Utils
         public static bool ShowDebugMessages = false;
 
         /// <summary>
-        /// Shows a debug message dialog (only when kShowDebugMessages is set to <c>true</c>).
+        /// Shows a debug message dialog (only when <see cref="zoeoeAndDestrospean.Utils.DebugUtils.ShowDebugMessages"/> is set to <c>true</c>).
         /// </summary>
         public static void ShowDebugMessageDialog(string message)
         {
@@ -21,7 +21,7 @@ namespace zoeoeAndDestrospean.Utils
         }
 
         /// <summary>
-        /// Shows a debug message notification (only when kShowDebugMessages is set to <c>true</c>).
+        /// Shows a debug message notification (only when <see cref="zoeoeAndDestrospean.Utils.DebugUtils.ShowDebugMessages"/> is set to <c>true</c>).
         /// </summary>
         public static void ShowDebugMessageNotification(string message)
         {

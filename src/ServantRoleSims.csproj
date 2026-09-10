@@ -37,23 +37,14 @@
     <BaseIntermediateOutputPath>..\build\obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionAttribute.cs" />
-    <Compile Include="Abstracts\Service.cs" />
-    <Compile Include="Abstracts\ServiceSituation.cs" />
-    <Compile Include="Interactions\CallForServices.cs" />
-    <Compile Include="Interfaces\IAmLiveInService.cs" />
-    <Compile Include="Interfaces\IService.cs" />
-    <Compile Include="Utils\AutonomyUtils.cs" />
     <Compile Include="Utils\CommonUtils.cs" />
-    <Compile Include="Utils\ServiceUtils.cs" />
     <Compile Include="Utils\DebugUtils.cs" />
     <Compile Include="Enums\CommodityKindType.cs" />
     <Compile Include="Enums\DummyEnum.cs" />
     <Compile Include="Delegates\Action.cs" />
     <Compile Include="Delegates\Func.cs" />
-    <Compile Include="Interfaces\IAmSociableService.cs" />
     <Compile Include="Situations\CustomServiceSituation.cs" />
     <Compile Include="UI\Dialogs\ObjectPickerDialog.cs" />
     <Compile Include="UI\Columns\BodyTypeColumn.cs" />
@@ -62,9 +53,19 @@
     <Compile Include="UI\Columns\TypeColumn.cs" />
     <Compile Include="Utils\InteractionObjectTypeUtils.cs" />
     <Compile Include="Utils\OutfitExtensions.cs" />
-    <Compile Include="Utils\OutfitAssignmentUtils.cs" />
-    <Compile Include="Utils\NRaasCompatibility.cs" />
+    <Compile Include="Misc\SkillLevelPair.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Utils\NRaasMasterControllerIntegration.cs" />
+    <Compile Include="Utils\ServantRolesMod\AutonomyUtils.cs" />
+    <Compile Include="Utils\ServantRolesMod\OutfitAssignmentUtils.cs" />
+    <Compile Include="Utils\ServantRolesMod\ServiceUtils.cs" />
+    <Compile Include="Abstracts\ServantRolesMod\Service.cs" />
+    <Compile Include="Abstracts\ServantRolesMod\ServiceSituation.cs" />
+    <Compile Include="Interfaces\ServantRolesMod\IAmLiveInService.cs" />
+    <Compile Include="Interfaces\ServantRolesMod\IAmSociableService.cs" />
+    <Compile Include="Interfaces\ServantRolesMod\IService.cs" />
     <Compile Include="Services\CustomService.cs" />
+    <Compile Include="Interactions\CallForServices.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

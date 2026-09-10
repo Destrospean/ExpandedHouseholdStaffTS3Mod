@@ -4,9 +4,11 @@ using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.ObjectComponents;
+using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Situations;
+using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
@@ -18,6 +20,7 @@ using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using zoeoeAndDestrospean.Misc;
 using zoeoeAndDestrospean.Utils;
 using zoeoeAndDestrospean.Utils.ServantRolesMod;
 
@@ -36,12 +39,12 @@ namespace zoeoeAndDestrospean.ServantRolesMod
 
         static Main()
         {
+            CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
             DebugUtils.ShowDebugMessages = kShowDebugMessages;
             InteractionObjectTypeUtils.InitTypes();
-            CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
             if (kIntegrateNRaasMasterController && Array.Exists(AppDomain.CurrentDomain.GetAssemblies(), x => x.GetName().Name == "NRaasMasterController"))
             {
-                NRaasCompatibility.IntegrateNRaasMasterController();
+                NRaasMasterControllerIntegration.Init();
             }
             LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
@@ -80,16 +83,20 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                         TraitNames.MakesNoMesses,
                                         TraitNames.SpeedyCleaner
                                     },
+                                Inventory = new List<IGameObject>
+                                    {
+                                        BookGeneralData.GetBookGeneralByTitle("HowToServeAndNotBeServed")
+                                    },
                                 IsLiveInService = true,
                                 IsQuietAroundSleepingSims = true,
                                 IsScaredOfBonehilda = true,
                                 PotentialTraitCount = 2,
                                 PotentialTraits = new List<TraitNames>
                                     {
-                                        TraitNames.Neurotic,
+                                        TraitNames.Charismatic,
                                         TraitNames.Flirty,
                                         TraitNames.Kleptomaniac,
-                                        TraitNames.Charismatic
+                                        TraitNames.Neurotic
                                     },
                                 ServiceTuning = new Service.ServiceTuning(1, 800, false, true, true),
                                 Traits = new List<TraitNames>
@@ -111,11 +118,15 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                 PotentialTraitCount = 2,
                                 PotentialTraits = new List<TraitNames>
                                     {
-                                        TraitNames.Neurotic,
-                                        TraitNames.Perfectionist,
                                         TraitNames.HotHeaded,
+                                        TraitNames.Neurotic,
+                                        TraitNames.Perfectionist
                                     },
                                 ServiceTuning = new Service.ServiceTuning(1, 1000, false, true, true),
+                                Skills = new List<SkillLevelPair>
+                                    {
+                                        new SkillLevelPair(SkillNames.Cooking)
+                                    },
                                 Traits = new List<TraitNames>
                                     {
                                         TraitNames.Artistic,

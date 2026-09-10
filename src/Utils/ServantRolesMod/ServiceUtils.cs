@@ -1,7 +1,7 @@
 ﻿using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
-using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
+using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
@@ -10,6 +10,7 @@ using Sims3.SimIFace.CAS;
 using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
+using zoeoeAndDestrospean.Misc;
 using zoeoeAndDestrospean.Enums;
 
 namespace zoeoeAndDestrospean.Utils.ServantRolesMod
@@ -131,8 +132,6 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             ulong mServiceType = 1uL;
 
-            List<ulong> mSkills = new List<ulong>();
-
             List<ulong> mTraits = new List<ulong>();
 
             uint mValidAges = 48u;
@@ -185,6 +184,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     mHiddenTraits = value.ConvertAll(x => (ulong)x);
                 }
             }
+
+            public List<IGameObject> Inventory = new List<IGameObject>();
 
             public bool IsLiveInService = false;
 
@@ -260,17 +261,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public List<SkillNames> Skills
-            {
-                get
-                {
-                    return mSkills.ConvertAll(x => (SkillNames)x);
-                }
-                set
-                {
-                    mSkills = value.ConvertAll(x => (ulong)x);
-                }
-            }
+            public List<SkillLevelPair> Skills = new List<SkillLevelPair>();
 
             /// <summary>
             /// How old leftovers can be out in minutes before the custom service NPC will put it away.
@@ -326,11 +317,11 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             {
             }
 
-            public ServiceProfile(string name, string title, string requestedMessage = null, string cancelledMessage = null, string cancelledWhileActiveMessage = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null) : this(name, title, requestedMessage, cancelledMessage, cancelledWhileActiveMessage, null, additionalMotives, outputs, traits, hiddenTraits, potentialTraits, potentialTraitCount, skills)
+            public ServiceProfile(string name, string title, string requestedMessage = null, string cancelledMessage = null, string cancelledWhileActiveMessage = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillLevelPair> skills = null) : this(name, title, requestedMessage, cancelledMessage, cancelledWhileActiveMessage, null, additionalMotives, outputs, traits, hiddenTraits, potentialTraits, potentialTraitCount, skills)
             {
             }
 
-            public ServiceProfile(string name, string title, string requestedMessage = null, string cancelledMessage = null, string cancelledWhileActiveMessage = null, CommodityKind? serviceMotive = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillNames> skills = null)
+            public ServiceProfile(string name, string title, string requestedMessage = null, string cancelledMessage = null, string cancelledWhileActiveMessage = null, CommodityKind? serviceMotive = null, List<CommodityKind> additionalMotives = null, List<CommodityChange> outputs = null, List<TraitNames> traits = null, List<TraitNames> hiddenTraits = null, List<TraitNames> potentialTraits = null, int potentialTraitCount = 0, List<SkillLevelPair> skills = null)
             {
                 Name = name;
                 Title = title;
@@ -348,7 +339,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 HiddenTraits = hiddenTraits ?? new List<TraitNames>();
                 PotentialTraits = potentialTraits ?? new List<TraitNames>();
                 PotentialTraitCount = potentialTraitCount;
-                Skills = skills ?? new List<SkillNames>();
+                Skills = skills ?? new List<SkillLevelPair>();
             }
 
             public void AddHiddenTraits(params TraitNames[] traits)
@@ -375,11 +366,11 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public void AddSkills(params SkillNames[] skills)
+            public void AddSkills(params SkillLevelPair[] skills)
             {
-                foreach (SkillNames skill in skills)
+                foreach (SkillLevelPair skill in skills)
                 {
-                    mSkills.Add((ulong)skill);
+                    Skills.Add(skill);
                 }
             }
 
@@ -430,16 +421,16 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public void RemoveSkills(Predicate<SkillNames> predicate)
+            public void RemoveSkills(Predicate<SkillLevelPair> predicate)
             {
-                mSkills.RemoveAll(x => predicate((SkillNames)x));
+                Skills.RemoveAll(predicate);
             }
 
-            public void RemoveSkills(params SkillNames[] skills)
+            public void RemoveSkills(params SkillLevelPair[] skills)
             {
-                foreach (SkillNames skill in skills)
+                foreach (SkillLevelPair skill in skills)
                 {
-                    mSkills.Remove((ulong)skill);
+                    Skills.Remove(skill);
                 }
             }
 
@@ -480,7 +471,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
         public static bool IsFromServantRolesMod(Type type)
         {
-            return typeof(IService).IsAssignableFrom(type);
+            return typeof(Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod.IService).IsAssignableFrom(type);
         }
     }
 }
