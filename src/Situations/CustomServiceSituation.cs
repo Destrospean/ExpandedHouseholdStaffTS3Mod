@@ -199,7 +199,28 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                         ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new Maid.QuitBecauseOfBonehilda.Definition(), null, null, null);
                         parent.Worker.Service.ClearServiceForLot(parent.Lot);
                         parent.Worker.Service.EndService(parent.Worker.SimDescription);
-                        ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new DriveAwayInServiceCar.Definition(parent.Car), null, null, null);
+                        if (parent.Car == null)
+                        {
+                            uint offsetHint = 0u;
+                            Vector3 outPos = Vector3.Invalid;
+                            if (LotManager.FindPlaceOutsideLot(parent.Worker.LotCurrent, ref offsetHint, ref outPos))
+                            {
+                                Route route = parent.Worker.CreateRoute();
+                                route.PlanToPoint(outPos);
+                                if (parent.Worker.DoRoute(route))
+                                {
+                                    if (parent.Worker != null && parent.Worker.SimDescription.VirtualLotHome == null)
+                                    {
+                                        parent.Worker.FadeOut(false, false, 0f);
+                                        parent.Worker.RemoveFromWorld();
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new DriveAwayInServiceCar.Definition(parent.Car), null, null, null);
+                        }
                     });
             }
         }
