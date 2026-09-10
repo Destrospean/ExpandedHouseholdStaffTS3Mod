@@ -271,20 +271,16 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             DebugUtils.TryDisplayScriptError(() =>
                 {
-                    if (!profile.IsLoaded)
+                    CommonUtils.AddEnumValue<CommodityKind>("Be" + profile.Name, profile.ServiceMotive);
+                    LoadServiceMotive(profile.ServiceMotive);
+                    string activeTopic = profile.Title + " Service";
+                    if (!ActiveTopicData.Exists(activeTopic))
                     {
-                        CommonUtils.AddEnumValue<CommodityKind>("Be" + profile.Name, profile.ServiceMotive);
-                        LoadServiceMotive(profile.ServiceMotive);
-                        string activeTopic = profile.Title + " Service";
-                        if (!ActiveTopicData.Exists(activeTopic))
-                        {
-                            ActiveTopicData.Add(new ActiveTopicData(activeTopic, false, 1000, "", true, true, false, true, null, 0f, "", false));
-                        }
-                        foreach (ServiceUtils.ActiveTopicAction action in profile.Actions)
-                        {
-                            CommonUtils.AddActions(activeTopic, action.Grouping, action.IsActive, action.Name);
-                        }
-                        profile.IsLoaded = true;
+                        ActiveTopicData.Add(new ActiveTopicData(activeTopic, false, 1000, "", true, true, false, true, null, 0f, "", false));
+                    }
+                    foreach (ServiceUtils.ActiveTopicAction action in profile.Actions)
+                    {
+                        CommonUtils.AddActions(activeTopic, action.Grouping, action.IsActive, action.Name);
                     }
                     Create(profile);
                     CustomService service;
@@ -325,7 +321,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         World.sOnWorldQuitEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                             {
                                 service.RemoveOutputs();
-                                string activeTopic = service.GetServiceTopic(null);
                                 foreach (ServiceUtils.ActiveTopicAction action in profile.Actions)
                                 {
                                     CommonUtils.RemoveActions(activeTopic, action.Grouping, action.IsActive, action.Name);

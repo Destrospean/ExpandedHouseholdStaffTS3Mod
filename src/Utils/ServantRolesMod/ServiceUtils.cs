@@ -212,8 +212,6 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public bool IsLoaded = false;
-
             public bool IsQuietAroundSleepingSims
             {
                 get
