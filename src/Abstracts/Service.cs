@@ -202,7 +202,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        protected static void AddInteractions(Bed bed)
+        public static void AddInteractions(Bed bed)
         {
             DebugUtils.TryDisplayScriptError(() => bed.AddInteraction(SetUnsetServiceBed.Singleton, true));
         }
@@ -210,7 +210,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         /// <summary>
         /// Loads a motive tuning but (optionally) with a different commodity kind from the one specified in XML.
         /// </summary>
-        protected static void LoadMotive(XmlDocument xmlDocument, CommodityKind commodityKind = CommodityKind.None)
+        static void LoadMotive(XmlDocument xmlDocument, CommodityKind commodityKind = CommodityKind.None)
         {
             XmlNodeList elementsByTagName = xmlDocument.GetElementsByTagName("Motive");
             foreach (XmlElement motiveElement in elementsByTagName)
@@ -344,34 +344,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                     motiveTunings.Add(motiveTuning);
                     Commodities.NewType(commodityKind, 1, motiveTuning.Min, motiveTuning.Max, 0, true, -100, 100);
                 }
-            }
-        }
-
-        protected static void OnObjectPlacedInLot(object sender, EventArgs e)
-        {
-            DebugUtils.TryDisplayScriptError(() =>
-                {
-                    World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
-                    if (onObjectPlacedInLotEventArgs != null)
-                    {
-                        GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
-                        if (typeof(IAmLiveInService).IsAssignableFrom(DerivedType))
-                        {
-                            Bed bed = gameObject as Bed;
-                            if (bed != null)
-                            {
-                                AddInteractions(bed);
-                            }
-                        }
-                    }
-                });
-        }
-
-        protected static void OnWorldQuit(object sender, EventArgs e)
-        {
-            if (Instance != null)
-            {
-                Instance = null;
             }
         }
 
@@ -587,12 +559,27 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
         /// </summary>
         public static void Init()
         {
-            CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);
-            World.OnObjectPlacedInLotEventHandler += OnObjectPlacedInLot;
+            World.OnObjectPlacedInLotEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
+                {
+                    World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
+                    if (onObjectPlacedInLotEventArgs != null)
+                    {
+                        GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
+                        if (typeof(IAmLiveInService).IsAssignableFrom(DerivedType))
+                        {
+                            Bed bed = gameObject as Bed;
+                            if (bed != null)
+                            {
+                                AddInteractions(bed);
+                            }
+                        }
+                    }
+                });
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
                     if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
                     {
+                        CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);
                         LoadServiceMotive();
                         string activeTopic = DerivedType.Name + " Service";
                         if (!ActiveTopicData.Exists(activeTopic))
@@ -632,7 +619,13 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         }
                     }
                 });
-            World.sOnWorldQuitEventHandler += OnWorldQuit;
+            World.sOnWorldQuitEventHandler += (sender, e) =>
+                {
+                    if (Instance != null)
+                    {
+                        Instance = null;
+                    }
+                };
         }
 
         public static void LoadServiceMotive(CommodityKind? serviceMotive = null)

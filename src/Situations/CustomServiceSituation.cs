@@ -104,7 +104,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     bool retVal;
                     return !DebugUtils.TryDisplayScriptError(() =>
                         {
-                            if ((Parent.Worker.Service as CustomService)?.Profile.IsScaredOfBonehilda ?? false)
+                            CustomService service = Parent.Worker.Service as CustomService;
+                            if (service?.Profile.IsScaredOfBonehilda ?? false)
                             {
                                 foreach (Sim sim in Lot.GetObjects<Sim>())
                                 {
@@ -123,6 +124,15 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                                 {
                                     Parent.Worker.AddExitReason(ExitReason.CanceledByScript);
                                     return false;
+                                }
+                            }
+                            InteractionQueue interactionQueue = Parent.Worker.InteractionQueue;
+                            if (interactionQueue != null)
+                            {
+                                InteractionInstance headInteraction = interactionQueue.GetHeadInteraction();
+                                if (headInteraction != null && service != null && headInteraction.SatisfiesCommodity(service.ServiceMotive))
+                                {
+                                    return true;
                                 }
                             }
                             return true;

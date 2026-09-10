@@ -465,6 +465,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
         public static readonly Dictionary<Type, CommodityKind> ServiceMotives = new Dictionary<Type, CommodityKind>();
 
+        [PersistableStatic(true)]
+        public static List<ServiceProfile> ServiceProfiles = new List<ServiceProfile>();
+
         public static bool IsFromServantRolesMod<Service>() where Service : Sims3.Gameplay.Services.Service
         {
             return IsFromServantRolesMod(typeof(Service));

@@ -224,29 +224,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             SetUnsetServiceBedInstance = new SetUnsetServiceBed.Definition(profile);
         }
 
-        protected new void AddInteractions(Bed bed)
+        public new void AddInteractions(Bed bed)
         {
             DebugUtils.TryDisplayScriptError(() => bed.AddInteraction(SetUnsetServiceBedInstance, true));
-        }
-
-        protected new void OnObjectPlacedInLot(object sender, EventArgs e)
-        {
-            DebugUtils.TryDisplayScriptError(() =>
-                {
-                    World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
-                    if (onObjectPlacedInLotEventArgs != null)
-                    {
-                        GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
-                        if (Profile.IsLiveInService)
-                        {
-                            Bed bed = gameObject as Bed;
-                            if (bed != null)
-                            {
-                                AddInteractions(bed);
-                            }
-                        }
-                    }
-                });
         }
 
         public override void AddOutputs()
@@ -321,7 +301,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                                 service.AddInteractions(bed);
                             }
                         }
-                        World.OnObjectPlacedInLotEventHandler += service.OnObjectPlacedInLot;
+                        World.OnObjectPlacedInLotEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
+                            {
+                                World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
+                                if (onObjectPlacedInLotEventArgs != null)
+                                {
+                                    GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
+                                    if (service.Profile.IsLiveInService)
+                                    {
+                                        Bed bed = gameObject as Bed;
+                                        if (bed != null)
+                                        {
+                                            service.AddInteractions(bed);
+                                        }
+                                    }
+                                }
+                            });
                         service.AddOutputs();
                         IEnumerator<SimDescription> enumerator = service.Pool.GetEnumerator();
                         while (enumerator.MoveNext())
@@ -331,26 +326,22 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                                 CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, service.ServiceMotive);
                             }
                         }
+                        World.sOnWorldQuitEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
+                            {
+                                service.RemoveOutputs();
+                                string activeTopic = service.GetServiceTopic(null);
+                                foreach (ServiceUtils.ActiveTopicAction action in profile.Actions)
+                                {
+                                    CommonUtils.RemoveActions(activeTopic, action.Grouping, action.IsActive, action.Name);
+                                }
+                                if (ActiveTopicData.Exists(activeTopic))
+                                {
+                                    ActiveTopicData.sData.Remove(activeTopic);
+                                }
+                                ServiceUtils.CustomServices.Remove(profile.Name);
+                            });
                     }
                 });
-            World.sOnWorldQuitEventHandler += (sender, e) =>
-                {
-                    CustomService service;
-                    if (ServiceUtils.CustomServices.TryGetValue(profile.Name, out service) && service != null)
-                    {
-                        service.RemoveOutputs();
-                        string activeTopic = service.GetServiceTopic(null);
-                        foreach (ServiceUtils.ActiveTopicAction action in profile.Actions)
-                        {
-                            CommonUtils.RemoveActions(activeTopic, action.Grouping, action.IsActive, action.Name);
-                        }
-                        if (ActiveTopicData.Exists(activeTopic))
-                        {
-                            ActiveTopicData.sData.Remove(activeTopic);
-                        }
-                        ServiceUtils.CustomServices.Remove(profile.Name);
-                    }
-                };
         }
 
         public override ServiceSituation InternalCreateSituation(Lot assignedLot, Sim createdSim, int cost, ObjectGuid requestingSim)
@@ -438,11 +429,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         }
                     }
                     Book book = BookGeneralData.GetBookGeneralByTitle(kCustomServiceBook);
-                    Inventory inventory = sim.Inventory;
-                    if (inventory != null)
+                    if (sim.Inventory != null)
                     {
-                        inventory.DestroyItems();
-                        if (!inventory.TryToAdd(book))
+                        sim.Inventory.DestroyItems();
+                        if (!sim.Inventory.TryToAdd(book))
                         {
                             book.Destroy();
                         }
