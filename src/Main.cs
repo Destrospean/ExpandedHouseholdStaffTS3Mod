@@ -109,7 +109,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                     },
                                 WaitsBeforePuttingAwayLeftovers = true
                             });
-                        CustomService.Init(new ServiceUtils.ServiceProfile("Chef", Localization.LocalizeString(entryKey + "Chef:Title"))
+                        CustomService.Init(new ServiceUtils.ServiceProfile("Chef", Localization.LocalizeString(entryKey + "Chef:Title"), additionalMotives: null)
                             {
                                 Actions = new List<ServiceUtils.ActiveTopicAction>
                                     {
