@@ -138,6 +138,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             ulong mServiceType = 1uL;
 
+            Dictionary<string, string> mStrings = new Dictionary<string, string>();
+
             List<ulong> mTraits = new List<ulong>();
 
             uint mValidAges = 48u;
@@ -146,9 +148,31 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             public List<ActiveTopicAction> Actions = new List<ActiveTopicAction>();
 
-            public string CancelledMessage;
+            public string CancelledMessage
+            {
+                get
+                {
+                    string value;
+                    return mStrings.TryGetValue("CancelledMessage", out value) ? value : null;
+                }
+                set
+                {
+                    mStrings["CancelledMessage"] = value;
+                }
+            }
 
-            public string CancelledWhileActiveMessage;
+            public string CancelledWhileActiveMessage
+            {
+                get
+                {
+                    string value;
+                    return mStrings.TryGetValue("CancelledWhileActiveMessage", out value) ? value : null;
+                }
+                set
+                {
+                    mStrings["CancelledWhileActiveMessage"] = value;
+                }
+            }
 
             /// <summary>
             /// Length of time (in minutes) between checks that everything is done.
@@ -262,7 +286,18 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public string Name;
+            public string Name
+            {
+                get
+                {
+                    string value;
+                    return mStrings.TryGetValue("Name", out value) ? value : null;
+                }
+                set
+                {
+                    mStrings["Name"] = value;
+                }
+            }
 
             public List<CommodityChange> Outputs = new List<CommodityChange>();
 
@@ -304,7 +339,18 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public string RequestedMessage;
+            public string RequestedMessage
+            {
+                get
+                {
+                    string requestedMessage;
+                    return mStrings.TryGetValue("RequestedMessage", out requestedMessage) ? requestedMessage : null;
+                }
+                set
+                {
+                    mStrings["RequestedMessage"] = value;
+                }
+            }
 
             public CommodityKind ServiceMotive
             {
@@ -340,7 +386,18 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             /// </summary>
             public float TimeWaitBeforePutawayLeftovers = 60f;
 
-            public string Title;
+            public string Title
+            {
+                get
+                {
+                    string value;
+                    return mStrings.TryGetValue("Title", out value) ? value : null;
+                }
+                set
+                {
+                    mStrings["Title"] = value;
+                }
+            }
 
             public List<TraitNames> Traits
             {
@@ -403,6 +460,10 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
 
             protected ServiceProfile()
+            {
+            }
+
+            public ServiceProfile(string name, string title, List<CommodityKind> additionalMotives = null) : this(name, title, serviceMotive: null, additionalMotives: additionalMotives)
             {
             }
 

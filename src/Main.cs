@@ -56,20 +56,9 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                     if (kInitializeIncludedServices)
                     {
                         string entryKey = typeof(CustomService).GetLocalizationKey().Replace("CustomService", "");
-                        CustomService.Init(new ServiceUtils.ServiceProfile("Housekeeper", Localization.LocalizeString(entryKey + "Housekeeper:Title"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceRequested"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelled"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelledWhileActive"), new List<CommodityKind>
+                        CustomService.Init(new ServiceUtils.ServiceProfile("Housekeeper", Localization.LocalizeString(entryKey + "Housekeeper:Title"), new List<CommodityKind>
                             {
                                 CommodityKind.BeMaid
-                            }, new List<ServiceUtils.CommodityChange>
-                            {
-                                new ServiceUtils.CommodityChange("Sims3.Gameplay.Actors.Sim+ReadSomethingInInventory+Definition", "Sims3.Gameplay.Actors.Sim", 2f, true, 2f, OutputUpdateType.ContinuousFlow),
-                                new ServiceUtils.CommodityChange("Sims3.Gameplay.InteractionsShared.SitAndWait+Definition", "Sims3.Gameplay.Abstracts.GameObject", 1f, false, 1f, OutputUpdateType.ImmediateDelta),
-                                new ServiceUtils.CommodityChange("Sims3.Gameplay.Objects.Bookshelf_ReadSomething+Definition", "Sims3.Gameplay.Objects.Bookshelf", 2f, true, 2f, OutputUpdateType.ContinuousFlow),
-                                new ServiceUtils.CommodityChange("Sims3.Gameplay.Objects.Environment.FirePit+LightFirePit+Definition", "Sims3.Gameplay.Objects.Environment.FirePit", 200f, true, 200f, OutputUpdateType.ContinuousFlow),
-                                new ServiceUtils.CommodityChange("Sims3.Gameplay.Objects.Fireplaces.Fireplace+LightFire+Definition", "Sims3.Gameplay.Objects.Fireplaces.Fireplace", 200f, true, 200f, OutputUpdateType.ContinuousFlow),
-                                new ServiceUtils.CommodityChange("Sims3.Gameplay.Objects.ReadBook+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                                new ServiceUtils.CommodityChange("Sims3.Gameplay.Objects.ReadBookChooser+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                                new ServiceUtils.CommodityChange("Sims3.Store.Objects.Tablet+ChooseBookOnTablet+Definition", "Sims3.Store.Objects.Tablet", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
-                                new ServiceUtils.CommodityChange("Sims3.Store.Objects.Tablet+ReadBookOnTablet+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow)
                             })
                             {
                                 Actions = new List<ServiceUtils.ActiveTopicAction>
@@ -77,6 +66,8 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                         new ServiceUtils.ActiveTopicAction("Dismiss"),
                                         new ServiceUtils.ActiveTopicAction("Fire")
                                     },
+                                CancelledMessage = Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelled"),
+                                CancelledWhileActiveMessage = Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelledWhileActive"),
                                 GetUniformFromName = true,
                                 HiddenTraits = new List<TraitNames>
                                     {
@@ -90,6 +81,18 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                 IsLiveInService = true,
                                 IsQuietAroundSleepingSims = true,
                                 IsScaredOfBonehilda = true,
+                                Outputs = new List<ServiceUtils.CommodityChange>
+                                    {
+                                        new ServiceUtils.CommodityChange("Sims3.Gameplay.Actors.Sim+ReadSomethingInInventory+Definition", "Sims3.Gameplay.Actors.Sim", 2f, true, 2f, OutputUpdateType.ContinuousFlow),
+                                        new ServiceUtils.CommodityChange("Sims3.Gameplay.InteractionsShared.SitAndWait+Definition", "Sims3.Gameplay.Abstracts.GameObject", 1f, false, 1f, OutputUpdateType.ImmediateDelta),
+                                        new ServiceUtils.CommodityChange("Sims3.Gameplay.Objects.Bookshelf_ReadSomething+Definition", "Sims3.Gameplay.Objects.Bookshelf", 2f, true, 2f, OutputUpdateType.ContinuousFlow),
+                                        new ServiceUtils.CommodityChange("Sims3.Gameplay.Objects.Environment.FirePit+LightFirePit+Definition", "Sims3.Gameplay.Objects.Environment.FirePit", 200f, true, 200f, OutputUpdateType.ContinuousFlow),
+                                        new ServiceUtils.CommodityChange("Sims3.Gameplay.Objects.Fireplaces.Fireplace+LightFire+Definition", "Sims3.Gameplay.Objects.Fireplaces.Fireplace", 200f, true, 200f, OutputUpdateType.ContinuousFlow),
+                                        new ServiceUtils.CommodityChange("Sims3.Gameplay.Objects.ReadBook+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                                        new ServiceUtils.CommodityChange("Sims3.Gameplay.Objects.ReadBookChooser+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                                        new ServiceUtils.CommodityChange("Sims3.Store.Objects.Tablet+ChooseBookOnTablet+Definition", "Sims3.Store.Objects.Tablet", 1f, true, 1f, OutputUpdateType.ContinuousFlow),
+                                        new ServiceUtils.CommodityChange("Sims3.Store.Objects.Tablet+ReadBookOnTablet+Definition", "Sims3.Gameplay.Objects.Book", 1f, true, 1f, OutputUpdateType.ContinuousFlow)
+                                    },
                                 PotentialTraitCount = 2,
                                 PotentialTraits = new List<TraitNames>
                                     {
@@ -98,6 +101,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                         TraitNames.Kleptomaniac,
                                         TraitNames.Neurotic
                                     },
+                                RequestedMessage = Localization.LocalizeString(entryKey + "Housekeeper:ServiceRequested"),
                                 ServiceTuning = new Service.ServiceTuning(1, 800, false, true, true),
                                 Traits = new List<TraitNames>
                                     {
@@ -105,13 +109,15 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                     },
                                 WaitsBeforePuttingAwayLeftovers = true
                             });
-                        CustomService.Init(new ServiceUtils.ServiceProfile("Chef", Localization.LocalizeString(entryKey + "Chef:Title"), Localization.LocalizeString(entryKey + "Chef:ServiceRequested"), Localization.LocalizeString(entryKey + "Chef:ServiceCancelled"), Localization.LocalizeString(entryKey + "Housekeeper:ServiceCancelledWhileActive"), null)
+                        CustomService.Init(new ServiceUtils.ServiceProfile("Chef", Localization.LocalizeString(entryKey + "Chef:Title"))
                             {
                                 Actions = new List<ServiceUtils.ActiveTopicAction>
                                     {
                                         new ServiceUtils.ActiveTopicAction("Dismiss"),
                                         new ServiceUtils.ActiveTopicAction("Fire")
                                     },
+                                CancelledMessage = Localization.LocalizeString(entryKey + "Chef:ServiceCancelled"),
+                                CancelledWhileActiveMessage = Localization.LocalizeString(entryKey + "Chef:ServiceCancelledWhileActive"),
                                 GetUniformFromName = true,
                                 GetUniformNameCallback = (simDescription) => "career_execchef_" + (simDescription.IsFemale ? "female" : "male") + (simDescription.Elder ? "elder" : ""),
                                 IsLiveInService = true,
@@ -122,6 +128,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                         TraitNames.Neurotic,
                                         TraitNames.Perfectionist
                                     },
+                                RequestedMessage = Localization.LocalizeString(entryKey + "Chef:ServiceRequested"),
                                 ServiceTuning = new Service.ServiceTuning(1, 1000, false, true, true),
                                 Skills = new List<SkillLevelPair>
                                     {
