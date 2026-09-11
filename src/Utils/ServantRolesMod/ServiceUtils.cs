@@ -816,14 +816,14 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public void RemoveActions(Predicate<ActiveTopicAction> predicate)
+            public void RemoveActions(Predicate<ActiveTopicAction> predicate = null)
             {
-                mActions.RemoveAll(predicate);
+                mActions.RemoveAll(predicate ?? (x => true));
             }
 
-            public void RemoveHiddenTraits(Predicate<TraitNames> predicate)
+            public void RemoveHiddenTraits(Predicate<TraitNames> predicate = null)
             {
-                mHiddenTraits.RemoveAll(x => predicate((TraitNames)x));
+                mHiddenTraits.RemoveAll(x => predicate == null || predicate((TraitNames)x));
             }
 
             public void RemoveHiddenTraits(params TraitNames[] traits)
@@ -842,9 +842,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public void RemoveMotives(Predicate<CommodityKind> predicate)
+            public void RemoveMotives(Predicate<CommodityKind> predicate = null)
             {
-                mMotives.RemoveAll(x => predicate((CommodityKind)x));
+                mMotives.RemoveAll(x => predicate == null || predicate((CommodityKind)x));
             }
 
             public void RemoveOutputs(params CommodityChange[] outputs)
@@ -855,14 +855,14 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public void RemoveOutputs(Predicate<CommodityChange> predicate)
+            public void RemoveOutputs(Predicate<CommodityChange> predicate = null)
             {
-                mOutputs.RemoveAll(predicate);
+                mOutputs.RemoveAll(predicate ?? (x => true));
             }
 
-            public void RemovePotentialTraits(Predicate<TraitNames> predicate)
+            public void RemovePotentialTraits(Predicate<TraitNames> predicate = null)
             {
-                mPotentialTraits.RemoveAll(x => predicate((TraitNames)x));
+                mPotentialTraits.RemoveAll(x => predicate == null || predicate((TraitNames)x));
             }
 
             public void RemovePotentialTraits(params TraitNames[] traits)
@@ -873,9 +873,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public void RemoveSkills(Predicate<SkillLevelPair> predicate)
+            public void RemoveSkills(Predicate<SkillLevelPair> predicate = null)
             {
-                Skills.RemoveAll(predicate);
+                mSkills.RemoveAll(predicate ?? (x => true));
             }
 
             public void RemoveSkills(params SkillLevelPair[] skills)
@@ -886,9 +886,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public void RemoveTraits(Predicate<TraitNames> predicate)
+            public void RemoveTraits(Predicate<TraitNames> predicate = null)
             {
-                mTraits.RemoveAll(x => predicate((TraitNames)x));
+                mTraits.RemoveAll(x => predicate == null || predicate((TraitNames)x));
             }
 
             public void RemoveTraits(params TraitNames[] traits)
