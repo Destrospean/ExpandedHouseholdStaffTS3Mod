@@ -681,6 +681,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// The allowed range of ages that the service NPC can be.
+            /// </summary>
             public CASAgeGenderFlags ValidAges
             {
                 get
@@ -693,6 +696,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// The allowed range of genders that the service NPC can be.
+            /// </summary>
             public CASAgeGenderFlags ValidGenders
             {
                 get
@@ -706,6 +712,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// If set to <c>true</c>, the service NPC waits a bit after a meal is prepared before putting it away.
+            /// </summary>
             public bool WaitsBeforePuttingAwayLeftovers
             {
                 get

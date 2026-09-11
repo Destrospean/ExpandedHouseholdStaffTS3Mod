@@ -298,18 +298,27 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
             set;
         }
 
+        /// <summary>
+        /// The allowed range of ages that the service NPC can be.
+        /// </summary>
         CASAgeGenderFlags ValidAges
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// The allowed range of genders that the service NPC can be.
+        /// </summary>
         CASAgeGenderFlags ValidGenders
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// If set to <c>true</c>, the service NPC waits a bit after a meal is prepared before putting it away.
+        /// </summary>
         bool WaitsBeforePuttingAwayLeftovers
         {
             get;
