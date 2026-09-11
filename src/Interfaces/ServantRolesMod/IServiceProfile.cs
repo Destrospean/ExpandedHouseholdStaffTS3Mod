@@ -15,7 +15,7 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
     public interface IServiceProfile 
     {
         /// <summary>
-        /// The actions for the service topic.
+        /// The list of actions for the service topic.
         /// </summary>
         List<ServiceUtils.ActiveTopicAction> Actions
         {
@@ -106,6 +106,7 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
 
         /// <summary>
         /// The list of hidden traits for the service NPC.
+        /// Note: do not add or remove elements from this property directly, as that will not work. Use the <see cref="AddHiddenTraits"/> and <see cref="RemoveHiddenTraits"/> methods instead.
         /// </summary>
         List<TraitNames> HiddenTraits
         {
@@ -123,7 +124,8 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
         }
 
         /// <summary>
-        /// If set to <c>true</c>, the service NPC will stay with the household that requested them. Interactions for setting/unsetting their bed will be available to service NPCs with this property set to <c>true</c>.
+        /// If set to <c>true</c>, the service NPC will stay with the household that requested them.
+        /// Interactions for setting/unsetting their bed will be available to service NPCs with this property set to <c>true</c>.
         /// </summary>
         bool IsLiveInService
         {
@@ -150,7 +152,8 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
         }
 
         /// <summary>
-        /// The service motives. Do not include the <see cref="ServiceMotive"/> property, as that is automatically adding upon creating an instance of <see cref="zoeoeAndDestrospean.Utils.ServantRolesMod.ServiceUtils.ServiceProfile"/>.
+        /// The service motives. If assigning manually (rather than as a parameter in the constructor) be sure include the <see cref="ServiceMotive"/> property.
+        /// Note: do not add or remove elements from this property directly, as that will not work. Use the <see cref="AddMotives"/> and <see cref="RemoveMotives"/> methods instead.
         /// </summary>
         List<CommodityKind> Motives
         {
@@ -168,7 +171,7 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
         }
 
         /// <summary>
-        /// The outputs added to interaction tunings for the service motive.
+        /// The list of outputs added to interaction tunings for the service motive.
         /// </summary>
         List<ServiceUtils.CommodityChange> Outputs
         {
@@ -187,6 +190,7 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
 
         /// <summary>
         /// The list of potential traits for the service NPC; will be randomly picked from, the number of which is specified by <see cref="PotentialTraitCount"/>.
+        /// Note: do not add or remove elements from this property directly, as that will not work. Use the <see cref="AddPotentialTraits"/> and <see cref="RemovePotentialTraits"/> methods instead.
         /// </summary>
         List<TraitNames> PotentialTraits
         {
@@ -249,7 +253,7 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
         }
 
         /// <summary>
-        /// The skills (and their levels) for the service NPC to start out with.
+        /// The list of skills (and their levels) for the service NPC to start out with.
         /// </summary>
         List<SkillLevelPair> Skills
         {
@@ -277,6 +281,7 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
 
         /// <summary>
         /// The list of explicit traits for the service NPC.
+        /// Note: do not add or remove elements from this property directly, as that will not work. Use the <see cref="AddTraits"/> and <see cref="RemoveTraits"/> methods instead.
         /// </summary>
         List<TraitNames> Traits
         {

@@ -174,7 +174,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             uint mValidGenders = 0u;
 
             /// <summary>
-            /// The actions for the service topic.
+            /// The list of actions for the service topic.
             /// </summary>
             public List<ActiveTopicAction> Actions
             {
@@ -332,6 +332,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             /// <summary>
             /// The list of hidden traits for the service NPC.
+            /// Note: do not add or remove elements from this property directly, as that will not work. Use the <see cref="AddHiddenTraits"/> and <see cref="RemoveHiddenTraits"/> methods instead.
             /// </summary>
             public List<TraitNames> HiddenTraits
             {
@@ -360,7 +361,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
 
             /// <summary>
-            /// If set to <c>true</c>, the service NPC will stay with the household that requested them. Interactions for setting/unsetting their bed will be available to service NPCs with this property set to <c>true</c>.
+            /// If set to <c>true</c>, the service NPC will stay with the household that requested them.
+            /// Interactions for setting/unsetting their bed will be available to service NPCs with this property set to <c>true</c>.
             /// </summary>
             public bool IsLiveInService
             {
@@ -426,7 +428,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
 
             /// <summary>
-            /// The service motives. Do not include the <see cref="ServiceMotive"/> property, as that is automatically adding upon creating an instance of <see cref="zoeoeAndDestrospean.Utils.ServantRolesMod.ServiceUtils.ServiceProfile"/>.
+            /// The service motives. If assigning manually (rather than as a parameter in the constructor) be sure include the <see cref="ServiceMotive"/> property.
+            /// Note: do not add or remove elements from this property directly, as that will not work. Use the <see cref="AddMotives"/> and <see cref="RemoveMotives"/> methods instead.
             /// </summary>
             public List<CommodityKind> Motives
             {
@@ -457,7 +460,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
 
             /// <summary>
-            /// The outputs added to interaction tunings for the service motive.
+            /// The list of outputs added to interaction tunings for the service motive.
             /// </summary>
             public List<CommodityChange> Outputs
             {
@@ -488,6 +491,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             /// <summary>
             /// The list of potential traits for the service NPC; will be randomly picked from, the number of which is specified by <see cref="PotentialTraitCount"/>.
+            /// Note: do not add or remove elements from this property directly, as that will not work. Use the <see cref="AddPotentialTraits"/> and <see cref="RemovePotentialTraits"/> methods instead.
             /// </summary>
             public List<TraitNames> PotentialTraits
             {
@@ -601,7 +605,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
                 
             /// <summary>
-            /// The skills (and their levels) for the service NPC to start out with.
+            /// The list of skills (and their levels) for the service NPC to start out with.
             /// </summary>
             public List<SkillLevelPair> Skills
             {
@@ -645,9 +649,10 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     mStrings["Title"] = value;
                 }
             }
-
+                
             /// <summary>
             /// The list of explicit traits for the service NPC.
+            /// Note: do not add or remove elements from this property directly, as that will not work. Use the <see cref="AddTraits"/> and <see cref="RemoveTraits"/> methods instead.
             /// </summary>
             public List<TraitNames> Traits
             {
