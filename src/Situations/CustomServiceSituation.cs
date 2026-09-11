@@ -7,6 +7,7 @@ using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interactions;
+using Sims3.Gameplay.Objects.Vehicles;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
@@ -18,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using zoeoeAndDestrospean.Utils;
 using zoeoeAndDestrospean.Utils.ServantRolesMod;
-using Sims3.Gameplay.Objects.Vehicles;
 
 namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 {
@@ -47,7 +47,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(((CustomService)parent.Worker.Service).DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, parent.Worker.Service.GetType().Name + " waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
+                CustomService service = (CustomService)parent.Worker.Service;
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(service.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, service.Profile.Name + " waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public override void OnSocializedWith(Sim sim)
@@ -151,8 +152,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
-                CustomService service = (CustomService)Parent.Worker.Service;
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(service.CheckTime, TimeUnit.Minutes, CheckForDuties, service.CheckTime, TimeUnit.Minutes, "Time for " + Parent.Worker.Service.GetType().Name + " to check if everything is done", AlarmType.AlwaysPersisted));
+                CustomService service = (CustomService)parent.Worker.Service;
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(service.CheckTime, TimeUnit.Minutes, CheckForDuties, service.CheckTime, TimeUnit.Minutes, "Time for " + service.Profile.Name + " to check if everything is done", AlarmType.AlwaysPersisted));
             }
 
             public void CheckForDuties()
@@ -254,7 +255,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(((CustomService)Parent.Worker.Service).DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, Parent.Worker.Service.GetType().Name + " waiting to route", AlarmType.DeleteOnReset, parent.Worker));
+                CustomService service = (CustomService)parent.Worker.Service;
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(service.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, service.Profile.Name + " waiting to route", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public void TimeToRoute()
@@ -263,7 +265,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     {
                         Parent.OnServiceStarting();
                         CustomService service = (CustomService)Parent.Worker.Service;
-                        RouteToLot<CustomServiceSituation, StartPerformingDuties> routeToLot = service.Profile.CarInstanceName == null ? new WalkToLot<CustomServiceSituation, StartPerformingDuties>(Parent) : new RouteToLot<CustomServiceSituation, StartPerformingDuties>(Parent);
+                        RouteToLot<CustomServiceSituation, StartPerformingDuties> routeToLot = string.IsNullOrEmpty(service.Profile.CarInstanceName) ? new WalkToLot<CustomServiceSituation, StartPerformingDuties>(Parent) : new RouteToLot<CustomServiceSituation, StartPerformingDuties>(Parent);
                         routeToLot.SetRouteTime(service.DriveTime);
                         Parent.SetState(routeToLot);
                     });
@@ -320,8 +322,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     string entryKey = NotEnoughFundsMessage();
                     if (entryKey != null)
                     {
-                        string titleText = Localization.LocalizeString(entryKey, (Worker.Service as CustomService)?.Profile.Title);
-                        StyledNotification.Show(new StyledNotification.Format(titleText, StyledNotification.NotificationStyle.kGameMessageNegative));
+                        StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString(entryKey, (Worker.Service as CustomService)?.Profile.Title), StyledNotification.NotificationStyle.kGameMessageNegative));
                     }
                     mNumStealAttempts = 0;
                     mObjectsFailedToSteal = new List<GameObject>();
@@ -336,6 +337,12 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 callbackOnCompletion(Worker, 0f);
             }
+        }
+
+        public override CarService CreateServiceCar()
+        {
+            CustomService service = (CustomService)Worker.Service;
+            return GlobalFunctions.CreateObjectOutOfWorld(string.IsNullOrEmpty(service.Profile.CarInstanceName) ? "CarServiceSedan" : service.Profile.CarInstanceName, service.Profile.CarProductVersion, typeof(CarServiceMaidVan).FullName, null) as CarService;
         }
 
         public override void FreezeMotives()
@@ -384,12 +391,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 base.SetToFire(serviceSim, firer);
             }
-        }
-
-        public override CarService CreateServiceCar()
-        {
-            CustomService service = (CustomService)Worker.Service;
-            return GlobalFunctions.CreateObjectOutOfWorld(service.Profile.CarInstanceName, service.Profile.CarProductVersion, typeof(CarServiceMaidVan).FullName, null) as CarService;
         }
 
         public override void SwitchWorkerToServiceOutfit()

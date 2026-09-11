@@ -120,7 +120,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                 serviceInfo.mPrice = service.IsEmergencyService ? 0 : service.Cost();
                 serviceInfo.mRecurring = service.IsRecurrent();
                 serviceInfo.mIsPaidWeekly = service.IsPaidWeekly;
-                serviceInfo.mActiveButMissingRequirementToolTip = string.Empty;
+                serviceInfo.mActiveButMissingRequirementToolTip = "";
                 serviceInfo.Service = service;
                 return serviceInfo;
             }

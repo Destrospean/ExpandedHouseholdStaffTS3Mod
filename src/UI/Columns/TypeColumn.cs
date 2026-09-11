@@ -13,7 +13,7 @@ namespace zoeoeAndDestrospean.UI.Columns
 
         public override ObjectPicker.ColumnInfo GetValue(Type type)
         {
-            return new ObjectPicker.TextColumn(type == null ? "" : type.FullName);
+            return new ObjectPicker.TextColumn(type?.FullName ?? "");
         }
     }
 }

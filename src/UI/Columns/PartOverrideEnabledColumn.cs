@@ -1,6 +1,7 @@
 ﻿using Sims3.Gameplay.CAS;
 using Sims3.SimIFace.CAS;
 using Sims3.UI;
+using System.Collections.Generic;
 
 namespace zoeoeAndDestrospean.UI.Columns
 {
@@ -8,12 +9,12 @@ namespace zoeoeAndDestrospean.UI.Columns
     {
         readonly string mLocalizationPath;
 
-        readonly System.Collections.Generic.List<BodyTypes> mPartOverrides;
+        readonly List<BodyTypes> mPartOverrides;
 
         public PartOverrideEnabledColumn(string localizationPath, BodyTypes[] partOverrides) : base(localizationPath + "/Headers/Enabled:Text", localizationPath + "/Headers/Enabled:Tooltip", 40)
         {
             mLocalizationPath = localizationPath;
-            mPartOverrides = new System.Collections.Generic.List<BodyTypes>(partOverrides);
+            mPartOverrides = new List<BodyTypes>(partOverrides);
         }
 
         public override ObjectPicker.ColumnInfo GetValue(BodyTypes bodyType)

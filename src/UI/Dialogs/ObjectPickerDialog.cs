@@ -59,15 +59,15 @@ namespace zoeoeAndDestrospean.UI.Dialogs
                 return;
             }
             mModalDialogWindow.Area = new Rect(new Vector2(mModalDialogWindow.Area.TopLeft.x, mModalDialogWindow.Area.TopLeft.y), new Vector2(mModalDialogWindow.Area.BottomRight.x + 200, mModalDialogWindow.Area.BottomRight.y));
-            ((Text)mModalDialogWindow.GetChildByID(99576787, false)).Caption = title;
-            mTable = (ObjectPicker)mModalDialogWindow.GetChildByID(99576784, false);
+            ((Text)mModalDialogWindow.GetChildByID(99576787u, false)).Caption = title;
+            mTable = (ObjectPicker)mModalDialogWindow.GetChildByID(99576784u, false);
             mTable.ObjectTable.TableChanged += OnTableChanged;
             mTable.SelectionChanged += OnSelectionChanged;
             mTable.RowSelected += OnSelectionChanged;
             mTable.mViewButton.Visible = false;
             mTable.mTable.mPopulationCompletedCallback += OnComplete;
             mTable.Area = new Rect(new Vector2(mTable.Area.TopLeft.x, mTable.Area.TopLeft.y), new Vector2(mTable.Area.BottomRight.x + 200, mTable.Area.BottomRight.y));
-            mOkayButton = (Button)mModalDialogWindow.GetChildByID(99576785, false);
+            mOkayButton = (Button)mModalDialogWindow.GetChildByID(99576785u, false);
             mOkayButton.TooltipText = Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/Global:Accept");
             mOkayButton.Enabled = mOkayButtonAlwaysEnabled;
             mOkayButton.Click += (sender, eventArgs) =>
@@ -141,8 +141,8 @@ namespace zoeoeAndDestrospean.UI.Dialogs
             float x = (float)Math.Round((mModalDialogWindow.Parent.Area.Width - mModalDialogWindow.Area.Width) / 2);
             float y = (float)Math.Round((mModalDialogWindow.Parent.Area.Height - mModalDialogWindow.Area.Height) / 2);
             mModalDialogWindow.Area = new Rect(x, y, x + mModalDialogWindow.Area.Width, y + mModalDialogWindow.Area.Height);
-            Text text = (Text)mModalDialogWindow.GetChildByID(99576787, false);
-            text.Area = new Rect(text.Area.TopLeft.x, 20, text.Area.BottomRight.x, 50 - mModalDialogWindow.Area.Height);
+            Text text = (Text)mModalDialogWindow.GetChildByID(99576787u, false);
+            text.Area = new Rect(text.Area.TopLeft.x, 20f, text.Area.BottomRight.x, 50f - mModalDialogWindow.Area.Height);
             mModalDialogWindow.Visible = true;
         }
 
@@ -187,7 +187,7 @@ namespace zoeoeAndDestrospean.UI.Dialogs
 
         public static List<T> Show<T>(string title, List<ObjectPicker.TabInfo> tabs, List<CommonHeaderInfo<T>> headers, int selectableRowCount, List<ObjectPicker.RowInfo> preSelectedRows, out bool confirmed, out bool cancelled, bool okayButtonAlwaysEnabled = false)
         {
-            Simulator.Sleep(0);
+            Simulator.Sleep(0u);
             List<List<ObjectPicker.ColumnInfo>> columnInfoLists = new List<List<ObjectPicker.ColumnInfo>>();
             foreach (ObjectPicker.TabInfo tabInfo in tabs)
             {
