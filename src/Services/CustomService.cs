@@ -257,6 +257,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 });
         }
 
+        /// <summary>
+        /// Deinitializes everything related to the service of the specified profile.
+        /// </summary>
         public static void Deinit(IServiceProfile profile, bool worldJustGotQuit = false)
         {
             DebugUtils.TryDisplayScriptError(() =>
@@ -309,6 +312,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             return Profile.Name + " Service";
         }
 
+        /// <summary>
+        /// Initializes everything related to the service of the specified profile.
+        /// </summary>
         public static void Init(IServiceProfile profile)
         {
             DebugUtils.TryDisplayScriptError(() =>
