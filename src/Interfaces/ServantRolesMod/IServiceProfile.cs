@@ -316,15 +316,23 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
             set;
         }
 
+        void AddActions(params ServiceUtils.ActiveTopicAction[] actions);
+
         void AddHiddenTraits(params TraitNames[] traits);
 
         void AddMotives(params CommodityKind[] motives);
+
+        void AddOutputs(params ServiceUtils.CommodityChange[] outputs);
 
         void AddPotentialTraits(params TraitNames[] traits);
 
         void AddSkills(params SkillLevelPair[] skills);
 
         void AddTraits(params TraitNames[] traits);
+
+        void RemoveActions(params ServiceUtils.ActiveTopicAction[] actions);
+
+        void RemoveActions(Predicate<ServiceUtils.ActiveTopicAction> predicate);
 
         void RemoveHiddenTraits(Predicate<TraitNames> predicate);
 
@@ -333,6 +341,10 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
         void RemoveMotives(params CommodityKind[] motives);
 
         void RemoveMotives(Predicate<CommodityKind> predicate);
+
+        void RemoveOutputs(params ServiceUtils.CommodityChange[] outputs);
+
+        void RemoveOutputs(Predicate<ServiceUtils.CommodityChange> predicate);
 
         void RemovePotentialTraits(Predicate<TraitNames> predicate);
 

@@ -761,6 +761,11 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 Skills = skills ?? new List<SkillLevelPair>();
             }
 
+            public void AddActions(params ActiveTopicAction[] actions)
+            {
+                mActions.AddRange(actions);
+            }
+
             public void AddHiddenTraits(params TraitNames[] traits)
             {
                 foreach (TraitNames trait in traits)
@@ -777,6 +782,11 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            public void AddOutputs(params CommodityChange[] outputs)
+            {
+                mOutputs.AddRange(outputs);
+            }
+
             public void AddPotentialTraits(params TraitNames[] traits)
             {
                 foreach (TraitNames trait in traits)
@@ -787,10 +797,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             public void AddSkills(params SkillLevelPair[] skills)
             {
-                foreach (SkillLevelPair skill in skills)
-                {
-                    Skills.Add(skill);
-                }
+                mSkills.AddRange(skills);
             }
 
             public void AddTraits(params TraitNames[] traits)
@@ -799,6 +806,19 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 {
                     mTraits.Add((ulong)trait);
                 }
+            }
+
+            public void RemoveActions(params ActiveTopicAction[] actions)
+            {
+                foreach (ActiveTopicAction action in actions)
+                {
+                    mActions.Remove(action);
+                }
+            }
+
+            public void RemoveActions(Predicate<ActiveTopicAction> predicate)
+            {
+                mActions.RemoveAll(predicate);
             }
 
             public void RemoveHiddenTraits(Predicate<TraitNames> predicate)
@@ -825,6 +845,19 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             public void RemoveMotives(Predicate<CommodityKind> predicate)
             {
                 mMotives.RemoveAll(x => predicate((CommodityKind)x));
+            }
+
+            public void RemoveOutputs(params CommodityChange[] outputs)
+            {
+                foreach (CommodityChange output in outputs)
+                {
+                    mOutputs.Remove(output);
+                }
+            }
+
+            public void RemoveOutputs(Predicate<CommodityChange> predicate)
+            {
+                mOutputs.RemoveAll(predicate);
             }
 
             public void RemovePotentialTraits(Predicate<TraitNames> predicate)
