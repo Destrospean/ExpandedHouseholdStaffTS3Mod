@@ -33,7 +33,7 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
         }
 
         /// <summary>
-        /// The message that shows when the service cancelled is there is already a service NPC of that service on the lot.
+        /// The message that shows when the service is cancelled and there is already a service NPC of that service on the lot.
         /// </summary>
         string CancelledWhileActiveMessage
         {
