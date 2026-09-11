@@ -12,15 +12,15 @@ namespace zoeoeAndDestrospean.UI.Dialogs
 
         bool mOkayButtonAlwaysEnabled;
 
-        bool mWasCancelled;
-
-        bool mWasConfirmed;
-
         List<ObjectPicker.RowInfo> mResult;
 
         ObjectPicker mTable;
 
         Vector2 mTableOffset;
+
+        bool mWasCancelled;
+
+        bool mWasConfirmed;
 
         public List<ObjectPicker.RowInfo> Result
         {
