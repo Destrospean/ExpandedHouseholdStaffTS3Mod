@@ -353,7 +353,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public override string GetUniformName(SimDescription simDescription)
         {
-            ServiceUtils.ServiceProfile profile = (Worker.Service as CustomService)?.Profile;
+            ServiceUtils.ServiceProfile profile = (Worker.Service as CustomService)?.Profile as ServiceUtils.ServiceProfile;
             return profile?.GetUniformNameCallback == null ? base.GetUniformName(Worker.SimDescription) : profile.GetUniformNameCallback(Worker.SimDescription);
         }
 
@@ -407,7 +407,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                             Worker.SimDescription.RemoveOutfit(OutfitCategories.Career, i, true);
                         }
                     }
-                    else if (service.Profile.GetUniformFromName)
+                    else if (((ServiceUtils.ServiceProfile)service.Profile).GetUniformFromName)
                     {
                         base.SwitchWorkerToServiceOutfit();
                     }

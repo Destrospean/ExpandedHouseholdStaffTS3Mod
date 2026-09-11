@@ -49,7 +49,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
             LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
-                    foreach (ServiceUtils.ServiceProfile profile in ServiceUtils.ServiceProfiles)
+                    foreach (IServiceProfile profile in ServiceUtils.ServiceProfiles)
                     {
                         CustomService.Init(profile);
                     }
@@ -109,7 +109,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                                     },
                                 WaitsBeforePuttingAwayLeftovers = true
                             });
-                        CustomService.Init(new ServiceUtils.ServiceProfile("Chef", Localization.LocalizeString(entryKey + "Chef:Title"), additionalMotives: null)
+                        CustomService.Init(new ServiceUtils.ServiceProfile("Chef", Localization.LocalizeString(entryKey + "Chef:Title"))
                             {
                                 Actions = new List<ServiceUtils.ActiveTopicAction>
                                     {

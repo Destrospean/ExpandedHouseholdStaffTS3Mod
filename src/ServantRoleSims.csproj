@@ -67,6 +67,7 @@
     <Compile Include="Services\CustomService.cs" />
     <Compile Include="Interactions\CallForServices.cs" />
     <Compile Include="Enums\ServantRolesMod\ServiceProfileFlags.cs" />
+    <Compile Include="Interfaces\ServantRolesMod\IServiceProfile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

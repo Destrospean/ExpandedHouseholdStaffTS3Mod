@@ -30,9 +30,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         {
             public new class Definition : Service<CustomService>.SetUnsetServiceBed.Definition
             {
-                ServiceUtils.ServiceProfile mServiceProfile;
+                IServiceProfile mServiceProfile;
 
-                public Definition(ServiceUtils.ServiceProfile serviceProfile)
+                public Definition(IServiceProfile serviceProfile)
                 {
                     mServiceProfile = serviceProfile;
                 }
@@ -142,7 +142,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public ServiceUtils.ServiceProfile Profile;
+        public IServiceProfile Profile;
 
         public float RelationshipLevelForQuit
         {
@@ -213,7 +213,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public CustomService(ServiceUtils.ServiceProfile profile)
+        public CustomService(IServiceProfile profile)
         {
             Profile = profile;
             ServiceUtils.CustomServices[profile.Name] = this;
@@ -233,7 +233,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             }
         }
 
-        public static void Create(ServiceUtils.ServiceProfile profile)
+        public static void Create(IServiceProfile profile)
         {
             DebugUtils.TryDisplayScriptError(() =>
                 {
@@ -257,7 +257,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 });
         }
 
-        public static void Deinit(ServiceUtils.ServiceProfile profile, bool worldJustGotQuit = false)
+        public static void Deinit(IServiceProfile profile, bool worldJustGotQuit = false)
         {
             DebugUtils.TryDisplayScriptError(() =>
                 {
@@ -309,7 +309,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             return Profile.Name + " Service";
         }
 
-        public static void Init(ServiceUtils.ServiceProfile profile)
+        public static void Init(IServiceProfile profile)
         {
             DebugUtils.TryDisplayScriptError(() =>
                 {

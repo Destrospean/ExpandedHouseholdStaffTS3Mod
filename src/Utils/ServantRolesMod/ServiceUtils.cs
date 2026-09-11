@@ -2,6 +2,7 @@
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Interfaces;
+using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
@@ -119,33 +120,77 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
         }
 
-        [Persistable]
-        public class ServiceProfile
+        public class ServiceProfile : IServiceProfile
         {
+            List<ActiveTopicAction> mActions = new List<ActiveTopicAction>();
+
             uint mCarProductVersion = 0u;
 
+            float mCheckTime = 5f;
+
+            float mDelayBeforeArriving = 0.5f;
+
+            float mDelayBeforeLeaving = 0.3f;
+
+            float mDriveTime = 5f;
+
+            float mExtraWaitTimeAfterSocializing = 0.5f;
+
             ulong mFlags = 0uL;
+
+            List<IGameObject> mInventory = new List<IGameObject>();
 
             List<ulong> mHiddenTraits = new List<ulong>();
 
             List<int> mMotives = new List<int>();
 
+            List<CommodityChange> mOutputs = new List<CommodityChange>();
+
+            int mPotentialTraitCount = 0;
+
             List<ulong> mPotentialTraits = new List<ulong>();
+
+            float mRelationshipLevelForQuit = -50f;
 
             int mServiceMotive = 0;
 
+            [Persistable]
+            public Service.ServiceTuning mServiceTuning = new Service.ServiceTuning();
+
             ulong mServiceType = 1uL;
+
+            List<SkillLevelPair> mSkills = new List<SkillLevelPair>();
 
             Dictionary<string, string> mStrings = new Dictionary<string, string>();
 
+            float mTimeWaitBeforePutawayLeftovers = 60f;
+
             List<ulong> mTraits = new List<ulong>();
+
+            float mUseObjectInSameRoomAsSleeperMultiplier = 0.1f;
 
             uint mValidAges = 48u;
 
             uint mValidGenders = 0u;
 
-            public List<ActiveTopicAction> Actions = new List<ActiveTopicAction>();
+            /// <summary>
+            /// The actions for the service topic.
+            /// </summary>
+            public List<ActiveTopicAction> Actions
+            {
+                get
+                {
+                    return mActions;
+                }
+                set
+                {
+                    mActions = value; 
+                }
+            }
 
+            /// <summary>
+            /// The message that shows when the service is cancelled.
+            /// </summary>
             public string CancelledMessage
             {
                 get
@@ -159,6 +204,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// The message that shows when the service cancelled is there is already a service NPC of that service on the lot.
+            /// </summary>
             public string CancelledWhileActiveMessage
             {
                 get
@@ -172,6 +220,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// The instance name of the car the service NPC arrives in. If <c>null</c> or empty, the service NPC will arrive and leave by foot.
+            /// </summary>
             public string CarInstanceName
             {
                 get
@@ -185,6 +236,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// The product version of the car the service NPC arrives in. This is for when car is a Store, expansion pack, or stuff pack item.
+            /// </summary>
             public ProductVersion CarProductVersion
             {
                 get
@@ -200,32 +254,85 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             /// <summary>
             /// Length of time (in minutes) between checks that everything is done.
             /// </summary>
-            public float CheckTime = 5f;
+            public float CheckTime
+            {
+                get
+                {
+                    return mCheckTime;
+                }
+                set
+                {
+                    mCheckTime = value;
+                }
+            }
 
             /// <summary>
-            /// Length of time (in hours) that the custom service NPC waits before routing to lot.
+            /// Length of time (in hours) that the service NPC waits before routing to lot.
             /// </summary>
-            public float DelayBeforeArriving = 0.5f;
+            public float DelayBeforeArriving
+            {
+                get
+                {
+                    return mDelayBeforeArriving;
+                }
+                set
+                {
+                    mDelayBeforeArriving = value;
+                }
+            }
 
             /// <summary>
-            /// Length of time (in hours) that the custom service NPC waits before leaving the lot, after their work is done.
+            /// Length of time (in hours) that the service NPC waits before leaving the lot, after their work is done.
             /// </summary>
-            public float DelayBeforeLeaving = 0.3f;
+            public float DelayBeforeLeaving
+            {
+                get
+                {
+                    return mDelayBeforeLeaving;
+                }
+                set
+                {
+                    mDelayBeforeLeaving = value;
+                }
+            }
 
             /// <summary>
-            /// Length of time (in minutes) that the custom service NPC takes to drive to lot.
+            /// Length of time (in minutes) that the service NPC takes to drive to lot.
             /// </summary>
-            public float DriveTime = 5f;
+            public float DriveTime
+            {
+                get
+                {
+                    return mDriveTime;
+                }
+                set
+                {
+                    mDriveTime = value;
+                }
+            }
 
             /// <summary>
             /// Extra time (in hours) to wait before leaving if the service NPC is socialized with.
             /// </summary>
-            public float ExtraWaitTimeAfterSocializing = 0.5f;
+            public float ExtraWaitTimeAfterSocializing
+            {
+                get
+                {
+                    return mExtraWaitTimeAfterSocializing;
+                }
+                set
+                {
+                    mExtraWaitTimeAfterSocializing = value;
+                }
+            }
 
             public GetUniformNameDelegate GetUniformNameCallback = null;
 
             public bool GetUniformFromName = false;
 
+            /// <summary>
+            /// The list of hidden traits for the service NPC.
+            /// </summary>
             public List<TraitNames> HiddenTraits
             {
                 get
@@ -237,9 +344,24 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     mHiddenTraits = value.ConvertAll(x => (ulong)x);
                 }
             }
+            /// <summary>
+            /// The items the service NPC spawns with.
+            /// </summary>
+            public List<IGameObject> Inventory
+            {
+                get
+                {
+                    return mInventory;
+                }
+                set
+                {
+                    mInventory = value;
+                }
+            }
 
-            public List<IGameObject> Inventory = new List<IGameObject>();
-
+            /// <summary>
+            /// If set to <c>true</c>, the service NPC will stay with the household that requested them. Interactions for setting/unsetting their bed will be available to service NPCs with this property set to <c>true</c>.
+            /// </summary>
             public bool IsLiveInService
             {
                 get
@@ -259,6 +381,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// If set to <c>true</c>, the service NPC will avoid interacting with objects in the same room as a sleeping Sim.
+            /// </summary>
             public bool IsQuietAroundSleepingSims
             {
                 get
@@ -278,6 +403,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// If set to <c>true</c>, the service NPC will quit when they are in close proximity to Bonehilda, and will scream and run away dramatically.
+            /// </summary>
             public bool IsScaredOfBonehilda
             {
                 get
@@ -297,6 +425,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// The service motives. Do not include the <see cref="ServiceMotive"/> property, as that is automatically adding upon creating an instance of <see cref="zoeoeAndDestrospean.Utils.ServantRolesMod.ServiceUtils.ServiceProfile"/>.
+            /// </summary>
             public List<CommodityKind> Motives
             {
                 get
@@ -309,6 +440,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// The internal name of the service. Must be unique.
+            /// </summary>
             public string Name
             {
                 get
@@ -322,10 +456,39 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            public List<CommodityChange> Outputs = new List<CommodityChange>();
+            /// <summary>
+            /// The outputs added to interaction tunings for the service motive.
+            /// </summary>
+            public List<CommodityChange> Outputs
+            {
+                get
+                {
+                    return mOutputs;
+                }
+                set
+                {
+                    mOutputs = value;
+                }
+            }
 
-            public int PotentialTraitCount = 0;
+            /// <summary>
+            /// The number of potential traits to randomly pick from the list of potential traits (see <see cref="PotentialTraits"/>) for the service NPC.
+            /// </summary>
+            public int PotentialTraitCount
+            {
+                get
+                {
+                    return mPotentialTraitCount;
+                }
+                set
+                {
+                    mPotentialTraitCount = value;
+                }
+            }
 
+            /// <summary>
+            /// The list of potential traits for the service NPC; will be randomly picked from, the number of which is specified by <see cref="PotentialTraitCount"/>.
+            /// </summary>
             public List<TraitNames> PotentialTraits
             {
                 get
@@ -338,11 +501,25 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            /// <summary>
-            /// If the custom service NPC's relationship with any YAE falls below this level, they will quit.
+            // <summary>
+            /// If the service NPC's relationship with any YAE falls below this level, they will quit.
             /// </summary>
-            public float RelationshipLevelForQuit = -50f;
+            public float RelationshipLevelForQuit
+            {
+                get
+                {
+                    return mRelationshipLevelForQuit;
+                }
+                set
+                {
+                    mRelationshipLevelForQuit = value;
+                }
+            }
 
+
+            /// <summary>
+            /// If set to <c>true</c>, the service NPC will call emergency services when there is a fire on the lot they're assigned to.
+            /// </summary>
             public bool ReportsFires
             {
                 get
@@ -361,7 +538,10 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     }
                 }
             }
-
+                
+            /// <summary>
+            /// The message that shows when a service NPC is requested.
+            /// </summary>
             public string RequestedMessage
             {
                 get
@@ -374,7 +554,10 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     mStrings["RequestedMessage"] = value;
                 }
             }
-
+                
+            /// <summary>
+            /// Note: this can (and should) be omitted for the UI for creating/editing service profiles.
+            /// </summary>
             public CommodityKind ServiceMotive
             {
                 get
@@ -387,9 +570,24 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
-            [Persistable]
-            public Service.ServiceTuning ServiceTuning = new Service.ServiceTuning();
-
+            /// <summary>
+            /// Includes cost, whether the service is recurring, whether the service is an emergency service, etc.
+            /// </summary>
+            public Service.ServiceTuning ServiceTuning
+            {
+                get
+                {
+                    return mServiceTuning;
+                }
+                set
+                {
+                    mServiceTuning = value;
+                }
+            }
+                
+            /// <summary>
+            /// Note: this can (and should) be omitted for the UI for creating/editing service profiles.
+            /// </summary>
             public ServiceType ServiceType
             {
                 get
@@ -401,14 +599,40 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     mServiceType = (ulong)value;
                 }
             }
-
-            public List<SkillLevelPair> Skills = new List<SkillLevelPair>();
+                
+            /// <summary>
+            /// The skills (and their levels) for the service NPC to start out with.
+            /// </summary>
+            public List<SkillLevelPair> Skills
+            {
+                get
+                {
+                    return mSkills;
+                }
+                set
+                {
+                    mSkills = value;
+                }
+            }
+                
+            /// <summary>
+            /// How old leftovers can be out in minutes before the service NPC will put it away.
+            /// </summary>
+            public float TimeWaitBeforePutawayLeftovers
+            {
+                get
+                {
+                    return mTimeWaitBeforePutawayLeftovers;
+                }
+                set
+                {
+                    mTimeWaitBeforePutawayLeftovers = value;
+                }
+            }
 
             /// <summary>
-            /// How old leftovers can be out in minutes before the custom service NPC will put it away.
+            /// The display name of the service.
             /// </summary>
-            public float TimeWaitBeforePutawayLeftovers = 60f;
-
             public string Title
             {
                 get
@@ -422,6 +646,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// The list of explicit traits for the service NPC.
+            /// </summary>
             public List<TraitNames> Traits
             {
                 get
@@ -435,9 +662,19 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
 
             /// <summary>
-            /// Multiplier for interactions in a room where a sim is sleeping.
+            /// Multiplier for interactions in a room where a Sim is sleeping.
             /// </summary>
-            public float UseObjectInSameRoomAsSleeperMultiplier = 0.1f;
+            public float UseObjectInSameRoomAsSleeperMultiplier
+            {
+                get
+                {
+                    return mUseObjectInSameRoomAsSleeperMultiplier;
+                }
+                set
+                {
+                    mUseObjectInSameRoomAsSleeperMultiplier = value;
+                }
+            }
 
             public CASAgeGenderFlags ValidAges
             {
@@ -483,6 +720,10 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
 
             protected ServiceProfile()
+            {
+            }
+
+            public ServiceProfile(string name, string title) : this(name, title, additionalMotives: null)
             {
             }
 
@@ -630,7 +871,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         public static readonly Dictionary<Type, CommodityKind> ServiceMotives = new Dictionary<Type, CommodityKind>();
 
         [PersistableStatic(true)]
-        public static List<ServiceProfile> ServiceProfiles = new List<ServiceProfile>();
+        public static List<IServiceProfile> ServiceProfiles = new List<IServiceProfile>();
 
         public static bool IsFromServantRolesMod<Service>() where Service : Sims3.Gameplay.Services.Service
         {

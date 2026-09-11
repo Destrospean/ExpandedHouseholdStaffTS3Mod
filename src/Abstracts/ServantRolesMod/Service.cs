@@ -415,7 +415,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                         {
                             SetTraits(simDescription);
                             SetRandomTraits(simDescription);
-                            if (customService == null || customService.Profile.GetUniformFromName)
+                            if (customService == null || ((ServiceUtils.ServiceProfile)customService.Profile).GetUniformFromName)
                             {
                                 OverlayUniform(simDescription, ServiceType.ToString());
                             }
