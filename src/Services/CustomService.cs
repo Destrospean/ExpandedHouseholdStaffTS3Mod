@@ -286,7 +286,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         service.RemoveOutputs();
                         MotiveTuning.sTuning.Remove((int)profile.ServiceMotive);
                         CommonUtils.RemoveEnumValue<CommodityKind>("Be" + profile.Name);
-                        string activeTopic = profile.Title + " Service";
+                        string activeTopic = profile.Name + " Service";
                         foreach (ServiceUtils.ActiveTopicAction action in profile.Actions)
                         {
                             CommonUtils.RemoveActions(activeTopic, action.Grouping, action.IsActive, action.Name);
@@ -306,7 +306,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
 
         public override string GetServiceTopic(Sim serviceSim)
         {
-            return Profile.Title + " Service";
+            return Profile.Name + " Service";
         }
 
         public static void Init(ServiceUtils.ServiceProfile profile)
@@ -315,7 +315,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 {
                     CommonUtils.AddEnumValue<CommodityKind>("Be" + profile.Name, profile.ServiceMotive);
                     LoadServiceMotive(profile.ServiceMotive);
-                    string activeTopic = profile.Title + " Service";
+                    string activeTopic = profile.Name + " Service";
                     if (!ActiveTopicData.Exists(activeTopic))
                     {
                         ActiveTopicData.Add(new ActiveTopicData(activeTopic, false, 1000, "", true, true, false, true, null, 0f, "", false));
