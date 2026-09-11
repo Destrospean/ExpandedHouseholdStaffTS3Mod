@@ -111,7 +111,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                 if (service.IsRecurrent())
                 {
                     serviceInfo.mAlreadyActiveToolTip = Localization.LocalizeString("Gameplay/UI/ServicesUIWindow:RecurrentAlreadyActive");
-                    bool isNonLiveInServiceActiveOnLot = service as IAmLiveInService == null && service.IsAnySimAssignedToLot(servicesModel.Lot);
+                    bool isNonLiveInServiceActiveOnLot = service as IAmLiveInService == null && !(customService?.Profile.IsLiveInService ?? false) && service.IsAnySimAssignedToLot(servicesModel.Lot);
                     serviceInfo.mCancelledTns = customService == null ? Localization.LocalizeString(entryKey + ":ServiceCancelled" + (isNonLiveInServiceActiveOnLot ? "WhileActive" : "")) : isNonLiveInServiceActiveOnLot ? customService.Profile.CancelledWhileActiveMessage : customService.Profile.CancelledMessage;
                 }
                 serviceInfo.mRequestedTns = customService == null ? Localization.LocalizeString(entryKey + ":ServiceRequested") : customService.Profile.RequestedMessage;

@@ -147,7 +147,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                 {
                     foreach (CustomService service in new List<CustomService>(ServiceUtils.CustomServices.Values))
                     {
-                        CustomService.Deinit(service.Profile, false);
+                        CustomService.Deinit(service.Profile, true);
                     }
                 };
         }

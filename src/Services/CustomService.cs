@@ -257,14 +257,35 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 });
         }
 
-        public static void Deinit(ServiceUtils.ServiceProfile profile, bool removeAllInteractions = true)
+        public static void Deinit(ServiceUtils.ServiceProfile profile, bool worldJustGotQuit = false)
         {
             DebugUtils.TryDisplayScriptError(() =>
                 {
                     CustomService service;
                     if (ServiceUtils.CustomServices.TryGetValue(profile.Name, out service) && service != null)
                     {
+                        ServiceUtils.CustomServices.Remove(profile.Name);
+                        if (!worldJustGotQuit)
+                        {
+                            if (profile.IsLiveInService)
+                            {
+                                foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
+                                {
+                                    service.RemoveInteractions(bed);
+                                }
+                            }
+                            IEnumerator<SimDescription> enumerator = service.Pool.GetEnumerator();
+                            while (enumerator.MoveNext())
+                            {
+                                if (enumerator.Current != null)
+                                {
+                                    service.RemoveSimFromPool(enumerator.Current);
+                                }
+                            }
+                        }
                         service.RemoveOutputs();
+                        MotiveTuning.sTuning.Remove((int)profile.ServiceMotive);
+                        CommonUtils.RemoveEnumValue<CommodityKind>("Be" + profile.Name);
                         string activeTopic = profile.Title + " Service";
                         foreach (ServiceUtils.ActiveTopicAction action in profile.Actions)
                         {
@@ -273,14 +294,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                         if (ActiveTopicData.Exists(activeTopic))
                         {
                             ActiveTopicData.sData.Remove(activeTopic);
-                        }
-                        ServiceUtils.CustomServices.Remove(profile.Name);
-                        if (removeAllInteractions)
-                        {
-                            foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
-                            {
-                                service.RemoveInteractions(bed);
-                            }
                         }
                     }
                 });

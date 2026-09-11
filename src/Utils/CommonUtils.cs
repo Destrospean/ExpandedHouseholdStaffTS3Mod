@@ -285,6 +285,20 @@ namespace zoeoeAndDestrospean.Utils
             }
         }
 
+        public static void RemoveEnumValue<T>(string key) where T : struct
+        {
+            Type enumType = typeof(T);
+            EnumParser caseInsensitiveEnumParser, caseSensitiveEnumParser;
+            if (ParserFunctions.sCaseInsensitiveEnumParsers.TryGetValue(enumType, out caseInsensitiveEnumParser) && caseInsensitiveEnumParser.mLookup.ContainsKey(key.ToLowerInvariant()))
+            {
+                caseInsensitiveEnumParser.mLookup.Remove(key.ToLowerInvariant());
+            }
+            if (ParserFunctions.sCaseSensitiveEnumParsers.TryGetValue(enumType, out caseSensitiveEnumParser) && caseSensitiveEnumParser.mLookup.ContainsKey(key))
+            {
+                caseSensitiveEnumParser.mLookup.Remove(key);
+            }
+        }
+
         /// <summary>
         /// Removes the commodity kind as a commodity change output from an interaction tuning.
         /// </summary>
