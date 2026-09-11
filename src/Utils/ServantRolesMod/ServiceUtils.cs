@@ -689,7 +689,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
                 set
                 {
-                    mValidAges = (uint)value;
+                    mValidAges = (uint)(value & CASAgeGenderFlags.AgeMask);
                 }
             }
 
@@ -701,7 +701,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
                 set
                 {
-                    mValidGenders = (uint)value;
+                    CASAgeGenderFlags gender = value & CASAgeGenderFlags.GenderMask;
+                    mValidGenders = gender == CASAgeGenderFlags.GenderMask ? 0u : (uint)gender;
                 }
             }
 
