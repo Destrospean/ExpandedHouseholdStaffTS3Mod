@@ -237,7 +237,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
 
             /// <summary>
-            /// The product version of the car the service NPC arrives in. This is for when car is a Store, expansion pack, or stuff pack item.
+            /// The product version of the car the service NPC arrives in. This is for when the car is a Store, expansion pack, or stuff pack item.
             /// </summary>
             public ProductVersion CarProductVersion
             {
