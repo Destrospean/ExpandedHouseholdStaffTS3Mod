@@ -362,7 +362,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             /// <summary>
             /// If set to <c>true</c>, the service NPC will stay with the household that requested them.
-            /// Interactions for setting/unsetting their bed will be available to service NPCs with this property set to <c>true</c>.
+            /// Interactions for setting/unsetting their bed will be available to the service NPC with this property set to <c>true</c>.
             /// </summary>
             public bool IsLiveInService
             {
