@@ -143,6 +143,13 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                             });
                     }
                 });
+            World.sOnWorldQuitEventHandler += (sender, e) =>
+                {
+                    foreach (CustomService service in new List<CustomService>(ServiceUtils.CustomServices.Values))
+                    {
+                        CustomService.Deinit(service.Profile, false);
+                    }
+                };
         }
 
         public static bool IsInServicePreventingSocialization(Sim target)

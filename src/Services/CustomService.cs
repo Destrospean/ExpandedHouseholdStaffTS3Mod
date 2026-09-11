@@ -257,6 +257,35 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 });
         }
 
+        public static void Deinit(ServiceUtils.ServiceProfile profile, bool removeAllInteractions = true)
+        {
+            DebugUtils.TryDisplayScriptError(() =>
+                {
+                    CustomService service;
+                    if (ServiceUtils.CustomServices.TryGetValue(profile.Name, out service) && service != null)
+                    {
+                        service.RemoveOutputs();
+                        string activeTopic = profile.Title + " Service";
+                        foreach (ServiceUtils.ActiveTopicAction action in profile.Actions)
+                        {
+                            CommonUtils.RemoveActions(activeTopic, action.Grouping, action.IsActive, action.Name);
+                        }
+                        if (ActiveTopicData.Exists(activeTopic))
+                        {
+                            ActiveTopicData.sData.Remove(activeTopic);
+                        }
+                        ServiceUtils.CustomServices.Remove(profile.Name);
+                        if (removeAllInteractions)
+                        {
+                            foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
+                            {
+                                service.RemoveInteractions(bed);
+                            }
+                        }
+                    }
+                });
+        }
+
         public override CASAgeGenderFlags GetGenderForNewNpc(Lot lot)
         {
             return Profile.ValidGenders;
@@ -318,19 +347,6 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                                 CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, service.ServiceMotive);
                             }
                         }
-                        World.sOnWorldQuitEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
-                            {
-                                service.RemoveOutputs();
-                                foreach (ServiceUtils.ActiveTopicAction action in profile.Actions)
-                                {
-                                    CommonUtils.RemoveActions(activeTopic, action.Grouping, action.IsActive, action.Name);
-                                }
-                                if (ActiveTopicData.Exists(activeTopic))
-                                {
-                                    ActiveTopicData.sData.Remove(activeTopic);
-                                }
-                                ServiceUtils.CustomServices.Remove(profile.Name);
-                            });
                     }
                 });
         }
@@ -345,6 +361,11 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     retVal = new CustomServiceSituation(this, assignedLot, createdSim, cost);
                 });
             return retVal;
+        }
+
+        public void RemoveInteractions(Bed bed)
+        {
+            DebugUtils.TryDisplayScriptError(() => bed.RemoveInteractionByType(SetUnsetServiceBedInstance));
         }
 
         public override void RemoveOutputs()
