@@ -132,7 +132,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         }
 
         /// <summary>
-        /// Outputs for interactions and their target types that the service motive of the service is inserted into,
+        /// Outputs for interactions and their target types that the service motive of the service is inserted into.
         /// </summary>
         public override List<ServiceUtils.CommodityChange> Outputs
         {
