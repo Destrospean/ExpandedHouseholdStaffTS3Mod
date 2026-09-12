@@ -1088,7 +1088,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             {
                 if (step == 0)
                 {
-                    if (!InteractionObjectTypeUtils.TryGetSelectedTypes(out interactionDefinitionTypes, InteractionObjectTypeUtils.InteractionDefinitionTypes))
+                    if (!InteractionObjectTypeUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, InteractionObjectTypeUtils.InteractionDefinitionTypes))
                     {
                         return false;
                     }
@@ -1096,7 +1096,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
                 if (step == 1)
                 {
-                    if (!InteractionObjectTypeUtils.TryGetSelectedTypes(out targetTypes, InteractionObjectTypeUtils.GameObjectTypes))
+                    if (!InteractionObjectTypeUtils.TryUIGetSelectedTypes(out targetTypes, InteractionObjectTypeUtils.GameObjectTypes))
                     {
                         step--;
                         continue;
@@ -1156,11 +1156,11 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             Type[] interactionDefinitionTypes, targetTypes;
             while (true)
             {
-                if (!InteractionObjectTypeUtils.TryGetSelectedTypes(out interactionDefinitionTypes, Array.FindAll(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => profile.Outputs.Exists(y => y.InteractionDefinitionType == x.FullName))))
+                if (!InteractionObjectTypeUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, Array.FindAll(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => profile.Outputs.Exists(y => y.InteractionDefinitionType == x.FullName))))
                 {
                     return false;
                 }
-                if (!InteractionObjectTypeUtils.TryGetSelectedTypes(out targetTypes, Array.FindAll(InteractionObjectTypeUtils.GameObjectTypes, x => profile.Outputs.Exists(y => y.TargetType == x.FullName && Array.Exists(interactionDefinitionTypes, z => z.FullName == y.InteractionDefinitionType)))))
+                if (!InteractionObjectTypeUtils.TryUIGetSelectedTypes(out targetTypes, Array.FindAll(InteractionObjectTypeUtils.GameObjectTypes, x => profile.Outputs.Exists(y => y.TargetType == x.FullName && Array.Exists(interactionDefinitionTypes, z => z.FullName == y.InteractionDefinitionType)))))
                 {
                     continue;
                 }

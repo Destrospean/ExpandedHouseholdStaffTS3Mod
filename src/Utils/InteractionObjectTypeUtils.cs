@@ -53,7 +53,7 @@ namespace zoeoeAndDestrospean.Utils
             sInteractionDefinitionTypes = interactionDefinitionTypes.ToArray();
         }
 
-        public static bool TryGetSelectedTypes(out Type[] selectedTypes, Type[] allTypes = null, string namespaceListTitle = null, string typeListTitle = null)
+        public static bool TryUIGetSelectedTypes(out Type[] selectedTypes, Type[] allTypes = null, string namespaceListTitle = null, string typeListTitle = null)
         {
             bool retVal;
             Type[] tempSelectedTypes = null;
