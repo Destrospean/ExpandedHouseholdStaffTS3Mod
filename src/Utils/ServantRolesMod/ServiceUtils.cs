@@ -966,7 +966,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         }
 
         /// <summary>
-        /// Gets whether a custom service with the specified profile name can be added to the savegame.
+        /// Gets whether a custom service with the specified profile can be added to the savegame.
         /// </summary>
         public static bool CanAddServiceToSaveGame(IServiceProfile profile)
         {
