@@ -942,16 +942,53 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
         }
 
-        public static readonly Dictionary<string, CustomService> CustomServices = new Dictionary<string, CustomService>();
+        public static readonly Dictionary<string, CustomService> CustomInstances = new Dictionary<string, CustomService>();
 
-        public static readonly Dictionary<Type, Service> Instances = new Dictionary<Type, Service>();
+        public static readonly List<Type> LoadedTypes = new List<Type>();
 
-        public static readonly List<Type> PreloadedTypes = new List<Type>();
+        public static readonly Dictionary<string, Service> PredefinedInstances = new Dictionary<string, Service>();
 
         public static readonly Dictionary<Type, CommodityKind> ServiceMotives = new Dictionary<Type, CommodityKind>();
 
         [PersistableStatic(true)]
         public static List<IServiceProfile> ServiceProfiles = new List<IServiceProfile>();
+
+        /// <summary>
+        /// Adds a custom service with the specified profile to the savegame, requestable via the <see cref="Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions.CallForServices"/> interaction.
+        /// </summary>
+        public static void AddServiceToSaveGame(IServiceProfile profile)
+        {
+            if (CanAddServiceToSaveGame(profile))
+            {
+                ServiceProfiles.Add(profile);
+                CustomService.Init(profile);
+            }
+        }
+
+        /// <summary>
+        /// Gets whether a custom service with the specified profile name can be added to the savegame.
+        /// </summary>
+        public static bool CanAddServiceToSaveGame(IServiceProfile profile)
+        {
+            return !CustomInstances.ContainsKey(profile.Name);
+        }
+
+        /// <summary>
+        /// Gets whether a custom service with the specified profile name can be removed from the savegame.
+        /// </summary>
+        public static bool CanRemoveServiceFromSaveGame(string name)
+        {
+            CustomService service;
+            return CustomInstances.TryGetValue(name, out service) && ServiceProfiles.Contains(service.Profile);
+        }
+
+        /// <summary>
+        /// Gets whether a custom service with the specified profile can be removed from the savegame.
+        /// </summary>
+        public static bool CanRemoveServiceFromSaveGame(IServiceProfile profile)
+        {
+            return CanRemoveServiceFromSaveGame(profile.Name);
+        }
 
         public static bool IsFromServantRolesMod<Service>() where Service : Sims3.Gameplay.Services.Service
         {
@@ -966,6 +1003,26 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         public static bool IsFromServantRolesMod(Type type)
         {
             return typeof(Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod.IService).IsAssignableFrom(type);
+        }
+
+        /// <summary>
+        /// Removes a custom service with the specified profile name from the savegame.
+        /// </summary>
+        public static void RemoveServiceFromSaveGame(string name)
+        {
+            if (CanRemoveServiceFromSaveGame(name))
+            {
+                CustomService.Deinit(CustomInstances[name].Profile);
+                ServiceProfiles.Remove(CustomInstances[name].Profile);
+            }
+        }
+
+        /// <summary>
+        /// Removes a custom service with the specified profile from the savegame.
+        /// </summary>
+        public static void RemoveServiceFromSaveGame(IServiceProfile profile)
+        {
+            RemoveServiceFromSaveGame(profile.Name);
         }
     }
 }

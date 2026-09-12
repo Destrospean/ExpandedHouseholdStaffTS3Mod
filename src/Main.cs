@@ -145,7 +145,7 @@ namespace zoeoeAndDestrospean.ServantRolesMod
                 });
             World.sOnWorldQuitEventHandler += (sender, e) =>
                 {
-                    foreach (CustomService service in new List<CustomService>(ServiceUtils.CustomServices.Values))
+                    foreach (CustomService service in new List<CustomService>(ServiceUtils.CustomInstances.Values))
                     {
                         CustomService.Deinit(service.Profile, true);
                     }

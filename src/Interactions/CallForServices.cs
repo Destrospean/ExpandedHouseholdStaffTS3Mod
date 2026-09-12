@@ -49,8 +49,8 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions
                         Singer.Instance,
                         PerformanceArtist.Instance
                     };
-                services.AddRange(ServiceUtils.Instances.Values);
-                foreach (Service service in ServiceUtils.CustomServices.Values)
+                services.AddRange(ServiceUtils.PredefinedInstances.Values);
+                foreach (Service service in ServiceUtils.CustomInstances.Values)
                 {
                     services.Add(service);
                 }

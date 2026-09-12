@@ -40,7 +40,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                 public override string GetInteractionName(Sim actor, Bed target, InteractionObjectPair iop)
                 {
                     CustomService service;
-                    if (!ServiceUtils.CustomServices.TryGetValue(mServiceProfile.Name, out service) || service == null)
+                    if (!ServiceUtils.CustomInstances.TryGetValue(mServiceProfile.Name, out service) || service == null)
                     {
                         return mServiceProfile.Title;
                     }
@@ -57,7 +57,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                             return false;
                         }
                         CustomService service;
-                        if (ServiceUtils.CustomServices.TryGetValue(mServiceProfile.Name, out service) && service != null)
+                        if (ServiceUtils.CustomInstances.TryGetValue(mServiceProfile.Name, out service) && service != null)
                         {
                             List<Sim> simsAssignedToLot = service.GetSimsAssignedToLot(actor.LotHome);
                             if (simsAssignedToLot.Count > 0)
@@ -216,7 +216,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
         public CustomService(IServiceProfile profile)
         {
             Profile = profile;
-            ServiceUtils.CustomServices[profile.Name] = this;
+            ServiceUtils.CustomInstances[profile.Name] = this;
             SetUnsetServiceBedInstance = new SetUnsetServiceBed.Definition(profile);
         }
 
@@ -240,7 +240,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     if (ServiceNPCSpecifications.ValidForCurrentWorld(profile.ServiceType))
                     {
                         CustomService service;
-                        if (ServiceUtils.CustomServices.TryGetValue(profile.Name, out service) && service != null)
+                        if (ServiceUtils.CustomInstances.TryGetValue(profile.Name, out service) && service != null)
                         {
                             service.PostLoadFixup();
                         }
@@ -249,10 +249,10 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                             new CustomService(profile);
                         }
                     }
-                    else if (ServiceUtils.CustomServices.ContainsKey(profile.Name))
+                    else if (ServiceUtils.CustomInstances.ContainsKey(profile.Name))
                     {
-                        Destroy(ServiceUtils.CustomServices[profile.Name]);
-                        ServiceUtils.CustomServices.Remove(profile.Name);
+                        Destroy(ServiceUtils.CustomInstances[profile.Name]);
+                        ServiceUtils.CustomInstances.Remove(profile.Name);
                     }
                 });
         }
@@ -265,9 +265,9 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
             DebugUtils.TryDisplayScriptError(() =>
                 {
                     CustomService service;
-                    if (ServiceUtils.CustomServices.TryGetValue(profile.Name, out service) && service != null)
+                    if (ServiceUtils.CustomInstances.TryGetValue(profile.Name, out service) && service != null)
                     {
-                        ServiceUtils.CustomServices.Remove(profile.Name);
+                        ServiceUtils.CustomInstances.Remove(profile.Name);
                         if (!worldJustGotQuit)
                         {
                             if (profile.IsLiveInService)
@@ -332,7 +332,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services
                     }
                     Create(profile);
                     CustomService service;
-                    if (ServiceUtils.CustomServices.TryGetValue(profile.Name, out service) && service != null)
+                    if (ServiceUtils.CustomInstances.TryGetValue(profile.Name, out service) && service != null)
                     {
                         if (profile.IsLiveInService)
                         {

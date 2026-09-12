@@ -117,11 +117,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             get
             {
                 Service service;
-                return ServiceUtils.Instances.TryGetValue(DerivedType, out service) ? (Service<T>)service : null;
+                return ServiceUtils.PredefinedInstances.TryGetValue(DerivedType.Name, out service) ? (Service<T>)service : null;
             }
             set
             {
-                ServiceUtils.Instances[DerivedType] = value;
+                ServiceUtils.PredefinedInstances[DerivedType.Name] = value;
             }
         }
 
@@ -575,7 +575,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 });
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
-                    if (!ServiceUtils.PreloadedTypes.Contains(DerivedType))
+                    if (!ServiceUtils.LoadedTypes.Contains(DerivedType))
                     {
                         CommonUtils.AddEnumValue<CommodityKind>("Be" + DerivedType.Name, ServiceMotive);
                         LoadServiceMotive();
@@ -585,7 +585,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                             ActiveTopicData.Add(new ActiveTopicData(activeTopic, false, 1000, "", true, true, false, true, null, 0, "", false));
                         }
                         CommonUtils.AddActions(activeTopic, LongTermRelationshipTypes.Default, false, "Dismiss", "Fire");
-                        ServiceUtils.PreloadedTypes.Add(DerivedType);
+                        ServiceUtils.LoadedTypes.Add(DerivedType);
                     }
                     MethodInfo createMethod = DerivedType.GetMethod("Create");
                     if (createMethod == null)
