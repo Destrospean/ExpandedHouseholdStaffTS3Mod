@@ -208,6 +208,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             /// <summary>
             /// The message that shows when the service is cancelled and there is already a service NPC of that service on the lot.
+            /// Note: this will only be used when <see cref="IsLiveInService"/> is set to <c>false</c>.
+            /// <see cref="CancelledMessage"/> will be used instead if <see cref="IsLiveInService"/> is set to <c>true</c>.
             /// </summary>
             public string CancelledWhileActiveMessage
             {
