@@ -5,14 +5,16 @@ using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
+using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
+using Sims3.UI;
 using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
-using zoeoeAndDestrospean.Misc;
 using zoeoeAndDestrospean.Enums;
+using zoeoeAndDestrospean.Misc;
 
 namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 {
@@ -953,6 +955,50 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         [PersistableStatic(true)]
         public static List<IServiceProfile> ServiceProfiles = new List<IServiceProfile>();
 
+        static bool TryUIGetBooleanValue(string title, out bool boolean)
+        {
+            string text = UI.Dialogs.ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
+                {
+                    {
+                        "True (REPLACE THIS TEXT)",
+                        true.ToString()
+                    },
+                    {
+                        "False (REPLACE THIS TEXT)",
+                        false.ToString()
+                    }
+                }, false.ToString()) as string;
+            if (text == null)
+            {
+                boolean = false;
+                return false;
+            }
+            boolean = bool.Parse(text);
+            return true;
+        }
+
+        static bool TryUIGetUpdateType(string title, out OutputUpdateType updateType)
+        {
+            string text = UI.Dialogs.ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
+                {
+                    {
+                        "Continuous Flow (REPLACE THIS TEXT)",
+                        OutputUpdateType.ContinuousFlow.ToString()
+                    },
+                    {
+                        "Immediate Delta (REPLACE THIS TEXT)",
+                        OutputUpdateType.ImmediateDelta.ToString()
+                    }
+                }, OutputUpdateType.ContinuousFlow.ToString()) as string;
+            if (text == null)
+            {
+                updateType = 0;
+                return false;
+            }
+            updateType = (OutputUpdateType)Enum.Parse(typeof(OutputUpdateType), text);
+            return true;
+        }
+
         /// <summary>
         /// Adds a custom service with the specified profile to the savegame, requestable via the <see cref="Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions.CallForServices"/> interaction.
         /// </summary>
@@ -1023,6 +1069,103 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         public static void RemoveServiceFromSaveGame(IServiceProfile profile)
         {
             RemoveServiceFromSaveGame(profile.Name);
+        }
+
+        /// <summary>
+        /// Opens a series of dialogs to add an output to an interaction for a service motive of the specified profile.
+        /// </summary>
+        /// <returns><c>true</c>, if the an output was added, <c>false</c> otherwise.</returns>
+        public static bool TryUIAddOutput(IServiceProfile profile)
+        {
+            byte step = 0;
+            Type[] interactionDefinitionTypes = null;
+            Type[] targetTypes = null;
+            string advertised = null;
+            string actual = null;
+            bool locked = false;
+            OutputUpdateType updateType = 0;
+            while (true)
+            {
+                if (step == 0)
+                {
+                    if (!InteractionObjectTypeUtils.TryGetSelectedTypes(out interactionDefinitionTypes, InteractionObjectTypeUtils.InteractionDefinitionTypes))
+                    {
+                        return false;
+                    }
+                    step++;
+                }
+                if (step == 1)
+                {
+                    if (!InteractionObjectTypeUtils.TryGetSelectedTypes(out targetTypes, InteractionObjectTypeUtils.GameObjectTypes))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                }
+                if (step == 2)
+                {
+                    advertised = StringInputDialog.Show("Priority (REPLACE THIS TEXT)", "Advertised (REPLACE THIS TEXT)", "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    if (advertised == null)
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                }
+                if (step == 3)
+                {
+                    actual = StringInputDialog.Show("Priority (REPLACE THIS TEXT)", "Actual (REPLACE THIS TEXT)", "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    if (actual == null)
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                }
+                if (step == 4)
+                {
+                    if (!TryUIGetBooleanValue("Locked (REPLACE THIS TEXT)", out locked))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                }
+                if (step == 5)
+                {
+                    if (!TryUIGetUpdateType("Update Type (REPLACE THIS TEXT)", out updateType))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                }
+                profile.AddOutputs(new CommodityChange(interactionDefinitionTypes[0], targetTypes[0], ParserFunctions.ParseFloat(advertised, 200f), locked, ParserFunctions.ParseFloat(actual, 200f), updateType));
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Opens a series of dialogs to remove an output from an interaction for a service motive of the specified profile.
+        /// </summary>
+        /// <returns><c>true</c>, if the an output was removed, <c>false</c> otherwise.</returns>
+        public static bool TryUIRemoveOutput(IServiceProfile profile)
+        {
+            Type[] interactionDefinitionTypes, targetTypes;
+            while (true)
+            {
+                if (!InteractionObjectTypeUtils.TryGetSelectedTypes(out interactionDefinitionTypes, Array.FindAll(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => profile.Outputs.Exists(y => y.InteractionDefinitionType == x.FullName))))
+                {
+                    return false;
+                }
+                if (!InteractionObjectTypeUtils.TryGetSelectedTypes(out targetTypes, Array.FindAll(InteractionObjectTypeUtils.GameObjectTypes, x => profile.Outputs.Exists(y => y.TargetType == x.FullName && Array.Exists(interactionDefinitionTypes, z => z.FullName == y.InteractionDefinitionType)))))
+                {
+                    continue;
+                }
+                profile.RemoveOutputs(new CommodityChange(interactionDefinitionTypes[0], targetTypes[0], 200f, true, 200f, OutputUpdateType.ContinuousFlow));
+                return true;
+            }
         }
     }
 }

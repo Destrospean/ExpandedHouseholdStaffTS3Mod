@@ -68,6 +68,8 @@
     <Compile Include="Interactions\CallForServices.cs" />
     <Compile Include="Enums\ServantRolesMod\ServiceProfileFlags.cs" />
     <Compile Include="Interfaces\ServantRolesMod\IServiceProfile.cs" />
+    <Compile Include="UI\Dialogs\ComboSelectionDialog.cs" />
+    <Compile Include="Misc\DummyComparer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
