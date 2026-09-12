@@ -37,6 +37,9 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            /// <summary>
+            /// If set to <c>true</c>, the action is an FPA; otherwise, it's an SPA.
+            /// </summary>
             public bool IsActive;
 
             public string Name;
@@ -45,6 +48,13 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             {
             }
 
+            /// <summary>
+            /// Initializes a new instance of the
+            /// <see cref="zoeoeAndDestrospean.Utils.ServantRolesMod.ServiceUtils+ActiveTopicAction"/> class.
+            /// </summary>
+            /// <param name="name">Name.</param>
+            /// <param name="grouping">Grouping.</param>
+            /// <param name="isActive">If set to <c>true</c>, the action is an FPA; otherwise, it's an SPA.</param>
             public ActiveTopicAction(string name, LongTermRelationshipTypes grouping = LongTermRelationshipTypes.Default, bool isActive = false)
             {
                 Name = name;

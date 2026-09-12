@@ -26,7 +26,7 @@ namespace zoeoeAndDestrospean.Utils
         /// </summary>
         /// <param name="activeTopic">Active topic.</param>
         /// <param name="grouping">Grouping.</param>
-        /// <param name="isActive">If set to <c>true</c>, it's an FPA, otherwise it's an SPA.</param>
+        /// <param name="isActive">If set to <c>true</c>, the action is an FPA; otherwise, it's an SPA.</param>
         /// <param name="actionsToAdd">Actions to add.</param>
         public static void AddActions(string activeTopic, LongTermRelationshipTypes grouping, bool isActive, params string[] actionsToAdd)
         {
@@ -272,7 +272,7 @@ namespace zoeoeAndDestrospean.Utils
         /// </summary>
         /// <param name="activeTopic">Active topic.</param>
         /// <param name="grouping">Grouping.</param>
-        /// <param name="isActive">If set to <c>true</c>, it's an FPA, otherwise it's an SPA.</param>
+        /// <param name="isActive">If set to <c>true</c>, the action is an FPA; otherwise, it's an SPA.</param>
         /// <param name="actionsToRemove">Actions to remove.</param>
         public static void RemoveActions(string activeTopic, LongTermRelationshipTypes grouping, bool isActive, params string[] actionsToRemove)
         {
@@ -307,8 +307,8 @@ namespace zoeoeAndDestrospean.Utils
         /// <param name="locked">If set to <c>true</c>, locked.</param>
         /// <param name="actualValue">Actual value.</param>
         /// <param name="updateType">Update type.</param>
-        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c> time depends on commodity filling.</param>
-        /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
+        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c>, time depends on commodity filling.</param>
+        /// <param name="updateEvenOnFailure">If set to <c>true</c>, update even on failure.</param>
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
         /// <typeparam name="InteractionDefinition">Interaction definition type.</typeparam>
         /// <typeparam name="Target">Target type.</typeparam>
@@ -327,8 +327,8 @@ namespace zoeoeAndDestrospean.Utils
         /// <param name="locked">If set to <c>true</c>, locked.</param>
         /// <param name="actualValue">Actual value.</param>
         /// <param name="updateType">Update type.</param>
-        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c> time depends on commodity filling.</param>
-        /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
+        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c>, time depends on commodity filling.</param>
+        /// <param name="updateEvenOnFailure">If set to <c>true</c>, update even on failure.</param>
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
         public static void RemoveAsOutput(this CommodityKind commodityKind, Type interactionDefinitionType, Type targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
@@ -347,8 +347,8 @@ namespace zoeoeAndDestrospean.Utils
         /// <param name="locked">If set to <c>true</c>, locked.</param>
         /// <param name="actualValue">Actual value.</param>
         /// <param name="updateType">Update type.</param>
-        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c> time depends on commodity filling.</param>
-        /// <param name="updateEvenOnFailure">If set to <c>true</c> update even on failure.</param>
+        /// <param name="timeDependsOnCommodityFilling">If set to <c>true</c>, time depends on commodity filling.</param>
+        /// <param name="updateEvenOnFailure">If set to <c>true</c>, update even on failure.</param>
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
         public static void RemoveAsOutput(this CommodityKind commodityKind, string interactionDefinitionType, string targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
