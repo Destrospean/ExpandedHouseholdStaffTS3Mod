@@ -970,7 +970,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// </summary>
         public static bool CanAddServiceToSaveGame(IServiceProfile profile)
         {
-            return !CustomInstances.ContainsKey(profile.Name);
+            return !CustomInstances.ContainsKey(profile.Name) && !ServiceProfiles.Contains(profile);
         }
 
         /// <summary>
