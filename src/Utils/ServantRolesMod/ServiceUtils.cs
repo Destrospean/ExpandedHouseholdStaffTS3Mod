@@ -1141,6 +1141,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     }
                     step++;
                 }
+                profile.RemoveOutputs(profile.Outputs.FindAll(x => x.InteractionDefinitionType == interactionDefinitionTypes[0].FullName && x.TargetType == targetTypes[0].FullName).ToArray());
                 profile.AddOutputs(new CommodityChange(interactionDefinitionTypes[0], targetTypes[0], ParserFunctions.ParseFloat(advertised, 200f), locked, ParserFunctions.ParseFloat(actual, 200f), updateType));
                 return true;
             }
