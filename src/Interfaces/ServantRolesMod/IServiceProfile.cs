@@ -262,6 +262,16 @@ namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
         }
 
         /// <summary>
+        /// Length of time (in hours) that the service NPC spends performing their duties before they charge for their service and leave.
+        /// Note: this will only be used when <see cref="IsLiveInService"/> is set to <c>false</c>. 
+        /// </summary>
+        float TimeToSpendWorking
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// How old leftovers can be out in minutes before the service NPC will put it away.
         /// </summary>
         float TimeWaitBeforePutawayLeftovers

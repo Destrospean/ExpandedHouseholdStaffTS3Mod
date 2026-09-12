@@ -163,6 +163,8 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             Dictionary<string, string> mStrings = new Dictionary<string, string>();
 
+            float mTimeToSpendWorking = 8f;
+
             float mTimeWaitBeforePutawayLeftovers = 60f;
 
             List<ulong> mTraits = new List<ulong>();
@@ -616,6 +618,22 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 set
                 {
                     mSkills = value;
+                }
+            }
+
+            /// <summary>
+            /// Length of time (in hours) that the service NPC spends performing their duties before they charge for their service and leave.
+            /// Note: this will only be used when <see cref="IsLiveInService"/> is set to <c>false</c>. 
+            /// </summary>
+            public float TimeToSpendWorking
+            {
+                get
+                {
+                    return mTimeToSpendWorking;
+                }
+                set
+                {
+                    mTimeToSpendWorking = value;
                 }
             }
                 

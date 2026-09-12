@@ -47,7 +47,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
-                CustomService service = (CustomService)parent.Worker.Service;
+                CustomService service = (CustomService)parent.Service;
                 DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(service.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, service.Profile.Name + " waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
             }
 
@@ -55,7 +55,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
             {
                 DebugUtils.TryDisplayScriptError(() =>
                     {
-                        CustomService service = (CustomService)Parent.Worker.Service;
+                        CustomService service = (CustomService)Parent.Service;
                         float timeLeft = AlarmManager.GetTimeLeft(mAlarmHandle, TimeUnit.Hours);
                         if (timeLeft < service.ExtraWaitTimeAfterSocializing)
                         {
@@ -90,7 +90,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     {
                         Parent.NPCLeavingMessage(LeavingReason.NPCFired);
                         Parent.SetState(new LeaveLot<ServiceSituation<CustomServiceSituation>>(Parent));
-                        Parent.Worker.Service.FireSim(actor);
+                        Parent.Service.FireSim(actor);
                     });
             }
         }
@@ -106,7 +106,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     bool retVal;
                     return !DebugUtils.TryDisplayScriptError(() =>
                         {
-                            CustomService service = Parent.Worker.Service as CustomService;
+                            CustomService service = Parent.Service as CustomService;
                             if (service?.Profile.IsScaredOfBonehilda ?? false)
                             {
                                 foreach (Sim sim in Lot.GetObjects<Sim>())
@@ -152,7 +152,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
-                CustomService service = (CustomService)parent.Worker.Service;
+                CustomService service = (CustomService)parent.Service;
                 DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(service.CheckTime, TimeUnit.Minutes, CheckForDuties, service.CheckTime, TimeUnit.Minutes, "Time for " + service.Profile.Name + " to check if everything is done", AlarmType.AlwaysPersisted));
             }
 
@@ -172,7 +172,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 DebugUtils.TryDisplayScriptError(() =>
                     {
                         Parent.Worker.WorkMotive = CommodityKind.None;
-                        foreach (CommodityKind motive in Parent.Worker.Service?.ServiceMotives ?? new List<CommodityKind>())
+                        foreach (CommodityKind motive in Parent.Service?.ServiceMotives ?? new List<CommodityKind>())
                         {
                             Parent.Worker.Autonomy.Motives.RemoveMotive(motive);
                         }
@@ -255,7 +255,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
-                CustomService service = (CustomService)parent.Worker.Service;
+                CustomService service = (CustomService)parent.Service;
                 DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(service.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, service.Profile.Name + " waiting to route", AlarmType.DeleteOnReset, parent.Worker));
             }
 
@@ -264,7 +264,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                 DebugUtils.TryDisplayScriptError(() =>
                     {
                         Parent.OnServiceStarting();
-                        CustomService service = (CustomService)Parent.Worker.Service;
+                        CustomService service = (CustomService)Parent.Service;
                         RouteToLot<CustomServiceSituation, StartPerformingDuties> routeToLot = string.IsNullOrEmpty(service.Profile.CarInstanceName) ? new WalkToLot<CustomServiceSituation, StartPerformingDuties>(Parent) : new RouteToLot<CustomServiceSituation, StartPerformingDuties>(Parent);
                         routeToLot.SetRouteTime(service.DriveTime);
                         Parent.SetState(routeToLot);
@@ -276,7 +276,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         {
             get
             {
-                return (Worker.Service as CustomService)?.Profile.IsLiveInService ?? false;
+                return (Service as CustomService)?.Profile.IsLiveInService ?? false;
             }
         }
 
@@ -293,7 +293,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     if (sim.SimDescription.YoungAdultOrAbove)
                     {
                         Relationship relationship = Relationship.Get(Worker, sim, true);
-                        if (relationship.LTR.Liking < ((CustomService)Worker.Service).RelationshipLevelForQuit)
+                        if (relationship.LTR.Liking < ((CustomService)Service).RelationshipLevelForQuit)
                         {
                             SetToFire(Worker, Worker);
                             return true;
@@ -301,6 +301,14 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     }
                 }
                 return false;
+            }
+        }
+
+        public override float TimeToSpendWorking
+        {
+            get
+            {
+                return (Service as CustomService)?.Profile.TimeToSpendWorking ?? 0f;
             }
         }
 
@@ -322,7 +330,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
                     string entryKey = NotEnoughFundsMessage();
                     if (entryKey != null)
                     {
-                        StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString(entryKey, (Worker.Service as CustomService)?.Profile.Title), StyledNotification.NotificationStyle.kGameMessageNegative));
+                        StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString(entryKey, (Service as CustomService)?.Profile.Title), StyledNotification.NotificationStyle.kGameMessageNegative));
                     }
                     mNumStealAttempts = 0;
                     mObjectsFailedToSteal = new List<GameObject>();
@@ -341,7 +349,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public override CarService CreateServiceCar()
         {
-            CustomService service = (CustomService)Worker.Service;
+            CustomService service = (CustomService)Service;
             return GlobalFunctions.CreateObjectOutOfWorld(string.IsNullOrEmpty(service.Profile.CarInstanceName) ? "CarServiceSedan" : service.Profile.CarInstanceName, service.Profile.CarProductVersion, typeof(CarServiceMaidVan).FullName, null) as CarService;
         }
 
@@ -353,7 +361,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public override string GetUniformName(SimDescription simDescription)
         {
-            ServiceUtils.ServiceProfile profile = (Worker.Service as CustomService)?.Profile as ServiceUtils.ServiceProfile;
+            ServiceUtils.ServiceProfile profile = (Service as CustomService)?.Profile as ServiceUtils.ServiceProfile;
             return profile?.GetUniformNameCallback == null ? base.GetUniformName(Worker.SimDescription) : profile.GetUniformNameCallback(Worker.SimDescription);
         }
 
@@ -367,7 +375,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
 
         public override void SetMotivesAndCommodities()
         {
-            CustomService service = (CustomService)Worker.Service;
+            CustomService service = (CustomService)Service;
             CommonUtils.UpdateMotiveTunings(Worker, service.ServiceMotive);
             Worker.Motives.MaxEverything();
             Worker.WorkMotive = service.ServiceMotive;
@@ -397,7 +405,7 @@ namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
         {
             DebugUtils.TryDisplayScriptError(() =>
                 {
-                    CustomService service = (CustomService)Worker.Service;
+                    CustomService service = (CustomService)Service;
                     OutfitAssignmentUtils.OutfitAssignment outfitAssignment;
                     if (Worker.SimDescription.TryGetOutfitAssignment(service.Profile, out outfitAssignment) && Worker.AddAssignedOutfit(outfitAssignment.SpecialOutfitKey))
                     {

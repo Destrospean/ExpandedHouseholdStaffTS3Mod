@@ -122,20 +122,13 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         AlarmHandle mCheckForFireAlarmHandle = AlarmHandle.kInvalidHandle;
 
-        AlarmHandle mPayLiveInServiceAlarm = AlarmHandle.kInvalidHandle;
+        AlarmHandle mPayLiveInServiceAlarmHandle = AlarmHandle.kInvalidHandle;
+
+        AlarmHandle mTimeToFinishAlarmHandle = AlarmHandle.kInvalidHandle;
 
         bool mInformedFireDepartment;
 
         public ulong LastInteractionId;
-
-        public int DayCountSinceLastPayment
-        {
-            get
-            {
-                int dayCountSinceLastPayment = SimClock.ElapsedCalendarDays() - mDateLastPaid;
-                return dayCountSinceLastPayment > 0 ? dayCountSinceLastPayment : 1;
-            }
-        }
 
         public virtual float DelayBeforeArriving
         {
@@ -161,6 +154,15 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        public int NumDaysSinceLastPayment
+        {
+            get
+            {
+                int numDaysSinceLastPayment = SimClock.ElapsedCalendarDays() - mDateLastPaid;
+                return numDaysSinceLastPayment > 0 ? numDaysSinceLastPayment : 1;
+            }
+        }
+
         public virtual bool ReportsFires
         {
             get
@@ -180,6 +182,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
                 SetToLeave();
                 return true;
             }
+        }
+
+        public abstract float TimeToSpendWorking
+        {
+            get;
         }
 
         public ServiceSituation()
@@ -213,7 +220,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public void AddCheckForFireAlarm()
         {
-            mCheckForFireAlarmHandle = Worker.AddAlarmRepeating(Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, CheckForFire, Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, "Service: Check for Fire", AlarmType.DeleteOnReset);
+            mCheckForFireAlarmHandle = Worker.AddAlarmRepeating(Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, CheckForFire, Babysitter.BabysitterCheckForChildTime, TimeUnit.Minutes, Service.GetType().Name + ": Check for Fire", AlarmType.DeleteOnReset);
         }
 
         public virtual bool ChargeForServiceWhileActive()
@@ -256,16 +263,22 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
+        public override void CleanUp()
+        {
+            AlarmManager.RemoveAlarm(mTimeToFinishAlarmHandle);
+            base.CleanUp();
+        }
+
         public override int CostTotal()
         {
-            return IsLiveInService ? Cost * DayCountSinceLastPayment / 7 : base.CostTotal();
+            return IsLiveInService ? Cost * NumDaysSinceLastPayment / 7 : base.CostTotal();
         }
 
         public override void EndService()
         {
             if (IsLiveInService)
             {
-                Worker.RemoveAlarm(mPayLiveInServiceAlarm);
+                Worker.RemoveAlarm(mPayLiveInServiceAlarmHandle);
             }
             if (ReportsFires)
             {
@@ -319,7 +332,11 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             if (IsLiveInService)
             {
                 mDateLastPaid = SimClock.ElapsedCalendarDays();
-                mPayLiveInServiceAlarm = AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayLiveInService, 1, TimeUnit.Weeks, Service.GetType().Name + " weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
+                mPayLiveInServiceAlarmHandle = AlarmManager.AddAlarmRepeating(1, TimeUnit.Weeks, PayLiveInService, 1, TimeUnit.Weeks, Service.GetType().Name + " weekly payment Alarm", AlarmType.AlwaysPersisted, Worker);
+            }
+            else
+            {
+                mTimeToFinishAlarmHandle = AlarmManager.AddAlarm(TimeToSpendWorking, TimeUnit.Hours, SetToJobDone, Service.GetType().Name + " finishing", AlarmType.DeleteOnReset, Worker);
             }
         }
 
