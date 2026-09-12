@@ -263,12 +263,6 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
             }
         }
 
-        public override void CleanUp()
-        {
-            AlarmManager.RemoveAlarm(mTimeToFinishAlarmHandle);
-            base.CleanUp();
-        }
-
         public override int CostTotal()
         {
             return IsLiveInService ? Cost * NumDaysSinceLastPayment / 7 : base.CostTotal();
@@ -276,10 +270,7 @@ namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
 
         public override void EndService()
         {
-            if (IsLiveInService)
-            {
-                Worker.RemoveAlarm(mPayLiveInServiceAlarmHandle);
-            }
+            Worker.RemoveAlarm(IsLiveInService ? mPayLiveInServiceAlarmHandle : mTimeToFinishAlarmHandle);
             if (ReportsFires)
             {
                 Worker.RemoveAlarm(mCheckForFireAlarmHandle);

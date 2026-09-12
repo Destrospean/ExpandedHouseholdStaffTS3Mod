@@ -623,7 +623,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             /// <summary>
             /// Length of time (in hours) that the service NPC spends performing their duties before they charge for their service and leave.
-            /// Note: this will only be used when <see cref="IsLiveInService"/> is set to <c>false</c>. 
+            /// Note: this will only be used when <see cref="IsLiveInService"/> is set to <c>false</c>.
             /// </summary>
             public float TimeToSpendWorking
             {
@@ -639,6 +639,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 
             /// <summary>
             /// How old leftovers can be out in minutes before the service NPC will put it away.
+            /// Note: this will only be used when <see cref="WaitsBeforePuttingAwayLeftovers"/> is set to <c>true</c>.
             /// </summary>
             public float TimeWaitBeforePutawayLeftovers
             {
@@ -686,6 +687,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             /// <summary>
             /// Multiplier for interactions in a room where a Sim is sleeping.
+            /// Note: this will only be used when <see cref="IsQuietAroundSleepingSims"/> is set to <c>true</c>.
             /// </summary>
             public float UseObjectInSameRoomAsSleeperMultiplier
             {
