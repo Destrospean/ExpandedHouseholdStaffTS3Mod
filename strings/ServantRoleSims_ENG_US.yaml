@@ -75,8 +75,8 @@
                     ":SecondPrompt": "Enter in display name of the service (what shows up in the UI)."
                 ":ServiceCreationFailed": "Service Creation Failed"
                 ":NotUnique": "The internal name was not unique."
-                ":NameEmpty": "An internal name was not specified."
-                ":TitleEmpty": "An display name was not specified."
+                ":NameEmpty": "The internal name was not specified."
+                ":TitleEmpty": "The display name was not specified."
             "/ActualValueDialog":
                 ":Title": "Specify Actual Priority"
                 ":Prompt": "Enter in the actual priority value."
