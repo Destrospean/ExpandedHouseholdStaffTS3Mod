@@ -976,6 +976,14 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         }
 
         /// <summary>
+        /// Gets whether a custom service with the specified profile name can be added to the savegame.
+        /// </summary>
+        public static bool CanAddServiceToSaveGame(string name)
+        {
+            return !CustomInstances.ContainsKey(name) && !ServiceProfiles.Exists(x => x.Name == name);
+        }
+
+        /// <summary>
         /// Gets whether a custom service with the specified profile name can be removed from the savegame.
         /// </summary>
         public static bool CanRemoveServiceFromSaveGame(string name)
