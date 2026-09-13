@@ -133,7 +133,4 @@
     <Exec Command="&quot;$(SolutionDir)scripts\GenerateTunables.bat&quot;" Condition="'$(OS)' == 'Windows_NT'" />
     <Exec Command="sh &quot;$(SolutionDir)scripts\GenerateTunables.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
   </Target>
-  <ItemGroup>
-    <Folder Include="UI\Columns\ExpandedHouseholdStaff\" />
-  </ItemGroup>
 </Project>
