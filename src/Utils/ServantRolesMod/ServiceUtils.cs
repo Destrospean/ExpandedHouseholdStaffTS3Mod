@@ -1053,7 +1053,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             RemoveServiceFromSaveGame(profile.Name);
         }
 
-        public static bool ShowServiceProfileFlagListDialog(IServiceProfile profile, out ServiceProfileFlags flags, ServiceProfileFlags? preSelectedFlags = null)
+        public static bool ShowServiceProfileFlagListDialog(this IServiceProfile profile, out ServiceProfileFlags flags, ServiceProfileFlags? preSelectedFlags = null)
         {
             flags = 0;
             bool retVal;
