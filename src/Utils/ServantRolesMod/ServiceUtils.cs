@@ -1144,10 +1144,10 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             }
             profile = new ServiceProfile(results[0], results[1])
                 {
-                    Actions = new List<ServiceUtils.ActiveTopicAction>
+                    Actions = new List<ActiveTopicAction>
                         {
-                            new ServiceUtils.ActiveTopicAction("Dismiss"),
-                            new ServiceUtils.ActiveTopicAction("Fire")
+                            new ActiveTopicAction("Dismiss"),
+                            new ActiveTopicAction("Fire")
                         }
                 };
             return true;
