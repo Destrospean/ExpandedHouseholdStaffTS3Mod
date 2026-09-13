@@ -1053,7 +1053,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             RemoveServiceFromSaveGame(profile.Name);
         }
 
-        public static bool ShowServiceProfileFlagListDialog(IServiceProfile profile, out ServiceProfileFlags flags, ServiceProfileFlags[] preSelectedFlags = null)
+        public static bool ShowServiceProfileFlagListDialog(IServiceProfile profile, out ServiceProfileFlags flags, ServiceProfileFlags? preSelectedFlags = null)
         {
             flags = 0;
             bool retVal;
@@ -1062,7 +1062,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 {
                     string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
                     entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/ServiceProfileFlagListDialog";
-                    List<ServiceProfileFlags> flagList = new List<ServiceProfileFlags>(preSelectedFlags ?? Array.FindAll((ServiceProfileFlags[])Enum.GetValues(typeof(ServiceProfileFlags)), x => (profile as ServiceProfile)?.HasFlags(x) ?? false));
+                    List<ServiceProfileFlags> flagList = new List<ServiceProfileFlags>(Array.FindAll((ServiceProfileFlags[])Enum.GetValues(typeof(ServiceProfileFlags)), x => preSelectedFlags.HasValue ? (preSelectedFlags & x) == x : (profile as ServiceProfile)?.HasFlags(x) ?? false));
                     bool cancelled, confirmed;
                     while (true)
                     {
