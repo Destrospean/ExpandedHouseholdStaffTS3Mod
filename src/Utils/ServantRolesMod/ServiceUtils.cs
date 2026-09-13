@@ -1181,7 +1181,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// Opens a dialog to set feedback messages for Sims requesting and cancelling services.
         /// </summary>
         /// <returns><c>true</c>, if feedback messages were set, <c>false</c> otherwise.</returns>
-        public static bool TryUISetMessages(this IServiceProfile profile)
+        public static bool TryUISetPhoneCallFeedback(this IServiceProfile profile)
         {
             string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
             entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/SetMessagesDialog";
