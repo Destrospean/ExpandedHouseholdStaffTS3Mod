@@ -1229,6 +1229,11 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                             new ActiveTopicAction("Fire")
                         }
                 };
+            ServiceProfileFlags flags;
+            if (profile.ShowServiceProfileFlagListDialog(out flags))
+            {
+                (profile as ServiceProfile)?.SetFlags(flags);
+            }
             return true;
         }
 
