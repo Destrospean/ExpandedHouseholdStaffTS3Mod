@@ -5,7 +5,6 @@ namespace zoeoeAndDestrospean.Enums.ServantRolesMod
     [Flags]
     public enum ServiceProfileFlags : ulong
     {
-        None = 0x0uL,
         LiveInService = 0x1uL,
         QuietAroundSleepingSims = 0x2uL,
         ReportsFires = 0x4uL,

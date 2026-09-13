@@ -22,8 +22,8 @@
                         ":Tooltip": "The name of the part type"
                 "/Options":
                     "/Enabled":
-                        ":False": "False"
                         ":True": "True"
+                        ":False": "False"
                     "/PartType":
                         ":Accessories": "Accessories"
                         ":Armband": "Armband"
@@ -63,6 +63,25 @@
                         ":Socks": "Socks"
                         ":UpperBody": "Upper Body"
                         ":WeddingRing": "Wedding Ring"
+            "/ServiceProfileFlagListDialog":
+                ":Title": "Select Service Properties"
+                "/Headers":
+                    "/Enabled":
+                        ":Text": "Enabled"
+                        ":Tooltip": "Whether the property is enabled"
+                    "/ServiceProfileFlag":
+                        ":Text": "Property"
+                        ":Tooltip": "The name of the property"
+                "/Options":
+                    "/Enabled":
+                        ":True": "True"
+                        ":False": "False"
+                    "/ServiceProfileFlag":
+                        ":LiveInService": "Live-In Service"
+                        ":QuietAroundSleepingSims": "Quiet Around Sleeping Sims"
+                        ":ReportsFires": "Reports Fires to the Fire Department"
+                        ":ScaredOfBonehilda": "Scared of Bonehilda"
+                        ":WaitsBeforePuttingAwayLeftovers": "Waits Before Putting Away Leftovers"
             "/UpdateTypeDialog":
                 ":Title": "Select Update Type"
                 "/Options":
