@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace zoeoeAndDestrospean.Enums.ServantRolesMod
+namespace Destrospean.Enums.ServantRolesMod
 {
     [Flags]
     public enum ServiceProfileFlags : ulong

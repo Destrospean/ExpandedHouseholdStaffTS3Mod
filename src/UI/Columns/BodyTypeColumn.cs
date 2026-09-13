@@ -1,7 +1,7 @@
 ﻿using Sims3.SimIFace.CAS;
 using Sims3.UI;
 
-namespace zoeoeAndDestrospean.UI.Columns
+namespace Destrospean.UI.Columns
 {
     public class BodyTypeColumn : Dialogs.ObjectPickerDialog.CommonHeaderInfo<BodyTypes>
     {

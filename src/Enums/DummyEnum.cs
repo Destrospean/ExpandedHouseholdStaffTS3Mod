@@ -1,4 +1,4 @@
-﻿namespace zoeoeAndDestrospean.Enums
+﻿namespace Destrospean.Enums
 {
     public enum DummyEnum
     {

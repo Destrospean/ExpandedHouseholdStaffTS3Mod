@@ -1,6 +1,6 @@
 ﻿using Sims3.UI;
 
-namespace zoeoeAndDestrospean.UI.Columns
+namespace Destrospean.UI.Columns
 {
     public class TextColumn : Dialogs.ObjectPickerDialog.CommonHeaderInfo<string>
     {

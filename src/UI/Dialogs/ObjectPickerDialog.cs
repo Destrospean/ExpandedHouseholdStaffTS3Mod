@@ -2,9 +2,9 @@
 using Sims3.UI;
 using System;
 using System.Collections.Generic;
-using zoeoeAndDestrospean.Utils;
+using Destrospean.Utils;
 
-namespace zoeoeAndDestrospean.UI.Dialogs
+namespace Destrospean.UI.Dialogs
 {
     public class ObjectPickerDialog : ModalDialog
     {

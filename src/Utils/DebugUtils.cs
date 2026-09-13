@@ -1,16 +1,16 @@
 ﻿using Sims3.SimIFace;
 using Sims3.UI;
 using System;
-using zoeoeAndDestrospean.Delegates;
+using Destrospean.Delegates;
 
-namespace zoeoeAndDestrospean.Utils
+namespace Destrospean.Utils
 {
     public class DebugUtils
     {
         public static bool ShowDebugMessages = false;
 
         /// <summary>
-        /// Shows a debug message dialog (only when <see cref="zoeoeAndDestrospean.Utils.DebugUtils.ShowDebugMessages"/> is set to <c>true</c>).
+        /// Shows a debug message dialog (only when <see cref="Destrospean.Utils.DebugUtils.ShowDebugMessages"/> is set to <c>true</c>).
         /// </summary>
         public static void ShowDebugMessageDialog(string message)
         {
@@ -21,7 +21,7 @@ namespace zoeoeAndDestrospean.Utils
         }
 
         /// <summary>
-        /// Shows a debug message notification (only when <see cref="zoeoeAndDestrospean.Utils.DebugUtils.ShowDebugMessages"/> is set to <c>true</c>).
+        /// Shows a debug message notification (only when <see cref="Destrospean.Utils.DebugUtils.ShowDebugMessages"/> is set to <c>true</c>).
         /// </summary>
         public static void ShowDebugMessageNotification(string message)
         {

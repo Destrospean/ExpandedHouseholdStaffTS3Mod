@@ -1,8 +1,8 @@
 ﻿using Sims3.UI;
 using System.Collections.Generic;
-using zoeoeAndDestrospean.Enums.ServantRolesMod;
+using Destrospean.Enums.ServantRolesMod;
 
-namespace zoeoeAndDestrospean.UI.Columns.ServantRolesMod
+namespace Destrospean.UI.Columns.ServantRolesMod
 {
     public class ServiceProfileFlagEnabledColumn : Dialogs.ObjectPickerDialog.CommonHeaderInfo<ServiceProfileFlags>
     {

@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace zoeoeAndDestrospean.Utils.ServantRolesMod
+namespace Destrospean.Utils.ServantRolesMod
 {
     /// <summary>
     /// Alternative methods for autonomy-related things. Use these methods instead of the originals for services and service situations from the Servant Roles Mod.

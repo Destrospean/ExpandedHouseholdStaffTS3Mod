@@ -2,7 +2,7 @@
 using Sims3.UI;
 using System.Collections.Generic;
 
-namespace zoeoeAndDestrospean.UI.Columns
+namespace Destrospean.UI.Columns
 {
     public class PartOverrideEnabledColumn : Dialogs.ObjectPickerDialog.CommonHeaderInfo<BodyTypes>
     {

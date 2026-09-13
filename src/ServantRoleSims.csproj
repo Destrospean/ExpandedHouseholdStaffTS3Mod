@@ -7,7 +7,7 @@
     <ProjectGuid>{A217F96A-14F1-4FA3-A82E-52EA73FD56E6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod</RootNamespace>
+    <RootNamespace>Sims3.Gameplay.Destrospean.ServantRolesMod</RootNamespace>
     <AssemblyName>ServantRoleSims</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

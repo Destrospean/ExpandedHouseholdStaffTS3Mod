@@ -8,7 +8,7 @@ using Sims3.Gameplay.CAS;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 
-namespace zoeoeAndDestrospean.Utils
+namespace Destrospean.Utils
 {
     public class NRaasMasterControllerIntegration
     {

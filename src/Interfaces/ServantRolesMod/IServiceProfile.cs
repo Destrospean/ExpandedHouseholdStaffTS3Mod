@@ -4,12 +4,12 @@ using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
-using zoeoeAndDestrospean.Misc;
-using zoeoeAndDestrospean.Utils.ServantRolesMod;
+using Destrospean.Misc;
+using Destrospean.Utils.ServantRolesMod;
 using System;
 using System.Collections.Generic;
 
-namespace Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod
+namespace Sims3.Gameplay.Interfaces.Destrospean.ServantRolesMod
 {
     [Persistable]
     public interface IServiceProfile 

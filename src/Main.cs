@@ -2,7 +2,7 @@
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interfaces;
-using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
+using Sims3.Gameplay.Interfaces.Destrospean.ServantRolesMod;
 using Sims3.Gameplay.ObjectComponents;
 using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Objects.Electronics;
@@ -11,20 +11,20 @@ using Sims3.Gameplay.Situations;
 using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
+using Sims3.Gameplay.Destrospean.ServantRolesMod;
+using Sims3.Gameplay.Destrospean.ServantRolesMod.Interactions;
+using Sims3.Gameplay.Destrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using zoeoeAndDestrospean.Misc;
-using zoeoeAndDestrospean.Utils;
-using zoeoeAndDestrospean.Utils.ServantRolesMod;
+using Destrospean.Misc;
+using Destrospean.Utils;
+using Destrospean.Utils.ServantRolesMod;
 
-namespace zoeoeAndDestrospean.ServantRolesMod
+namespace Destrospean.ServantRolesMod
 {
     public class Main
     {

@@ -1,5 +1,5 @@
 ﻿using Sims3.Gameplay.Abstracts;
-using Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod;
+using Sims3.Gameplay.Abstracts.Destrospean.ServantRolesMod;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
@@ -11,16 +11,16 @@ using Sims3.Gameplay.Objects.Vehicles;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
+using Sims3.Gameplay.Destrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using Sims3.UI;
 using System;
 using System.Collections.Generic;
-using zoeoeAndDestrospean.Utils;
-using zoeoeAndDestrospean.Utils.ServantRolesMod;
+using Destrospean.Utils;
+using Destrospean.Utils.ServantRolesMod;
 
-namespace Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations
+namespace Sims3.Gameplay.Destrospean.ServantRolesMod.Situations
 {
     public class CustomServiceSituation : ServiceSituation<CustomServiceSituation>
     {

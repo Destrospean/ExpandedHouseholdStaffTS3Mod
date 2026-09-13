@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace zoeoeAndDestrospean.Misc
+namespace Destrospean.Misc
 {
     public class DummyComparer : IComparer<string>
     {

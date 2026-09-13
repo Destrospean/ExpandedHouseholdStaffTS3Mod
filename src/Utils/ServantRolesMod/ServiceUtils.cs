@@ -2,24 +2,24 @@
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Interfaces;
-using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
+using Sims3.Gameplay.Interfaces.Destrospean.ServantRolesMod;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
+using Sims3.Gameplay.Destrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using Sims3.UI;
 using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
-using zoeoeAndDestrospean.Enums;
-using zoeoeAndDestrospean.Enums.ServantRolesMod;
-using zoeoeAndDestrospean.Misc;
-using zoeoeAndDestrospean.UI.Columns.ServantRolesMod;
-using ObjectPickerDialog = zoeoeAndDestrospean.UI.Dialogs.ObjectPickerDialog;
+using Destrospean.Enums;
+using Destrospean.Enums.ServantRolesMod;
+using Destrospean.Misc;
+using Destrospean.UI.Columns.ServantRolesMod;
+using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
 
-namespace zoeoeAndDestrospean.Utils.ServantRolesMod
+namespace Destrospean.Utils.ServantRolesMod
 {
     public static class ServiceUtils
     {
@@ -55,7 +55,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
             /// <summary>
             /// Initializes a new instance of the
-            /// <see cref="zoeoeAndDestrospean.Utils.ServantRolesMod.ServiceUtils+ActiveTopicAction"/> class.
+            /// <see cref="Destrospean.Utils.ServantRolesMod.ServiceUtils+ActiveTopicAction"/> class.
             /// </summary>
             /// <param name="name">Name.</param>
             /// <param name="grouping">Grouping.</param>
@@ -974,7 +974,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         public static List<IServiceProfile> ServiceProfiles = new List<IServiceProfile>();
 
         /// <summary>
-        /// Adds a custom service with the specified profile to the savegame, requestable via the <see cref="Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions.CallForServices"/> interaction.
+        /// Adds a custom service with the specified profile to the savegame, requestable via the <see cref="Sims3.Gameplay.Destrospean.ServantRolesMod.Interactions.CallForServices"/> interaction.
         /// </summary>
         public static void AddServiceToSaveGame(this IServiceProfile profile)
         {
@@ -1030,7 +1030,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 
         public static bool IsFromServantRolesMod(Type type)
         {
-            return typeof(Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod.IService).IsAssignableFrom(type);
+            return typeof(Sims3.Gameplay.Interfaces.Destrospean.ServantRolesMod.IService).IsAssignableFrom(type);
         }
 
         /// <summary>

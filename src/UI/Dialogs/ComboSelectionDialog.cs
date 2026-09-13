@@ -2,7 +2,7 @@
 using Sims3.UI;
 ﻿using System.Collections.Generic;
 
-namespace zoeoeAndDestrospean.UI.Dialogs
+namespace Destrospean.UI.Dialogs
 {
     public class ComboSelectionDialog : ModalDialog
     {

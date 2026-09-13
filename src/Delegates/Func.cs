@@ -1,4 +1,4 @@
-﻿namespace zoeoeAndDestrospean.Delegates
+﻿namespace Destrospean.Delegates
 {
     public delegate T Func<T>();
 }

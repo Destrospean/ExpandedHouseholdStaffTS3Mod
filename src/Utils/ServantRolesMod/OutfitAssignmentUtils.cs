@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.CAS;
-using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
+using Sims3.Gameplay.Interfaces.Destrospean.ServantRolesMod;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using Sims3.UI;
-using zoeoeAndDestrospean.UI.Columns;
+using Destrospean.UI.Columns;
 
-namespace zoeoeAndDestrospean.Utils.ServantRolesMod
+namespace Destrospean.Utils.ServantRolesMod
 {
     public static class OutfitAssignmentUtils
     {

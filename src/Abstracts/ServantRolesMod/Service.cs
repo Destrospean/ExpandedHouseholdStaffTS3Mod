@@ -4,13 +4,13 @@ using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
-using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
+using Sims3.Gameplay.Interfaces.Destrospean.ServantRolesMod;
 using Sims3.Gameplay.Objects.Beds;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Services;
+using Sims3.Gameplay.Destrospean.ServantRolesMod;
+using Sims3.Gameplay.Destrospean.ServantRolesMod.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using Sims3.UI.Controller;
@@ -18,11 +18,11 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
-using zoeoeAndDestrospean.Enums;
-using zoeoeAndDestrospean.Utils;
-using zoeoeAndDestrospean.Utils.ServantRolesMod;
+using Destrospean.Enums;
+using Destrospean.Utils;
+using Destrospean.Utils.ServantRolesMod;
 
-namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
+namespace Sims3.Gameplay.Abstracts.Destrospean.ServantRolesMod
 {
     /// <summary>
     /// Service base class from which to derive all services for the Servant Roles Mod.

@@ -1,8 +1,8 @@
 ﻿using Sims3.Gameplay.Skills;
 using Sims3.SimIFace;
-using zoeoeAndDestrospean.Utils;
+using Destrospean.Utils;
 
-namespace zoeoeAndDestrospean.Misc
+namespace Destrospean.Misc
 {
     [Persistable]
     public class SkillLevelPair
@@ -28,7 +28,7 @@ namespace zoeoeAndDestrospean.Misc
         }
 
         /// <summary>
-        /// Creates a new <see cref="zoeoeAndDestrospean.Misc.SkillLevelPair"/> with a maximum value skill level.
+        /// Creates a new <see cref="Destrospean.Misc.SkillLevelPair"/> with a maximum value skill level.
         /// </summary>
         public SkillLevelPair(SkillNames skillName) : this(skillName, -1)
         {

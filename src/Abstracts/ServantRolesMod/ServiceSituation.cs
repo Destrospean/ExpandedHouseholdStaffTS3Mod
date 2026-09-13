@@ -5,22 +5,22 @@ using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
-using Sims3.Gameplay.Interfaces.zoeoeAndDestrospean.ServantRolesMod;
+using Sims3.Gameplay.Interfaces.Destrospean.ServantRolesMod;
 using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod;
-using Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Situations;
+using Sims3.Gameplay.Destrospean.ServantRolesMod;
+using Sims3.Gameplay.Destrospean.ServantRolesMod.Situations;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using Sims3.UI;
 using System;
 using System.Collections.Generic;
-using zoeoeAndDestrospean.Enums;
-using zoeoeAndDestrospean.Utils;
+using Destrospean.Enums;
+using Destrospean.Utils;
 
-namespace Sims3.Gameplay.Abstracts.zoeoeAndDestrospean.ServantRolesMod
+namespace Sims3.Gameplay.Abstracts.Destrospean.ServantRolesMod
 {
     /// <summary>
     /// Service situation base class from which to derive all service situations for the Servant Roles Mod.

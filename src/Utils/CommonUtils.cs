@@ -14,17 +14,17 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Xml;
-using zoeoeAndDestrospean.Enums;
-using zoeoeAndDestrospean.Misc;
-using zoeoeAndDestrospean.UI.Columns;
-using zoeoeAndDestrospean.UI.Dialogs;
-using ObjectPickerDialog = zoeoeAndDestrospean.UI.Dialogs.ObjectPickerDialog;
+using Destrospean.Enums;
+using Destrospean.Misc;
+using Destrospean.UI.Columns;
+using Destrospean.UI.Dialogs;
+using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
 
-namespace zoeoeAndDestrospean.Utils
+namespace Destrospean.Utils
 {
     public static class CommonUtils
     {
-        const string kAuthorName = "zoeoeAndDestrospean";
+        const string kAuthorName = "Destrospean";
 
         /// <summary>
         /// Adds actions to an active topic.

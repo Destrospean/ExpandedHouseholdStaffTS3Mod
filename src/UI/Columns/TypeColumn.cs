@@ -1,7 +1,7 @@
 ﻿using Sims3.UI;
 using System;
 
-namespace zoeoeAndDestrospean.UI.Columns
+namespace Destrospean.UI.Columns
 {
     public class TypeColumn : Dialogs.ObjectPickerDialog.CommonHeaderInfo<Type>
     {

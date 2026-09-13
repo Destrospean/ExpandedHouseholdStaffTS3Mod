@@ -1,7 +1,7 @@
 ﻿using Sims3.UI;
-using zoeoeAndDestrospean.Enums.ServantRolesMod;
+using Destrospean.Enums.ServantRolesMod;
 
-namespace zoeoeAndDestrospean.UI.Columns.ServantRolesMod
+namespace Destrospean.UI.Columns.ServantRolesMod
 {
     public class ServiceProfileFlagColumn : Dialogs.ObjectPickerDialog.CommonHeaderInfo<ServiceProfileFlags>
     {
