@@ -2,7 +2,7 @@
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interfaces;
-using Sims3.Gameplay.Interfaces.Destrospean.ServantRolesMod;
+using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.ObjectComponents;
 using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Objects.Electronics;
@@ -11,9 +11,9 @@ using Sims3.Gameplay.Situations;
 using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.Destrospean.ServantRolesMod;
-using Sims3.Gameplay.Destrospean.ServantRolesMod.Interactions;
-using Sims3.Gameplay.Destrospean.ServantRolesMod.Services;
+using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff;
+using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions;
+using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using Sims3.UI.Controller;
@@ -22,9 +22,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using Destrospean.Misc;
 using Destrospean.Utils;
-using Destrospean.Utils.ServantRolesMod;
+using Destrospean.Utils.ExpandedHouseholdStaff;
 
-namespace Destrospean.ServantRolesMod
+namespace Destrospean.ExpandedHouseholdStaff
 {
     public class Main
     {
@@ -158,10 +158,10 @@ namespace Destrospean.ServantRolesMod
         }
 
         [ScoringFunction]
-        public static float ServantRolesMod_PutAwayLeftOversScoringFunction(Sim actor, InteractionObjectPair iop)
+        public static float ExpandedHouseholdStaff_PutAwayLeftOversScoringFunction(Sim actor, InteractionObjectPair iop)
         {
             Type serviceDataType = actor.Service.GetType();
-            bool serviceIsFromThisMod = actor.Service.IsFromServantRolesMod();
+            bool serviceIsFromThisMod = actor.Service.IsFromExpandedHouseholdStaff();
             PropertyInfo timeWaitBeforePutawayLeftoversProperty = serviceDataType.GetProperty("TimeWaitBeforePutawayLeftovers");
             if (!serviceIsFromThisMod && actor.Service.ServiceType == ServiceType.Butler || serviceIsFromThisMod && (bool)serviceDataType.GetProperty("WaitsBeforePuttingAwayLeftovers").GetValue(actor.Service, null) && timeWaitBeforePutawayLeftoversProperty != null && timeWaitBeforePutawayLeftoversProperty.PropertyType == typeof(float))
             {

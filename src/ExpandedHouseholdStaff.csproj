@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A217F96A-14F1-4FA3-A82E-52EA73FD56E6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff</RootNamespace>
+    <AssemblyName>ExpandedHouseholdStaff</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\build\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>6</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>..\build\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>6</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>..\build\obj\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ExtensionAttribute.cs" />
+    <Compile Include="Utils\CommonUtils.cs" />
+    <Compile Include="Utils\DebugUtils.cs" />
+    <Compile Include="Enums\CommodityKindType.cs" />
+    <Compile Include="Enums\DummyEnum.cs" />
+    <Compile Include="Delegates\Action.cs" />
+    <Compile Include="Delegates\Func.cs" />
+    <Compile Include="Situations\CustomServiceSituation.cs" />
+    <Compile Include="UI\Dialogs\ObjectPickerDialog.cs" />
+    <Compile Include="UI\Columns\BodyTypeColumn.cs" />
+    <Compile Include="UI\Columns\TextColumn.cs" />
+    <Compile Include="UI\Columns\TypeColumn.cs" />
+    <Compile Include="Utils\InteractionObjectTypeUtils.cs" />
+    <Compile Include="Utils\OutfitExtensions.cs" />
+    <Compile Include="Misc\SkillLevelPair.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Utils\NRaasMasterControllerIntegration.cs" />
+    <Compile Include="Utils\ExpandedHouseholdStaff\AutonomyUtils.cs" />
+    <Compile Include="Utils\ExpandedHouseholdStaff\OutfitAssignmentUtils.cs" />
+    <Compile Include="Utils\ExpandedHouseholdStaff\ServiceUtils.cs" />
+    <Compile Include="Abstracts\ExpandedHouseholdStaff\Service.cs" />
+    <Compile Include="Abstracts\ExpandedHouseholdStaff\ServiceSituation.cs" />
+    <Compile Include="Interfaces\ExpandedHouseholdStaff\IAmLiveInService.cs" />
+    <Compile Include="Interfaces\ExpandedHouseholdStaff\IAmSociableService.cs" />
+    <Compile Include="Interfaces\ExpandedHouseholdStaff\IService.cs" />
+    <Compile Include="Services\CustomService.cs" />
+    <Compile Include="Interactions\CallForServices.cs" />
+    <Compile Include="Enums\ExpandedHouseholdStaff\ServiceProfileFlags.cs" />
+    <Compile Include="Interfaces\ExpandedHouseholdStaff\IServiceProfile.cs" />
+    <Compile Include="UI\Dialogs\ComboSelectionDialog.cs" />
+    <Compile Include="Misc\DummyComparer.cs" />
+    <Compile Include="UI\Columns\PartOverrideEnabledColumn.cs" />
+    <Compile Include="UI\Columns\ExpandedHouseholdStaff\ServiceProfileFlagColumn.cs" />
+    <Compile Include="UI\Columns\ExpandedHouseholdStaff\ServiceProfileFlagEnabledColumn.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Reference Include="mscorlib">
+      <HintPath>..\libs\mscorlib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ScriptCore">
+      <HintPath>..\libs\ScriptCore.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SimIFace">
+      <HintPath>..\libs\SimIFace.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sims3GameplayObjects">
+      <HintPath>..\libs\Sims3GameplayObjects.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sims3GameplaySystems">
+      <HintPath>..\libs\Sims3GameplaySystems.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sims3Metadata">
+      <HintPath>..\libs\Sims3MetaData.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sims3StoreObjects">
+      <HintPath>..\libs\Sims3StoreObjects.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>..\libs\System.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <HintPath>..\libs\System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UI">
+      <HintPath>..\libs\UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="NRaasMasterController">
+      <HintPath>..\libs\NRaasMasterController.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup />
+  <Target Name="Generate STBLs" BeforeTargets="Build">
+    <Exec Command="&quot;$(SolutionDir)scripts\GenerateSTBLs.bat&quot;" Condition="'$(OS)' == 'Windows_NT'" />
+    <Exec Command="sh &quot;$(SolutionDir)scripts\GenerateSTBLs.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
+  </Target>
+  <Target Name="Create Package" AfterTargets="Build">
+    <Exec Command="&quot;$(SolutionDir)scripts\CreatePackage.bat&quot; &quot;ExpandedHouseholdStaff&quot; &quot;$(TargetPath)&quot; &quot;$(SolutionDir)&quot; &quot;$(SolutionDir)dist\&quot;" Condition="'$(OS)' == 'Windows_NT'" />
+    <Exec Command="sh &quot;$(SolutionDir)scripts\CreatePackage.sh&quot; &quot;ExpandedHouseholdStaff&quot; &quot;$(TargetPath)&quot; &quot;$(SolutionDir)&quot; &quot;$(SolutionDir)dist\&quot;" Condition="'$(OS)' != 'Windows_NT'" />
+  </Target>
+  <Target Name="Generate Tunable _XMLs" AfterTargets="Create Package">
+    <Exec Command="&quot;$(SolutionDir)scripts\GenerateTunables.bat&quot;" Condition="'$(OS)' == 'Windows_NT'" />
+    <Exec Command="sh &quot;$(SolutionDir)scripts\GenerateTunables.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
+  </Target>
+  <ItemGroup>
+    <Folder Include="UI\Columns\ExpandedHouseholdStaff\" />
+  </ItemGroup>
+</Project>

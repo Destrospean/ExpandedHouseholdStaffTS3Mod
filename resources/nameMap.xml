@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nameMap.xsd">
-  <resource name="ServantRoleSims" type="0x073FAA07"/>
+  <resource name="ExpandedHouseholdStaff" type="0x073FAA07"/>
   <resource name="*.stbl" type="0x220557DA"/>
-  <resource name="ServantRolesMod_ServiceMotive" type="0x0333406C"/>
+  <resource name="ExpandedHouseholdStaff_ServiceMotive" type="0x0333406C"/>
   <resource name="PutAwayLeftovers_ServingContainer" type="0x03B33DDF"/>
 </resources>

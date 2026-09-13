@@ -1,4 +1,4 @@
-This is a the source code of the WIP Servant Roles Mod.
+This is a the source code of the WIP Expanded Household Staff Mod.
 
 The structure is a bit newish/unorthodox compared to most Sims 3 mod repos, so I'll explain things here:
 

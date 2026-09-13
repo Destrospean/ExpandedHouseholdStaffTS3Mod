@@ -1,0 +1,9 @@
+﻿namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
+{
+    /// <summary>
+    /// Dummy interface to identify a service as one from the Expanded Household Staff Mod.
+    /// </summary>
+    public interface IService
+    {
+    }
+}

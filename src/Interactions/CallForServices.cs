@@ -1,21 +1,21 @@
 ﻿using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
-using Sims3.Gameplay.Interfaces.Destrospean.ServantRolesMod;
+using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Moving;
 using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Tutorial;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.Destrospean.ServantRolesMod.Services;
+using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services;
 using Sims3.SimIFace;
 using Sims3.UI;
 using System;
 using System.Collections.Generic;
 using Destrospean.Utils;
-using Destrospean.Utils.ServantRolesMod;
+using Destrospean.Utils.ExpandedHouseholdStaff;
 
-namespace Sims3.Gameplay.Destrospean.ServantRolesMod.Interactions
+namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
 {
     /// <summary>
     /// Replacement interaction for calling for services.
@@ -99,7 +99,7 @@ namespace Sims3.Gameplay.Destrospean.ServantRolesMod.Interactions
 
             public static ServiceInfo GetServiceInfo(UI.ServicesModel servicesModel, Service service)
             {
-                if (!service.IsFromServantRolesMod())
+                if (!service.IsFromExpandedHouseholdStaff())
                 {
                     return servicesModel.GetServiceInfo(service);
                 }

@@ -1,18 +1,18 @@
 ﻿using Sims3.Gameplay.Abstracts;
-using Sims3.Gameplay.Abstracts.Destrospean.ServantRolesMod;
+using Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interfaces;
-using Sims3.Gameplay.Interfaces.Destrospean.ServantRolesMod;
+using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Objects.Beds;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.Destrospean.ServantRolesMod.Situations;
+using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using System;
@@ -20,9 +20,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using Destrospean.Misc;
 using Destrospean.Utils;
-using Destrospean.Utils.ServantRolesMod;
+using Destrospean.Utils.ExpandedHouseholdStaff;
 
-namespace Sims3.Gameplay.Destrospean.ServantRolesMod.Services
+namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
 {
     public class CustomService : Service<CustomService>, IAmSociableService
     {
