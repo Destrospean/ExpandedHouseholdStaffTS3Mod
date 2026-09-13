@@ -14,6 +14,7 @@ using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
 using zoeoeAndDestrospean.Enums;
+using zoeoeAndDestrospean.Enums.ServantRolesMod;
 using zoeoeAndDestrospean.Misc;
 
 namespace zoeoeAndDestrospean.Utils.ServantRolesMod
