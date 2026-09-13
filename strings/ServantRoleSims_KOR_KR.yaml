@@ -77,7 +77,7 @@
                 ":NotUnique": "The internal name was not unique."
                 ":NameEmpty": "The internal name was not specified."
                 ":TitleEmpty": "The display name was not specified."
-            "/SetMessagesDialog":
+            "/SetPhoneCallFeedbackDialog":
                 ":Title": "Specify Phone Call Feedback"
                 "/Prompts":
                     ":SetCancelledMessage": "Enter in the feedback for cancelling the service."

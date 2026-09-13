@@ -1184,7 +1184,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         public static bool TryUISetPhoneCallFeedback(this IServiceProfile profile)
         {
             string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/SetMessagesDialog";
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/SetPhoneCallFeedbackDialog";
             string[] results = ThreeStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), new string[]
                 {
                     Localization.LocalizeString(entryKey + "/Prompts:SetRequestedMessage"),
