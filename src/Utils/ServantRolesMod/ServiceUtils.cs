@@ -1142,7 +1142,14 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
                 return false;
             }
-            profile = new ServiceProfile(results[0], results[1]);
+            profile = new ServiceProfile(results[0], results[1])
+                {
+                    Actions = new List<ServiceUtils.ActiveTopicAction>
+                        {
+                            new ServiceUtils.ActiveTopicAction("Dismiss"),
+                            new ServiceUtils.ActiveTopicAction("Fire")
+                        }
+                };
             return true;
         }
 
