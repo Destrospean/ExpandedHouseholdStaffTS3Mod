@@ -958,7 +958,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// <summary>
         /// Adds a custom service with the specified profile to the savegame, requestable via the <see cref="Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions.CallForServices"/> interaction.
         /// </summary>
-        public static void AddServiceToSaveGame(IServiceProfile profile)
+        public static void AddServiceToSaveGame(this IServiceProfile profile)
         {
             if (CanAddServiceToSaveGame(profile))
             {
@@ -978,7 +978,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// <summary>
         /// Gets whether a custom service with the specified profile can be added to the savegame.
         /// </summary>
-        public static bool CanAddServiceToSaveGame(IServiceProfile profile)
+        public static bool CanAddServiceToSaveGame(this IServiceProfile profile)
         {
             return !CustomInstances.ContainsKey(profile.Name) && !ServiceProfiles.Contains(profile);
         }
@@ -995,7 +995,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// <summary>
         /// Gets whether a custom service with the specified profile can be removed from the savegame.
         /// </summary>
-        public static bool CanRemoveServiceFromSaveGame(IServiceProfile profile)
+        public static bool CanRemoveServiceFromSaveGame(this IServiceProfile profile)
         {
             return CanRemoveServiceFromSaveGame(profile.Name);
         }
@@ -1030,7 +1030,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// <summary>
         /// Removes a custom service with the specified profile from the savegame.
         /// </summary>
-        public static void RemoveServiceFromSaveGame(IServiceProfile profile)
+        public static void RemoveServiceFromSaveGame(this IServiceProfile profile)
         {
             RemoveServiceFromSaveGame(profile.Name);
         }
@@ -1039,7 +1039,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// Opens a series of dialogs to add an output to an interaction for a service motive of the specified profile.
         /// </summary>
         /// <returns><c>true</c>, if the an output was added, <c>false</c> otherwise.</returns>
-        public static bool TryUIAddOutput(IServiceProfile profile)
+        public static bool TryUIAddOutput(this IServiceProfile profile)
         {
             string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
             entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
@@ -1150,7 +1150,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// Opens a series of dialogs to remove an output from an interaction for a service motive of the specified profile.
         /// </summary>
         /// <returns><c>true</c>, if the an output was removed, <c>false</c> otherwise.</returns>
-        public static bool TryUIRemoveOutput(IServiceProfile profile)
+        public static bool TryUIRemoveOutput(this IServiceProfile profile)
         {
             string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
             entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
@@ -1168,6 +1168,36 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 profile.RemoveOutputs(x => x.InteractionDefinitionType == interactionDefinitionTypes[0].FullName && x.TargetType == targetTypes[0].FullName);
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Opens a dialog to set feedback messages for Sims requesting and cancelling services.
+        /// </summary>
+        /// <returns><c>true</c>, if feedback messages were set, <c>false</c> otherwise.</returns>
+        public static bool TryUISetMessages(this IServiceProfile profile)
+        {
+            string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/SetMessagesDialog";
+            string[] results = ThreeStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), new string[]
+                {
+                    Localization.LocalizeString(entryKey + "/Prompts:SetRequestedMessage"),
+                    Localization.LocalizeString(entryKey + "/Prompts:SetCancelledMessage"),
+                    Localization.LocalizeString(entryKey + "/Prompts:SetCancelledWhileActiveMessage")
+                },
+                new string[]
+                {
+                    profile.RequestedMessage,
+                    profile.CancelledMessage,
+                    profile.CancelledWhileActiveMessage
+                }, false);
+            if (results == null)
+            {
+                return false;
+            }
+            profile.RequestedMessage = results[0];
+            profile.CancelledMessage = results[1];
+            profile.CancelledWhileActiveMessage = results[2];
+            return true;
         }
     }
 }

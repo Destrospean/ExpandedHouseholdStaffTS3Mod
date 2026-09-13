@@ -77,6 +77,12 @@
                 ":NotUnique": "The internal name was not unique."
                 ":NameEmpty": "The internal name was not specified."
                 ":TitleEmpty": "The display name was not specified."
+            "/SetMessagesDialog":
+                ":Title": "Specify Phone Call Feedback"
+                "/Prompts":
+                    ":SetCancelledMessage": "Enter in the feedback for cancelling the service."
+                    ":SetCancelledWhileActiveMessage": "Enter in the feedback for cancelling the service while it's active."
+                    ":SetRequestedMessage": "Enter in the feedback for requesting the service."
             "/ActualValueDialog":
                 ":Title": "Specify Actual Priority"
                 ":Prompt": "Enter in the actual priority value."
