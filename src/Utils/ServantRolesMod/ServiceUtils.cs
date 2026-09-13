@@ -1083,7 +1083,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
                 if (step == 4)
                 {
-                    if (!CommonUtils.TryUIGetBooleanValue(Localization.LocalizeString(entryKey + "/ActualValueDialog:Title"), out locked))
+                    if (!CommonUtils.TryUIGetBooleanValue(Localization.LocalizeString(entryKey + "/LockedDialog:Title"), out locked))
                     {
                         step--;
                         continue;
