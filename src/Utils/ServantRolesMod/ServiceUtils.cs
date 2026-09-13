@@ -1110,6 +1110,12 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
                 profile.RemoveOutputs(x => x.InteractionDefinitionType == interactionDefinitionTypes[0].FullName && x.TargetType == targetTypes[0].FullName);
                 profile.AddOutputs(new CommodityChange(interactionDefinitionTypes[0], targetTypes[0], ParserFunctions.ParseFloat(advertised, 200f), locked, ParserFunctions.ParseFloat(actual, 200f), updateType));
+                CustomService service;
+                if (CustomInstances.TryGetValue(profile.Name, out service))
+                {
+                    service.RemoveOutputs();
+                    service.AddOutputs();
+                }
                 return true;
             }
         }
@@ -1174,6 +1180,12 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     continue;
                 }
                 profile.RemoveOutputs(x => x.InteractionDefinitionType == interactionDefinitionTypes[0].FullName && x.TargetType == targetTypes[0].FullName);
+                CustomService service;
+                if (CustomInstances.TryGetValue(profile.Name, out service))
+                {
+                    service.RemoveOutputs();
+                    service.AddOutputs();
+                }
                 return true;
             }
         }
