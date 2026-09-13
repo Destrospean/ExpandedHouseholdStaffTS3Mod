@@ -1108,7 +1108,6 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     }
                     step++;
                 }
-
                 CustomService service;
                 bool serviceInSaveGame = CustomInstances.TryGetValue(profile.Name, out service);
                 if (serviceInSaveGame)
