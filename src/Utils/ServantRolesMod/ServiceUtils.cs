@@ -1234,6 +1234,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             {
                 ((ServiceProfile)profile).SetFlags(flags);
             }
+            profile.TryUISetPhoneCallFeedback();
             return true;
         }
 
