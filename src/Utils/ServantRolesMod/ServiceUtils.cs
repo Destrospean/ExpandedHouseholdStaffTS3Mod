@@ -1114,6 +1114,39 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         }
 
         /// <summary>
+        /// Opens a dialog to create a service profile.
+        /// </summary>
+        /// <returns><c>true</c>, if a service profile was created, <c>false</c> otherwise.</returns>
+        public static bool TryUICreateServiceProfile(out IServiceProfile profile)
+        {
+            profile = null;
+            string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/CreateServiceProfileDialog";
+            List<string> results = TwoStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:FirstPrompt"), Localization.LocalizeString(entryKey + "/Prompts:SecondPrompt"), "", "", Localization.LocalizeString("Ui/Caption/Global:Accept"), Localization.LocalizeString("Ui/Caption/Global:Cancel"));
+            if (results == null)
+            {
+                return false;
+            }
+            if (string.IsNullOrEmpty(results[0]))
+            {
+                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NameEmpty"));
+                return false;
+            }
+            if (string.IsNullOrEmpty(results[1]))
+            {
+                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":TitleEmpty"));
+                return false;
+            }
+            if (!CanAddServiceToSaveGame(results[0]))
+            {
+                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
+                return false;
+            }
+            profile = new ServiceProfile(results[0], results[1]);
+            return true;
+        }
+
+        /// <summary>
         /// Opens a series of dialogs to remove an output from an interaction for a service motive of the specified profile.
         /// </summary>
         /// <returns><c>true</c>, if the an output was removed, <c>false</c> otherwise.</returns>

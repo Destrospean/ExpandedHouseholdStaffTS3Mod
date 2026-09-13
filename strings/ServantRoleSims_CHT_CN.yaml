@@ -68,6 +68,15 @@
                 "/Options":
                     ":ContinuousFlow": "Continuous Flow"
                     ":ImmediateDelta": "Immediate Delta"
+            "/CreateServiceProfileDialog":
+                ":Title": "Create Service"
+                "/Prompts":
+                    ":FirstPrompt": "Enter in the internal name of the service (must be unique)."
+                    ":SecondPrompt": "Enter in display name of the service (what shows up in the UI)."
+                ":ServiceCreationFailed": "Service Creation Failed"
+                ":NotUnique": "The internal name was not unique."
+                ":NameEmpty": "An internal name was not specified."
+                ":TitleEmpty": "An display name was not specified."
             "/ActualValueDialog":
                 ":Title": "Specify Actual Priority"
                 ":Prompt": "Enter in the actual priority value."
