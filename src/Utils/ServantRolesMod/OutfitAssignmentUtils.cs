@@ -276,18 +276,19 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             BodyTypes[] tempPartOverrides = null;
             if (DebugUtils.TryDisplayScriptError(() =>
                 {
-                    string localizationPath = typeof(OutfitAssignmentUtils).GetLocalizationKey() + "/Dialogs/PartOverrideListDialog";
+                    string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
+                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/PartOverrideListDialog";
                     List<BodyTypes> partOverrideList = new List<BodyTypes>(preSelectedPartOverrides ?? assignedOutfit.PartOverrides.ToArray());
                     bool cancelled, confirmed;
                     while (true)
                     {
-                        List<BodyTypes> selectedPartOverrides = UI.Dialogs.ObjectPickerDialog.Show(Responder.Instance.LocalizationModel.LocalizeString(localizationPath + ":Title"), new List<ObjectPicker.TabInfo>
+                        List<BodyTypes> selectedPartOverrides = UI.Dialogs.ObjectPickerDialog.Show(Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
                             {
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<BodyTypes>(OverridableBodyTypes).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<UI.Dialogs.ObjectPickerDialog.CommonHeaderInfo<BodyTypes>>
                             {
-                                new BodyTypeColumn(localizationPath),
-                                new PartOverrideEnabledColumn(localizationPath, partOverrideList.ToArray())
+                                new BodyTypeColumn(entryKey),
+                                new PartOverrideEnabledColumn(entryKey, partOverrideList.ToArray())
                             }, 1, out confirmed, out cancelled, true);
                         if (cancelled)
                         {
