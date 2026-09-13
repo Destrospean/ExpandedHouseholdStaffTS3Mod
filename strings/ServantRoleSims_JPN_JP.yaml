@@ -1,4 +1,33 @@
 "zoeoeAndDestrospean":
+    "/UI":
+        "/Dialogs":
+            "/NamespaceListDialog":
+                ":Title": "Namespace"
+                "/Titles":
+                    ":InteractionDefinition": "Interaction Definition Namespace"
+                    ":Target": "Target Namespace"
+            "/TypeListDialog":
+                ":Title": "Class"
+                "/Titles":
+                    ":InteractionDefinition": "Interaction Definition Class"
+                    ":Target": "Target Class"
+            "/BooleanValueDialog":
+                "/Options":
+                    ":True": "True"
+                    ":False": "False"
+            "/UpdateTypeDialog":
+                ":Title": "Update Type"
+                "/Options":
+                    ":ContinuousFlow": "Continuous Flow"
+                    ":ImmediateDelta": "Immediate Delta"
+            "/ActualValueDialog":
+                ":Title": "Actual Priority"
+                ":Prompt": "Enter in the actual priority value."
+            "/AdvertisedValueDialog":
+                ":Title": "Advertised Priority"
+                ":Prompt": "Enter in the advertised priority value."
+            "/LockedDialog":
+                ":Title": "Locked"
     "/ServantRolesMod":
         "/Services":
             "/Chef":

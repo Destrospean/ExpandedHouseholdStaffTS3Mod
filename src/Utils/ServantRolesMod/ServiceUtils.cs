@@ -955,50 +955,6 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         [PersistableStatic(true)]
         public static List<IServiceProfile> ServiceProfiles = new List<IServiceProfile>();
 
-        static bool TryUIGetBooleanValue(string title, out bool boolean)
-        {
-            string text = UI.Dialogs.ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
-                {
-                    {
-                        "True (REPLACE THIS TEXT)",
-                        true.ToString()
-                    },
-                    {
-                        "False (REPLACE THIS TEXT)",
-                        false.ToString()
-                    }
-                }, false.ToString()) as string;
-            if (text == null)
-            {
-                boolean = false;
-                return false;
-            }
-            boolean = bool.Parse(text);
-            return true;
-        }
-
-        static bool TryUIGetUpdateType(string title, out OutputUpdateType updateType)
-        {
-            string text = UI.Dialogs.ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
-                {
-                    {
-                        "Continuous Flow (REPLACE THIS TEXT)",
-                        OutputUpdateType.ContinuousFlow.ToString()
-                    },
-                    {
-                        "Immediate Delta (REPLACE THIS TEXT)",
-                        OutputUpdateType.ImmediateDelta.ToString()
-                    }
-                }, OutputUpdateType.ContinuousFlow.ToString()) as string;
-            if (text == null)
-            {
-                updateType = 0;
-                return false;
-            }
-            updateType = (OutputUpdateType)Enum.Parse(typeof(OutputUpdateType), text);
-            return true;
-        }
-
         /// <summary>
         /// Adds a custom service with the specified profile to the savegame, requestable via the <see cref="Sims3.Gameplay.zoeoeAndDestrospean.ServantRolesMod.Interactions.CallForServices"/> interaction.
         /// </summary>
@@ -1077,18 +1033,20 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// <returns><c>true</c>, if the an output was added, <c>false</c> otherwise.</returns>
         public static bool TryUIAddOutput(IServiceProfile profile)
         {
-            byte step = 0;
+            string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
             Type[] interactionDefinitionTypes = null;
             Type[] targetTypes = null;
             string advertised = null;
             string actual = null;
             bool locked = false;
             OutputUpdateType updateType = 0;
+            byte step = 0;
             while (true)
             {
                 if (step == 0)
                 {
-                    if (!InteractionObjectTypeUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, InteractionObjectTypeUtils.InteractionDefinitionTypes))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, InteractionObjectTypeUtils.InteractionDefinitionTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:InteractionDefinition")))
                     {
                         return false;
                     }
@@ -1096,7 +1054,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
                 if (step == 1)
                 {
-                    if (!InteractionObjectTypeUtils.TryUIGetSelectedTypes(out targetTypes, InteractionObjectTypeUtils.GameObjectTypes))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, InteractionObjectTypeUtils.GameObjectTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:Target")))
                     {
                         step--;
                         continue;
@@ -1105,7 +1063,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
                 if (step == 2)
                 {
-                    advertised = StringInputDialog.Show("Priority (REPLACE THIS TEXT)", "Advertised (REPLACE THIS TEXT)", "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    advertised = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/AdvertisedValueDialog:Title"), Localization.LocalizeString(entryKey + "/AdvertisedValueDialog:Prompt"), "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
                     if (advertised == null)
                     {
                         step--;
@@ -1115,7 +1073,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
                 if (step == 3)
                 {
-                    actual = StringInputDialog.Show("Priority (REPLACE THIS TEXT)", "Actual (REPLACE THIS TEXT)", "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    actual = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/ActualValueDialog:Title"), Localization.LocalizeString(entryKey + "/ActualValueDialog:Prompt"), "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
                     if (actual == null)
                     {
                         step--;
@@ -1125,7 +1083,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
                 if (step == 4)
                 {
-                    if (!TryUIGetBooleanValue("Locked (REPLACE THIS TEXT)", out locked))
+                    if (!CommonUtils.TryUIGetBooleanValue(Localization.LocalizeString(entryKey + "/ActualValueDialog:Title"), out locked))
                     {
                         step--;
                         continue;
@@ -1134,7 +1092,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
                 if (step == 5)
                 {
-                    if (!TryUIGetUpdateType("Update Type (REPLACE THIS TEXT)", out updateType))
+                    if (!CommonUtils.TryUIGetUpdateType(Localization.LocalizeString(entryKey + "/UpdateTypeDialog:Title"), out updateType))
                     {
                         step--;
                         continue;
@@ -1153,14 +1111,16 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// <returns><c>true</c>, if the an output was removed, <c>false</c> otherwise.</returns>
         public static bool TryUIRemoveOutput(IServiceProfile profile)
         {
+            string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
             Type[] interactionDefinitionTypes, targetTypes;
             while (true)
             {
-                if (!InteractionObjectTypeUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, Array.FindAll(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => profile.Outputs.Exists(y => y.InteractionDefinitionType == x.FullName))))
+                if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, Array.FindAll(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => profile.Outputs.Exists(y => y.InteractionDefinitionType == x.FullName)), Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:InteractionDefinition")))
                 {
                     return false;
                 }
-                if (!InteractionObjectTypeUtils.TryUIGetSelectedTypes(out targetTypes, Array.FindAll(InteractionObjectTypeUtils.GameObjectTypes, x => profile.Outputs.Exists(y => y.TargetType == x.FullName && Array.Exists(interactionDefinitionTypes, z => z.FullName == y.InteractionDefinitionType)))))
+                if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, Array.FindAll(InteractionObjectTypeUtils.GameObjectTypes, x => profile.Outputs.Exists(y => y.TargetType == x.FullName && Array.Exists(interactionDefinitionTypes, z => z.FullName == y.InteractionDefinitionType))), Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:Target")))
                 {
                     continue;
                 }

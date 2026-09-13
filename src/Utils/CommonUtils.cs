@@ -7,6 +7,7 @@ using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace;
+using Sims3.UI;
 using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,10 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Xml;
 using zoeoeAndDestrospean.Enums;
+using zoeoeAndDestrospean.Misc;
+using zoeoeAndDestrospean.UI.Columns;
+using zoeoeAndDestrospean.UI.Dialogs;
+using ObjectPickerDialog = zoeoeAndDestrospean.UI.Dialogs.ObjectPickerDialog;
 
 namespace zoeoeAndDestrospean.Utils
 {
@@ -399,7 +404,7 @@ namespace zoeoeAndDestrospean.Utils
                     MethodInfo oldMethod = typeof(OldType).GetMethod(oldMethodName, (BindingFlags)0x3C, null, Array.ConvertAll(method.GetParameters(), x => x.ParameterType), null);
                     if (oldMethod != null)
                     {
-                        CommonUtils.ReplaceMethod(oldMethod, method);
+                        ReplaceMethod(oldMethod, method);
                     }
                 }
             }
@@ -420,6 +425,107 @@ namespace zoeoeAndDestrospean.Utils
                 }
             }
             return false;
+        }
+
+        public static bool TryUIGetBooleanValue(string title, out bool boolean)
+        {
+            string entryKey = typeof(UI.Dialogs.ComboSelectionDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/BooleanValueDialog/Options:";
+            string text = UI.Dialogs.ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
+                {
+                    {
+                        Localization.LocalizeString(entryKey + true),
+                        true.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(entryKey + false),
+                        false.ToString()
+                    }
+                }, false.ToString()) as string;
+            if (text == null)
+            {
+                boolean = false;
+                return false;
+            }
+            boolean = bool.Parse(text);
+            return true;
+        }
+
+        public static bool TryUIGetSelectedTypes(out Type[] selectedTypes, Type[] allTypes, string namespaceListTitle = null, string typeListTitle = null)
+        {
+            bool retVal;
+            Type[] tempSelectedTypes = null;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+                    Array.Sort(allTypes, (a, b) => a.FullName.CompareTo(b.FullName));
+                    List<string> namespaces = new List<string>();
+                    foreach (Type type in allTypes)
+                    {
+                        if (!namespaces.Contains(type.Namespace))
+                        {
+                            namespaces.Add(type.Namespace);
+                        }
+                    }
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        List<string> selectedNamespaces = ObjectPickerDialog.Show(namespaceListTitle ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/NamespaceListDialog:Title"), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), namespaces.ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<string>>
+                            {
+                                new TextColumn(entryKey + "/NamespaceListDialog")
+                            }, 1, out confirmed, out cancelled);
+                        if (cancelled)
+                        {
+                            tempSelectedTypes = null;
+                            return false;
+                        }
+                        tempSelectedTypes = (ObjectPickerDialog.Show(typeListTitle ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/TypeListDialog:Title"), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", selectedNamespaces[0], new List<Type>(allTypes).FindAll(x => x.Namespace == selectedNamespaces[0]).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<Type>>
+                            {
+                                new TypeColumn(entryKey + "/TypeListDialog")
+                            }, int.MaxValue, out confirmed, out cancelled) ?? new List<Type>()).ToArray();
+                        if (confirmed)
+                        {
+                            return true;
+                        }
+                    }
+                }, out retVal))
+            {
+                selectedTypes = null;
+                return false;
+            }
+            selectedTypes = tempSelectedTypes;
+            return retVal;
+        }
+
+        public static bool TryUIGetUpdateType(string title, out OutputUpdateType updateType)
+        {
+            string entryKey = typeof(UI.Dialogs.ComboSelectionDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/UpdateTypeDialog/Options:";
+            string text = UI.Dialogs.ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
+                {
+                    {
+                        Localization.LocalizeString(entryKey + OutputUpdateType.ContinuousFlow),
+                        OutputUpdateType.ContinuousFlow.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(entryKey + OutputUpdateType.ImmediateDelta),
+                        OutputUpdateType.ImmediateDelta.ToString()
+                    }
+                }, OutputUpdateType.ContinuousFlow.ToString()) as string;
+            if (text == null)
+            {
+                updateType = 0;
+                return false;
+            }
+            updateType = (OutputUpdateType)Enum.Parse(typeof(OutputUpdateType), text);
+            return true;
         }
 
         public static void UpdateMotiveTunings(Sim sim, CommodityKind commodityKind)
