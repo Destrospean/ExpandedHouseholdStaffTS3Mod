@@ -427,7 +427,7 @@ namespace zoeoeAndDestrospean.Utils
             return false;
         }
 
-        public static bool TryUIGetBooleanValue(string title, out bool boolean)
+        public static bool TryUIGetBooleanValue(string title, out bool boolean, bool defaultValue = false)
         {
             string text = UI.Dialogs.ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
                 {
@@ -439,7 +439,7 @@ namespace zoeoeAndDestrospean.Utils
                         Localization.LocalizeString(0x918EEA8E85AB6760),
                         false.ToString()
                     }
-                }, false.ToString()) as string;
+                }, defaultValue.ToString()) as string;
             if (text == null)
             {
                 boolean = false;
