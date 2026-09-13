@@ -1053,10 +1053,11 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             RemoveServiceFromSaveGame(profile.Name);
         }
 
-        public static bool ShowServiceProfileFlagListDialog(IServiceProfile profile, out ServiceProfileFlags[] flags, ServiceProfileFlags[] preSelectedFlags = null)
+        public static bool ShowServiceProfileFlagListDialog(IServiceProfile profile, out ServiceProfileFlags flags, ServiceProfileFlags[] preSelectedFlags = null)
         {
+            flags = 0;
             bool retVal;
-            ServiceProfileFlags[] tempFlags = null;
+            ServiceProfileFlags[] flagArray = null;
             if (DebugUtils.TryDisplayScriptError(() =>
                 {
                     string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
@@ -1075,12 +1076,12 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                             }, 1, out confirmed, out cancelled, true);
                         if (cancelled)
                         {
-                            tempFlags = null;
+                            flagArray = null;
                             return false;
                         }
                         if (confirmed)
                         {
-                            tempFlags = flagList.ToArray();
+                            flagArray = flagList.ToArray();
                             return true;
                         }
                         if (flagList.Contains(selectedFlags[0]))
@@ -1094,10 +1095,12 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                     }
                 }, out retVal))
             {
-                flags = null;
                 return false;
             }
-            flags = tempFlags;
+            foreach (ServiceProfileFlags flag in flagArray)
+            {
+                flags |= flag;
+            }
             return retVal;
         }
 
