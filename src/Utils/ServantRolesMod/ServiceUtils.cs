@@ -1232,7 +1232,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             ServiceProfileFlags flags;
             if (profile.ShowServiceProfileFlagListDialog(out flags))
             {
-                (profile as ServiceProfile)?.SetFlags(flags);
+                ((ServiceProfile)profile).SetFlags(flags);
             }
             return true;
         }
