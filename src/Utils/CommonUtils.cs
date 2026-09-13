@@ -429,16 +429,14 @@ namespace zoeoeAndDestrospean.Utils
 
         public static bool TryUIGetBooleanValue(string title, out bool boolean)
         {
-            string entryKey = typeof(UI.Dialogs.ComboSelectionDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/BooleanValueDialog/Options:";
             string text = UI.Dialogs.ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
                 {
                     {
-                        Localization.LocalizeString(entryKey + true),
+                        Localization.LocalizeString(0xC83C121BA92C23BF),
                         true.ToString()
                     },
                     {
-                        Localization.LocalizeString(entryKey + false),
+                        Localization.LocalizeString(0x918EEA8E85AB6760),
                         false.ToString()
                     }
                 }, false.ToString()) as string;

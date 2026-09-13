@@ -63,23 +63,19 @@
                         ":Socks": "Socks"
                         ":UpperBody": "Upper Body"
                         ":WeddingRing": "Wedding Ring"
-            "/BooleanValueDialog":
-                "/Options":
-                    ":True": "True"
-                    ":False": "False"
             "/UpdateTypeDialog":
-                ":Title": "Update Type"
+                ":Title": "Select Update Type"
                 "/Options":
                     ":ContinuousFlow": "Continuous Flow"
                     ":ImmediateDelta": "Immediate Delta"
             "/ActualValueDialog":
-                ":Title": "Actual Priority"
+                ":Title": "Specify Actual Priority"
                 ":Prompt": "Enter in the actual priority value."
             "/AdvertisedValueDialog":
-                ":Title": "Advertised Priority"
+                ":Title": "Specify Advertised Priority"
                 ":Prompt": "Enter in the advertised priority value."
             "/LockedDialog":
-                ":Title": "Locked"
+                ":Title": "Specify If Locked"
     "/ServantRolesMod":
         "/Services":
             "/CustomService":
