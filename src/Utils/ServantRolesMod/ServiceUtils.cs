@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using zoeoeAndDestrospean.Enums;
 using zoeoeAndDestrospean.Enums.ServantRolesMod;
 using zoeoeAndDestrospean.Misc;
+using zoeoeAndDestrospean.UI.Columns.ServantRolesMod;
+using ObjectPickerDialog = zoeoeAndDestrospean.UI.Dialogs.ObjectPickerDialog;
 
 namespace zoeoeAndDestrospean.Utils.ServantRolesMod
 {
@@ -853,6 +855,16 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 }
             }
 
+            public ServiceProfileFlags GetFlags()
+            {
+                return (ServiceProfileFlags)mFlags;
+            }
+
+            public bool HasFlags(ServiceProfileFlags flags)
+            {
+                return ((ServiceProfileFlags)mFlags & flags) == flags;
+            }
+
             public void RemoveActions(params ActiveTopicAction[] actions)
             {
                 foreach (ActiveTopicAction action in actions)
@@ -942,6 +954,11 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
                 {
                     mTraits.Remove((ulong)trait);
                 }
+            }
+
+            public void SetFlags(ServiceProfileFlags flags)
+            {
+                mFlags = (ulong)flags;
             }
         }
 
@@ -1036,13 +1053,61 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
             RemoveServiceFromSaveGame(profile.Name);
         }
 
+        public static bool ShowServiceProfileFlagListDialog(IServiceProfile profile, out ServiceProfileFlags[] flags, ServiceProfileFlags[] preSelectedFlags = null)
+        {
+            bool retVal;
+            ServiceProfileFlags[] tempFlags = null;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/ServiceProfileFlagListDialog";
+                    List<ServiceProfileFlags> flagList = new List<ServiceProfileFlags>(preSelectedFlags ?? Array.FindAll((ServiceProfileFlags[])Enum.GetValues(typeof(ServiceProfileFlags)), x => (profile as ServiceProfile)?.HasFlags(x) ?? false));
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        List<ServiceProfileFlags> selectedFlags = ObjectPickerDialog.Show(Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<ServiceProfileFlags>((ServiceProfileFlags[])Enum.GetValues(typeof(ServiceProfileFlags))).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<ServiceProfileFlags>>
+                            {
+                                new ServiceProfileFlagColumn(entryKey),
+                                new ServiceProfileFlagEnabledColumn(entryKey, flagList.ToArray())
+                            }, 1, out confirmed, out cancelled, true);
+                        if (cancelled)
+                        {
+                            tempFlags = null;
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            tempFlags = flagList.ToArray();
+                            return true;
+                        }
+                        if (flagList.Contains(selectedFlags[0]))
+                        {
+                            flagList.Remove(selectedFlags[0]);
+                        }
+                        else
+                        {
+                            flagList.Add(selectedFlags[0]);
+                        }
+                    }
+                }, out retVal))
+            {
+                flags = null;
+                return false;
+            }
+            flags = tempFlags;
+            return retVal;
+        }
+
         /// <summary>
         /// Opens a series of dialogs to add an output to an interaction for a service motive of the specified profile.
         /// </summary>
         /// <returns><c>true</c>, if the an output was added, <c>false</c> otherwise.</returns>
         public static bool TryUIAddOutput(this IServiceProfile profile)
         {
-            string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
             entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
             Type[] interactionDefinitionTypes = null;
             Type[] targetTypes = null;
@@ -1131,7 +1196,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         public static bool TryUICreateServiceProfile(out IServiceProfile profile)
         {
             profile = null;
-            string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
             entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/CreateServiceProfileDialog";
             List<string> results = TwoStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:FirstPrompt"), Localization.LocalizeString(entryKey + "/Prompts:SecondPrompt"), "", "", Localization.LocalizeString("Ui/Caption/Global:Accept"), Localization.LocalizeString("Ui/Caption/Global:Cancel"));
             if (results == null)
@@ -1170,7 +1235,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// <returns><c>true</c>, if the an output was removed, <c>false</c> otherwise.</returns>
         public static bool TryUIRemoveOutput(this IServiceProfile profile)
         {
-            string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
             entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
             Type[] interactionDefinitionTypes, targetTypes;
             while (true)
@@ -1204,7 +1269,7 @@ namespace zoeoeAndDestrospean.Utils.ServantRolesMod
         /// <returns><c>true</c>, if feedback messages were set, <c>false</c> otherwise.</returns>
         public static bool TryUISetPhoneCallFeedback(this IServiceProfile profile)
         {
-            string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
             entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/SetPhoneCallFeedbackDialog";
             string[] results = ThreeStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), new string[]
                 {
