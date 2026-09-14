@@ -1127,7 +1127,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
         public static bool ShowCASAgeGenderFlagListDialog(this IServiceProfile profile, out CASAgeGenderFlags flags, CASAgeGenderFlags? preSelectedFlags = null, CASAgeGenderFlags mask = CASAgeGenderFlags.AgeMask | CASAgeGenderFlags.GenderMask, string title = null)
         {
-            flags = 0;
+            flags = CASAgeGenderFlags.None;
             bool retVal;
             CASAgeGenderFlags[] flagArray = null;
             if (DebugUtils.TryDisplayScriptError(() =>
@@ -1355,12 +1355,12 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             CASAgeGenderFlags ageFlags;
             if (profile.ShowCASAgeGenderFlagListDialog(out ageFlags, null, CASAgeGenderFlags.AgeMask, Localization.LocalizeString(entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog/Titles:Age")))
             {
-                ((ServiceProfile)profile).ValidAges = ageFlags;
+                profile.ValidAges = ageFlags;
             }
             CASAgeGenderFlags genderFlags;
             if (profile.ShowCASAgeGenderFlagListDialog(out genderFlags, null, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog/Titles:Gender")))
             {
-                ((ServiceProfile)profile).ValidGenders = genderFlags;
+                profile.ValidGenders = genderFlags;
             }
             ServiceProfileFlags serviceProfileFlags;
             if (profile.ShowServiceProfileFlagListDialog(out serviceProfileFlags))
