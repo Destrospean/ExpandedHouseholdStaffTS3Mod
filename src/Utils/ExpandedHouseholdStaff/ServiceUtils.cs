@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using Destrospean.Enums;
 using Destrospean.Enums.ExpandedHouseholdStaff;
 using Destrospean.Misc;
+using Destrospean.UI.Columns;
 using Destrospean.UI.Columns.ExpandedHouseholdStaff;
 using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
 
@@ -1040,8 +1041,9 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         {
             if (CanRemoveServiceFromSaveGame(name))
             {
-                CustomService.Deinit(CustomInstances[name].Profile);
-                ServiceProfiles.Remove(CustomInstances[name].Profile);
+                IServiceProfile profile = CustomInstances[name].Profile;
+                CustomService.Deinit(profile);
+                ServiceProfiles.Remove(profile);
             }
         }
 
@@ -1123,7 +1125,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 if (step == 0)
                 {
-                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, InteractionObjectTypeUtils.InteractionDefinitionTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:InteractionDefinition")))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, InteractionObjectTypeUtils.InteractionDefinitionTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:InteractionDefinition"), 1, true))
                     {
                         return false;
                     }
@@ -1131,7 +1133,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 1)
                 {
-                    if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, InteractionObjectTypeUtils.GameObjectTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:Target")))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, InteractionObjectTypeUtils.GameObjectTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:Target"), 1, true))
                     {
                         step--;
                         continue;
@@ -1238,6 +1240,43 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return true;
         }
 
+        public static bool TryUIGetSelectedServiceProfiles(out IServiceProfile[] selectedProfiles, IServiceProfile[] allProfiles, string profileListTitle = null, int selectableRowCount = int.MaxValue, bool okayButtonAlwaysEnabled = false)
+        {
+            bool retVal;
+            IServiceProfile[] tempSelectedProfiles = null;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        tempSelectedProfiles = (ObjectPickerDialog.Show(profileListTitle ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/ServiceProfileListDialog:Title"), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<IServiceProfile>(allProfiles).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<IServiceProfile>>
+                            {
+                                new ServiceProfileColumn(entryKey + "/ServiceProfileListDialog")
+                            }, selectableRowCount, out confirmed, out cancelled, okayButtonAlwaysEnabled) ?? new List<IServiceProfile>()).ToArray();
+                        if (cancelled)
+                        {
+                            tempSelectedProfiles = null;
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            return true;
+                        }
+                    }
+                }, out retVal))
+            {
+                selectedProfiles = null;
+                return false;
+            }
+            selectedProfiles = tempSelectedProfiles;
+            return retVal;
+        }
+
         /// <summary>
         /// Opens a series of dialogs to remove an output from an interaction for a service motive of the specified profile.
         /// </summary>
@@ -1270,6 +1309,26 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Opens a dialog to remove custom services from the savegame.
+        /// </summary>
+        /// <returns><c>true</c>, if any custom services were removed from the savegame, <c>false</c> otherwise.</returns>
+        public static bool TryUIRemoveServicesFromSaveGame()
+        {
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/DeleteServiceProfileDialog";
+            IServiceProfile[] selectedProfiles;
+            if (TryUIGetSelectedServiceProfiles(out selectedProfiles, ServiceProfiles.ToArray(), Localization.LocalizeString(entryKey + ":Title")))
+            {
+                foreach (IServiceProfile profile in new List<IServiceProfile>(selectedProfiles))
+                {
+                    profile.RemoveServiceFromSaveGame();
+                }
+                return true;
+            }
+            return false;
         }
 
         /// <summary>

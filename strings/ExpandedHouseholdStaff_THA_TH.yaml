@@ -87,6 +87,8 @@
                 "/Options":
                     ":ContinuousFlow": "Continuous Flow"
                     ":ImmediateDelta": "Immediate Delta"
+            "/ServiceProfileListDialog":
+                ":Title": "Select Services"
             "/CreateServiceProfileDialog":
                 ":Title": "Create Service"
                 "/Prompts":
@@ -96,6 +98,8 @@
                 ":NotUnique": "The internal name was not unique."
                 ":NameEmpty": "The internal name was not specified."
                 ":TitleEmpty": "The display name was not specified."
+            "/DeleteServiceProfileDialog":
+                ":Title": "Delete Services"
             "/SetPhoneCallFeedbackDialog":
                 ":Title": "Specify Phone Call Feedback"
                 "/Prompts":
@@ -111,6 +115,13 @@
             "/LockedDialog":
                 ":Title": "Specify If Locked"
     "/ExpandedHouseholdStaff":
+        "/Interactions":
+            "/CreateServiceProfile":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Create Service"
+            "/DeleteServiceProfile":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Delete Services"
         "/Services":
             "/CustomService":
                 ":NotEnoughFunds": "You don't have enough funds to pay the {0.String}."

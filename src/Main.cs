@@ -1,6 +1,7 @@
 ﻿using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
+using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.ObjectComponents;
@@ -29,31 +30,35 @@ namespace Destrospean.ExpandedHouseholdStaff
     public class Main
     {
         [Tunable]
-        static bool kInitializeIncludedServices = true;
-
-        [Tunable]
-        static bool kIntegrateNRaasMasterController = true;
-
-        [Tunable]
-        static bool kShowDebugMessages = true;
+        protected static bool kInstantiator;
 
         static Main()
         {
             CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
-            DebugUtils.ShowDebugMessages = kShowDebugMessages;
+            DebugUtils.ShowDebugMessages = Tuning.kShowDebugMessages;
             InteractionObjectTypeUtils.InitTypes();
-            if (kIntegrateNRaasMasterController && Array.Exists(AppDomain.CurrentDomain.GetAssemblies(), x => x.GetName().Name == "NRaasMasterController"))
+            if (Tuning.kIntegrateNRaasMasterController && Array.Exists(AppDomain.CurrentDomain.GetAssemblies(), x => x.GetName().Name == "NRaasMasterController"))
             {
                 NRaasMasterControllerIntegration.Init();
             }
             LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
+            EventListener simInstantiatedListener = null;
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
+                    foreach (Sim sim in Sims3.Gameplay.Queries.GetObjects<Sim>())
+                    {
+                        AddInteractions(sim);
+                    }
+                    simInstantiatedListener = EventTracker.AddListener(EventTypeId.kSimInstantiated, evt =>
+                        {
+                            DebugUtils.TryDisplayScriptError(() => AddInteractions(evt.TargetObject as Sim));
+                            return ListenerAction.Keep;
+                        });
                     foreach (IServiceProfile profile in ServiceUtils.ServiceProfiles)
                     {
                         CustomService.Init(profile);
                     }
-                    if (kInitializeIncludedServices)
+                    if (Tuning.kInitializeIncludedServices)
                     {
                         string entryKey = typeof(CustomService).GetLocalizationKey().Replace("CustomService", "");
                         CustomService.Init(new ServiceUtils.ServiceProfile("Housekeeper", Localization.LocalizeString(entryKey + "Housekeeper:Title"), new List<CommodityKind>
@@ -145,11 +150,22 @@ namespace Destrospean.ExpandedHouseholdStaff
                 });
             World.sOnWorldQuitEventHandler += (sender, e) =>
                 {
+                    EventTracker.RemoveListener(simInstantiatedListener);
+                    simInstantiatedListener = null;
                     foreach (CustomService service in new List<CustomService>(ServiceUtils.CustomInstances.Values))
                     {
                         CustomService.Deinit(service.Profile, true);
                     }
                 };
+        }
+
+        public static void AddInteractions(Sim sim)
+        {
+            if (sim != null)
+            {
+                sim.AddInteraction(CreateServiceProfile.Singleton, true);
+                sim.AddInteraction(DeleteServiceProfile.Singleton, true);
+            }
         }
 
         public static bool IsInServicePreventingSocialization(Sim target)
