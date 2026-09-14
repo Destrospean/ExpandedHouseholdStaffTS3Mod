@@ -1354,20 +1354,24 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 };
             profile.TryUISetPhoneCallFeedback();
             CASAgeGenderFlags ageFlags;
-            if (profile.ShowCASAgeGenderFlagListDialog(out ageFlags, null, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog/Titles:Age")))
+            string entryKeyTruncated = entryKey.Remove(entryKey.LastIndexOf('/'));
+            if (profile.ShowCASAgeGenderFlagListDialog(out ageFlags, null, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKeyTruncated + "/CASAgeGenderFlagListDialog/Titles:Age")))
             {
                 profile.ValidAges = ageFlags;
             }
             CASAgeGenderFlags genderFlags;
-            if (profile.ShowCASAgeGenderFlagListDialog(out genderFlags, CASAgeGenderFlags.GenderMask, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog/Titles:Gender")))
+            if (profile.ShowCASAgeGenderFlagListDialog(out genderFlags, CASAgeGenderFlags.GenderMask, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKeyTruncated + "/CASAgeGenderFlagListDialog/Titles:Gender")))
             {
                 profile.ValidGenders = genderFlags;
             }
             ServiceProfileFlags serviceProfileFlags;
+            ServiceProfile serviceProfile = (ServiceProfile)profile;
             if (profile.ShowServiceProfileFlagListDialog(out serviceProfileFlags))
             {
-                ((ServiceProfile)profile).SetFlags(serviceProfileFlags);
+                serviceProfile.SetFlags(serviceProfileFlags);
             }
+            string cost = StringInputDialog.Show(Localization.LocalizeString(entryKeyTruncated + "/CostDialog:Title"), Localization.LocalizeString(entryKeyTruncated + "/CostDialog/Prompts:" + (profile.IsLiveInService ? "Weekly" : "Daily")), "50", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+            serviceProfile.Cost = cost == null ? serviceProfile.Cost : int.Parse(cost);
             return true;
         }
 

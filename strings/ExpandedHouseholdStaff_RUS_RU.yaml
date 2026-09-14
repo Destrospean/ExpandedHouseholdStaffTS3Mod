@@ -146,6 +146,11 @@
                 ":Prompt": "Enter in the advertised priority value."
             "/LockedDialog":
                 ":Title": "Specify If Locked"
+            "/CostDialog":
+                ":Title": "Specify Cost"
+                "/Prompts":
+                    ":Daily": "Enter in the daily cost of the service."
+                    ":Weekly": "Enter in the weekly cost of the service."
     "/ExpandedHouseholdStaff":
         "/Interactions":
             "/CreateServiceProfile":
