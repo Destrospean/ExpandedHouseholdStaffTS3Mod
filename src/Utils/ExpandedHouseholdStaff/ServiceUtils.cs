@@ -144,8 +144,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             float mCheckTime = 5f;
 
-            int mCost = 50;
-
             float mDelayBeforeArriving = 0.5f;
 
             float mDelayBeforeLeaving = 0.3f;
@@ -159,8 +157,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             List<IGameObject> mInventory = new List<IGameObject>();
 
             List<ulong> mHiddenTraits = new List<ulong>();
-
-            int mMaxNumNPCsInPool = 1;
 
             List<int> mMotives = new List<int>();
 
@@ -308,6 +304,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     mCheckTime = value;
                 }
             }
+
+            public int Cost = 50;
 
             /// <summary>
             /// Length of time (in hours) that the service NPC waits before routing to lot.
@@ -514,6 +512,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
             }
 
+            public int MaxNumNPCsInPool = 1;
+
             /// <summary>
             /// The service motives. If assigning manually (rather than as a parameter in the constructor) be sure include the <see cref="ServiceMotive"/> property.
             /// Note: do not add or remove elements from this property directly, as that will not work. Use the <see cref="AddMotives"/> and <see cref="RemoveMotives"/> methods instead.
@@ -667,12 +667,12 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 get
                 {
-                    return new Service.ServiceTuning(mMaxNumNPCsInPool, mCost, IsEmergencyService, IsLiveInService || IsRecurrent, AlwaysTryToSendTheSameSim);
+                    return new Service.ServiceTuning(MaxNumNPCsInPool, Cost, IsEmergencyService, IsLiveInService || IsRecurrent, AlwaysTryToSendTheSameSim);
                 }
                 set
                 {
-                    mCost = value.kCost;
-                    mMaxNumNPCsInPool = value.kMaxNumNPCsInPool;
+                    Cost = value.kCost;
+                    MaxNumNPCsInPool = value.kMaxNumNPCsInPool;
                     AlwaysTryToSendTheSameSim = value.kAlwaysTryToSendSameSim;
                     IsEmergencyService = value.kIsEmergencyService;
                     IsRecurrent = value.kIsRecurrent;
