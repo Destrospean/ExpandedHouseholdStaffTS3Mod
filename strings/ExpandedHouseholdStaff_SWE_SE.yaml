@@ -82,6 +82,9 @@
                         ":ReportsFires": "Reports Fires to the Fire Department"
                         ":ScaredOfBonehilda": "Scared of Bonehilda"
                         ":WaitsBeforePuttingAwayLeftovers": "Waits Before Putting Away Leftovers"
+                        ":Recurrent": "Recurring"
+                        ":EmergencyService": "Emergency Service"
+                        ":AlwaysTryToSendTheSameSim": "Always Try to Send the Same Sim"
             "/UpdateTypeDialog":
                 ":Title": "Select Update Type"
                 "/Options":

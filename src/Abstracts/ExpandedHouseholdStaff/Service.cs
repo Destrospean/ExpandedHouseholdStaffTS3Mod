@@ -415,10 +415,6 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
                         {
                             SetTraits(simDescription);
                             SetRandomTraits(simDescription);
-                            if (customService == null || ((ServiceUtils.ServiceProfile)customService.Profile).GetUniformFromName)
-                            {
-                                OverlayUniform(simDescription, ServiceType.ToString());
-                            }
                         }
                     }
                 });

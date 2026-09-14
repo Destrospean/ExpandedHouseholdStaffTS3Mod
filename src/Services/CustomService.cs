@@ -30,22 +30,22 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
         {
             public new class Definition : Service<CustomService>.SetUnsetServiceBed.Definition
             {
-                IServiceProfile mServiceProfile;
+                public IServiceProfile ServiceProfile;
 
                 public Definition(IServiceProfile serviceProfile)
                 {
-                    mServiceProfile = serviceProfile;
+                    ServiceProfile = serviceProfile;
                 }
 
                 public override string GetInteractionName(Sim actor, Bed target, InteractionObjectPair iop)
                 {
                     CustomService service;
-                    if (!ServiceUtils.CustomInstances.TryGetValue(mServiceProfile.Name, out service) || service == null)
+                    if (!ServiceUtils.CustomInstances.TryGetValue(ServiceProfile.Name, out service) || service == null)
                     {
-                        return mServiceProfile.Title;
+                        return ServiceProfile.Title;
                     }
                     List<Sim> simsAssignedToLot = service.GetSimsAssignedToLot(actor.LotHome);
-                    return Localization.LocalizeString(actor.IsFemale, DerivedType.GetLocalizationKey() + "/" + typeof(SetUnsetServiceBed).Name + (target.FindOwnedBed(simsAssignedToLot[0]) == target ? ":Unset" : ":Set") + "InteractionName", simsAssignedToLot[0].SimDescription, mServiceProfile.Title);
+                    return Localization.LocalizeString(actor.IsFemale, DerivedType.GetLocalizationKey() + "/" + typeof(SetUnsetServiceBed).Name + (target.FindOwnedBed(simsAssignedToLot[0]) == target ? ":Unset" : ":Set") + "InteractionName", simsAssignedToLot[0].SimDescription, ServiceProfile.Title);
                 }
 
                 public override bool Test(Sim actor, Bed target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
@@ -57,7 +57,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                             return false;
                         }
                         CustomService service;
-                        if (ServiceUtils.CustomInstances.TryGetValue(mServiceProfile.Name, out service) && service != null)
+                        if (ServiceUtils.CustomInstances.TryGetValue(ServiceProfile.Name, out service) && service != null)
                         {
                             List<Sim> simsAssignedToLot = service.GetSimsAssignedToLot(actor.LotHome);
                             if (simsAssignedToLot.Count > 0)
@@ -277,12 +277,22 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                                     service.RemoveInteractions(bed);
                                 }
                             }
-                            IEnumerator<SimDescription> enumerator = service.Pool.GetEnumerator();
-                            while (enumerator.MoveNext())
+                            foreach (SimDescription simDescription in new List<SimDescription>(service.Pool))
                             {
-                                if (enumerator.Current != null)
+                                if (simDescription != null && simDescription.CreatedSim != null)
                                 {
-                                    service.RemoveSimFromPool(enumerator.Current);
+                                    if (simDescription.CreatedSim == null)
+                                    {
+                                        service.RemoveSimFromPool(simDescription);
+                                        continue;
+                                    }
+                                    CustomServiceSituation situation = ServiceSituation.FindServiceSituationInvolving(simDescription.CreatedSim) as CustomServiceSituation;
+                                    if (situation == null)
+                                    {
+                                        service.RemoveSimFromPool(simDescription);
+                                        continue;
+                                    }
+                                    situation.SetState(new CustomServiceSituation.LeaveLotAndEndService(situation));
                                 }
                             }
                         }
@@ -384,7 +394,16 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
 
         public void RemoveInteractions(Bed bed)
         {
-            DebugUtils.TryDisplayScriptError(() => bed.RemoveInteractionByType(SetUnsetServiceBedInstance));
+            DebugUtils.TryDisplayScriptError(() =>
+                {
+                    foreach (InteractionObjectPair interaction in new List<InteractionObjectPair>(bed.Interactions))
+                    {
+                        if ((interaction.InteractionDefinition as SetUnsetServiceBed.Definition)?.ServiceProfile == Profile)
+                        {
+                            bed.RemoveInteraction(interaction);
+                        }
+                    }
+                });
         }
 
         public override void RemoveOutputs()

@@ -74,6 +74,34 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             }
         }
 
+        public class LeaveLotAndEndService : ChildSituation<CustomServiceSituation>
+        {
+            public LeaveLotAndEndService()
+            {
+            }
+
+            public LeaveLotAndEndService(CustomServiceSituation parent) : base(parent)
+            {
+            }
+
+            public override void Init(CustomServiceSituation parent)
+            {
+                DebugUtils.TryDisplayScriptError(() =>
+                    {
+                        parent.Worker.InteractionQueue.CancelAllInteractions();
+                        parent.NPCLeavingMessage(LeavingReason.NPCDismissed);
+                        parent.UnsetServiceBed();
+                        parent.ChargeForService((s, x) => ForceSituationSpecificInteraction(parent.Lot, parent.Worker, new DriveAwayInServiceCar.Definition(parent.Car), null, OnFinished, OnFinished));
+                    });
+            }
+
+            public void OnFinished(Sim actor, float x)
+            {
+                actor.Service.ClearServiceForLot(Parent.Lot);
+                actor.Service.EndService(actor.SimDescription);
+            }
+        }
+
         public new class NPCIsFired : ServiceSituation<CustomServiceSituation>.NPCIsFired
         {
             public NPCIsFired()
@@ -414,10 +442,25 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                         {
                             Worker.SimDescription.RemoveOutfit(OutfitCategories.Career, i, true);
                         }
+                        if (!Worker.SimDescription.IsRobot)
+                        {
+                            Worker.SwitchToOutfitWithoutSpin(OutfitCategories.Career);
+                        }
+                        return;
                     }
-                    else if (((ServiceUtils.ServiceProfile)service.Profile).GetUniformFromName)
+                    if (((ServiceUtils.ServiceProfile)service.Profile).GetUniformFromName)
                     {
                         base.SwitchWorkerToServiceOutfit();
+                        return;
+                    }
+                    Worker.SimDescription.AddOutfit(new SimOutfit(Worker.SimDescription.GetOutfit(OutfitCategories.Everyday, 0).Key), OutfitCategories.Career, true);
+                    for (int i = Worker.SimDescription.GetOutfitCount(OutfitCategories.Career) - 1; i > 0; i--)
+                    {
+                        Worker.SimDescription.RemoveOutfit(OutfitCategories.Career, i, true);
+                    }
+                    if (!Worker.SimDescription.IsRobot)
+                    {
+                        Worker.SwitchToOutfitWithoutSpin(OutfitCategories.Career);
                     }
                 });
         }

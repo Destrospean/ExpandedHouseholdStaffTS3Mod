@@ -144,6 +144,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             float mCheckTime = 5f;
 
+            int mCost = 50;
+
             float mDelayBeforeArriving = 0.5f;
 
             float mDelayBeforeLeaving = 0.3f;
@@ -158,6 +160,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             List<ulong> mHiddenTraits = new List<ulong>();
 
+            int mMaxNumNPCsInPool = 1;
+
             List<int> mMotives = new List<int>();
 
             List<CommodityChange> mOutputs = new List<CommodityChange>();
@@ -169,9 +173,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             float mRelationshipLevelForQuit = -50f;
 
             int mServiceMotive = 0;
-
-            [Persistable]
-            public Service.ServiceTuning mServiceTuning = new Service.ServiceTuning();
 
             ulong mServiceType = 1uL;
 
@@ -203,6 +204,28 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 set
                 {
                     mActions = value; 
+                }
+            }
+
+            /// <summary>
+            /// If set to <c>true</c>, the service always tries to send the same NPC to a specific household.
+            /// </summary>
+            public bool AlwaysTryToSendTheSameSim
+            {
+                get
+                {
+                    return (mFlags & (ulong)ServiceProfileFlags.AlwaysTryToSendTheSameSim) != 0uL;
+                }
+                set
+                {
+                    if (value)
+                    {
+                        mFlags |= (ulong)ServiceProfileFlags.AlwaysTryToSendTheSameSim;
+                    }
+                    else
+                    {
+                        mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.AlwaysTryToSendTheSameSim;
+                    }
                 }
             }
 
@@ -381,6 +404,28 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
 
             /// <summary>
+            /// If set to <c>true</c>, this service charges <see cref="mCost"/> only if falsely called.
+            /// </summary>
+            public bool IsEmergencyService
+            {
+                get
+                {
+                    return (mFlags & (ulong)ServiceProfileFlags.EmergencyService) != 0uL;
+                }
+                set
+                {
+                    if (value)
+                    {
+                        mFlags |= (ulong)ServiceProfileFlags.EmergencyService;
+                    }
+                    else
+                    {
+                        mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.EmergencyService;
+                    }
+                }
+            }
+
+            /// <summary>
             /// If set to <c>true</c>, the service NPC will stay with the household that requested them.
             /// Interactions for setting/unsetting their bed will be available to the service NPC with this property set to <c>true</c>.
             /// </summary>
@@ -421,6 +466,28 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     else
                     {
                         mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.QuietAroundSleepingSims;
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Whether the service is recurrent (<c>true</c>) or one-off (<c>false</c>). Recurrent services are the only type which can be cancelled through the phone dialog.
+            /// </summary>
+            public bool IsRecurrent
+            {
+                get
+                {
+                    return (mFlags & (ulong)ServiceProfileFlags.Recurrent) != 0uL;
+                }
+                set
+                {
+                    if (value)
+                    {
+                        mFlags |= (ulong)ServiceProfileFlags.Recurrent;
+                    }
+                    else
+                    {
+                        mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.Recurrent;
                     }
                 }
             }
@@ -540,7 +607,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
             }
 
-
             /// <summary>
             /// If set to <c>true</c>, the service NPC will call emergency services when there is a fire on the lot they're assigned to.
             /// </summary>
@@ -601,11 +667,15 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 get
                 {
-                    return mServiceTuning;
+                    return new Service.ServiceTuning(mMaxNumNPCsInPool, mCost, IsEmergencyService, IsLiveInService || IsRecurrent, AlwaysTryToSendTheSameSim);
                 }
                 set
                 {
-                    mServiceTuning = value;
+                    mCost = value.kCost;
+                    mMaxNumNPCsInPool = value.kMaxNumNPCsInPool;
+                    AlwaysTryToSendTheSameSim = value.kAlwaysTryToSendSameSim;
+                    IsEmergencyService = value.kIsEmergencyService;
+                    IsRecurrent = value.kIsRecurrent;
                 }
             }
                 
@@ -1350,7 +1420,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     profile.RequestedMessage,
                     profile.CancelledMessage,
                     profile.CancelledWhileActiveMessage
-                }, false);
+                }, int.MaxValue, new Vector2(-1, -1), ThreeStringInputDialog.Validation.None, ModalDialog.PauseMode.PauseSimulator, false);
             if (results == null)
             {
                 return false;
