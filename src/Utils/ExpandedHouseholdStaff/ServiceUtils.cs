@@ -1134,13 +1134,13 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 {
                     string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
                     entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog";
-                    List<CASAgeGenderFlags> flagList = new List<CASAgeGenderFlags>(Array.FindAll((CASAgeGenderFlags[])Enum.GetValues(typeof(CASAgeGenderFlags)), x => preSelectedFlags.HasValue ? (preSelectedFlags & mask & x) == x : profile == null ? false : ((profile.ValidAges | profile.ValidGenders) & mask & x) == x));
+                    List<CASAgeGenderFlags> flagList = new List<CASAgeGenderFlags>(Array.FindAll((CASAgeGenderFlags[])Enum.GetValues(typeof(CASAgeGenderFlags)), x => preSelectedFlags.HasValue ? (preSelectedFlags & mask & x) == x : profile == null ? false : ((profile.ValidAges | profile.ValidGenders) & mask & x) == x && x != CASAgeGenderFlags.None && x != CASAgeGenderFlags.AgeMask && x != CASAgeGenderFlags.GenderMask));
                     bool cancelled, confirmed;
                     while (true)
                     {
                         List<CASAgeGenderFlags> selectedFlags = ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
                             {
-                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<CASAgeGenderFlags>(Array.FindAll((CASAgeGenderFlags[])Enum.GetValues(typeof(CASAgeGenderFlags)), x => (x & mask) == x)).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<CASAgeGenderFlags>(Array.FindAll((CASAgeGenderFlags[])Enum.GetValues(typeof(CASAgeGenderFlags)), x => (x & mask) == x && x != CASAgeGenderFlags.None && x != CASAgeGenderFlags.AgeMask && x != CASAgeGenderFlags.GenderMask)).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<CASAgeGenderFlags>>
                             {
                                 new CASAgeGenderFlagColumn(entryKey),
@@ -1352,10 +1352,20 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                             new ActiveTopicAction("Fire")
                         }
                 };
-            ServiceProfileFlags flags;
-            if (profile.ShowServiceProfileFlagListDialog(out flags))
+            CASAgeGenderFlags ageFlags;
+            if (profile.ShowCASAgeGenderFlagListDialog(out ageFlags, null, CASAgeGenderFlags.AgeMask, Localization.LocalizeString(entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog/Titles:Age")))
             {
-                ((ServiceProfile)profile).SetFlags(flags);
+                ((ServiceProfile)profile).ValidAges = ageFlags;
+            }
+            CASAgeGenderFlags genderFlags;
+            if (profile.ShowCASAgeGenderFlagListDialog(out genderFlags, null, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog/Titles:Gender")))
+            {
+                ((ServiceProfile)profile).ValidGenders = genderFlags;
+            }
+            ServiceProfileFlags serviceProfileFlags;
+            if (profile.ShowServiceProfileFlagListDialog(out serviceProfileFlags))
+            {
+                ((ServiceProfile)profile).SetFlags(serviceProfileFlags);
             }
             profile.TryUISetPhoneCallFeedback();
             return true;

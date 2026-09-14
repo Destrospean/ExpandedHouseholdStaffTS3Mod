@@ -11,6 +11,32 @@
                 "/Titles":
                     ":InteractionDefinition": "Interaction Definition Class"
                     ":Target": "Target Class"
+            "/CASAgeGenderFlagListDialog":
+                ":Title": "Select Allowed Demographics"
+                "/Titles":
+                    ":Age": "Select Allowed Ages"
+                    ":Gender": "Select Allowed Genders"
+                "/Headers":
+                    "/Enabled":
+                        ":Text": "Enabled"
+                        ":Tooltip": "Whether the demographic is allowed"
+                    "/CASAgeGenderFlag":
+                        ":Text": "Demographic"
+                        ":Tooltip": "The name of the demographic"
+                "/Options":
+                    "/Enabled":
+                        ":True": "True"
+                        ":False": "False"
+                    "/CASAgeGenderFlag":
+                        ":Baby": "Allow Babies"
+                        ":Toddler": "Allow Toddlers"
+                        ":Child": "Allow Children"
+                        ":Teen": "Allow Teens"
+                        ":YoungAdult": "Allow Young Adults"
+                        ":Adult": "Allow Adults"
+                        ":Elder": "Allow Elders"
+                        ":Male": "Allow Males"
+                        ":Female": "Allow Females"
             "/PartOverrideListDialog":
                 ":Title": "Select Part Overrides"
                 "/Headers":
