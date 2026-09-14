@@ -1353,12 +1353,12 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                         }
                 };
             CASAgeGenderFlags ageFlags;
-            if (profile.ShowCASAgeGenderFlagListDialog(out ageFlags, null, CASAgeGenderFlags.AgeMask, Localization.LocalizeString(entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog/Titles:Age")))
+            if (profile.ShowCASAgeGenderFlagListDialog(out ageFlags, null, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog/Titles:Age")))
             {
                 profile.ValidAges = ageFlags;
             }
             CASAgeGenderFlags genderFlags;
-            if (profile.ShowCASAgeGenderFlagListDialog(out genderFlags, null, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog/Titles:Gender")))
+            if (profile.ShowCASAgeGenderFlagListDialog(out genderFlags, CASAgeGenderFlags.GenderMask, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog/Titles:Gender")))
             {
                 profile.ValidGenders = genderFlags;
             }
