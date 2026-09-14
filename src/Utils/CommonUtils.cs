@@ -1,4 +1,4 @@
-﻿using Sims3.Gameplay.Abstracts;
+using Sims3.Gameplay.Abstracts;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Core;
@@ -194,8 +194,7 @@ namespace Destrospean.Utils
                 {
                     CommodityTypes commodityTypes;
                     ParserFunctions.TryParseEnum<CommodityTypes>(element.GetAttribute("com"), out commodityTypes, CommodityTypes.Undefined);
-                    ActionData data = new ActionData(element.GetAttribute("key"), commodityTypes, ProductVersion.BaseGame, new XmlElementLookup(element), isEp5Installed);
-                    ActionData.Add(data);
+                    ActionData.Add(new ActionData(element.GetAttribute("key"), commodityTypes, ProductVersion.BaseGame, new XmlElementLookup(element), isEp5Installed));
                 }
             }
         }
