@@ -76,6 +76,8 @@
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\ServiceProfileColumn.cs" />
     <Compile Include="Interactions\CreateServiceProfile.cs" />
     <Compile Include="Interactions\DeleteServiceProfile.cs" />
+    <Compile Include="Interactions\AddAutonomousInteraction.cs" />
+    <Compile Include="Interactions\RemoveAutonomousInteraction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

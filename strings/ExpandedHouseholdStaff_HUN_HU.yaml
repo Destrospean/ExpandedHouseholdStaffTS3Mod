@@ -88,10 +88,13 @@
             "/UpdateTypeDialog":
                 ":Title": "Select Update Type"
                 "/Options":
+                    ":First": "Continuous Flow"
                     ":ContinuousFlow": "Continuous Flow"
                     ":ImmediateDelta": "Immediate Delta"
             "/ServiceProfileListDialog":
-                ":Title": "Select Services"
+                "/Titles":
+                    ":Singular": "Select Service"
+                    ":Plural": "Select Services"
             "/CreateServiceProfileDialog":
                 ":Title": "Create Service"
                 "/Prompts":
@@ -125,6 +128,12 @@
             "/DeleteServiceProfile":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Delete Services"
+            "/AddAutonomousInteraction":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Add Autonomous Interaction"
+            "/RemoveAutonomousInteraction":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Remove Autonomous Interactions"
         "/Services":
             "/CustomService":
                 ":NotEnoughFunds": "You don't have enough funds to pay the {0.String}."

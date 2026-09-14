@@ -1195,7 +1195,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 if (step == 0)
                 {
-                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, InteractionObjectTypeUtils.InteractionDefinitionTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:InteractionDefinition"), 1, true))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, InteractionObjectTypeUtils.InteractionDefinitionTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:InteractionDefinition"), 1))
                     {
                         return false;
                     }
@@ -1203,7 +1203,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 1)
                 {
-                    if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, InteractionObjectTypeUtils.GameObjectTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:Target"), 1, true))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, InteractionObjectTypeUtils.GameObjectTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:Target"), 1))
                     {
                         step--;
                         continue;
@@ -1321,7 +1321,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     bool cancelled, confirmed;
                     while (true)
                     {
-                        tempSelectedProfiles = (ObjectPickerDialog.Show(profileListTitle ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/ServiceProfileListDialog:Title"), new List<ObjectPicker.TabInfo>
+                        tempSelectedProfiles = (ObjectPickerDialog.Show(profileListTitle ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/ServiceProfileListDialog/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
                             {
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<IServiceProfile>(allProfiles).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<IServiceProfile>>
