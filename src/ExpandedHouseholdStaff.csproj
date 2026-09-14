@@ -78,6 +78,8 @@
     <Compile Include="Interactions\DeleteServiceProfile.cs" />
     <Compile Include="Interactions\AddAutonomousInteraction.cs" />
     <Compile Include="Interactions\RemoveAutonomousInteraction.cs" />
+    <Compile Include="UI\Columns\CASAgeGenderFlagColumn.cs" />
+    <Compile Include="UI\Columns\CASAgeGenderFlagEnabledColumn.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

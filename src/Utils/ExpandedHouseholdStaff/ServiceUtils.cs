@@ -1125,6 +1125,57 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             RemoveServiceFromSaveGame(profile.Name);
         }
 
+        public static bool ShowCASAgeGenderFlagListDialog(this IServiceProfile profile, out CASAgeGenderFlags flags, CASAgeGenderFlags? preSelectedFlags = null, CASAgeGenderFlags mask = CASAgeGenderFlags.AgeMask | CASAgeGenderFlags.GenderMask, string title = null)
+        {
+            flags = 0;
+            bool retVal;
+            CASAgeGenderFlags[] flagArray = null;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog";
+                    List<CASAgeGenderFlags> flagList = new List<CASAgeGenderFlags>(Array.FindAll((CASAgeGenderFlags[])Enum.GetValues(typeof(CASAgeGenderFlags)), x => preSelectedFlags.HasValue ? (preSelectedFlags & mask & x) == x : profile == null ? false : ((profile.ValidAges | profile.ValidGenders) & mask & x) == x));
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        List<CASAgeGenderFlags> selectedFlags = ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<CASAgeGenderFlags>(Array.FindAll((CASAgeGenderFlags[])Enum.GetValues(typeof(CASAgeGenderFlags)), x => (x & mask) == x)).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<CASAgeGenderFlags>>
+                            {
+                                new CASAgeGenderFlagColumn(entryKey),
+                                new CASAgeGenderFlagEnabledColumn(entryKey, flagList.ToArray())
+                            }, 1, out confirmed, out cancelled, true);
+                        if (cancelled)
+                        {
+                            flagArray = null;
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            flagArray = flagList.ToArray();
+                            return true;
+                        }
+                        if (flagList.Contains(selectedFlags[0]))
+                        {
+                            flagList.Remove(selectedFlags[0]);
+                        }
+                        else
+                        {
+                            flagList.Add(selectedFlags[0]);
+                        }
+                    }
+                }, out retVal))
+            {
+                return false;
+            }
+            foreach (CASAgeGenderFlags flag in flagArray)
+            {
+                flags |= flag;
+            }
+            return retVal;
+        }
+
         public static bool ShowServiceProfileFlagListDialog(this IServiceProfile profile, out ServiceProfileFlags flags, ServiceProfileFlags? preSelectedFlags = null)
         {
             flags = 0;
@@ -1310,7 +1361,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return true;
         }
 
-        public static bool TryUIGetSelectedServiceProfiles(out IServiceProfile[] selectedProfiles, IServiceProfile[] allProfiles, string profileListTitle = null, int selectableRowCount = int.MaxValue, bool okayButtonAlwaysEnabled = false)
+        public static bool TryUIGetSelectedServiceProfiles(out IServiceProfile[] selectedProfiles, IServiceProfile[] allProfiles, string title = null, int selectableRowCount = int.MaxValue)
         {
             bool retVal;
             IServiceProfile[] tempSelectedProfiles = null;
@@ -1321,13 +1372,13 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     bool cancelled, confirmed;
                     while (true)
                     {
-                        tempSelectedProfiles = (ObjectPickerDialog.Show(profileListTitle ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/ServiceProfileListDialog/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
+                        tempSelectedProfiles = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/ServiceProfileListDialog/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
                             {
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<IServiceProfile>(allProfiles).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<IServiceProfile>>
                             {
                                 new ServiceProfileColumn(entryKey + "/ServiceProfileListDialog")
-                            }, selectableRowCount, out confirmed, out cancelled, okayButtonAlwaysEnabled) ?? new List<IServiceProfile>()).ToArray();
+                            }, selectableRowCount, out confirmed, out cancelled) ?? new List<IServiceProfile>()).ToArray();
                         if (cancelled)
                         {
                             tempSelectedProfiles = null;

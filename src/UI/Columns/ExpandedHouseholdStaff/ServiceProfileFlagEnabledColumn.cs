@@ -16,9 +16,9 @@ namespace Destrospean.UI.Columns.ExpandedHouseholdStaff
             mFlagsEnabled = new List<ServiceProfileFlags>(flagsEnabled);
         }
 
-        public override ObjectPicker.ColumnInfo GetValue(ServiceProfileFlags bodyType)
+        public override ObjectPicker.ColumnInfo GetValue(ServiceProfileFlags flag)
         {
-            return new ObjectPicker.TextColumn(Responder.Instance.LocalizationModel.LocalizeString(mLocalizationPath + "/Options/Enabled:" + mFlagsEnabled.Contains(bodyType)));
+            return new ObjectPicker.TextColumn(Responder.Instance.LocalizationModel.LocalizeString(mLocalizationPath + "/Options/Enabled:" + mFlagsEnabled.Contains(flag)));
         }
     }
 }

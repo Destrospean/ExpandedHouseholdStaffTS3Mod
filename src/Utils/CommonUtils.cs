@@ -449,7 +449,7 @@ namespace Destrospean.Utils
             return true;
         }
 
-        public static bool TryUIGetSelectedTypes(out Type[] selectedTypes, Type[] allTypes, string namespaceListTitle = null, string typeListTitle = null, int selectableRowCount = int.MaxValue, bool okayButtonAlwaysEnabled = false)
+        public static bool TryUIGetSelectedTypes(out Type[] selectedTypes, Type[] allTypes, string namespaceListTitle = null, string typeListTitle = null, int selectableRowCount = int.MaxValue)
         {
             bool retVal;
             Type[] tempSelectedTypes = null;
@@ -487,7 +487,7 @@ namespace Destrospean.Utils
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<Type>>
                             {
                                 new TypeColumn(entryKey + "/TypeListDialog")
-                            }, selectableRowCount, out confirmed, out cancelled, okayButtonAlwaysEnabled) ?? new List<Type>()).ToArray();
+                            }, selectableRowCount, out confirmed, out cancelled) ?? new List<Type>()).ToArray();
                         if (confirmed)
                         {
                             return true;
