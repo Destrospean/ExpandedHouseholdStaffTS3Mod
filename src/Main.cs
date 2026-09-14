@@ -1,4 +1,4 @@
-﻿using Sims3.Gameplay.Actors;
+using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.EventSystem;
@@ -104,7 +104,7 @@ namespace Destrospean.ExpandedHouseholdStaff
                                     {
                                         TraitNames.Charismatic,
                                         TraitNames.Flirty,
-                                        TraitNames.Kleptomaniac,
+                                        TraitNames.Kleptomaniac
                                     },
                                 RequestedMessage = Localization.LocalizeString(entryKey + "Housekeeper:ServiceRequested"),
                                 ServiceTuning = new Service.ServiceTuning(1, 800, false, true, true),
