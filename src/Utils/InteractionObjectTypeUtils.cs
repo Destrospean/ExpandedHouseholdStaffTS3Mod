@@ -1,4 +1,4 @@
-﻿using Sims3.Gameplay.Interactions;
+using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Destrospean.Utils
 {
-    public static class InteractionObjectTypeUtils
+    public class InteractionObjectTypeUtils
     {
         static Type[] sGameObjectTypes;
 
