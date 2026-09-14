@@ -1352,6 +1352,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                             new ActiveTopicAction("Fire")
                         }
                 };
+            profile.TryUISetPhoneCallFeedback();
             CASAgeGenderFlags ageFlags;
             if (profile.ShowCASAgeGenderFlagListDialog(out ageFlags, null, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog/Titles:Age")))
             {
@@ -1367,7 +1368,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 ((ServiceProfile)profile).SetFlags(serviceProfileFlags);
             }
-            profile.TryUISetPhoneCallFeedback();
             return true;
         }
 
