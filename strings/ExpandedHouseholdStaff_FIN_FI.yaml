@@ -151,6 +151,13 @@
                 "/Titles":
                     ":Singular": "Select Service"
                     ":Plural": "Select Services"
+                "/Headers":
+                    "/Name":
+                        ":Text": "Name"
+                        ":Tooltip": "The internal name of the profile"
+                    "/Title":
+                        ":Text": "Title"
+                        ":Tooltip": "The display name of the profile"
             "/CreateServiceProfileDialog":
                 ":Title": "Create Service"
                 "/Prompts":

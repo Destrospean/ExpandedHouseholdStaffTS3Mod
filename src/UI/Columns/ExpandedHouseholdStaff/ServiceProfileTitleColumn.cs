@@ -3,9 +3,9 @@ using Sims3.UI;
 
 namespace Destrospean.UI.Columns.ExpandedHouseholdStaff
 {
-    public class ServiceProfileColumn : Dialogs.ObjectPickerDialog.CommonHeaderInfo<IServiceProfile>
+    public class ServiceProfileTitleColumn : Dialogs.ObjectPickerDialog.CommonHeaderInfo<IServiceProfile>
     {
-        public ServiceProfileColumn(string localizationPath) : base(localizationPath + "/Header:Text", localizationPath + "/Header:Tooltip", 440)
+        public ServiceProfileTitleColumn(string localizationPath) : base(localizationPath + "/Headers/Title:Text", localizationPath + "/Headers/Title:Tooltip", 220)
         {
         }
 

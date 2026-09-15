@@ -1437,7 +1437,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<IServiceProfile>(allProfiles).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<IServiceProfile>>
                             {
-                                new ServiceProfileColumn(entryKey + "/ServiceProfileListDialog")
+                                new ServiceProfileNameColumn(entryKey + "/ServiceProfileListDialog"),
+                                new ServiceProfileTitleColumn(entryKey + "/ServiceProfileListDialog")
                             }, selectableRowCount, out confirmed, out cancelled) ?? new List<IServiceProfile>()).ToArray();
                         if (cancelled)
                         {
