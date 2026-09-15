@@ -29,7 +29,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
 
             public override bool Test(Sim actor, Sim target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
             {
-                return actor == target && !isAutonomous && ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable).Count > 0;
+                return actor == target && !isAutonomous && ServiceUtils.ServiceProfiles.Exists(x => !x.IsImmutable);
             }
         }
 
