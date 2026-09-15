@@ -1187,6 +1187,15 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return retVal;
         }
 
+        public static void ShowCostDialog(IServiceProfile profile)
+        {
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/CostDialog";
+            ServiceProfile serviceProfile = (ServiceProfile)profile;
+            string cost = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:" + (profile.IsLiveInService ? "Weekly" : "Daily")), "50", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+            serviceProfile.Cost = cost == null ? serviceProfile.Cost : int.Parse(cost);
+        }
+
         public static bool ShowServiceProfileFlagListDialog(this IServiceProfile profile, out ServiceProfileFlags flags, ServiceProfileFlags? preSelectedFlags = null)
         {
             flags = 0;
@@ -1380,18 +1389,15 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 profile.ValidGenders = gender;
             }
 
-            ServiceProfile serviceProfile = (ServiceProfile)profile;
-
             // The following code sets the service profile flags.
             ServiceProfileFlags serviceProfileFlags;
             if (profile.ShowServiceProfileFlagListDialog(out serviceProfileFlags))
             {
-                serviceProfile.SetFlags(serviceProfileFlags);
+                ((ServiceProfile)profile).SetFlags(serviceProfileFlags);
             }
 
             // The following code sets the cost of the service.
-            string cost = StringInputDialog.Show(Localization.LocalizeString(entryKeyTruncated + "/CostDialog:Title"), Localization.LocalizeString(entryKeyTruncated + "/CostDialog/Prompts:" + (profile.IsLiveInService ? "Weekly" : "Daily")), "50", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
-            serviceProfile.Cost = cost == null ? serviceProfile.Cost : int.Parse(cost);
+            ShowCostDialog(profile);
 
             // The following code sets the traits the service NPC will always come with.
             List<Trait> traits = profile.Traits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
@@ -1407,7 +1413,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             if (profile.PotentialTraits.Count > 0)
             {
                 string potentialTraitCount = StringInputDialog.Show(Localization.LocalizeString(entryKeyTruncated + "/PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKeyTruncated + "/PotentialTraitCountDialog:Prompt"), "0", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
-                profile.PotentialTraitCount = potentialTraitCount == null ? serviceProfile.PotentialTraitCount : int.Parse(potentialTraitCount);
+                profile.PotentialTraitCount = potentialTraitCount == null ? profile.PotentialTraitCount : int.Parse(potentialTraitCount);
             }
 
             // The following code sets the hidden traits the service NPC will come with.
