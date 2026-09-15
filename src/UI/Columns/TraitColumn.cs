@@ -1,4 +1,5 @@
 ﻿using Sims3.Gameplay.ActorSystems;
+using Sims3.SimIFace;
 using Sims3.UI;
 
 namespace Destrospean.UI.Columns
@@ -15,7 +16,7 @@ namespace Destrospean.UI.Columns
         public override ObjectPicker.ColumnInfo GetValue(Trait trait)
         {
             string name = trait.TraitName(mIsFemale);
-            return new ObjectPicker.TextColumn(string.IsNullOrEmpty(name) ? trait.Guid.ToString() : name);
+            return new ObjectPicker.ThumbAndTextColumn(new ThumbnailKey(trait.IconKey, ThumbnailSize.Large), string.IsNullOrEmpty(name) ? trait.Guid.ToString() : name);
         }
     }
 }
