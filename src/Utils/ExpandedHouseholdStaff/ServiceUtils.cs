@@ -667,7 +667,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 get
                 {
-                    return new Service.ServiceTuning(MaxNumNPCsInPool, Cost, IsEmergencyService, IsLiveInService || IsRecurrent, AlwaysTryToSendTheSameSim);
+                    return new Service.ServiceTuning(MaxNumNPCsInPool, Cost, IsEmergencyService, IsRecurrent, AlwaysTryToSendTheSameSim);
                 }
                 set
                 {
