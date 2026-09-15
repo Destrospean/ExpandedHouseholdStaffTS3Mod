@@ -45,16 +45,15 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
 
                 public override bool Test(Sim actor, Bed target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
                 {
-                    Lot lotHome = actor.LotHome;
-                    if (lotHome != null)
+                    if (actor.LotHome != null)
                     {
-                        if (target.LotCurrent != lotHome)
+                        if (target.LotCurrent != actor.LotHome)
                         {
                             return false;
                         }
                         if (Instance != null)
                         {
-                            List<Sim> simsAssignedToLot = Instance.GetSimsAssignedToLot(lotHome);
+                            List<Sim> simsAssignedToLot = Instance.GetSimsAssignedToLot(actor.LotHome);
                             if (simsAssignedToLot.Count > 0)
                             {
                                 Sim owner = simsAssignedToLot[0];
