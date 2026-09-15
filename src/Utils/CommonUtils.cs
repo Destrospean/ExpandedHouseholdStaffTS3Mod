@@ -1,5 +1,6 @@
 using Sims3.Gameplay.Abstracts;
 using Sims3.Gameplay.Actors;
+using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
@@ -7,6 +8,7 @@ using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace;
+using Sims3.SimIFace.CAS;
 using Sims3.UI;
 using Sims3.UI.Controller;
 using System;
@@ -407,6 +409,67 @@ namespace Destrospean.Utils
                     }
                 }
             }
+        }
+
+        public static bool ShowTraitListDialog(CASAgeGenderFlags age, CASAgeGenderFlags gender, CASAgeGenderFlags species, List<Trait> currentTraits, List<Trait> allTraits = null, string title = null)
+        {
+            bool retVal;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    CASAGSAvailabilityFlags ageSpecies = CASUtils.CASAGSAvailabilityFlagsFromCASAgeGenderFlags(age | species);
+                    if (allTraits == null)
+                    {
+                        allTraits = new List<Trait>();
+                        foreach (Trait trait in TraitManager.GetDictionaryTraits)
+                        {
+                            if (trait.TraitValidForAgeSpecies(ageSpecies) && !trait.IsHidden && !trait.IsReward)
+                            {
+                                allTraits.Add(trait);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        allTraits.RemoveAll(x => !x.TraitValidForAgeSpecies(ageSpecies));
+                    }
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/TraitListDialog";
+                    List<Trait> traitList = new List<Trait>(currentTraits);
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        List<Trait> selectedTraits = ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), allTraits.ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<Trait>>
+                            {
+                                new TraitColumn(entryKey),
+                                new TraitEnabledColumn(entryKey, traitList.ToArray())
+                            }, 1, out confirmed, out cancelled, true);
+                        if (cancelled)
+                        {
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            currentTraits.Clear();
+                            currentTraits.AddRange(traitList);
+                            return true;
+                        }
+                        if (traitList.Contains(selectedTraits[0]))
+                        {
+                            traitList.Remove(selectedTraits[0]);
+                        }
+                        else
+                        {
+                            traitList.Add(selectedTraits[0]);
+                        }
+                    }
+                }, out retVal))
+            {
+                return false;
+            }
+            return retVal;
         }
 
         public static bool TryGetType(string fullName, out Type type)

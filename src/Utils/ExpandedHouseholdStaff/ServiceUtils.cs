@@ -1228,67 +1228,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return retVal;
         }
 
-        public static bool ShowTraitListDialog(CASAgeGenderFlags age, CASAgeGenderFlags gender, CASAgeGenderFlags species, List<Trait> currentTraits, List<Trait> allTraits = null, string title = null)
-        {
-            bool retVal;
-            if (DebugUtils.TryDisplayScriptError(() =>
-                {
-                    CASAGSAvailabilityFlags ageSpecies = CASUtils.CASAGSAvailabilityFlagsFromCASAgeGenderFlags(age | species);
-                    if (allTraits == null)
-                    {
-                        allTraits = new List<Trait>();
-                        foreach (Trait trait in TraitManager.GetDictionaryTraits)
-                        {
-                            if (trait.TraitValidForAgeSpecies(ageSpecies) && !trait.IsHidden && !trait.IsReward)
-                            {
-                                allTraits.Add(trait);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        allTraits.RemoveAll(x => !x.TraitValidForAgeSpecies(ageSpecies));
-                    }
-                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/TraitListDialog";
-                    List<Trait> traitList = new List<Trait>(currentTraits);
-                    bool cancelled, confirmed;
-                    while (true)
-                    {
-                        List<Trait> selectedTraits = ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
-                            {
-                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), allTraits.ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
-                            }, new List<ObjectPickerDialog.CommonHeaderInfo<Trait>>
-                            {
-                                new TraitColumn(entryKey),
-                                new TraitEnabledColumn(entryKey, traitList.ToArray())
-                            }, 1, out confirmed, out cancelled, true);
-                        if (cancelled)
-                        {
-                            return false;
-                        }
-                        if (confirmed)
-                        {
-                            currentTraits.Clear();
-                            currentTraits.AddRange(traitList);
-                            return true;
-                        }
-                        if (traitList.Contains(selectedTraits[0]))
-                        {
-                            traitList.Remove(selectedTraits[0]);
-                        }
-                        else
-                        {
-                            traitList.Add(selectedTraits[0]);
-                        }
-                    }
-                }, out retVal))
-            {
-                return false;
-            }
-            return retVal;
-        }
-
         /// <summary>
         /// Opens a series of dialogs to add an output to an interaction for a service motive of the specified profile.
         /// </summary>
@@ -1446,12 +1385,12 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             // The following code sets the traits the service NPC will always come with.
             List<Trait> traits = profile.Traits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Explicit"));
+            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Explicit"));
             profile.Traits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
 
             // The following code sets the traits the service NPC will randomly pick from.
             traits = profile.PotentialTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Potential"));
+            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Potential"));
             profile.PotentialTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
 
             // The following code sets how many of the potential traits the service NPC will randomly pick.
@@ -1463,7 +1402,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             // The following code sets the hidden traits the service NPC will come with.
             traits = profile.HiddenTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, new List<Trait>(TraitManager.GetDictionaryTraits).FindAll(x => x.IsHidden || x.IsReward), Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Hidden"));
+            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, new List<Trait>(TraitManager.GetDictionaryTraits).FindAll(x => x.IsHidden || x.IsReward), Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Hidden"));
             profile.HiddenTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
             return true;
         }
