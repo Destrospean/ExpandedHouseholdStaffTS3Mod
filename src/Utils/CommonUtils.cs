@@ -5,6 +5,7 @@ using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
+using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace;
@@ -411,6 +412,79 @@ namespace Destrospean.Utils
             }
         }
 
+        public static bool ShowSkillListDialog(CASAgeGenderFlags age, CASAgeGenderFlags species, List<SkillLevelPair> currentSkills, List<SkillLevelPair> allSkills = null, string title = null)
+        {
+            bool retVal;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    CASAGSAvailabilityFlags ageSpecies = CASUtils.CASAGSAvailabilityFlagsFromCASAgeGenderFlags(age | species);
+                    if (allSkills == null)
+                    {
+                        allSkills = new List<SkillLevelPair>();
+                        foreach (Skill skill in SkillManager.SkillDictionary)
+                        {
+                            if ((skill.AvailableAgeSpecies & ageSpecies) != 0)
+                            {
+                                allSkills.Add(new SkillLevelPair(skill.Guid, 0));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        allSkills.RemoveAll(x => (SkillManager.GetStaticSkill(x.SkillName).AvailableAgeSpecies & ageSpecies) == 0);
+                    }
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/SkillListDialog";
+                    List<SkillLevelPair> skillList = new List<SkillLevelPair>(currentSkills);
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        List<SkillLevelPair> selectedSkills = ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), allSkills.ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<SkillLevelPair>>
+                            {
+                                new SkillColumn(entryKey),
+                                new SkillLevelColumn(entryKey, skillList.ToArray())
+                            }, 1, out confirmed, out cancelled, true);
+                        if (cancelled)
+                        {
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            currentSkills.Clear();
+                            currentSkills.AddRange(skillList);
+                            return true;
+                        }
+                        string skillLevel = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/Titles:SkillLevel"), Localization.LocalizeString(entryKey + "/Prompts:SkillLevel"), selectedSkills[0].SkillLevel.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                        selectedSkills[0].SkillLevel = skillLevel == null ? selectedSkills[0].SkillLevel : int.Parse(skillLevel);
+                        Skill skill = SkillManager.GetStaticSkill(selectedSkills[0].SkillName);
+                        if (selectedSkills[0].SkillLevel == -1)
+                        {
+                            selectedSkills[0].SkillLevel = skill.MaxSkillLevel;
+                        }
+                        else if (selectedSkills[0].SkillLevel > skill.MaxSkillLevel)
+                        {
+                            selectedSkills[0].SkillLevel = skill.MaxSkillLevel;
+                        }
+                        if (selectedSkills[0].SkillLevel == 0 && skillList.Contains(selectedSkills[0]))
+                        {
+                            skillList.Remove(selectedSkills[0]);
+                            continue;
+                        }
+                        if (selectedSkills[0].SkillLevel != 0 && !skillList.Contains(selectedSkills[0]))
+                        {
+                            skillList.Add(selectedSkills[0]);
+                        }
+                    }
+                }, out retVal))
+            {
+                return false;
+            }
+            return retVal;
+        }
+
         public static bool ShowTraitListDialog(CASAgeGenderFlags age, CASAgeGenderFlags gender, CASAgeGenderFlags species, List<Trait> currentTraits, List<Trait> allTraits = null, string title = null)
         {
             bool retVal;
@@ -443,7 +517,7 @@ namespace Destrospean.Utils
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), allTraits.ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<Trait>>
                             {
-                                new TraitColumn(entryKey),
+                                new TraitColumn(entryKey, gender == CASAgeGenderFlags.Female),
                                 new TraitEnabledColumn(entryKey, traitList.ToArray())
                             }, 1, out confirmed, out cancelled, true);
                         if (cancelled)

@@ -82,6 +82,8 @@
     <Compile Include="UI\Columns\TraitColumn.cs" />
     <Compile Include="UI\Columns\TraitEnabledColumn.cs" />
     <Compile Include="UI\Columns\BodyTypeEnabledColumn.cs" />
+    <Compile Include="UI\Columns\SkillColumn.cs" />
+    <Compile Include="UI\Columns\SkillLevelColumn.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1414,6 +1414,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             traits = profile.HiddenTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
             CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, new List<Trait>(TraitManager.GetDictionaryTraits).FindAll(x => x.IsHidden || x.IsReward), Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Hidden"));
             profile.HiddenTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
+
+            // The following code sets the skills the service NPC has.
+            CommonUtils.ShowSkillListDialog(age, CASAgeGenderFlags.Human, profile.Skills);
+
             return true;
         }
 
@@ -1515,7 +1519,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         public static bool TryUISetPhoneCallFeedback(this IServiceProfile profile)
         {
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/SetPhoneCallFeedbackDialog";
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/PhoneCallFeedbackDialog";
             string[] results = ThreeStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), new string[]
                 {
                     Localization.LocalizeString(entryKey + "/Prompts:SetRequestedMessage"),

@@ -11,6 +11,19 @@
                 "/Titles":
                     ":InteractionDefinition": "Interaction Definition Class"
                     ":Target": "Target Class"
+            "/SkillListDialog":
+                ":Title": "Specify Skill Levels"
+                "/Titles":
+                    ":SkillLevel": "Specify Skill Level"
+                "/Prompts":
+                    ":SkillLevel": "Enter in the skill level (a value greater than maximum sets it to maximum)."
+                "/Headers":
+                    "/Skill":
+                        ":Text": "Skill"
+                        ":Tooltip": "The name of the skill"
+                    "/Level":
+                        ":Text": "Level"
+                        ":Tooltip": "The skill level"
             "/TraitListDialog":
                 ":Title": "Select Traits"
                 "/Titles":
@@ -18,12 +31,12 @@
                     ":Hidden": "Select Hidden Traits"
                     ":Potential": "Select Possible Random Traits"
                 "/Headers":
-                    "/Enabled":
-                        ":Text": "Enabled"
-                        ":Tooltip": "Whether the trait is enabled"
                     "/Trait":
                         ":Text": "Trait"
                         ":Tooltip": "The name of the trait"
+                    "/Enabled":
+                        ":Text": "Enabled"
+                        ":Tooltip": "Whether the trait is enabled"
                 "/Options":
                     "/Enabled":
                         ":True": "True"
@@ -34,16 +47,13 @@
                     ":Age": "Select Allowed Ages"
                     ":Gender": "Select Allowed Genders"
                 "/Headers":
-                    "/Enabled":
-                        ":Text": "Enabled"
-                        ":Tooltip": "Whether the demographic is allowed"
                     "/CASAgeGenderFlag":
                         ":Text": "Demographic"
                         ":Tooltip": "The name of the demographic"
-                "/Options":
                     "/Enabled":
-                        ":True": "True"
-                        ":False": "False"
+                        ":Text": "Enabled"
+                        ":Tooltip": "Whether the demographic is allowed"
+                "/Options":
                     "/CASAgeGenderFlag":
                         ":Baby": "Allow Babies"
                         ":Toddler": "Allow Toddlers"
@@ -54,19 +64,19 @@
                         ":Elder": "Allow Elders"
                         ":Male": "Allow Males"
                         ":Female": "Allow Females"
-            "/PartOverrideListDialog":
-                ":Title": "Select Part Overrides"
-                "/Headers":
-                    "/Enabled":
-                        ":Text": "Enabled"
-                        ":Tooltip": "Whether the part override is enabled"
-                    "/PartType":
-                        ":Text": "Part Type"
-                        ":Tooltip": "The name of the part type"
-                "/Options":
                     "/Enabled":
                         ":True": "True"
                         ":False": "False"
+            "/PartOverrideListDialog":
+                ":Title": "Select Part Overrides"
+                "/Headers":
+                    "/PartType":
+                        ":Text": "Part Type"
+                        ":Tooltip": "The name of the part type"
+                    "/Enabled":
+                        ":Text": "Enabled"
+                        ":Tooltip": "Whether the part override is enabled"
+                "/Options":
                     "/PartType":
                         ":Accessories": "Accessories"
                         ":Armband": "Armband"
@@ -106,19 +116,19 @@
                         ":Socks": "Socks"
                         ":UpperBody": "Upper Body"
                         ":WeddingRing": "Wedding Ring"
-            "/ServiceProfileFlagListDialog":
-                ":Title": "Select Service Properties"
-                "/Headers":
-                    "/Enabled":
-                        ":Text": "Enabled"
-                        ":Tooltip": "Whether the property is enabled"
-                    "/ServiceProfileFlag":
-                        ":Text": "Property"
-                        ":Tooltip": "The name of the property"
-                "/Options":
                     "/Enabled":
                         ":True": "True"
                         ":False": "False"
+            "/ServiceProfileFlagListDialog":
+                ":Title": "Select Service Properties"
+                "/Headers":
+                    "/ServiceProfileFlag":
+                        ":Text": "Property"
+                        ":Tooltip": "The name of the property"
+                    "/Enabled":
+                        ":Text": "Enabled"
+                        ":Tooltip": "Whether the property is enabled"
+                "/Options":
                     "/ServiceProfileFlag":
                         ":LiveInService": "Live-In Service"
                         ":QuietAroundSleepingSims": "Quiet Around Sleeping Sims"
@@ -128,6 +138,9 @@
                         ":Recurrent": "Recurring"
                         ":EmergencyService": "Emergency Service"
                         ":AlwaysTryToSendTheSameSim": "Always Try to Send the Same Sim"
+                    "/Enabled":
+                        ":True": "True"
+                        ":False": "False"
             "/UpdateTypeDialog":
                 ":Title": "Select Update Type"
                 "/Options":
@@ -149,20 +162,12 @@
                 ":TitleEmpty": "The display name was not specified."
             "/DeleteServiceProfileDialog":
                 ":Title": "Delete Services"
-            "/SetPhoneCallFeedbackDialog":
+            "/PhoneCallFeedbackDialog":
                 ":Title": "Specify Phone Call Feedback"
                 "/Prompts":
                     ":SetCancelledMessage": "Enter in the feedback for cancelling the service."
                     ":SetCancelledWhileActiveMessage": "Enter in the feedback for cancelling the service while it's active."
                     ":SetRequestedMessage": "Enter in the feedback for requesting the service."
-            "/ActualValueDialog":
-                ":Title": "Specify Actual Priority"
-                ":Prompt": "Enter in the actual priority value."
-            "/AdvertisedValueDialog":
-                ":Title": "Specify Advertised Priority"
-                ":Prompt": "Enter in the advertised priority value."
-            "/LockedDialog":
-                ":Title": "Specify If Locked"
             "/CostDialog":
                 ":Title": "Specify Cost"
                 "/Prompts":
@@ -171,6 +176,14 @@
             "/PotentialTraitCountDialog":
                 ":Title": "Specify Possible Random Trait Count"
                 ":Prompt": "Enter in number of traits that will be selected randomly from the possible random traits pool."
+            "/ActualValueDialog":
+                ":Title": "Specify Actual Priority"
+                ":Prompt": "Enter in the actual priority value."
+            "/AdvertisedValueDialog":
+                ":Title": "Specify Advertised Priority"
+                ":Prompt": "Enter in the advertised priority value."
+            "/LockedDialog":
+                ":Title": "Specify If Locked"
     "/ExpandedHouseholdStaff":
         "/Interactions":
             "/CreateServiceProfile":
