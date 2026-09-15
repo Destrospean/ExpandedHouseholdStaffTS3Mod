@@ -117,6 +117,15 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         }
 
         /// <summary>
+        /// If set to <c>true</c>, the service cannot be changed in the game.
+        /// </summary>
+        bool IsImmutable
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// The items the service NPC spawns with.
         /// </summary>
         List<IGameObject> Inventory

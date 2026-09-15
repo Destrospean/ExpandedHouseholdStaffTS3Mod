@@ -387,6 +387,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     mHiddenTraits = value.ConvertAll(x => (ulong)x);
                 }
             }
+
             /// <summary>
             /// The items the service NPC spawns with.
             /// </summary>
@@ -422,6 +423,15 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                         mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.EmergencyService;
                     }
                 }
+            }
+
+            /// <summary>
+            /// If set to <c>true</c>, the service cannot be changed in the game.
+            /// </summary>
+            public bool IsImmutable
+            {
+                get;
+                set;
             }
 
             /// <summary>
@@ -1450,7 +1460,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     {
                         tempSelectedProfiles = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/ServiceProfileListDialog/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
                             {
-                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<IServiceProfile>(allProfiles).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<IServiceProfile>(Array.FindAll(allProfiles, x => !x.IsImmutable)).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<IServiceProfile>>
                             {
                                 new ServiceProfileNameColumn(entryKey + "/ServiceProfileListDialog"),
