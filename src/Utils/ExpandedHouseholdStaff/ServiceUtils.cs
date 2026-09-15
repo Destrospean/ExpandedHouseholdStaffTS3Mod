@@ -862,9 +862,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 Name = name;
                 Title = title;
-                RequestedMessage = requestedMessage ?? title;
-                CancelledMessage = cancelledMessage ?? title;
-                CancelledWhileActiveMessage = cancelledWhileActiveMessage ?? title;
+                string entryKey = typeof(CustomService).GetLocalizationKey();
+                RequestedMessage = requestedMessage ?? Localization.LocalizeString(entryKey + ":ServiceRequested", title);
+                CancelledMessage = cancelledMessage ?? Localization.LocalizeString(entryKey + ":ServiceCancelled", title);
+                CancelledWhileActiveMessage = cancelledWhileActiveMessage ?? Localization.LocalizeString(entryKey + ":ServiceCancelledWhileActive", title);
                 ServiceMotive = serviceMotive ?? CommonUtils.GetCommodityKind("Be" + name, CommodityKindType.Motive);
                 Motives = additionalMotives ?? new List<CommodityKind>();
                 Outputs = outputs ?? new List<CommodityChange>();

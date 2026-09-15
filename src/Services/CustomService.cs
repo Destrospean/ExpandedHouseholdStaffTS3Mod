@@ -5,6 +5,7 @@ using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
+using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Objects.Beds;
@@ -26,9 +27,9 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
 {
     public class CustomService : Service<CustomService>, IAmSociableService
     {
-        public new class SetUnsetServiceBed : Service<CustomService>.SetUnsetServiceBed
+        public new class SetUnsetServiceBed : ImmediateInteraction<Sim, Bed>
         {
-            public new class Definition : Service<CustomService>.SetUnsetServiceBed.Definition
+            public class Definition : InteractionDefinition<Sim, Bed, SetUnsetServiceBed>
             {
                 public IServiceProfile ServiceProfile;
 
@@ -72,6 +73,36 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                     }
                     return false;
                 }
+            }
+
+            public override bool Run()
+            {
+                CustomService service;
+                if (ServiceUtils.CustomInstances.TryGetValue(((Definition)InteractionDefinition).ServiceProfile.Name, out service) && service != null)
+                {
+                    Sim simActiveOnLot = service.GetSimActiveOnLot(Actor.LotHome);
+                    if (simActiveOnLot != null)
+                    {
+                        Bed bed = Target.FindOwnedBed(simActiveOnLot);
+                        if (bed == Target)
+                        {
+                            Target.RelinquishOwnership(simActiveOnLot);
+                            return true;
+                        }
+                        if (Target.PartComponent != null && Target.PartComponent.PartDataList != null)
+                        {
+                            foreach (BedData value in Target.PartComponent.PartDataList.Values)
+                            {
+                                if (value != null)
+                                {
+                                    Target.ClaimOwnership(simActiveOnLot, value);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return true;
             }
         }
 
