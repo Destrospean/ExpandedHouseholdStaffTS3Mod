@@ -86,7 +86,6 @@ namespace Destrospean.ExpandedHouseholdStaff
                                     },
                                 IsLiveInService = true,
                                 IsQuietAroundSleepingSims = true,
-                                IsRecurrent = true,
                                 IsScaredOfBonehilda = true,
                                 Outputs = new List<ServiceUtils.CommodityChange>
                                     {
@@ -128,7 +127,6 @@ namespace Destrospean.ExpandedHouseholdStaff
                                 GetUniformFromName = true,
                                 GetUniformNameCallback = (simDescription) => "career_execchef_" + (simDescription.IsFemale ? "female" : "male") + (simDescription.Elder ? "elder" : ""),
                                 IsLiveInService = true,
-                                IsRecurrent = true,
                                 PotentialTraitCount = 2,
                                 PotentialTraits = new List<TraitNames>
                                     {
