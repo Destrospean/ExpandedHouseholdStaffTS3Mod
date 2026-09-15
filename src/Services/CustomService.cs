@@ -298,7 +298,6 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                     {
                         if (!worldJustGotQuit)
                         {
-                            ServiceUtils.CustomInstances.Remove(profile.Name);
                             if (profile.IsLiveInService)
                             {
                                 foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())

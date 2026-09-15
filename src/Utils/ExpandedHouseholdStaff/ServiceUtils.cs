@@ -1174,6 +1174,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 IServiceProfile profile = CustomInstances[name].Profile;
                 CustomService.Deinit(profile);
+                CustomInstances.Remove(name);
                 ServiceProfiles.Remove(profile);
             }
         }
