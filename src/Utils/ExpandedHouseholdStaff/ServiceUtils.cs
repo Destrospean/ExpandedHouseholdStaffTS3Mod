@@ -1139,6 +1139,16 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     bool cancelled, confirmed;
                     while (true)
                     {
+                        if (flagList.Count == 0)
+                        {
+                            foreach (CASAgeGenderFlags flag in Enum.GetValues(typeof(CASAgeGenderFlags)))
+                            {
+                                if ((mask & flag) == flag && flag != CASAgeGenderFlags.None && flag != CASAgeGenderFlags.AgeMask && flag != CASAgeGenderFlags.GenderMask)
+                                {
+                                    flagList.Add(flag);
+                                }
+                            }
+                        }
                         List<CASAgeGenderFlags> selectedFlags = ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
                             {
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<CASAgeGenderFlags>(Array.FindAll((CASAgeGenderFlags[])Enum.GetValues(typeof(CASAgeGenderFlags)), x => (x & mask) == x && x != CASAgeGenderFlags.None && x != CASAgeGenderFlags.AgeMask && x != CASAgeGenderFlags.GenderMask)).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
@@ -1365,7 +1375,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             // The following code sets the valid range of genders the service NPC can be.
             CASAgeGenderFlags gender;
-            if (profile.ShowCASAgeGenderFlagListDialog(out gender, CASAgeGenderFlags.GenderMask, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKeyTruncated + "/CASAgeGenderFlagListDialog/Titles:Gender")))
+            if (profile.ShowCASAgeGenderFlagListDialog(out gender, null, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKeyTruncated + "/CASAgeGenderFlagListDialog/Titles:Gender")))
             {
                 profile.ValidGenders = gender;
             }
