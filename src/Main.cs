@@ -114,6 +114,7 @@ namespace Destrospean.ExpandedHouseholdStaff
                                     },
                                 WaitsBeforePuttingAwayLeftovers = true
                             });
+                        /*
                         CustomService.Init(new ServiceUtils.ServiceProfile("Chef", Localization.LocalizeString(entryKey + "Chef:Title"))
                             {
                                 Actions = new List<ServiceUtils.ActiveTopicAction>
@@ -146,6 +147,7 @@ namespace Destrospean.ExpandedHouseholdStaff
                                     },
                                 WaitsBeforePuttingAwayLeftovers = true
                             });
+                        */
                     }
                 });
             World.sOnWorldQuitEventHandler += (sender, e) =>
