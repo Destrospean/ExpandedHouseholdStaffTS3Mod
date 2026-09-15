@@ -136,6 +136,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
         }
 
+        [Persistable]
         public class ServiceProfile : IServiceProfile
         {
             List<ActiveTopicAction> mActions = new List<ActiveTopicAction>();
@@ -1034,13 +1035,14 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
         }
 
-        public static readonly Dictionary<string, CustomService> CustomInstances = new Dictionary<string, CustomService>();
+        [PersistableStatic(true)]
+        public static Dictionary<string, CustomService> CustomInstances = new Dictionary<string, CustomService>();
 
-        public static readonly List<Type> LoadedTypes = new List<Type>();
+        public static List<Type> LoadedTypes = new List<Type>();
 
-        public static readonly Dictionary<string, Service> PredefinedInstances = new Dictionary<string, Service>();
+        public static Dictionary<string, Service> PredefinedInstances = new Dictionary<string, Service>();
 
-        public static readonly Dictionary<Type, CommodityKind> ServiceMotives = new Dictionary<Type, CommodityKind>();
+        public static Dictionary<Type, CommodityKind> ServiceMotives = new Dictionary<Type, CommodityKind>();
 
         [PersistableStatic(true)]
         public static List<IServiceProfile> ServiceProfiles = new List<IServiceProfile>();

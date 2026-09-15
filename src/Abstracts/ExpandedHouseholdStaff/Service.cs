@@ -27,6 +27,7 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
     /// <summary>
     /// Service base class from which to derive all services for the Expanded Household Staff Mod.
     /// </summary>
+    [Persistable]
     public abstract class Service<T> : Service, IService where T : Service<T>
     {
         public class SetUnsetServiceBed : ImmediateInteraction<Sim, Bed>

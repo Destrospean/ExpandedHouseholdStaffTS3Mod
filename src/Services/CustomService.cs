@@ -25,13 +25,19 @@ using Destrospean.Utils.ExpandedHouseholdStaff;
 
 namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
 {
+    [Persistable]
     public class CustomService : Service<CustomService>, IAmSociableService
     {
         public new class SetUnsetServiceBed : ImmediateInteraction<Sim, Bed>
         {
+            [Persistable]
             public class Definition : InteractionDefinition<Sim, Bed, SetUnsetServiceBed>
             {
                 public CustomService Service;
+
+                public Definition()
+                {
+                }
 
                 public Definition(CustomService service)
                 {
@@ -232,6 +238,10 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
             }
         }
 
+        public CustomService()
+        {
+        }
+
         public CustomService(IServiceProfile profile)
         {
             Profile = profile;
@@ -286,9 +296,9 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                     CustomService service;
                     if (ServiceUtils.CustomInstances.TryGetValue(profile.Name, out service) && service != null)
                     {
-                        ServiceUtils.CustomInstances.Remove(profile.Name);
                         if (!worldJustGotQuit)
                         {
+                            ServiceUtils.CustomInstances.Remove(profile.Name);
                             if (profile.IsLiveInService)
                             {
                                 foreach (Bed bed in Sims3.Gameplay.Queries.GetObjects<Bed>())
