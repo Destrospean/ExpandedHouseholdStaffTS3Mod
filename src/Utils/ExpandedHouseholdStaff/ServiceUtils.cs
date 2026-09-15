@@ -1090,6 +1090,64 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return CanRemoveServiceFromSaveGame(profile.Name);
         }
 
+        public static void EditServiceProfile(this IServiceProfile profile)
+        {
+            // The following code sets phone call feedback messages when requesting and cancelling services.
+            profile.TryUISetPhoneCallFeedback();
+
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+
+            // The following code sets the valid range of ages the service NPC can be.
+            CASAgeGenderFlags age;
+            if (profile.ShowCASAgeGenderFlagListDialog(out age, null, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKey + "/CASAgeGenderFlagListDialog/Titles:Age")))
+            {
+                profile.ValidAges = age;
+            }
+
+            // The following code sets the valid range of genders the service NPC can be.
+            CASAgeGenderFlags gender;
+            if (profile.ShowCASAgeGenderFlagListDialog(out gender, null, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey + "/CASAgeGenderFlagListDialog/Titles:Gender")))
+            {
+                profile.ValidGenders = gender;
+            }
+
+            // The following code sets the service profile flags.
+            ServiceProfileFlags serviceProfileFlags;
+            if (profile.ShowServiceProfileFlagListDialog(out serviceProfileFlags))
+            {
+                ((ServiceProfile)profile).SetFlags(serviceProfileFlags);
+            }
+
+            // The following code sets the cost of the service.
+            ShowCostDialog(profile);
+
+            // The following code sets the traits the service NPC will always come with.
+            List<Trait> traits = profile.Traits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
+            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKey + "/TraitListDialog/Titles:Explicit"));
+            profile.Traits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
+
+            // The following code sets the traits the service NPC will randomly pick from.
+            traits = profile.PotentialTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
+            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKey + "/TraitListDialog/Titles:Potential"));
+            profile.PotentialTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
+
+            // The following code sets how many of the potential traits the service NPC will randomly pick.
+            if (profile.PotentialTraits.Count > 0)
+            {
+                string potentialTraitCount = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKey + "/PotentialTraitCountDialog:Prompt"), "0", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                profile.PotentialTraitCount = potentialTraitCount == null ? profile.PotentialTraitCount : int.Parse(potentialTraitCount);
+            }
+
+            // The following code sets the hidden traits the service NPC will come with.
+            traits = profile.HiddenTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
+            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, new List<Trait>(TraitManager.GetDictionaryTraits).FindAll(x => x.IsHidden || x.IsReward), Localization.LocalizeString(entryKey + "/TraitListDialog/Titles:Hidden"));
+            profile.HiddenTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
+
+            // The following code sets the skills the service NPC has.
+            CommonUtils.ShowSkillListDialog(age, CASAgeGenderFlags.Human, profile.Skills);
+        }
+
         public static bool IsFromExpandedHouseholdStaff<Service>() where Service : Sims3.Gameplay.Services.Service
         {
             return IsFromExpandedHouseholdStaff(typeof(Service));
@@ -1372,58 +1430,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                             new ActiveTopicAction("Fire")
                         }
                 };
-            profile.TryUISetPhoneCallFeedback();
-            string entryKeyTruncated = entryKey.Remove(entryKey.LastIndexOf('/'));
-
-            // The following code sets the valid range of ages the service NPC can be.
-            CASAgeGenderFlags age;
-            if (profile.ShowCASAgeGenderFlagListDialog(out age, null, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKeyTruncated + "/CASAgeGenderFlagListDialog/Titles:Age")))
-            {
-                profile.ValidAges = age;
-            }
-
-            // The following code sets the valid range of genders the service NPC can be.
-            CASAgeGenderFlags gender;
-            if (profile.ShowCASAgeGenderFlagListDialog(out gender, null, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKeyTruncated + "/CASAgeGenderFlagListDialog/Titles:Gender")))
-            {
-                profile.ValidGenders = gender;
-            }
-
-            // The following code sets the service profile flags.
-            ServiceProfileFlags serviceProfileFlags;
-            if (profile.ShowServiceProfileFlagListDialog(out serviceProfileFlags))
-            {
-                ((ServiceProfile)profile).SetFlags(serviceProfileFlags);
-            }
-
-            // The following code sets the cost of the service.
-            ShowCostDialog(profile);
-
-            // The following code sets the traits the service NPC will always come with.
-            List<Trait> traits = profile.Traits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Explicit"));
-            profile.Traits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
-
-            // The following code sets the traits the service NPC will randomly pick from.
-            traits = profile.PotentialTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Potential"));
-            profile.PotentialTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
-
-            // The following code sets how many of the potential traits the service NPC will randomly pick.
-            if (profile.PotentialTraits.Count > 0)
-            {
-                string potentialTraitCount = StringInputDialog.Show(Localization.LocalizeString(entryKeyTruncated + "/PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKeyTruncated + "/PotentialTraitCountDialog:Prompt"), "0", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
-                profile.PotentialTraitCount = potentialTraitCount == null ? profile.PotentialTraitCount : int.Parse(potentialTraitCount);
-            }
-
-            // The following code sets the hidden traits the service NPC will come with.
-            traits = profile.HiddenTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, new List<Trait>(TraitManager.GetDictionaryTraits).FindAll(x => x.IsHidden || x.IsReward), Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Hidden"));
-            profile.HiddenTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
-
-            // The following code sets the skills the service NPC has.
-            CommonUtils.ShowSkillListDialog(age, CASAgeGenderFlags.Human, profile.Skills);
-
+            EditServiceProfile(profile);
             return true;
         }
 

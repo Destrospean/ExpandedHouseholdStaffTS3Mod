@@ -169,6 +169,9 @@
                 ":TitleEmpty": "The display name was not specified."
             "/DeleteServiceProfileDialog":
                 ":Title": "Delete Services"
+            "/EditServiceProfileDialog":
+                ":Title": "Edit Service"
+                ":Prompt": "Enter in display name of the service (what shows up in the UI)."
             "/PhoneCallFeedbackDialog":
                 ":Title": "Specify Phone Call Feedback"
                 "/Prompts":
@@ -199,6 +202,9 @@
             "/DeleteServiceProfile":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Delete Services"
+            "/EditServiceProfile":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Edit Service"
             "/AddAutonomousInteraction":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Add Autonomous Interaction"

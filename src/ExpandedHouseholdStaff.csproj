@@ -85,6 +85,7 @@
     <Compile Include="UI\Columns\SkillLevelColumn.cs" />
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\ServiceProfileTitleColumn.cs" />
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\ServiceProfileNameColumn.cs" />
+    <Compile Include="Interactions\EditServiceProfile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
