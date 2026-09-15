@@ -7,7 +7,7 @@ namespace Destrospean.UI.Columns
     {
         readonly bool mIsFemale;
 
-        public TraitColumn(string localizationPath, bool isFemale = false) : base(localizationPath + "/Headers/Trait:Text", localizationPath + "/Headers/CASAgeGenderFlag:Tooltip", 400)
+        public TraitColumn(string localizationPath, bool isFemale = false) : base(localizationPath + "/Headers/Trait:Text", localizationPath + "/Headers/Trait:Tooltip", 400)
         {
             mIsFemale = isFemale;
         }
