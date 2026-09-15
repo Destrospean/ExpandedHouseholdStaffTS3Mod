@@ -671,11 +671,11 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 set
                 {
-                    Cost = value.kCost;
-                    MaxNumNPCsInPool = value.kMaxNumNPCsInPool;
                     AlwaysTryToSendTheSameSim = value.kAlwaysTryToSendSameSim;
+                    Cost = value.kCost;
                     IsEmergencyService = value.kIsEmergencyService;
                     IsRecurrent = value.kIsRecurrent;
+                    MaxNumNPCsInPool = value.kMaxNumNPCsInPool;
                 }
             }
                 
