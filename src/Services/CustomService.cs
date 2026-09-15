@@ -451,10 +451,15 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                     }
                     foreach (TraitNames traitName in Profile.HiddenTraits)
                     {
+                        if (TraitManager.GetTraitFromDictionary(traitName).IsReward)
+                        {
+                            simDescription.TraitManager.AddElement(traitName);
+                            continue;
+                        }
                         simDescription.TraitManager.AddHiddenElement(traitName);
                     }
                     List<TraitNames> potentialTraits = new List<TraitNames>(Profile.PotentialTraits);
-                    for (int i = 0; i < Profile.PotentialTraitCount; i++)
+                    for (int i = 0; i < Math.Min(Profile.PotentialTraitCount, Profile.PotentialTraits.Count); i++)
                     {
                         TraitNames traitName = RandomUtil.GetRandomObjectFromList(potentialTraits);
                         simDescription.TraitManager.AddElement(traitName);

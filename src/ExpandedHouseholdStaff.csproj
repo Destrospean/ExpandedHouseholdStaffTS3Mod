@@ -69,7 +69,6 @@
     <Compile Include="Interfaces\ExpandedHouseholdStaff\IServiceProfile.cs" />
     <Compile Include="UI\Dialogs\ComboSelectionDialog.cs" />
     <Compile Include="Misc\DummyComparer.cs" />
-    <Compile Include="UI\Columns\PartOverrideEnabledColumn.cs" />
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\ServiceProfileFlagColumn.cs" />
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\ServiceProfileFlagEnabledColumn.cs" />
     <Compile Include="Tuning.cs" />
@@ -80,6 +79,9 @@
     <Compile Include="Interactions\RemoveAutonomousInteraction.cs" />
     <Compile Include="UI\Columns\CASAgeGenderFlagColumn.cs" />
     <Compile Include="UI\Columns\CASAgeGenderFlagEnabledColumn.cs" />
+    <Compile Include="UI\Columns\TraitColumn.cs" />
+    <Compile Include="UI\Columns\TraitEnabledColumn.cs" />
+    <Compile Include="UI\Columns\BodyTypeEnabledColumn.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

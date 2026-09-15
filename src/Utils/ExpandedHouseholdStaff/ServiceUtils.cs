@@ -1228,6 +1228,67 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return retVal;
         }
 
+        public static bool ShowTraitListDialog(CASAgeGenderFlags age, CASAgeGenderFlags gender, CASAgeGenderFlags species, List<Trait> currentTraits, List<Trait> allTraits = null, string title = null)
+        {
+            bool retVal;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    CASAGSAvailabilityFlags ageSpecies = CASUtils.CASAGSAvailabilityFlagsFromCASAgeGenderFlags(age | species);
+                    if (allTraits == null)
+                    {
+                        allTraits = new List<Trait>();
+                        foreach (Trait trait in TraitManager.GetDictionaryTraits)
+                        {
+                            if (trait.TraitValidForAgeSpecies(ageSpecies) && !trait.IsHidden && !trait.IsReward)
+                            {
+                                allTraits.Add(trait);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        allTraits.RemoveAll(x => !x.TraitValidForAgeSpecies(ageSpecies));
+                    }
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/TraitListDialog";
+                    List<Trait> traitList = new List<Trait>(currentTraits);
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        List<Trait> selectedTraits = ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), allTraits.ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<Trait>>
+                            {
+                                new TraitColumn(entryKey),
+                                new TraitEnabledColumn(entryKey, traitList.ToArray())
+                            }, 1, out confirmed, out cancelled, true);
+                        if (cancelled)
+                        {
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            currentTraits.Clear();
+                            currentTraits.AddRange(traitList);
+                            return true;
+                        }
+                        if (traitList.Contains(selectedTraits[0]))
+                        {
+                            traitList.Remove(selectedTraits[0]);
+                        }
+                        else
+                        {
+                            traitList.Add(selectedTraits[0]);
+                        }
+                    }
+                }, out retVal))
+            {
+                return false;
+            }
+            return retVal;
+        }
+
         /// <summary>
         /// Opens a series of dialogs to add an output to an interaction for a service motive of the specified profile.
         /// </summary>
@@ -1354,25 +1415,56 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                         }
                 };
             profile.TryUISetPhoneCallFeedback();
-            CASAgeGenderFlags ageFlags;
             string entryKeyTruncated = entryKey.Remove(entryKey.LastIndexOf('/'));
-            if (profile.ShowCASAgeGenderFlagListDialog(out ageFlags, null, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKeyTruncated + "/CASAgeGenderFlagListDialog/Titles:Age")))
+
+            // The following code sets the valid range of ages the service NPC can be.
+            CASAgeGenderFlags age;
+            if (profile.ShowCASAgeGenderFlagListDialog(out age, null, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKeyTruncated + "/CASAgeGenderFlagListDialog/Titles:Age")))
             {
-                profile.ValidAges = ageFlags;
+                profile.ValidAges = age;
             }
-            CASAgeGenderFlags genderFlags;
-            if (profile.ShowCASAgeGenderFlagListDialog(out genderFlags, CASAgeGenderFlags.GenderMask, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKeyTruncated + "/CASAgeGenderFlagListDialog/Titles:Gender")))
+
+            // The following code sets the valid range of genders the service NPC can be.
+            CASAgeGenderFlags gender;
+            if (profile.ShowCASAgeGenderFlagListDialog(out gender, CASAgeGenderFlags.GenderMask, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKeyTruncated + "/CASAgeGenderFlagListDialog/Titles:Gender")))
             {
-                profile.ValidGenders = genderFlags;
+                profile.ValidGenders = gender;
             }
-            ServiceProfileFlags serviceProfileFlags;
+
             ServiceProfile serviceProfile = (ServiceProfile)profile;
+
+            // The following code sets the service profile flags.
+            ServiceProfileFlags serviceProfileFlags;
             if (profile.ShowServiceProfileFlagListDialog(out serviceProfileFlags))
             {
                 serviceProfile.SetFlags(serviceProfileFlags);
             }
+
+            // The following code sets the cost of the service.
             string cost = StringInputDialog.Show(Localization.LocalizeString(entryKeyTruncated + "/CostDialog:Title"), Localization.LocalizeString(entryKeyTruncated + "/CostDialog/Prompts:" + (profile.IsLiveInService ? "Weekly" : "Daily")), "50", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
             serviceProfile.Cost = cost == null ? serviceProfile.Cost : int.Parse(cost);
+
+            // The following code sets the traits the service NPC will always come with.
+            List<Trait> traits = profile.Traits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
+            ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Explicit"));
+            profile.Traits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
+
+            // The following code sets the traits the service NPC will randomly pick from.
+            traits = profile.PotentialTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
+            ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Potential"));
+            profile.PotentialTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
+
+            // The following code sets how many of the potential traits the service NPC will randomly pick.
+            if (profile.PotentialTraits.Count > 0)
+            {
+                string potentialTraitCount = StringInputDialog.Show(Localization.LocalizeString(entryKeyTruncated + "/PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKeyTruncated + "/PotentialTraitCountDialog:Prompt"), "0", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                profile.PotentialTraitCount = potentialTraitCount == null ? serviceProfile.PotentialTraitCount : int.Parse(potentialTraitCount);
+            }
+
+            // The following code sets the hidden traits the service NPC will come with.
+            traits = profile.HiddenTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
+            ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, new List<Trait>(TraitManager.GetDictionaryTraits).FindAll(x => x.IsHidden || x.IsReward), Localization.LocalizeString(entryKeyTruncated + "/TraitListDialog/Titles:Hidden"));
+            profile.HiddenTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
             return true;
         }
 

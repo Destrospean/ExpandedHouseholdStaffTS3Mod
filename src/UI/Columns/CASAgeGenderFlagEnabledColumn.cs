@@ -8,17 +8,17 @@ namespace Destrospean.UI.Columns
     {
         readonly string mLocalizationPath;
 
-        readonly List<CASAgeGenderFlags> mFlagsEnabled;
+        readonly List<CASAgeGenderFlags> mTraitsEnabled;
 
         public CASAgeGenderFlagEnabledColumn(string localizationPath, CASAgeGenderFlags[] flagsEnabled) : base(localizationPath + "/Headers/Enabled:Text", localizationPath + "/Headers/Enabled:Tooltip", 40)
         {
             mLocalizationPath = localizationPath;
-            mFlagsEnabled = new List<CASAgeGenderFlags>(flagsEnabled);
+            mTraitsEnabled = new List<CASAgeGenderFlags>(flagsEnabled);
         }
 
         public override ObjectPicker.ColumnInfo GetValue(CASAgeGenderFlags flag)
         {
-            return new ObjectPicker.TextColumn(Responder.Instance.LocalizationModel.LocalizeString(mLocalizationPath + "/Options/Enabled:" + mFlagsEnabled.Contains(flag)));
+            return new ObjectPicker.TextColumn(Responder.Instance.LocalizationModel.LocalizeString(mLocalizationPath + "/Options/Enabled:" + mTraitsEnabled.Contains(flag)));
         }
     }
 }

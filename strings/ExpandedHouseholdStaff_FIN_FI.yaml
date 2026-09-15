@@ -11,6 +11,23 @@
                 "/Titles":
                     ":InteractionDefinition": "Interaction Definition Class"
                     ":Target": "Target Class"
+            "/TraitListDialog":
+                ":Title": "Select Traits"
+                "/Titles":
+                    ":Explicit": "Select Explicit Traits"
+                    ":Hidden": "Select Hidden Traits"
+                    ":Potential": "Select Possible Random Traits"
+                "/Headers":
+                    "/Enabled":
+                        ":Text": "Enabled"
+                        ":Tooltip": "Whether the trait is enabled"
+                    "/Trait":
+                        ":Text": "Trait"
+                        ":Tooltip": "The name of the trait"
+                "/Options":
+                    "/Enabled":
+                        ":True": "True"
+                        ":False": "False"
             "/CASAgeGenderFlagListDialog":
                 ":Title": "Select Allowed Demographics"
                 "/Titles":
@@ -151,6 +168,9 @@
                 "/Prompts":
                     ":Daily": "Enter in the daily cost of the service."
                     ":Weekly": "Enter in the weekly cost of the service."
+            "/PotentialTraitCountDialog":
+                ":Title": "Specify Possible Random Trait Count"
+                ":Prompt": "Enter in number of traits that will be selected randomly from the possible random traits pool."
     "/ExpandedHouseholdStaff":
         "/Interactions":
             "/CreateServiceProfile":

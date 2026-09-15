@@ -288,7 +288,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                             }, new List<UI.Dialogs.ObjectPickerDialog.CommonHeaderInfo<BodyTypes>>
                             {
                                 new BodyTypeColumn(entryKey),
-                                new PartOverrideEnabledColumn(entryKey, partOverrideList.ToArray())
+                                new BodyTypeEnabledColumn(entryKey, partOverrideList.ToArray())
                             }, 1, out confirmed, out cancelled, true);
                         if (cancelled)
                         {
