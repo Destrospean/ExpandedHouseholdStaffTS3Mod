@@ -29,7 +29,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
 
             public override bool Test(Sim actor, Sim target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
             {
-                return actor == target && !isAutonomous && ServiceUtils.ServiceProfiles.Exists(x => !x.IsImmutable);
+                return actor == target && !isAutonomous && ServiceUtils.ServiceProfiles.Exists(x => !x.IsImmutable && x.Outputs.Count > 0);
             }
         }
 
@@ -40,7 +40,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
         public override bool Run()
         {
             IServiceProfile[] profiles;
-            if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.ToArray(), null, 1))
+            if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => x.Outputs.Count > 0).ToArray(), null, 1))
             {
                 profiles[0].TryUIRemoveOutput();
             }
