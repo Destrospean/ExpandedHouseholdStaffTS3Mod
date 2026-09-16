@@ -1,4 +1,4 @@
-﻿using Sims3.Gameplay.ActorSystems;
+using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Services;
@@ -117,18 +117,18 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         }
 
         /// <summary>
-        /// If set to <c>true</c>, the service cannot be changed in the game.
+        /// The items the service NPC spawns with.
         /// </summary>
-        bool IsImmutable
+        List<IGameObject> Inventory
         {
             get;
             set;
         }
 
         /// <summary>
-        /// The items the service NPC spawns with.
+        /// If set to <c>true</c>, the service cannot be changed in the game.
         /// </summary>
-        List<IGameObject> Inventory
+        bool IsImmutable
         {
             get;
             set;
