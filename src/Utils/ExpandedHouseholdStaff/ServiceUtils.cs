@@ -1494,6 +1494,45 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return true;
         }
 
+        public static bool TryUIGetSelectedActions(out ActiveTopicAction[] selectedActions, ActiveTopicAction[] allActions, string title = null, int selectableRowCount = int.MaxValue)
+        {
+            bool retVal;
+            ActiveTopicAction[] tempSelectedActions = null;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        tempSelectedActions = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/ActiveTopicActionListDialog/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<ActiveTopicAction>(allActions).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<ActiveTopicAction>>
+                            {
+                                new ActiveTopicActionColumn(entryKey + "/ActiveTopicActionListDialog"),
+                                new ActiveTopicActionGroupingColumn(entryKey + "/ActiveTopicActionListDialog"),
+                                new ActiveTopicActionActivenessColumn(entryKey + "/ActiveTopicActionListDialog")
+                            }, selectableRowCount, out confirmed, out cancelled) ?? new List<ActiveTopicAction>()).ToArray();
+                        if (cancelled)
+                        {
+                            tempSelectedActions = null;
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            return true;
+                        }
+                    }
+                }, out retVal))
+            {
+                selectedActions = null;
+                return false;
+            }
+            selectedActions = tempSelectedActions;
+            return retVal;
+        }
+
         public static bool TryUIGetSelectedServiceProfiles(out IServiceProfile[] selectedProfiles, IServiceProfile[] allProfiles, string title = null, int selectableRowCount = int.MaxValue)
         {
             bool retVal;
@@ -1538,46 +1577,17 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <returns><c>true</c>, if the an action was removed, <c>false</c> otherwise.</returns>
         public static bool TryUIRemoveAction(this IServiceProfile profile)
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
-            string name = null;
-            LongTermRelationshipTypes grouping = 0;
-            ActiveTopicActionActiveness activeTopicActionActiveness = 0;
-            byte step = 0;
-            while (true)
+            ActiveTopicAction[] actions;
+            if (TryUIGetSelectedActions(out actions, profile.Actions.ToArray()))
             {
-                if (step == 0)
+                foreach (ActiveTopicAction action in actions)
                 {
-                    name = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/ActionNameDialog:Title"), Localization.LocalizeString(entryKey + "/ActionNameDialog:Prompt"), "", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.None, false, ModalDialog.PauseMode.PauseSimulator, false, true);
-                    if (name == null)
-                    {
-                        return false;
-                    }
-                    step++;
+                    profile.RemoveActions(x => x.Name == action.Name && x.Grouping == action.Grouping && x.IsActive == action.IsActive);
+                    CommonUtils.RemoveActions(profile.Name + " Service", action.Grouping, action.IsActive, action.Name);
                 }
-                if (step == 1)
-                {
-                    if (!CommonUtils.TryUIGetFPAorSPA(Localization.LocalizeString(entryKey + "/ActiveTopicActionActivenessDialog:Title"), out activeTopicActionActiveness))
-                    {
-                        step--;
-                        continue;
-                    }
-                    step++;
-                }
-                if (step == 2)
-                {
-                    if (!CommonUtils.TryUIGetLongTermRelationshipType(Localization.LocalizeString(entryKey + "/LongTermRelationshipTypeDialog:Title"), profile.ValidGenders, out grouping))
-                    {
-                        step--;
-                        continue;
-                    }
-                    step++;
-                }
-                bool isActive = activeTopicActionActiveness == ActiveTopicActionActiveness.FPA;
-                profile.RemoveActions(x => x.Name == name && x.Grouping == grouping && x.IsActive == isActive);
-                CommonUtils.RemoveActions(profile.Name + " Service", grouping, isActive, name);
                 return true;
             }
+            return false;
         }
 
         /// <summary>

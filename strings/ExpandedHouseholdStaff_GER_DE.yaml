@@ -171,6 +171,24 @@
                     "/Title":
                         ":Text": "Title"
                         ":Tooltip": "The display name of the profile"
+            "/ActiveTopicActionListDialog":
+                "/Titles":
+                    ":Singular": "Select Action"
+                    ":Plural": "Select Actions"
+                "/Headers":
+                    "/ActiveTopicAction":
+                        ":Text": "Action"
+                        ":Tooltip": "The name of the action"
+                    "/Grouping":
+                        ":Text": "Grouping"
+                        ":Tooltip": "The grouping of the action"
+                    "/Activeness":
+                        ":Text": "FPA/SPA"
+                        ":Tooltip": "Whether the actor of the action is the first person actor (FPA) or second person actor (SPA)"
+                "/Options":
+                    "/Activeness":
+                        ":FPA": "FPA"
+                        ":SPA": "SPA"
             "/CreateServiceProfileDialog":
                 ":Title": "Create Service"
                 "/Prompts":
