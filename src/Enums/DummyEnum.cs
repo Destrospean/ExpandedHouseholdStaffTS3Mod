@@ -1,6 +1,6 @@
 ﻿namespace Destrospean.Enums
 {
-    public enum DummyEnum
+    public enum DummyEnum : byte
     {
         DummyValue
     }

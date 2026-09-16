@@ -141,6 +141,19 @@
                     "/Enabled":
                         ":True": "True"
                         ":False": "False"
+            "/ActiveTopicActionActivenessDialog":
+                ":Title": "Select Actor Type"
+                "/Options":
+                    ":FPA": "First Person Actor"
+                    ":SPA": "Second Person Actor"
+            "/LongTermRelationshipTypeDialog":
+                ":Title": "Select Long Term Relationship"
+                "/Options":
+                    ":All": "All"
+                    ":Default": "Default"
+                    ":Spouse": "Spouse"
+                    ":Ex": "Ex"
+                    ":ExSpouse": "Ex-Spouse"
             "/UpdateTypeDialog":
                 ":Title": "Select Update Type"
                 "/Options":
@@ -186,14 +199,15 @@
             "/PotentialTraitCountDialog":
                 ":Title": "Specify Possible Random Trait Count"
                 ":Prompt": "Enter in number of traits that will be selected randomly from the possible random traits pool."
+            "/ActionNameDialog":
+                ":Title": "Specify Action Name"
+                ":Prompt": "Enter in the name of the action."
             "/ActualValueDialog":
                 ":Title": "Specify Actual Priority"
                 ":Prompt": "Enter in the actual priority value."
             "/AdvertisedValueDialog":
                 ":Title": "Specify Advertised Priority"
                 ":Prompt": "Enter in the advertised priority value."
-            "/LockedDialog":
-                ":Title": "Specify If Locked"
     "/ExpandedHouseholdStaff":
         "/Interactions":
             "/CreateServiceProfile":
@@ -205,6 +219,12 @@
             "/EditServiceProfile":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Edit Service"
+            "/AddActiveTopicAction":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Add Active Topic Action"
+            "/RemoveActiveTopicAction":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Remove Active Topic Action"
             "/AddAutonomousInteraction":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Add Autonomous Interaction"

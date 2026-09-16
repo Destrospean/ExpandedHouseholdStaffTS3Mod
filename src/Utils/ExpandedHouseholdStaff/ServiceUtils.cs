@@ -44,7 +44,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
 
             /// <summary>
-            /// If set to <c>true</c>, the action is an FPA; otherwise, it's an SPA.
+            /// If set to <c>true</c>, the action is for the first person actor; otherwise, it's for the second person actor.
             /// </summary>
             public bool IsActive;
 
@@ -60,7 +60,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             /// </summary>
             /// <param name="name">Name.</param>
             /// <param name="grouping">Grouping.</param>
-            /// <param name="isActive">If set to <c>true</c>, the action is an FPA; otherwise, it's an SPA.</param>
+            /// <param name="isActive">If set to <c>true</c>,the action is for the first person actor; otherwise, it's for the second person actor.</param>
             public ActiveTopicAction(string name, LongTermRelationshipTypes grouping = LongTermRelationshipTypes.Default, bool isActive = false)
             {
                 Name = name;
@@ -1327,6 +1327,54 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         }
 
         /// <summary>
+        /// Opens a series of dialogs to add an action to a service topic of the specified profile.
+        /// </summary>
+        /// <returns><c>true</c>, if the an action was added, <c>false</c> otherwise.</returns>
+        public static bool TryUIAddAction(this IServiceProfile profile)
+        {
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+            string name = null;
+            LongTermRelationshipTypes grouping = 0;
+            ActiveTopicActionActiveness activeTopicActionActiveness = 0;
+            byte step = 0;
+            while (true)
+            {
+                if (step == 0)
+                {
+                    name = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/ActionNameDialog:Title"), Localization.LocalizeString(entryKey + "/ActionNameDialog:Prompt"), "", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.None, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    if (name == null)
+                    {
+                        return false;
+                    }
+                    step++;
+                }
+                if (step == 1)
+                {
+                    if (!CommonUtils.TryUIGetFPAorSPA(Localization.LocalizeString(entryKey + "/ActiveTopicActionActivenessDialog:Title"), out activeTopicActionActiveness))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                }
+                if (step == 2)
+                {
+                    if (!CommonUtils.TryUIGetLongTermRelationshipType(Localization.LocalizeString(entryKey + "/LongTermRelationshipTypeDialog:Title"), profile.ValidGenders, out grouping))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                }
+                bool isActive = activeTopicActionActiveness == ActiveTopicActionActiveness.FPA;
+                profile.AddActions(new ActiveTopicAction(name, grouping, isActive));
+                CommonUtils.AddActions(profile.Name + " Service", grouping, isActive, name);
+                return true;
+            }
+        }
+
+        /// <summary>
         /// Opens a series of dialogs to add an output to an interaction for a service motive of the specified profile.
         /// </summary>
         /// <returns><c>true</c>, if the an output was added, <c>false</c> otherwise.</returns>
@@ -1381,15 +1429,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     step++;
                 }
                 if (step == 4)
-                {
-                    if (!CommonUtils.TryUIGetBooleanValue(Localization.LocalizeString(entryKey + "/LockedDialog:Title"), out locked))
-                    {
-                        step--;
-                        continue;
-                    }
-                    step++;
-                }
-                if (step == 5)
                 {
                     if (!CommonUtils.TryUIGetUpdateType(Localization.LocalizeString(entryKey + "/UpdateTypeDialog:Title"), out updateType))
                     {
@@ -1491,6 +1530,54 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
             selectedProfiles = tempSelectedProfiles;
             return retVal;
+        }
+
+        /// <summary>
+        /// Opens a series of dialogs to remove an action from a service topic of the specified profile.
+        /// </summary>
+        /// <returns><c>true</c>, if the an action was added, <c>false</c> otherwise.</returns>
+        public static bool TryUIRemoveAction(this IServiceProfile profile)
+        {
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+            string name = null;
+            LongTermRelationshipTypes grouping = 0;
+            ActiveTopicActionActiveness activeTopicActionActiveness = 0;
+            byte step = 0;
+            while (true)
+            {
+                if (step == 0)
+                {
+                    name = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/ActionNameDialog:Title"), Localization.LocalizeString(entryKey + "/ActionNameDialog:Prompt"), "", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.None, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    if (name == null)
+                    {
+                        return false;
+                    }
+                    step++;
+                }
+                if (step == 1)
+                {
+                    if (!CommonUtils.TryUIGetFPAorSPA(Localization.LocalizeString(entryKey + "/ActiveTopicActionActivenessDialog:Title"), out activeTopicActionActiveness))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                }
+                if (step == 2)
+                {
+                    if (!CommonUtils.TryUIGetLongTermRelationshipType(Localization.LocalizeString(entryKey + "/LongTermRelationshipTypeDialog:Title"), profile.ValidGenders, out grouping))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                }
+                bool isActive = activeTopicActionActiveness == ActiveTopicActionActiveness.FPA;
+                profile.RemoveActions(x => x.Name == name && x.Grouping == grouping && x.IsActive == isActive);
+                CommonUtils.RemoveActions(profile.Name + " Service", grouping, isActive, name);
+                return true;
+            }
         }
 
         /// <summary>

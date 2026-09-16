@@ -21,6 +21,7 @@ using Destrospean.Enums;
 using Destrospean.Misc;
 using Destrospean.UI.Columns;
 using Destrospean.UI.Dialogs;
+using ComboSelectionDialog = Destrospean.UI.Dialogs.ComboSelectionDialog;
 using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
 
 namespace Destrospean.Utils
@@ -34,7 +35,7 @@ namespace Destrospean.Utils
         /// </summary>
         /// <param name="activeTopic">Active topic.</param>
         /// <param name="grouping">Grouping.</param>
-        /// <param name="isActive">If set to <c>true</c>, the action is an FPA; otherwise, it's an SPA.</param>
+        /// <param name="isActive">If set to <c>true</c>, the action is for the first person actor; otherwise, it's for the second person actor.</param>
         /// <param name="actionsToAdd">Actions to add.</param>
         public static void AddActions(string activeTopic, LongTermRelationshipTypes grouping, bool isActive, params string[] actionsToAdd)
         {
@@ -279,7 +280,7 @@ namespace Destrospean.Utils
         /// </summary>
         /// <param name="activeTopic">Active topic.</param>
         /// <param name="grouping">Grouping.</param>
-        /// <param name="isActive">If set to <c>true</c>, the action is an FPA; otherwise, it's an SPA.</param>
+        /// <param name="isActive">If set to <c>true</c>, the action is for the first person actor; otherwise, it's for the second person actor.</param>
         /// <param name="actionsToRemove">Actions to remove.</param>
         public static void RemoveActions(string activeTopic, LongTermRelationshipTypes grouping, bool isActive, params string[] actionsToRemove)
         {
@@ -565,7 +566,7 @@ namespace Destrospean.Utils
 
         public static bool TryUIGetBooleanValue(string title, out bool boolean, bool defaultValue = false)
         {
-            string text = UI.Dialogs.ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
+            string text = ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
                 {
                     {
                         Localization.LocalizeString(0xC83C121BA92C23BF),
@@ -582,6 +583,123 @@ namespace Destrospean.Utils
                 return false;
             }
             boolean = bool.Parse(text);
+            return true;
+        }
+
+        public static bool TryUIGetFPAorSPA(string title, out ActiveTopicActionActiveness activeTopicActionActiveness)
+        {
+            string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/ActiveTopicActionActivenessDialog/Options:";
+            string text = ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
+                {
+                    {
+                        Localization.LocalizeString(entryKey + ActiveTopicActionActiveness.FPA),
+                        ActiveTopicActionActiveness.FPA.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(entryKey + ActiveTopicActionActiveness.SPA),
+                        ActiveTopicActionActiveness.SPA.ToString()
+                    }
+                }, ActiveTopicActionActiveness.FPA.ToString()) as string;
+            if (text == null)
+            {
+                activeTopicActionActiveness = 0;
+                return false;
+            }
+            activeTopicActionActiveness = (ActiveTopicActionActiveness)Enum.Parse(typeof(ActiveTopicActionActiveness), text);
+            return true;
+        }
+
+        public static bool TryUIGetLongTermRelationshipType(string title, CASAgeGenderFlags gender, out LongTermRelationshipTypes longTermRelationshipType)
+        {
+            string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey();
+            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/LongTermRelationshipTypeDialog/Options:";
+            string longTermRelationshipEntryKey = "Gameplay/Excel/Socializing/LTR:";
+            string text = ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
+                {
+                    {
+                        Localization.LocalizeString(entryKey + LongTermRelationshipTypes.All),
+                        LongTermRelationshipTypes.All.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(entryKey + LongTermRelationshipTypes.Default),
+                        LongTermRelationshipTypes.Default.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.Stranger),
+                        LongTermRelationshipTypes.Stranger.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.Acquaintance),
+                        LongTermRelationshipTypes.Acquaintance.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.DistantFriend),
+                        LongTermRelationshipTypes.DistantFriend.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.Friend),
+                        LongTermRelationshipTypes.Friend.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.GoodFriend),
+                        LongTermRelationshipTypes.GoodFriend.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.BestFriend),
+                        LongTermRelationshipTypes.BestFriend.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(0xC86B0C71108DA632),
+                        LongTermRelationshipTypes.BestFriendsForever.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.OldFriend),
+                        LongTermRelationshipTypes.OldFriend.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.RomanticInterest),
+                        LongTermRelationshipTypes.RomanticInterest.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.Partner),
+                        LongTermRelationshipTypes.Partner.ToString()
+                    },
+                    {
+                        Localization.LocalizeString((gender & CASAgeGenderFlags.Male) == 0 ? 0x560E2FCA95B005B2 : 0xA85D4CDDDC0663AE),
+                        LongTermRelationshipTypes.Fiancee.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(entryKey + LongTermRelationshipTypes.Spouse),
+                        LongTermRelationshipTypes.Spouse.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(entryKey + LongTermRelationshipTypes.Ex),
+                        LongTermRelationshipTypes.Ex.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(entryKey + LongTermRelationshipTypes.ExSpouse),
+                        LongTermRelationshipTypes.ExSpouse.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.Disliked),
+                        LongTermRelationshipTypes.Disliked.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.Enemy),
+                        LongTermRelationshipTypes.Enemy.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.OldEnemies),
+                        LongTermRelationshipTypes.OldEnemies.ToString()
+                    }
+                }, LongTermRelationshipTypes.Default.ToString()) as string;
+            if (text == null)
+            {
+                longTermRelationshipType = 0;
+                return false;
+            }
+            longTermRelationshipType = (LongTermRelationshipTypes)Enum.Parse(typeof(LongTermRelationshipTypes), text);
             return true;
         }
 
@@ -640,9 +758,9 @@ namespace Destrospean.Utils
 
         public static bool TryUIGetUpdateType(string title, out OutputUpdateType updateType)
         {
-            string entryKey = typeof(UI.Dialogs.ComboSelectionDialog).GetLocalizationKey();
+            string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey();
             entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/UpdateTypeDialog/Options:";
-            string text = UI.Dialogs.ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
+            string text = ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
                 {
                     {
                         Localization.LocalizeString(entryKey + OutputUpdateType.ContinuousFlow),

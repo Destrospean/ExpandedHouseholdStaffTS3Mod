@@ -1,6 +1,6 @@
 ﻿namespace Destrospean.Enums
 {
-    public enum CommodityKindType
+    public enum CommodityKindType : byte
     {
         Motive,
         Skill,

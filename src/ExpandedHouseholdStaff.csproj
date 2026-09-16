@@ -86,6 +86,9 @@
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\ServiceProfileTitleColumn.cs" />
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\ServiceProfileNameColumn.cs" />
     <Compile Include="Interactions\EditServiceProfile.cs" />
+    <Compile Include="Interactions\AddActiveTopicAction.cs" />
+    <Compile Include="Enums\ActiveTopicActionActiveness.cs" />
+    <Compile Include="Interactions\RemoveActiveTopicAction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
