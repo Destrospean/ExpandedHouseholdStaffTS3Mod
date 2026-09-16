@@ -242,7 +242,7 @@
                 ":Name": "Add Active Topic Action"
             "/RemoveActiveTopicAction":
                 ":Path": "Expanded Household Staff..."
-                ":Name": "Remove Active Topic Action"
+                ":Name": "Remove Active Topic Actions"
             "/AddAutonomousInteraction":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Add Autonomous Interaction"
