@@ -1505,7 +1505,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             profile = new ServiceProfile(results[0], results[1]);
             while (ServiceMotiveExists(profile.ServiceMotive))
             {
-                profile.ServiceMotive = CommonUtils.GetCommodityKind(profile.Name + DownloadContent.GenerateGUID(), CommodityKindType.Motive);
+                profile.ServiceMotive = CommonUtils.GetCommodityKind("Be" + profile.Name + DownloadContent.GenerateGUID(), CommodityKindType.Motive);
             }
             profile.Motives = new List<CommodityKind>
                 {
