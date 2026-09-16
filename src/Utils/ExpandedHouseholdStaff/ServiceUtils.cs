@@ -1155,7 +1155,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             // The following code sets how many of the potential traits the service NPC will randomly pick.
             if (profile.PotentialTraits.Count > 0)
             {
-                string potentialTraitCount = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKey + "/PotentialTraitCountDialog:Prompt"), "0", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                string potentialTraitCount = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKey + "/PotentialTraitCountDialog:Prompt"), profile.PotentialTraitCount.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
                 profile.PotentialTraitCount = potentialTraitCount == null ? profile.PotentialTraitCount : int.Parse(potentialTraitCount);
             }
 
@@ -1271,7 +1271,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
             entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/CostDialog";
             ServiceProfile serviceProfile = (ServiceProfile)profile;
-            string cost = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:" + (profile.IsLiveInService ? "Weekly" : "Daily")), "50", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+            string cost = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:" + (profile.IsLiveInService ? "Weekly" : "Daily")), serviceProfile.Cost.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
             serviceProfile.Cost = cost == null ? serviceProfile.Cost : int.Parse(cost);
         }
 
