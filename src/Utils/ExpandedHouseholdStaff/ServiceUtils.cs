@@ -9,6 +9,7 @@ using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
+using Sims3.SimIFace.CustomContent;
 using Sims3.UI;
 using Sims3.UI.Controller;
 using System;
@@ -1205,6 +1206,25 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             RemoveServiceFromSaveGame(profile.Name);
         }
 
+        public static bool ServiceMotiveExists(CommodityKind serviceMotive)
+        {
+            foreach (CommodityKind value in Enum.GetValues(typeof(CommodityKind)))
+            {
+                if (serviceMotive == value)
+                {
+                    return true;
+                }
+            }
+            foreach (IServiceProfile profile in ServiceProfiles)
+            {
+                if (serviceMotive == profile.ServiceMotive)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static bool ShowCASAgeGenderFlagListDialog(this IServiceProfile profile, out CASAgeGenderFlags flags, CASAgeGenderFlags? preSelectedFlags = null, CASAgeGenderFlags mask = CASAgeGenderFlags.AgeMask | CASAgeGenderFlags.GenderMask, string title = null)
         {
             flags = CASAgeGenderFlags.None;
@@ -1482,30 +1502,16 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
                 return false;
             }
-            profile = new ServiceProfile(results[0], results[1])
+            profile = new ServiceProfile(results[0], results[1]);
+            while (ServiceMotiveExists(profile.ServiceMotive))
+            {
+                profile.ServiceMotive = CommonUtils.GetCommodityKind(profile.Name + DownloadContent.GenerateGUID(), CommodityKindType.Motive);
+            }
+            profile.Motives = new List<CommodityKind>
                 {
-                    Actions = new List<ActiveTopicAction>
-                        {
-                            new ActiveTopicAction("Dismiss"),
-                            new ActiveTopicAction("Fire")
-                        }
+                    profile.ServiceMotive
                 };
-            foreach (CommodityKind value in Enum.GetValues(typeof(CommodityKind)))
-            {
-                if (profile.ServiceMotive == value)
-                {
-                    SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
-                    return false;
-                }
-            }
-            foreach (IServiceProfile serviceProfile in ServiceProfiles)
-            {
-                if (profile.ServiceMotive == serviceProfile.ServiceMotive)
-                {
-                    SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
-                    return false;
-                }
-            }
+            profile.AddActions(new ActiveTopicAction("Dismiss"), new ActiveTopicAction("Fire"));
             EditServiceProfile(profile);
             return true;
         }
