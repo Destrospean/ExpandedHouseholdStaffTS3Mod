@@ -155,9 +155,11 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             ulong mFlags = 0uL;
 
+            List<ulong> mHiddenTraits = new List<ulong>();
+
             List<IGameObject> mInventory = new List<IGameObject>();
 
-            List<ulong> mHiddenTraits = new List<ulong>();
+            bool mIsImmutable = false;
 
             List<int> mMotives = new List<int>();
 
@@ -430,8 +432,14 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             /// </summary>
             public bool IsImmutable
             {
-                get;
-                set;
+                get
+                {
+                    return mIsImmutable;
+                }
+                set
+                {
+                    mIsImmutable = value;
+                }
             }
 
             /// <summary>
