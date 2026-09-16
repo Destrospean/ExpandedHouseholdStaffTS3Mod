@@ -1535,7 +1535,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <summary>
         /// Opens a series of dialogs to remove an action from a service topic of the specified profile.
         /// </summary>
-        /// <returns><c>true</c>, if the an action was added, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c>, if the an action was removed, <c>false</c> otherwise.</returns>
         public static bool TryUIRemoveAction(this IServiceProfile profile)
         {
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
