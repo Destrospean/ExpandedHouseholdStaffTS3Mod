@@ -1490,6 +1490,22 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                             new ActiveTopicAction("Fire")
                         }
                 };
+            foreach (CommodityKind value in Enum.GetValues(typeof(CommodityKind)))
+            {
+                if (profile.ServiceMotive == value)
+                {
+                    SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
+                    return false;
+                }
+            }
+            foreach (IServiceProfile serviceProfile in ServiceProfiles)
+            {
+                if (profile.ServiceMotive == serviceProfile.ServiceMotive)
+                {
+                    SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
+                    return false;
+                }
+            }
             EditServiceProfile(profile);
             return true;
         }
