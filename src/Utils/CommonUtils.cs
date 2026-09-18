@@ -248,8 +248,7 @@ namespace Destrospean.Utils
                         if (interactionDefinitionType.IsAssignableFrom(interaction.mInteraction.GetType()) && targetType.IsAssignableFrom(interaction.mTargetType))
                         {
                             gameObject.RemoveInteraction(interaction);
-                            InteractionObjectPair newInteraction = new InteractionObjectPair(interaction.InteractionDefinition, interaction.Target, AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType));
-                            gameObject.AddInteraction(newInteraction);
+                            gameObject.AddInteraction(new InteractionObjectPair(interaction.InteractionDefinition, interaction.Target, AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType)));
                             if (gameObject.ItemComp != null && gameObject.ItemComp.InteractionsInventory.Contains(interaction))
                             {
                                 gameObject.ItemComp.InteractionsInventory.Remove(interaction);
