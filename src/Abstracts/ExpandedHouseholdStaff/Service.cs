@@ -456,9 +456,9 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
                         if (simOutfit.IsValid)
                         {
                             SimBuilder simBuilder = new SimBuilder
-                            {
-                                UseCompression = true
-                            };
+                                {
+                                    UseCompression = true
+                                };
                             OutfitUtils.SetOutfit(simBuilder, simOutfit, null);
                             SimOutfit outfit = new SimOutfit(simBuilder.CacheOutfit("Service_" + outfitName));
                             simDescription = new SimDescription(outfit);

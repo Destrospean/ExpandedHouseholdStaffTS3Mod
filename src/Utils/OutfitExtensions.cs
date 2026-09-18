@@ -11,6 +11,8 @@ namespace Destrospean.Utils
     {
         public delegate bool EditSpecialOutfitFunc(Sim sim, string specialOutfitKey);
 
+        public delegate bool EditSpecialOutfitSimDescriptionFunc(SimDescription simDescription, string specialOutfitKey, OutfitCategories category);
+
         public static EditSpecialOutfitFunc EditSpecialOutfit = (sim, specialOutfitKey) =>
             {
                 SimDescription simDescription = sim.SimDescription;
@@ -38,6 +40,25 @@ namespace Destrospean.Utils
                 simDescription.AddSpecialOutfit(simDescription.GetOutfit(OutfitCategories.Everyday, 0), specialOutfitKey);
                 simDescription.RemoveOutfit(OutfitCategories.Everyday, 0, true);
                 sim.SwitchToOutfitWithoutSpin(previousOutfitCategory, previousOutfitIndex);
+                return !CASChangeReporter.Instance.CasCancelled;
+            };
+
+        public static EditSpecialOutfitSimDescriptionFunc EditSpecialOutfitSimDescription = (simDescription, specialOutfitKey, category) =>
+            {
+                if (!simDescription.HasSpecialOutfit(specialOutfitKey))
+                {
+                    simDescription.AddSpecialOutfit(simDescription.GetOutfit(category, 0), specialOutfitKey);
+                }
+                simDescription.AddOutfit(simDescription.GetSpecialOutfit(specialOutfitKey), category, 0);
+                simDescription.RemoveSpecialOutfit(specialOutfitKey);
+                CASLogic.GetSingleton().LoadSim(simDescription, category, 0);
+                GameStates.TransitionToCASStylistMode();
+                while (GameStates.NextInWorldStateId != 0)
+                {
+                    Simulator.Sleep(0u);
+                }
+                simDescription.AddSpecialOutfit(simDescription.GetOutfit(category, 0), specialOutfitKey);
+                simDescription.RemoveOutfit(category, 0, true);
                 return !CASChangeReporter.Instance.CasCancelled;
             };
 

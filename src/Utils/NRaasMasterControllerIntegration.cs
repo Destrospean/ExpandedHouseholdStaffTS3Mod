@@ -1,5 +1,6 @@
 ﻿using NRaas;
 using NRaas.CommonSpace.Options;
+using NRaas.MasterControllerSpace;
 using NRaas.MasterControllerSpace.Sims;
 using Sims3.Gameplay;
 using Sims3.Gameplay.Abstracts;
@@ -37,6 +38,24 @@ namespace Destrospean.Utils
                     simDescription.AddSpecialOutfit(simDescription.GetOutfit(OutfitCategories.Everyday, 0), specialOutfitKey);
                     simDescription.RemoveOutfit(OutfitCategories.Everyday, 0, true);
                     sim.SwitchToOutfitWithoutSpin(previousOutfitCategory, previousOutfitIndex);
+                    return !CASChangeReporter.Instance.CasCancelled;
+                };
+
+            OutfitExtensions.EditSpecialOutfitSimDescription = (simDescription, specialOutfitKey, category) =>
+                {
+                    if (!simDescription.HasSpecialOutfit(specialOutfitKey))
+                    {
+                        simDescription.AddSpecialOutfit(simDescription.GetOutfit(category, 0), specialOutfitKey);
+                    }
+                    simDescription.AddOutfit(simDescription.GetSpecialOutfit(specialOutfitKey), category, 0);
+                    simDescription.RemoveSpecialOutfit(specialOutfitKey);
+                    new Stylist().Perform(new GameHitParameters<SimDescriptionObject>(Sim.ActiveActor, new SimDescriptionObject(simDescription), GameObjectHit.NoHit));
+                    while (GameStates.NextInWorldStateId != 0)
+                    {
+                        SpeedTrap.Sleep();
+                    }
+                    simDescription.AddSpecialOutfit(simDescription.GetOutfit(category, 0), specialOutfitKey);
+                    simDescription.RemoveOutfit(category, 0, true);
                     return !CASChangeReporter.Instance.CasCancelled;
                 };
         }

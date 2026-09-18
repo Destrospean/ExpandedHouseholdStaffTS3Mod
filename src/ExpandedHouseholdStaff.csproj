@@ -92,6 +92,8 @@
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\ActiveTopicAction\ActiveTopicActionActivenessColumn.cs" />
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\ActiveTopicAction\ActiveTopicActionGroupingColumn.cs" />
     <Compile Include="UI\Columns\Skill\SkillColumn.cs" />
+    <Compile Include="Interactions\EditServiceUniform.cs" />
+    <Compile Include="Misc\ActionTask.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

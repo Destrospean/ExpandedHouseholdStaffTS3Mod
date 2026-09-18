@@ -413,6 +413,69 @@ namespace Destrospean.Utils
             }
         }
 
+        public static bool ShowCASAgeGenderFlagListDialog(out CASAgeGenderFlags flags, CASAgeGenderFlags? preSelectedFlags = null, CASAgeGenderFlags mask = CASAgeGenderFlags.AgeMask | CASAgeGenderFlags.GenderMask, string title = null, string entryKey = null, bool okayButtonAlwaysEnabled = true)
+        {
+            flags = CASAgeGenderFlags.None;
+            bool retVal;
+            CASAgeGenderFlags[] flagArray = null;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    entryKey = entryKey ?? typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "CASAgeGenderFlagListDialog");
+                    List<CASAgeGenderFlags> flagList = new List<CASAgeGenderFlags>(Array.FindAll((CASAgeGenderFlags[])Enum.GetValues(typeof(CASAgeGenderFlags)), x => preSelectedFlags.HasValue ? (preSelectedFlags & mask & x) == x && x != CASAgeGenderFlags.None && x != CASAgeGenderFlags.AgeMask && x != CASAgeGenderFlags.GenderMask : false));
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        if (flagList.Count == 0)
+                        {
+                            foreach (CASAgeGenderFlags flag in Enum.GetValues(typeof(CASAgeGenderFlags)))
+                            {
+                                if ((mask & flag) == flag && flag != CASAgeGenderFlags.None && flag != CASAgeGenderFlags.AgeMask && flag != CASAgeGenderFlags.GenderMask)
+                                {
+                                    flagList.Add(flag);
+                                }
+                            }
+                        }
+                        List<CASAgeGenderFlags> selectedFlags = ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<CASAgeGenderFlags>(Array.FindAll((CASAgeGenderFlags[])Enum.GetValues(typeof(CASAgeGenderFlags)), x => (x & mask) == x && x != CASAgeGenderFlags.None && x != CASAgeGenderFlags.AgeMask && x != CASAgeGenderFlags.GenderMask)).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, okayButtonAlwaysEnabled ? new List<ObjectPickerDialog.CommonHeaderInfo<CASAgeGenderFlags>>
+                            {
+                                new CASAgeGenderFlagColumn(entryKey),
+                                new CASAgeGenderFlagEnabledColumn(entryKey, flagList.ToArray())
+                            } : new List<ObjectPickerDialog.CommonHeaderInfo<CASAgeGenderFlags>>
+                            {
+                                new CASAgeGenderFlagColumn(entryKey),
+                            }, 1, out confirmed, out cancelled, okayButtonAlwaysEnabled);
+                        if (cancelled)
+                        {
+                            flagArray = null;
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            flagArray = flagList.ToArray();
+                            return true;
+                        }
+                        if (flagList.Contains(selectedFlags[0]))
+                        {
+                            flagList.Remove(selectedFlags[0]);
+                        }
+                        else
+                        {
+                            flagList.Add(selectedFlags[0]);
+                        }
+                    }
+                }, out retVal))
+            {
+                return false;
+            }
+            foreach (CASAgeGenderFlags flag in flagArray ?? new CASAgeGenderFlags[0])
+            {
+                flags |= flag;
+            }
+            return retVal;
+        }
+
         public static bool ShowSkillListDialog(CASAgeGenderFlags age, CASAgeGenderFlags species, List<SkillLevelPair> currentSkills, List<SkillLevelPair> allSkills = null, string title = null)
         {
             bool retVal;
@@ -434,8 +497,7 @@ namespace Destrospean.Utils
                     {
                         allSkills.RemoveAll(x => (SkillManager.GetStaticSkill(x.SkillName).AvailableAgeSpecies & ageSpecies) == 0);
                     }
-                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/SkillListDialog";
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "SkillListDialog");
                     List<SkillLevelPair> skillList = new List<SkillLevelPair>(currentSkills);
                     bool cancelled, confirmed;
                     while (true)
@@ -507,8 +569,7 @@ namespace Destrospean.Utils
                     {
                         allTraits.RemoveAll(x => !x.TraitValidForAgeSpecies(ageSpecies));
                     }
-                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/TraitListDialog";
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "TraitListDialog");
                     List<Trait> traitList = new List<Trait>(currentTraits);
                     bool cancelled, confirmed;
                     while (true)
@@ -588,8 +649,7 @@ namespace Destrospean.Utils
 
         public static bool TryUIGetFPAorSPA(string title, out ActiveTopicActionActiveness activeTopicActionActiveness)
         {
-            string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/ActiveTopicActionActivenessDialog/Options:";
+            string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey().Replace("ComboSelectionDialog", "ActiveTopicActionActivenessDialog/Options:");
             string text = ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
                 {
                     {
@@ -612,8 +672,7 @@ namespace Destrospean.Utils
 
         public static bool TryUIGetLongTermRelationshipType(string title, CASAgeGenderFlags gender, out LongTermRelationshipTypes longTermRelationshipType)
         {
-            string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/LongTermRelationshipTypeDialog/Options:";
+            string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey().Replace("ComboSelectionDialog", "LongTermRelationshipTypeDialog/Options:");
             string longTermRelationshipEntryKey = "Gameplay/Excel/Socializing/LTR:";
             string text = ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
                 {
@@ -709,8 +768,7 @@ namespace Destrospean.Utils
             Type[] tempSelectedTypes = null;
             if (DebugUtils.TryDisplayScriptError(() =>
                 {
-                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("/ObjectPickerDialog", "");
                     Array.Sort(allTypes, (a, b) => a.FullName.CompareTo(b.FullName));
                     List<string> namespaces = new List<string>();
                     foreach (Type type in allTypes)
@@ -758,8 +816,7 @@ namespace Destrospean.Utils
 
         public static bool TryUIGetUpdateType(string title, out OutputUpdateType updateType)
         {
-            string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/UpdateTypeDialog/Options:";
+            string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey().Replace("ComboSelectionDialog", "UpdateTypeDialog/Options:");
             string text = ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
                 {
                     {

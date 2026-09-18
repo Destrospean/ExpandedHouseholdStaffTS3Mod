@@ -87,6 +87,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
         static Dictionary<string, OutfitAssignment> sIndexedOutfitAssignments;
 
+        [PersistableStatic(true)]
         public static Dictionary<string, AssignedOutfit> AssignedOutfits = new Dictionary<string, AssignedOutfit>();
 
         public static Dictionary<string, OutfitAssignment> IndexedOutfitAssignments
@@ -238,7 +239,12 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
         public static string GetGlobalAssignedOutfitPrefix(this Sim sim, bool isCategory = false)
         {
-            return OutfitAssignmentGlobalPrefix + OutfitUtils.GetAgePrefix(sim.SimDescription.Age, true) + OutfitUtils.GetGenderPrefix(sim.SimDescription.Gender) + (isCategory ? "_Category_" : "_");
+            return sim.SimDescription.GetGlobalAssignedOutfitPrefix(isCategory);
+        }
+
+        public static string GetGlobalAssignedOutfitPrefix(this SimDescription simDescription, bool isCategory = false)
+        {
+            return OutfitAssignmentGlobalPrefix + OutfitUtils.GetAgePrefix(simDescription.Age, true) + OutfitUtils.GetGenderPrefix(simDescription.Gender) + (isCategory ? "_Category_" : "_");
         }
 
         public static void IndexOutfitAssignments()
@@ -276,8 +282,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             BodyTypes[] tempPartOverrides = null;
             if (DebugUtils.TryDisplayScriptError(() =>
                 {
-                    string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey();
-                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/PartOverrideListDialog";
+                    string entryKey = typeof(UI.Dialogs.ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "PartOverrideListDialog");
                     List<BodyTypes> partOverrideList = new List<BodyTypes>(preSelectedPartOverrides ?? assignedOutfit.PartOverrides.ToArray());
                     bool cancelled, confirmed;
                     while (true)

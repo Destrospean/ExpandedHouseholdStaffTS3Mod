@@ -176,6 +176,7 @@ namespace Destrospean.ExpandedHouseholdStaff
                 sim.AddInteraction(CreateServiceProfile.Singleton, true);
                 sim.AddInteraction(DeleteServiceProfile.Singleton, true);
                 sim.AddInteraction(EditServiceProfile.Singleton, true);
+                sim.AddInteraction(EditServiceUniform.Singleton, true);
                 sim.AddInteraction(AddActiveTopicAction.Singleton, true);
                 sim.AddInteraction(RemoveActiveTopicAction.Singleton, true);
                 sim.AddInteraction(AddAutonomousInteraction.Singleton, true);

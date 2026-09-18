@@ -67,6 +67,25 @@
                     "/Enabled":
                         ":True": "True"
                         ":False": "False"
+            "/ServiceOutfitDemographicDialog":
+                ":Title": "Select Demographic"
+                "/Titles":
+                    ":Age": "Select Age"
+                    ":Gender": "Select Gender"
+                "/Headers":
+                    "/CASAgeGenderFlag":
+                        ":Text": "Demographic"
+                        ":Tooltip": "The name of the demographic"
+                "/Options":
+                    "/CASAgeGenderFlag":
+                        ":Baby": "Baby"
+                        ":Toddler": "Toddler"
+                        ":Child": "Child"
+                        ":Teen": "Teen"
+                        ":Adult": "Young Adult/Adult"
+                        ":Elder": "Elder"
+                        ":Male": "Male"
+                        ":Female": "Female"
             "/PartOverrideListDialog":
                 ":Title": "Select Part Overrides"
                 "/Headers":
@@ -237,6 +256,9 @@
             "/EditServiceProfile":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Edit Service"
+            "/EditServiceUniform":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Edit Service Uniform"
             "/AddActiveTopicAction":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Add Active Topic Action"

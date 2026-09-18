@@ -1116,19 +1116,18 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             // The following code sets phone call feedback messages when requesting and cancelling services.
             profile.TryUISetPhoneCallFeedback();
 
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("/ObjectPickerDialog", "");
 
             // The following code sets the valid range of ages the service NPC can be.
             CASAgeGenderFlags age;
-            if (profile.ShowCASAgeGenderFlagListDialog(out age, null, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKey + "/CASAgeGenderFlagListDialog/Titles:Age")))
+            if (CommonUtils.ShowCASAgeGenderFlagListDialog(out age, profile.ValidAges, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKey + "/CASAgeGenderFlagListDialog/Titles:Age")))
             {
                 profile.ValidAges = age;
             }
 
             // The following code sets the valid range of genders the service NPC can be.
             CASAgeGenderFlags gender;
-            if (profile.ShowCASAgeGenderFlagListDialog(out gender, null, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey + "/CASAgeGenderFlagListDialog/Titles:Gender")))
+            if (CommonUtils.ShowCASAgeGenderFlagListDialog(out gender, profile.ValidGenders, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey + "/CASAgeGenderFlagListDialog/Titles:Gender")))
             {
                 profile.ValidGenders = gender;
             }
@@ -1225,71 +1224,9 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return false;
         }
 
-        public static bool ShowCASAgeGenderFlagListDialog(this IServiceProfile profile, out CASAgeGenderFlags flags, CASAgeGenderFlags? preSelectedFlags = null, CASAgeGenderFlags mask = CASAgeGenderFlags.AgeMask | CASAgeGenderFlags.GenderMask, string title = null)
-        {
-            flags = CASAgeGenderFlags.None;
-            bool retVal;
-            CASAgeGenderFlags[] flagArray = null;
-            if (DebugUtils.TryDisplayScriptError(() =>
-                {
-                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/CASAgeGenderFlagListDialog";
-                    List<CASAgeGenderFlags> flagList = new List<CASAgeGenderFlags>(Array.FindAll((CASAgeGenderFlags[])Enum.GetValues(typeof(CASAgeGenderFlags)), x => preSelectedFlags.HasValue ? (preSelectedFlags & mask & x) == x : profile == null ? false : ((profile.ValidAges | profile.ValidGenders) & mask & x) == x && x != CASAgeGenderFlags.None && x != CASAgeGenderFlags.AgeMask && x != CASAgeGenderFlags.GenderMask));
-                    bool cancelled, confirmed;
-                    while (true)
-                    {
-                        if (flagList.Count == 0)
-                        {
-                            foreach (CASAgeGenderFlags flag in Enum.GetValues(typeof(CASAgeGenderFlags)))
-                            {
-                                if ((mask & flag) == flag && flag != CASAgeGenderFlags.None && flag != CASAgeGenderFlags.AgeMask && flag != CASAgeGenderFlags.GenderMask)
-                                {
-                                    flagList.Add(flag);
-                                }
-                            }
-                        }
-                        List<CASAgeGenderFlags> selectedFlags = ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
-                            {
-                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<CASAgeGenderFlags>(Array.FindAll((CASAgeGenderFlags[])Enum.GetValues(typeof(CASAgeGenderFlags)), x => (x & mask) == x && x != CASAgeGenderFlags.None && x != CASAgeGenderFlags.AgeMask && x != CASAgeGenderFlags.GenderMask)).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
-                            }, new List<ObjectPickerDialog.CommonHeaderInfo<CASAgeGenderFlags>>
-                            {
-                                new CASAgeGenderFlagColumn(entryKey),
-                                new CASAgeGenderFlagEnabledColumn(entryKey, flagList.ToArray())
-                            }, 1, out confirmed, out cancelled, true);
-                        if (cancelled)
-                        {
-                            flagArray = null;
-                            return false;
-                        }
-                        if (confirmed)
-                        {
-                            flagArray = flagList.ToArray();
-                            return true;
-                        }
-                        if (flagList.Contains(selectedFlags[0]))
-                        {
-                            flagList.Remove(selectedFlags[0]);
-                        }
-                        else
-                        {
-                            flagList.Add(selectedFlags[0]);
-                        }
-                    }
-                }, out retVal))
-            {
-                return false;
-            }
-            foreach (CASAgeGenderFlags flag in flagArray)
-            {
-                flags |= flag;
-            }
-            return retVal;
-        }
-
         public static void ShowCostDialog(IServiceProfile profile)
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/CostDialog";
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "CostDialog");
             ServiceProfile serviceProfile = (ServiceProfile)profile;
             string cost = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:" + (profile.IsLiveInService ? "Weekly" : "Daily")), serviceProfile.Cost.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
             serviceProfile.Cost = cost == null ? serviceProfile.Cost : int.Parse(cost);
@@ -1302,8 +1239,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             ServiceProfileFlags[] flagArray = null;
             if (DebugUtils.TryDisplayScriptError(() =>
                 {
-                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/ServiceProfileFlagListDialog";
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "ServiceProfileFlagListDialog");
                     List<ServiceProfileFlags> flagList = new List<ServiceProfileFlags>(Array.FindAll((ServiceProfileFlags[])Enum.GetValues(typeof(ServiceProfileFlags)), x => preSelectedFlags.HasValue ? (preSelectedFlags & x) == x : (profile as ServiceProfile)?.HasFlags(x) ?? false));
                     bool cancelled, confirmed;
                     while (true)
@@ -1352,8 +1288,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <returns><c>true</c>, if the an action was added, <c>false</c> otherwise.</returns>
         public static bool TryUIAddAction(this IServiceProfile profile)
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("/ObjectPickerDialog", "");
             string name = null;
             LongTermRelationshipTypes grouping = 0;
             ActiveTopicActionActiveness activeTopicActionActiveness = 0;
@@ -1400,8 +1335,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <returns><c>true</c>, if the an output was added, <c>false</c> otherwise.</returns>
         public static bool TryUIAddOutput(this IServiceProfile profile)
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("/ObjectPickerDialog", "");
             Type[] interactionDefinitionTypes = null;
             Type[] targetTypes = null;
             string advertised = null;
@@ -1480,8 +1414,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         public static bool TryUICreateServiceProfile(out IServiceProfile profile)
         {
             profile = null;
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/CreateServiceProfileDialog";
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "CreateServiceProfileDialog");
             List<string> results = TwoStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:FirstPrompt"), Localization.LocalizeString(entryKey + "/Prompts:SecondPrompt"), "", "", Localization.LocalizeString("Ui/Caption/Global:Accept"), Localization.LocalizeString("Ui/Caption/Global:Cancel"));
             if (results == null)
             {
@@ -1522,19 +1455,18 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             ActiveTopicAction[] tempSelectedActions = null;
             if (DebugUtils.TryDisplayScriptError(() =>
                 {
-                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "ActiveTopicActionListDialog");
                     bool cancelled, confirmed;
                     while (true)
                     {
-                        tempSelectedActions = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/ActiveTopicActionListDialog/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
+                        tempSelectedActions = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
                             {
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<ActiveTopicAction>(allActions).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<ActiveTopicAction>>
                             {
-                                new ActiveTopicActionColumn(entryKey + "/ActiveTopicActionListDialog"),
-                                new ActiveTopicActionGroupingColumn(entryKey + "/ActiveTopicActionListDialog"),
-                                new ActiveTopicActionActivenessColumn(entryKey + "/ActiveTopicActionListDialog")
+                                new ActiveTopicActionColumn(entryKey),
+                                new ActiveTopicActionGroupingColumn(entryKey),
+                                new ActiveTopicActionActivenessColumn(entryKey)
                             }, selectableRowCount, out confirmed, out cancelled) ?? new List<ActiveTopicAction>()).ToArray();
                         if (cancelled)
                         {
@@ -1561,18 +1493,17 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             IServiceProfile[] tempSelectedProfiles = null;
             if (DebugUtils.TryDisplayScriptError(() =>
                 {
-                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-                    entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "ServiceProfileListDialog");
                     bool cancelled, confirmed;
                     while (true)
                     {
-                        tempSelectedProfiles = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/ServiceProfileListDialog/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
+                        tempSelectedProfiles = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
                             {
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<IServiceProfile>(Array.FindAll(allProfiles, x => !x.IsImmutable)).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<IServiceProfile>>
                             {
-                                new ServiceProfileNameColumn(entryKey + "/ServiceProfileListDialog"),
-                                new ServiceProfileTitleColumn(entryKey + "/ServiceProfileListDialog")
+                                new ServiceProfileNameColumn(entryKey),
+                                new ServiceProfileTitleColumn(entryKey)
                             }, selectableRowCount, out confirmed, out cancelled) ?? new List<IServiceProfile>()).ToArray();
                         if (cancelled)
                         {
@@ -1618,8 +1549,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <returns><c>true</c>, if the an output was removed, <c>false</c> otherwise.</returns>
         public static bool TryUIRemoveOutput(this IServiceProfile profile)
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/'));
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("/ObjectPickerDialog", "");
             Type[] interactionDefinitionTypes, targetTypes;
             while (true)
             {
@@ -1652,8 +1582,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <returns><c>true</c>, if any custom services were removed from the savegame, <c>false</c> otherwise.</returns>
         public static bool TryUIRemoveServicesFromSaveGame()
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/DeleteServiceProfileDialog";
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "DeleteServiceProfileDialog");
             IServiceProfile[] selectedProfiles;
             if (TryUIGetSelectedServiceProfiles(out selectedProfiles, ServiceProfiles.ToArray(), Localization.LocalizeString(entryKey + ":Title")))
             {
@@ -1672,8 +1601,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <returns><c>true</c>, if feedback messages were set, <c>false</c> otherwise.</returns>
         public static bool TryUISetPhoneCallFeedback(this IServiceProfile profile)
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey();
-            entryKey = entryKey.Remove(entryKey.LastIndexOf('/')) + "/PhoneCallFeedbackDialog";
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "PhoneCallFeedbackDialog");
             string[] results = ThreeStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), new string[]
                 {
                     Localization.LocalizeString(entryKey + "/Prompts:SetRequestedMessage"),
