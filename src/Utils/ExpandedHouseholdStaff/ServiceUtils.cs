@@ -1347,7 +1347,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 if (step == 0)
                 {
-                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, InteractionObjectTypeUtils.InteractionDefinitionTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:InteractionDefinition"), 1))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, Array.FindAll(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => InteractionObjectPair.sRequiresTuningCache.ContainsKey(x) && InteractionObjectPair.sRequiresTuningCache[x]), Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:InteractionDefinition"), 1))
                     {
                         return false;
                     }
@@ -1355,7 +1355,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 1)
                 {
-                    if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, InteractionObjectTypeUtils.GameObjectTypes, Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:Target"), 1))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, new List<InteractionTuning>(InteractionTuning.sAllTunings.Values).FindAll(x => x.FullInteractionName == interactionDefinitionTypes[0].FullName).ConvertAll(x => Array.Find(InteractionObjectTypeUtils.GameObjectTypes, y => y.FullName == x.FullObjectName)).ToArray(), Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:Target"), 1))
                     {
                         step--;
                         continue;

@@ -87,9 +87,11 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
                                         }
                                         string specialOutfitKey = simDescription.GetGlobalAssignedOutfitPrefix() + profiles[0].Name;
                                         OutfitAssignmentUtils.OutfitAssignment outfitAssignment;
+                                        BodyTypes[] preSelectedPartOverrides = null;
                                         if (simDescription.TryGetGlobalOutfitAssignment(profiles[0], out outfitAssignment))
                                         {
                                             simDescription.AddAssignedOutfit(OutfitAssignmentUtils.AssignedOutfits[outfitAssignment.SpecialOutfitKey], specialOutfitKey);
+                                            preSelectedPartOverrides = OutfitAssignmentUtils.AssignedOutfits[specialOutfitKey].PartOverrides.ToArray();
                                         }
                                         if (OutfitExtensions.EditSpecialOutfit(simDescription.CreatedSim, specialOutfitKey))
                                         {
@@ -97,7 +99,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
                                             ActionTask.Start(() => DebugUtils.TryDisplayScriptError(() =>
                                                 {
                                                     BodyTypes[] partOverrides;
-                                                    if (OutfitAssignmentUtils.ShowPartOverrideListDialog(OutfitAssignmentUtils.AssignedOutfits[specialOutfitKey] = new OutfitAssignmentUtils.AssignedOutfit(simDescription.GetSpecialOutfit(specialOutfitKey)), out partOverrides))
+                                                    if (OutfitAssignmentUtils.ShowPartOverrideListDialog(OutfitAssignmentUtils.AssignedOutfits[specialOutfitKey] = new OutfitAssignmentUtils.AssignedOutfit(simDescription.GetSpecialOutfit(specialOutfitKey)), out partOverrides, preSelectedPartOverrides))
                                                     {
                                                         OutfitAssignmentUtils.AssignedOutfits[specialOutfitKey].PartOverrides = new List<BodyTypes>(partOverrides);
                                                     }
