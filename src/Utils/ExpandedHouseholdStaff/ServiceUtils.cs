@@ -1116,18 +1116,18 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             // The following code sets phone call feedback messages when requesting and cancelling services.
             profile.TryUISetPhoneCallFeedback();
 
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("/ObjectPickerDialog", "");
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
 
             // The following code sets the valid range of ages the service NPC can be.
             CASAgeGenderFlags age;
-            if (CommonUtils.ShowCASAgeGenderFlagListDialog(out age, profile.ValidAges, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKey + "/CASAgeGenderFlagListDialog/Titles:Age")))
+            if (CommonUtils.ShowCASAgeGenderFlagListDialog(out age, profile.ValidAges, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKey + "CASAgeGenderFlagListDialog/Titles:Age")))
             {
                 profile.ValidAges = age;
             }
 
             // The following code sets the valid range of genders the service NPC can be.
             CASAgeGenderFlags gender;
-            if (CommonUtils.ShowCASAgeGenderFlagListDialog(out gender, profile.ValidGenders, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey + "/CASAgeGenderFlagListDialog/Titles:Gender")))
+            if (CommonUtils.ShowCASAgeGenderFlagListDialog(out gender, profile.ValidGenders, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey + "CASAgeGenderFlagListDialog/Titles:Gender")))
             {
                 profile.ValidGenders = gender;
             }
@@ -1144,24 +1144,24 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             // The following code sets the traits the service NPC will always come with.
             List<Trait> traits = profile.Traits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKey + "/TraitListDialog/Titles:Explicit"));
+            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKey + "TraitListDialog/Titles:Explicit"));
             profile.Traits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
 
             // The following code sets the traits the service NPC will randomly pick from.
             traits = profile.PotentialTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKey + "/TraitListDialog/Titles:Potential"));
+            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKey + "TraitListDialog/Titles:Potential"));
             profile.PotentialTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
 
             // The following code sets how many of the potential traits the service NPC will randomly pick.
             if (profile.PotentialTraits.Count > 0)
             {
-                string potentialTraitCount = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKey + "/PotentialTraitCountDialog:Prompt"), profile.PotentialTraitCount.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                string potentialTraitCount = StringInputDialog.Show(Localization.LocalizeString(entryKey + "PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKey + "PotentialTraitCountDialog:Prompt"), profile.PotentialTraitCount.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
                 profile.PotentialTraitCount = potentialTraitCount == null ? profile.PotentialTraitCount : int.Parse(potentialTraitCount);
             }
 
             // The following code sets the hidden traits the service NPC will come with.
             traits = profile.HiddenTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, new List<Trait>(TraitManager.GetDictionaryTraits).FindAll(x => x.IsHidden || x.IsReward), Localization.LocalizeString(entryKey + "/TraitListDialog/Titles:Hidden"));
+            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, new List<Trait>(TraitManager.GetDictionaryTraits).FindAll(x => x.IsHidden || x.IsReward), Localization.LocalizeString(entryKey + "TraitListDialog/Titles:Hidden"));
             profile.HiddenTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
 
             // The following code sets the skills the service NPC has.
@@ -1288,7 +1288,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <returns><c>true</c>, if the an action was added, <c>false</c> otherwise.</returns>
         public static bool TryUIAddAction(this IServiceProfile profile)
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("/ObjectPickerDialog", "");
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
             string name = null;
             LongTermRelationshipTypes grouping = 0;
             ActiveTopicActionActiveness activeTopicActionActiveness = 0;
@@ -1297,7 +1297,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 if (step == 0)
                 {
-                    name = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/ActionNameDialog:Title"), Localization.LocalizeString(entryKey + "/ActionNameDialog:Prompt"), "", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.None, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    name = StringInputDialog.Show(Localization.LocalizeString(entryKey + "ActionNameDialog:Title"), Localization.LocalizeString(entryKey + "ActionNameDialog:Prompt"), "", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.None, false, ModalDialog.PauseMode.PauseSimulator, false, true);
                     if (name == null)
                     {
                         return false;
@@ -1306,7 +1306,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 1)
                 {
-                    if (!CommonUtils.TryUIGetFPAorSPA(Localization.LocalizeString(entryKey + "/ActiveTopicActionActivenessDialog:Title"), out activeTopicActionActiveness))
+                    if (!CommonUtils.TryUIGetFPAorSPA(Localization.LocalizeString(entryKey + "ActiveTopicActionActivenessDialog:Title"), out activeTopicActionActiveness))
                     {
                         step--;
                         continue;
@@ -1315,7 +1315,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 2)
                 {
-                    if (!CommonUtils.TryUIGetLongTermRelationshipType(Localization.LocalizeString(entryKey + "/LongTermRelationshipTypeDialog:Title"), profile.ValidGenders, out grouping))
+                    if (!CommonUtils.TryUIGetLongTermRelationshipType(Localization.LocalizeString(entryKey + "LongTermRelationshipTypeDialog:Title"), profile.ValidGenders, out grouping))
                     {
                         step--;
                         continue;
@@ -1335,7 +1335,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <returns><c>true</c>, if the an output was added, <c>false</c> otherwise.</returns>
         public static bool TryUIAddOutput(this IServiceProfile profile)
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("/ObjectPickerDialog", "");
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
             Type[] interactionDefinitionTypes = null;
             Type[] targetTypes = null;
             string advertised = null;
@@ -1347,7 +1347,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 if (step == 0)
                 {
-                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, Array.FindAll(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => InteractionObjectPair.sRequiresTuningCache.ContainsKey(x) && InteractionObjectPair.sRequiresTuningCache[x]), Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:InteractionDefinition"), 1))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, Array.FindAll(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => InteractionObjectPair.sRequiresTuningCache.ContainsKey(x) && InteractionObjectPair.sRequiresTuningCache[x]), Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:InteractionDefinition"), 1))
                     {
                         return false;
                     }
@@ -1355,7 +1355,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 1)
                 {
-                    if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, new List<InteractionTuning>(InteractionTuning.sAllTunings.Values).FindAll(x => x.FullInteractionName == interactionDefinitionTypes[0].FullName).ConvertAll(x => Array.Find(InteractionObjectTypeUtils.GameObjectTypes, y => y.FullName == x.FullObjectName)).ToArray(), Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:Target"), 1))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, new List<InteractionTuning>(InteractionTuning.sAllTunings.Values).FindAll(x => x.FullInteractionName == interactionDefinitionTypes[0].FullName).ConvertAll(x => Array.Find(InteractionObjectTypeUtils.GameObjectTypes, y => y.FullName == x.FullObjectName)).ToArray(), Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:Target"), 1))
                     {
                         step--;
                         continue;
@@ -1364,7 +1364,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 2)
                 {
-                    advertised = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/AdvertisedValueDialog:Title"), Localization.LocalizeString(entryKey + "/AdvertisedValueDialog:Prompt"), "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    advertised = StringInputDialog.Show(Localization.LocalizeString(entryKey + "AdvertisedValueDialog:Title"), Localization.LocalizeString(entryKey + "AdvertisedValueDialog:Prompt"), "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
                     if (advertised == null)
                     {
                         step--;
@@ -1374,7 +1374,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 3)
                 {
-                    actual = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/ActualValueDialog:Title"), Localization.LocalizeString(entryKey + "/ActualValueDialog:Prompt"), "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    actual = StringInputDialog.Show(Localization.LocalizeString(entryKey + "ActualValueDialog:Title"), Localization.LocalizeString(entryKey + "ActualValueDialog:Prompt"), "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
                     if (actual == null)
                     {
                         step--;
@@ -1384,7 +1384,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 4)
                 {
-                    if (!CommonUtils.TryUIGetUpdateType(Localization.LocalizeString(entryKey + "/UpdateTypeDialog:Title"), out updateType))
+                    if (!CommonUtils.TryUIGetUpdateType(Localization.LocalizeString(entryKey + "UpdateTypeDialog:Title"), out updateType))
                     {
                         step--;
                         continue;
@@ -1549,15 +1549,15 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <returns><c>true</c>, if the an output was removed, <c>false</c> otherwise.</returns>
         public static bool TryUIRemoveOutput(this IServiceProfile profile)
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("/ObjectPickerDialog", "");
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
             Type[] interactionDefinitionTypes, targetTypes;
             while (true)
             {
-                if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, Array.FindAll(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => profile.Outputs.Exists(y => y.InteractionDefinitionType == x.FullName)), Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:InteractionDefinition")))
+                if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, Array.FindAll(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => profile.Outputs.Exists(y => y.InteractionDefinitionType == x.FullName)), Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:InteractionDefinition")))
                 {
                     return false;
                 }
-                if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, Array.FindAll(InteractionObjectTypeUtils.GameObjectTypes, x => profile.Outputs.Exists(y => y.TargetType == x.FullName && Array.Exists(interactionDefinitionTypes, z => z.FullName == y.InteractionDefinitionType))), Localization.LocalizeString(entryKey + "/NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "/TypeListDialog/Titles:Target")))
+                if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, Array.FindAll(InteractionObjectTypeUtils.GameObjectTypes, x => profile.Outputs.Exists(y => y.TargetType == x.FullName && Array.Exists(interactionDefinitionTypes, z => z.FullName == y.InteractionDefinitionType))), Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:Target")))
                 {
                     continue;
                 }

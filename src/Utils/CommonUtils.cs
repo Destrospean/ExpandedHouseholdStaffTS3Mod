@@ -768,7 +768,7 @@ namespace Destrospean.Utils
             Type[] tempSelectedTypes = null;
             if (DebugUtils.TryDisplayScriptError(() =>
                 {
-                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("/ObjectPickerDialog", "");
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
                     Array.Sort(allTypes, (a, b) => a.FullName.CompareTo(b.FullName));
                     List<string> namespaces = new List<string>();
                     foreach (Type type in allTypes)
@@ -781,24 +781,24 @@ namespace Destrospean.Utils
                     bool cancelled, confirmed;
                     while (true)
                     {
-                        List<string> selectedNamespaces = ObjectPickerDialog.Show(namespaceListTitle ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/NamespaceListDialog:Title"), new List<ObjectPicker.TabInfo>
+                        List<string> selectedNamespaces = ObjectPickerDialog.Show(namespaceListTitle ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "NamespaceListDialog:Title"), new List<ObjectPicker.TabInfo>
                             {
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), namespaces.ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<string>>
                             {
-                                new TextColumn(entryKey + "/NamespaceListDialog")
+                                new TextColumn(entryKey + "NamespaceListDialog")
                             }, 1, out confirmed, out cancelled);
                         if (cancelled)
                         {
                             tempSelectedTypes = null;
                             return false;
                         }
-                        tempSelectedTypes = (ObjectPickerDialog.Show(typeListTitle ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/TypeListDialog:Title"), new List<ObjectPicker.TabInfo>
+                        tempSelectedTypes = (ObjectPickerDialog.Show(typeListTitle ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "TypeListDialog:Title"), new List<ObjectPicker.TabInfo>
                             {
                                 new ObjectPicker.TabInfo("shop_all_r2", selectedNamespaces[0], new List<Type>(allTypes).FindAll(x => x.Namespace == selectedNamespaces[0]).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<Type>>
                             {
-                                new TypeColumn(entryKey + "/TypeListDialog")
+                                new TypeColumn(entryKey + "TypeListDialog")
                             }, selectableRowCount, out confirmed, out cancelled) ?? new List<Type>()).ToArray();
                         if (confirmed)
                         {
