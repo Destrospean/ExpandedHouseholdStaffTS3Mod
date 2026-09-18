@@ -39,7 +39,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionAttribute.cs" />
-    <Compile Include="Utils\CommonUtils.cs" />
     <Compile Include="Utils\DebugUtils.cs" />
     <Compile Include="Enums\CommodityKindType.cs" />
     <Compile Include="Enums\DummyEnum.cs" />
@@ -96,6 +95,7 @@
     <Compile Include="Misc\ActionTask.cs" />
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\CommodityChange\CommodityChangeInteractionDefinitionTypeColumn.cs" />
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\CommodityChange\CommodityChangeTargetTypeColumn.cs" />
+    <Compile Include="Utils\CommonUtils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -157,7 +157,4 @@
     <Exec Command="&quot;$(SolutionDir)scripts\GenerateTunables.bat&quot;" Condition="'$(OS)' == 'Windows_NT'" />
     <Exec Command="sh &quot;$(SolutionDir)scripts\GenerateTunables.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
   </Target>
-  <ItemGroup>
-    <Folder Include="UI\Columns\ExpandedHouseholdStaff\CommodityChange\" />
-  </ItemGroup>
 </Project>
