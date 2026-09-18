@@ -109,7 +109,6 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
                                                 ulong simDescriptionId = simDescription.SimDescriptionId;
                                                 Household.TouristHousehold.RemoveTemporary(simDescription);
                                                 simDescription.Dispose();
-                                                //DebugUtils.ShowDebugMessageNotification("SimDescription Removed: " + simDescriptionId);
                                             }, "Remove SimDescription: " + simDescription.SimDescriptionId, AlarmType.AlwaysPersisted, simDescription);
                                         Gameflow.SetGameSpeed(Gameflow.GameSpeed.Pause, Gameflow.SetGameSpeedContext.GameStates);
                                         listenerAction = ListenerAction.Remove;

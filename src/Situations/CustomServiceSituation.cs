@@ -437,7 +437,6 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                     OutfitAssignmentUtils.OutfitAssignment outfitAssignment;
                     if (Worker.SimDescription.TryGetGlobalOutfitAssignment(service.Profile, out outfitAssignment) && Worker.AddAssignedOutfit(outfitAssignment.SpecialOutfitKey))
                     {
-                        DebugUtils.ShowDebugMessageNotification(outfitAssignment.SpecialOutfitKey);
                         Worker.SimDescription.AddOutfit(new SimOutfit(Worker.SimDescription.GetSpecialOutfit(outfitAssignment.SpecialOutfitKey).Key), OutfitCategories.Career, true);
                         for (int i = Worker.SimDescription.GetOutfitCount(OutfitCategories.Career) - 1; i > 0; i--)
                         {
