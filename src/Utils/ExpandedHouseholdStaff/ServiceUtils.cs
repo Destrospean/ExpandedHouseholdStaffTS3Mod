@@ -1400,7 +1400,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 float actual = ParserFunctions.ParseFloat(actualString, 200f);
                 float advertised = ParserFunctions.ParseFloat(advertisedString, 200f);
                 bool locked = actual == advertised;
-                profile.RemoveOutputs(x => x.InteractionDefinitionType == interactionDefinitionTypes[0].FullName && x.TargetType == targetTypes[0].FullName && x.ConstantChange.ToString() == advertisedString && x.Locked == locked && x.ActualValue.ToString() == actualString && x.UpdateType == updateType);
+                profile.RemoveOutputs(x => x.InteractionDefinitionType == interactionDefinitionTypes[0].FullName && x.TargetType == targetTypes[0].FullName && x.ConstantChange == advertised && x.Locked == locked && x.ActualValue == actual && x.UpdateType == updateType);
                 profile.AddOutputs(new CommodityChange(interactionDefinitionTypes[0], targetTypes[0], advertised, locked, actual, updateType));
                 if (serviceInSaveGame)
                 {
