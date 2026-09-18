@@ -208,17 +208,26 @@
                     "/Activeness":
                         ":FPA": "FPA"
                         ":SPA": "SPA"
+            "/OutputListDialog":
+                "/Titles":
+                    ":Singular": "Select Output"
+                    ":Plural": "Select Outputs"
+                "/Headers":
+                    "/InteractionDefinitionType":
+                        ":Text": "Interaction Definition"
+                        ":Tooltip": "The namespace + class name of the interaction definition"
+                    "/TargetType":
+                        ":Text": "Target Type"
+                        ":Tooltip": "The namespace + class name of the target object type"
             "/CreateServiceProfileDialog":
                 ":Title": "Create Service"
                 "/Prompts":
-                    ":FirstPrompt": "Enter in the internal name of the service (must be unique)."
-                    ":SecondPrompt": "Enter in display name of the service (what shows up in the UI)."
+                    ":Name": "Enter in the internal name of the service (must be unique)."
+                    ":Title": "Enter in display name of the service (what shows up in the UI)."
                 ":ServiceCreationFailed": "Service Creation Failed"
                 ":NotUnique": "The internal name was not unique."
                 ":NameEmpty": "The internal name was not specified."
                 ":TitleEmpty": "The display name was not specified."
-            "/DeleteServiceProfileDialog":
-                ":Title": "Delete Services"
             "/EditServiceProfileDialog":
                 ":Title": "Edit Service"
                 ":Prompt": "Enter in display name of the service (what shows up in the UI)."

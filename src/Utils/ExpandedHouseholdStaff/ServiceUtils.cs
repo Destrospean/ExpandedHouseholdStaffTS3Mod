@@ -6,6 +6,7 @@ using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Utilities;
+using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions;
 using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
@@ -1338,9 +1339,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
             Type[] interactionDefinitionTypes = null;
             Type[] targetTypes = null;
-            string advertised = null;
-            string actual = null;
-            bool locked = false;
+            string advertisedString = null;
+            string actualString = null;
             OutputUpdateType updateType = 0;
             byte step = 0;
             while (true)
@@ -1364,8 +1364,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 2)
                 {
-                    advertised = StringInputDialog.Show(Localization.LocalizeString(entryKey + "AdvertisedValueDialog:Title"), Localization.LocalizeString(entryKey + "AdvertisedValueDialog:Prompt"), "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
-                    if (advertised == null)
+                    advertisedString = StringInputDialog.Show(Localization.LocalizeString(entryKey + "AdvertisedValueDialog:Title"), Localization.LocalizeString(entryKey + "AdvertisedValueDialog:Prompt"), "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    if (advertisedString == null)
                     {
                         step--;
                         continue;
@@ -1374,8 +1374,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 3)
                 {
-                    actual = StringInputDialog.Show(Localization.LocalizeString(entryKey + "ActualValueDialog:Title"), Localization.LocalizeString(entryKey + "ActualValueDialog:Prompt"), "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
-                    if (actual == null)
+                    actualString = StringInputDialog.Show(Localization.LocalizeString(entryKey + "ActualValueDialog:Title"), Localization.LocalizeString(entryKey + "ActualValueDialog:Prompt"), "200", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    if (actualString == null)
                     {
                         step--;
                         continue;
@@ -1397,8 +1397,11 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 {
                     service.RemoveOutputs();
                 }
-                profile.RemoveOutputs(x => x.InteractionDefinitionType == interactionDefinitionTypes[0].FullName && x.TargetType == targetTypes[0].FullName);
-                profile.AddOutputs(new CommodityChange(interactionDefinitionTypes[0], targetTypes[0], ParserFunctions.ParseFloat(advertised, 200f), locked, ParserFunctions.ParseFloat(actual, 200f), updateType));
+                float actual = ParserFunctions.ParseFloat(actualString, 200f);
+                float advertised = ParserFunctions.ParseFloat(advertisedString, 200f);
+                bool locked = actual == advertised;
+                profile.RemoveOutputs(x => x.InteractionDefinitionType == interactionDefinitionTypes[0].FullName && x.TargetType == targetTypes[0].FullName && x.ConstantChange.ToString() == advertisedString && x.Locked == locked && x.ActualValue.ToString() == actualString && x.UpdateType == updateType);
+                profile.AddOutputs(new CommodityChange(interactionDefinitionTypes[0], targetTypes[0], advertised, locked, actual, updateType));
                 if (serviceInSaveGame)
                 {
                     service.AddOutputs();
@@ -1415,7 +1418,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         {
             profile = null;
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "CreateServiceProfileDialog");
-            List<string> results = TwoStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:FirstPrompt"), Localization.LocalizeString(entryKey + "/Prompts:SecondPrompt"), "", "", Localization.LocalizeString("Ui/Caption/Global:Accept"), Localization.LocalizeString("Ui/Caption/Global:Cancel"));
+            List<string> results = TwoStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:Name"), Localization.LocalizeString(entryKey + "/Prompts:Title"), "", "", Localization.LocalizeString("Ui/Caption/Global:Accept"), Localization.LocalizeString("Ui/Caption/Global:Cancel"));
             if (results == null)
             {
                 return false;
@@ -1487,6 +1490,43 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return retVal;
         }
 
+        public static bool TryUIGetSelectedOutputs(out CommodityChange[] selectedOutputs, CommodityChange[] allOutputs, string title = null, int selectableRowCount = int.MaxValue)
+        {
+            bool retVal;
+            CommodityChange[] tempSelectedOutputs = null;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "OutputListDialog");
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        tempSelectedOutputs = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<CommodityChange>(allOutputs).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<CommodityChange>>
+                            {
+                                new CommodityChangeInteractionDefinitionTypeColumn(entryKey),
+                                new CommodityChangeTargetTypeColumn(entryKey)
+                            }, selectableRowCount, out confirmed, out cancelled) ?? new List<CommodityChange>()).ToArray();
+                        if (cancelled)
+                        {
+                            tempSelectedOutputs = null;
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            return true;
+                        }
+                    }
+                }, out retVal))
+            {
+                selectedOutputs = null;
+                return false;
+            }
+            selectedOutputs = tempSelectedOutputs;
+            return retVal;
+        }
+
         public static bool TryUIGetSelectedServiceProfiles(out IServiceProfile[] selectedProfiles, IServiceProfile[] allProfiles, string title = null, int selectableRowCount = int.MaxValue)
         {
             bool retVal;
@@ -1531,7 +1571,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         public static bool TryUIRemoveAction(this IServiceProfile profile)
         {
             ActiveTopicAction[] actions;
-            if (TryUIGetSelectedActions(out actions, profile.Actions.ToArray()))
+            if (TryUIGetSelectedActions(out actions, profile.Actions.ToArray(), Localization.LocalizeString(RemoveActiveTopicAction.LocalizationKey + ":Name")))
             {
                 foreach (ActiveTopicAction action in actions)
                 {
@@ -1549,31 +1589,23 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <returns><c>true</c>, if the an output was removed, <c>false</c> otherwise.</returns>
         public static bool TryUIRemoveOutput(this IServiceProfile profile)
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
-            Type[] interactionDefinitionTypes, targetTypes;
-            while (true)
+            CommodityChange[] outputs;
+            if (TryUIGetSelectedOutputs(out outputs, profile.Outputs.ToArray(), Localization.LocalizeString(RemoveAutonomousInteraction.LocalizationKey + ":Name")))
             {
-                if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, Array.FindAll(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => profile.Outputs.Exists(y => y.InteractionDefinitionType == x.FullName)), Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:InteractionDefinition")))
-                {
-                    return false;
-                }
-                if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, Array.FindAll(InteractionObjectTypeUtils.GameObjectTypes, x => profile.Outputs.Exists(y => y.TargetType == x.FullName && Array.Exists(interactionDefinitionTypes, z => z.FullName == y.InteractionDefinitionType))), Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:Target")))
-                {
-                    continue;
-                }
                 CustomService service;
                 bool serviceInSaveGame = CustomInstances.TryGetValue(profile.Name, out service);
                 if (serviceInSaveGame)
                 {
                     service.RemoveOutputs();
                 }
-                profile.RemoveOutputs(x => x.InteractionDefinitionType == interactionDefinitionTypes[0].FullName && x.TargetType == targetTypes[0].FullName);
+                profile.RemoveOutputs(outputs);
                 if (serviceInSaveGame)
                 {
                     service.AddOutputs();
                 }
                 return true;
             }
+            return false;
         }
 
         /// <summary>
@@ -1582,9 +1614,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// <returns><c>true</c>, if any custom services were removed from the savegame, <c>false</c> otherwise.</returns>
         public static bool TryUIRemoveServicesFromSaveGame()
         {
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "DeleteServiceProfileDialog");
             IServiceProfile[] selectedProfiles;
-            if (TryUIGetSelectedServiceProfiles(out selectedProfiles, ServiceProfiles.ToArray(), Localization.LocalizeString(entryKey + ":Title")))
+            if (TryUIGetSelectedServiceProfiles(out selectedProfiles, ServiceProfiles.ToArray(), Localization.LocalizeString(DeleteServiceProfile.LocalizationKey + ":Name")))
             {
                 foreach (IServiceProfile profile in new List<IServiceProfile>(selectedProfiles))
                 {

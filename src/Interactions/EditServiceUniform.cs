@@ -23,14 +23,14 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
         {
             public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair iop)
             {
-                return Localization.LocalizeString(target.IsFemale, sLocalizationKey + ":Name", actor.FirstName, target.FirstName);
+                return Localization.LocalizeString(target.IsFemale, LocalizationKey + ":Name", actor.FirstName, target.FirstName);
             }
 
             public override string[] GetPath(bool isFemale)
             {
                 return new[]
                 {
-                    Localization.LocalizeString(isFemale, sLocalizationKey + ":Path")
+                    Localization.LocalizeString(isFemale, LocalizationKey + ":Path")
                 };
             }
 
@@ -40,7 +40,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
             }
         }
 
-        static readonly string sLocalizationKey = typeof(EditServiceUniform).GetLocalizationKey();
+        public static readonly string LocalizationKey = typeof(EditServiceUniform).GetLocalizationKey();
 
         public static InteractionDefinition Singleton = new Definition();
 

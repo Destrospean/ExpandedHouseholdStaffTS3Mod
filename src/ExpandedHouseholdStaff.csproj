@@ -94,6 +94,8 @@
     <Compile Include="UI\Columns\Skill\SkillColumn.cs" />
     <Compile Include="Interactions\EditServiceUniform.cs" />
     <Compile Include="Misc\ActionTask.cs" />
+    <Compile Include="UI\Columns\ExpandedHouseholdStaff\CommodityChange\CommodityChangeInteractionDefinitionTypeColumn.cs" />
+    <Compile Include="UI\Columns\ExpandedHouseholdStaff\CommodityChange\CommodityChangeTargetTypeColumn.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -155,4 +157,7 @@
     <Exec Command="&quot;$(SolutionDir)scripts\GenerateTunables.bat&quot;" Condition="'$(OS)' == 'Windows_NT'" />
     <Exec Command="sh &quot;$(SolutionDir)scripts\GenerateTunables.sh&quot;" Condition="'$(OS)' != 'Windows_NT'" />
   </Target>
+  <ItemGroup>
+    <Folder Include="UI\Columns\ExpandedHouseholdStaff\CommodityChange\" />
+  </ItemGroup>
 </Project>

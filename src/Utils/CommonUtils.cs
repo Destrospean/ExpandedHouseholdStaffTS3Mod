@@ -243,16 +243,22 @@ namespace Destrospean.Utils
             {
                 if (targetType.IsAssignableFrom(gameObject.GetType()))
                 {
-                    foreach (InteractionObjectPair interactionObjectPair in new List<InteractionObjectPair>(gameObject.Interactions))
+                    foreach (InteractionObjectPair interaction in new List<InteractionObjectPair>(gameObject.Interactions))
                     {
-                        if (interactionDefinitionType.IsAssignableFrom(interactionObjectPair.mInteraction.GetType()) && targetType.IsAssignableFrom(interactionObjectPair.mTargetType))
+                        if (interactionDefinitionType.IsAssignableFrom(interaction.mInteraction.GetType()) && targetType.IsAssignableFrom(interaction.mTargetType))
                         {
-                            gameObject.RemoveInteraction(interactionObjectPair);
-                            gameObject.AddInteraction(new InteractionObjectPair(interactionObjectPair.InteractionDefinition, gameObject, AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType)));
-                            if (gameObject.ItemComp != null && gameObject.ItemComp.InteractionsInventory.Contains(interactionObjectPair))
+                            gameObject.RemoveInteraction(interaction);
+                            InteractionObjectPair newInteraction = new InteractionObjectPair(interaction.InteractionDefinition, gameObject, AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType));
+                            gameObject.AddInteraction(newInteraction);
+                            if (gameObject.ItemComp != null && gameObject.ItemComp.InteractionsInventory.Contains(interaction))
                             {
-                                gameObject.ItemComp.InteractionsInventory.Remove(interactionObjectPair);
-                                gameObject.AddInventoryInteraction(interactionObjectPair.InteractionDefinition);
+                                gameObject.ItemComp.InteractionsInventory.Remove(interaction);
+                                gameObject.AddInventoryInteraction(interaction.InteractionDefinition);
+                            }
+                            foreach (Sim sim in Sims3.Gameplay.Queries.GetObjects<Sim>())
+                            {
+                                sim.SimCommodityInteractionMap.RemoveInteractionForObject(interaction);
+                                sim.SimCommodityInteractionMap.AddInteractionsForObject(newInteraction);
                             }
                         }
                     }
