@@ -30,6 +30,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
     {
         public new class SetUnsetServiceBed : ImmediateInteraction<Sim, Bed>
         {
+            [DoesntRequireTuning]
             [Persistable]
             public class Definition : InteractionDefinition<Sim, Bed, SetUnsetServiceBed>
             {
@@ -403,13 +404,6 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                             {
                                 CommonUtils.UpdateMotiveTunings(enumerator.Current.CreatedSim, service.ServiceMotive);
                                 (ServiceSituation.FindServiceSituationInvolving(enumerator.Current.CreatedSim) as CustomServiceSituation)?.SetMotivesAndCommodities();
-                                /*
-                                enumerator.Current.CreatedSim.WorkMotive = service.ServiceMotive;
-                                foreach (CommodityKind motive in service.ServiceMotives)
-                                {
-                                    enumerator.Current.CreatedSim.Motives.CreateMotive(motive);
-                                }
-                                */
                             }
                         }
                     }

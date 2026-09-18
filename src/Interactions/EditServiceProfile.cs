@@ -8,17 +8,18 @@ using Sims3.UI;
 using Destrospean.Utils;
 using Destrospean.Utils.ExpandedHouseholdStaff;
 using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
+using Sims3.Gameplay.Abstracts;
 
-namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
+namespace Destrospean.ExpandedHouseholdStaff.Interactions
 {
-    public class EditServiceProfile : ImmediateInteraction<Sim, Sim>
+    public class EditServiceProfile : ImmediateInteraction<Sim, GameObject>
     {
         [DoesntRequireTuning]
-        public class Definition : ImmediateInteractionDefinition<Sim, Sim, EditServiceProfile>
+        public class Definition : ImmediateInteractionDefinition<Sim, GameObject, EditServiceProfile>
         {
-            public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair iop)
+            public override string GetInteractionName(Sim actor, GameObject target, InteractionObjectPair iop)
             {
-                return Localization.LocalizeString(target.IsFemale, LocalizationKey + ":Name", actor.FirstName, target.FirstName);
+                return Localization.LocalizeString(actor.IsFemale, LocalizationKey + ":Name");
             }
 
             public override string[] GetPath(bool isFemale)
@@ -29,9 +30,9 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
                 };
             }
 
-            public override bool Test(Sim actor, Sim target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
+            public override bool Test(Sim actor, GameObject target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
             {
-                return actor == target && !isAutonomous && ServiceUtils.ServiceProfiles.Exists(x => !x.IsImmutable);
+                return !isAutonomous && ServiceUtils.ServiceProfiles.Exists(x => !x.IsImmutable);
             }
         }
 

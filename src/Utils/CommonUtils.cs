@@ -631,6 +631,29 @@ namespace Destrospean.Utils
             return false;
         }
 
+        public static bool TryUIGetActiveTopicActionActiveness(string title, out ActiveTopicActionActiveness activeTopicActionActiveness, ActiveTopicActionActiveness defaultValue = ActiveTopicActionActiveness.SPA)
+        {
+            string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey().Replace("ComboSelectionDialog", "ActiveTopicActionActivenessDialog/Options:");
+            string text = ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
+                {
+                    {
+                        Localization.LocalizeString(entryKey + ActiveTopicActionActiveness.FPA),
+                        ActiveTopicActionActiveness.FPA.ToString()
+                    },
+                    {
+                        Localization.LocalizeString(entryKey + ActiveTopicActionActiveness.SPA),
+                        ActiveTopicActionActiveness.SPA.ToString()
+                    }
+                }, defaultValue.ToString()) as string;
+            if (text == null)
+            {
+                activeTopicActionActiveness = 0;
+                return false;
+            }
+            activeTopicActionActiveness = (ActiveTopicActionActiveness)Enum.Parse(typeof(ActiveTopicActionActiveness), text);
+            return true;
+        }
+
         public static bool TryUIGetBooleanValue(string title, out bool boolean, bool defaultValue = false)
         {
             string text = ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
@@ -653,30 +676,7 @@ namespace Destrospean.Utils
             return true;
         }
 
-        public static bool TryUIGetFPAorSPA(string title, out ActiveTopicActionActiveness activeTopicActionActiveness)
-        {
-            string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey().Replace("ComboSelectionDialog", "ActiveTopicActionActivenessDialog/Options:");
-            string text = ComboSelectionDialog.Show(title, new SortedDictionary<string, object>(new DummyComparer())
-                {
-                    {
-                        Localization.LocalizeString(entryKey + ActiveTopicActionActiveness.FPA),
-                        ActiveTopicActionActiveness.FPA.ToString()
-                    },
-                    {
-                        Localization.LocalizeString(entryKey + ActiveTopicActionActiveness.SPA),
-                        ActiveTopicActionActiveness.SPA.ToString()
-                    }
-                }, ActiveTopicActionActiveness.FPA.ToString()) as string;
-            if (text == null)
-            {
-                activeTopicActionActiveness = 0;
-                return false;
-            }
-            activeTopicActionActiveness = (ActiveTopicActionActiveness)Enum.Parse(typeof(ActiveTopicActionActiveness), text);
-            return true;
-        }
-
-        public static bool TryUIGetLongTermRelationshipType(string title, CASAgeGenderFlags gender, out LongTermRelationshipTypes longTermRelationshipType)
+        public static bool TryUIGetLongTermRelationshipType(string title, CASAgeGenderFlags gender, out LongTermRelationshipTypes longTermRelationshipType, LongTermRelationshipTypes defaultValue = LongTermRelationshipTypes.Default)
         {
             string entryKey = typeof(ComboSelectionDialog).GetLocalizationKey().Replace("ComboSelectionDialog", "LongTermRelationshipTypeDialog/Options:");
             string longTermRelationshipEntryKey = "Gameplay/Excel/Socializing/LTR:";
@@ -758,7 +758,7 @@ namespace Destrospean.Utils
                         Localization.LocalizeString(longTermRelationshipEntryKey + LongTermRelationshipTypes.OldEnemies),
                         LongTermRelationshipTypes.OldEnemies.ToString()
                     }
-                }, LongTermRelationshipTypes.Default.ToString()) as string;
+                }, defaultValue.ToString()) as string;
             if (text == null)
             {
                 longTermRelationshipType = 0;

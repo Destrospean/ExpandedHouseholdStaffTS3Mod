@@ -1,4 +1,5 @@
 ﻿using Sims3.Gameplay.Actors;
+using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
@@ -137,6 +138,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions
 
         public static InteractionDefinition Singleton = new Definition();
 
+        [DoesntRequireTuning]
         public class Definition : CallDefinition<CallForServices>
         {
             public override string GetInteractionName(ref InteractionInstanceParameters parameters)

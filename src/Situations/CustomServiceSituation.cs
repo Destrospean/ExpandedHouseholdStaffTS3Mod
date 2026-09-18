@@ -254,6 +254,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                 DebugUtils.TryDisplayScriptError(() =>
                     {
                         parent.OnArriveOnLot();
+                        parent.Worker.GreetSimOnLot(parent.Lot);
                         parent.SetMotivesAndCommodities();
                         parent.SetState(new PerformDuties(parent));
                     });

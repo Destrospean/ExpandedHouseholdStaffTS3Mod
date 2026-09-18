@@ -5,8 +5,8 @@ using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
+using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions;
 using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using Destrospean.Enums;
 using Destrospean.Enums.ExpandedHouseholdStaff;
+using Destrospean.ExpandedHouseholdStaff.Interactions;
 using Destrospean.Misc;
 using Destrospean.UI.Columns;
 using Destrospean.UI.Columns.ExpandedHouseholdStaff;
@@ -1298,16 +1299,36 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 if (step == 0)
                 {
-                    name = StringInputDialog.Show(Localization.LocalizeString(entryKey + "ActionNameDialog:Title"), Localization.LocalizeString(entryKey + "ActionNameDialog:Prompt"), "", -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.None, false, ModalDialog.PauseMode.PauseSimulator, false, true);
-                    if (name == null)
+                    List<ActiveTopicAction> allActions = new List<ActiveTopicAction>();
+                    foreach (var activeTopic in ActionAvailabilityData.sActiveTopicInteractions)
+                    {
+                        foreach (KeyValuePair<LongTermRelationshipTypes, Dictionary<bool, List<string>>> groups in activeTopic.Value)
+                        {
+                            foreach (KeyValuePair<bool, List<string>> group in groups.Value)
+                            {
+                                foreach (string action in group.Value)
+                                {
+                                    if (!allActions.Exists(x => x.Name == action))
+                                    {
+                                        allActions.Add(new ActiveTopicAction(action, groups.Key, group.Key));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    ActiveTopicAction[] actions;
+                    if (!TryUIGetSelectedActions(out actions, allActions.ToArray(), Localization.LocalizeString(AddActiveTopicAction.LocalizationKey + ":Name"), 1))
                     {
                         return false;
                     }
+                    name = actions[0].Name;
+                    grouping = actions[0].Grouping;
+                    activeTopicActionActiveness = actions[0].IsActive ? ActiveTopicActionActiveness.FPA : ActiveTopicActionActiveness.SPA;
                     step++;
                 }
                 if (step == 1)
                 {
-                    if (!CommonUtils.TryUIGetFPAorSPA(Localization.LocalizeString(entryKey + "ActiveTopicActionActivenessDialog:Title"), out activeTopicActionActiveness))
+                    if (!CommonUtils.TryUIGetActiveTopicActionActiveness(Localization.LocalizeString(entryKey + "ActiveTopicActionActivenessDialog:Title"), out activeTopicActionActiveness, activeTopicActionActiveness))
                     {
                         step--;
                         continue;
@@ -1316,7 +1337,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 2)
                 {
-                    if (!CommonUtils.TryUIGetLongTermRelationshipType(Localization.LocalizeString(entryKey + "LongTermRelationshipTypeDialog:Title"), profile.ValidGenders, out grouping))
+                    if (!CommonUtils.TryUIGetLongTermRelationshipType(Localization.LocalizeString(entryKey + "LongTermRelationshipTypeDialog:Title"), profile.ValidGenders, out grouping, grouping))
                     {
                         step--;
                         continue;

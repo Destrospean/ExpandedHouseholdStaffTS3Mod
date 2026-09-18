@@ -1,6 +1,8 @@
+using Sims3.Gameplay.Abstracts;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
+using Sims3.Gameplay.Core;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
@@ -21,6 +23,7 @@ using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Destrospean.ExpandedHouseholdStaff.Interactions;
 using Destrospean.Misc;
 using Destrospean.Utils;
 using Destrospean.Utils.ExpandedHouseholdStaff;
@@ -42,18 +45,20 @@ namespace Destrospean.ExpandedHouseholdStaff
                 NRaasMasterControllerIntegration.Init();
             }
             LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
-            EventListener simInstantiatedListener = null;
+            World.OnObjectPlacedInLotEventHandler += (sender, e) =>
+                {
+                    World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
+                    if (onObjectPlacedInLotEventArgs != null)
+                    {
+                        AddInteractions(GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId) as Mailbox);
+                    }
+                };
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
-                    foreach (Sim sim in Sims3.Gameplay.Queries.GetObjects<Sim>())
+                    foreach (Mailbox mailbox in Sims3.Gameplay.Queries.GetObjects<Mailbox>())
                     {
-                        AddInteractions(sim);
+                        AddInteractions(mailbox);
                     }
-                    simInstantiatedListener = EventTracker.AddListener(EventTypeId.kSimInstantiated, evt =>
-                        {
-                            DebugUtils.TryDisplayScriptError(() => AddInteractions(evt.TargetObject as Sim));
-                            return ListenerAction.Keep;
-                        });
                     foreach (IServiceProfile profile in ServiceUtils.ServiceProfiles)
                     {
                         CustomService.Init(profile);
@@ -160,8 +165,6 @@ namespace Destrospean.ExpandedHouseholdStaff
                 });
             World.sOnWorldQuitEventHandler += (sender, e) =>
                 {
-                    EventTracker.RemoveListener(simInstantiatedListener);
-                    simInstantiatedListener = null;
                     foreach (CustomService service in new List<CustomService>(ServiceUtils.CustomInstances.Values))
                     {
                         CustomService.Deinit(service.Profile, true);
@@ -169,18 +172,18 @@ namespace Destrospean.ExpandedHouseholdStaff
                 };
         }
 
-        public static void AddInteractions(Sim sim)
+        public static void AddInteractions(Mailbox mailbox)
         {
-            if (sim != null)
+            if (mailbox != null)
             {
-                sim.AddInteraction(CreateServiceProfile.Singleton, true);
-                sim.AddInteraction(DeleteServiceProfile.Singleton, true);
-                sim.AddInteraction(EditServiceProfile.Singleton, true);
-                sim.AddInteraction(EditServiceUniform.Singleton, true);
-                sim.AddInteraction(AddActiveTopicAction.Singleton, true);
-                sim.AddInteraction(RemoveActiveTopicAction.Singleton, true);
-                sim.AddInteraction(AddAutonomousInteraction.Singleton, true);
-                sim.AddInteraction(RemoveAutonomousInteraction.Singleton, true);
+                mailbox.AddInteraction(CreateServiceProfile.Singleton, true);
+                mailbox.AddInteraction(DeleteServiceProfile.Singleton, true);
+                mailbox.AddInteraction(EditServiceProfile.Singleton, true);
+                mailbox.AddInteraction(EditServiceUniform.Singleton, true);
+                mailbox.AddInteraction(AddActiveTopicAction.Singleton, true);
+                mailbox.AddInteraction(RemoveActiveTopicAction.Singleton, true);
+                mailbox.AddInteraction(AddAutonomousInteraction.Singleton, true);
+                mailbox.AddInteraction(RemoveAutonomousInteraction.Singleton, true);
             }
         }
 

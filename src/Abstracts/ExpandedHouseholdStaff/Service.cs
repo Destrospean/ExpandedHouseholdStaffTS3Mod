@@ -32,6 +32,7 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
     {
         public class SetUnsetServiceBed : ImmediateInteraction<Sim, Bed>
         {
+            [DoesntRequireTuning]
             public class Definition : InteractionDefinition<Sim, Bed, SetUnsetServiceBed>
             {
                 public override string GetInteractionName(Sim actor, Bed target, InteractionObjectPair iop)
