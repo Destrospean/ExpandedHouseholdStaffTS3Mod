@@ -248,21 +248,20 @@ namespace Destrospean.Utils
                         if (interactionDefinitionType.IsAssignableFrom(interaction.mInteraction.GetType()) && targetType.IsAssignableFrom(interaction.mTargetType))
                         {
                             gameObject.RemoveInteraction(interaction);
-                            InteractionObjectPair newInteraction = new InteractionObjectPair(interaction.InteractionDefinition, gameObject, AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType));
+                            InteractionObjectPair newInteraction = new InteractionObjectPair(interaction.InteractionDefinition, interaction.Target, AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType));
                             gameObject.AddInteraction(newInteraction);
                             if (gameObject.ItemComp != null && gameObject.ItemComp.InteractionsInventory.Contains(interaction))
                             {
                                 gameObject.ItemComp.InteractionsInventory.Remove(interaction);
                                 gameObject.AddInventoryInteraction(interaction.InteractionDefinition);
                             }
-                            foreach (Sim sim in Sims3.Gameplay.Queries.GetObjects<Sim>())
-                            {
-                                sim.SimCommodityInteractionMap.RemoveInteractionForObject(interaction);
-                                sim.SimCommodityInteractionMap.AddInteractionsForObject(newInteraction);
-                            }
                         }
                     }
                 }
+            }
+            foreach (Sim sim in Sims3.Gameplay.Queries.GetObjects<Sim>())
+            {
+                sim.UpdateCommodityInteractionMap();
             }
         }
 

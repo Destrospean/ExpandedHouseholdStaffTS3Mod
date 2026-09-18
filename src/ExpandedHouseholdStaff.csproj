@@ -46,7 +46,6 @@
     <Compile Include="Delegates\Func.cs" />
     <Compile Include="Situations\CustomServiceSituation.cs" />
     <Compile Include="UI\Dialogs\ObjectPickerDialog.cs" />
-    <Compile Include="UI\Columns\TextColumn.cs" />
     <Compile Include="UI\Columns\TypeColumn.cs" />
     <Compile Include="Utils\InteractionObjectTypeUtils.cs" />
     <Compile Include="Utils\OutfitExtensions.cs" />
@@ -96,6 +95,8 @@
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\CommodityChange\CommodityChangeInteractionDefinitionTypeColumn.cs" />
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\CommodityChange\CommodityChangeTargetTypeColumn.cs" />
     <Compile Include="Utils\CommonUtils.cs" />
+    <Compile Include="UI\Columns\TextColumn.cs" />
+    <Compile Include="UI\Columns\TextInListColumn.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

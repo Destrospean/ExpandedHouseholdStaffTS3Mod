@@ -181,6 +181,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             public override void Init(CustomServiceSituation parent)
             {
                 CustomService service = (CustomService)parent.Service;
+                parent.Worker.GreetSimOnLot(parent.Lot);
                 DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(service.CheckTime, TimeUnit.Minutes, CheckForDuties, service.CheckTime, TimeUnit.Minutes, "Time for " + service.Profile.Name + " to check if everything is done", AlarmType.AlwaysPersisted));
             }
 
@@ -254,7 +255,6 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                 DebugUtils.TryDisplayScriptError(() =>
                     {
                         parent.OnArriveOnLot();
-                        parent.Worker.GreetSimOnLot(parent.Lot);
                         parent.SetMotivesAndCommodities();
                         parent.SetState(new PerformDuties(parent));
                     });

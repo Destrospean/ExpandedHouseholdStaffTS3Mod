@@ -5,7 +5,7 @@ namespace Destrospean.UI.Columns
 {
     public class TypeColumn : Dialogs.ObjectPickerDialog.CommonHeaderInfo<Type>
     {
-        public TypeColumn(string localizationPath) : base(localizationPath + "/Header:Text", localizationPath + "/Header:Tooltip", 440)
+        public TypeColumn(string localizationPath) : base(localizationPath + "/Headers/Type:Text", localizationPath + "/Headers/Type:Tooltip", 440)
         {
         }
 

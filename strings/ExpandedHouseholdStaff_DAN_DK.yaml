@@ -6,11 +6,19 @@
                 "/Titles":
                     ":InteractionDefinition": "Interaction Definition Namespace"
                     ":Target": "Target Namespace"
+                "/Headers":
+                    "/Text":
+                        ":Text": "Namespace"
+                        ":Tooltip": "The namespace"
             "/TypeListDialog":
                 ":Title": "Class"
                 "/Titles":
                     ":InteractionDefinition": "Interaction Definition Class"
                     ":Target": "Target Class"
+                "/Headers":
+                    "/Type":
+                        ":Text": "Class"
+                        ":Tooltip": "The class name"
             "/SkillListDialog":
                 ":Title": "Specify Skill Levels"
                 "/Titles":
@@ -39,6 +47,19 @@
                         ":Tooltip": "Whether the trait is enabled"
                 "/Options":
                     "/Enabled":
+                        ":True": "True"
+                        ":False": "False"
+            "/MotiveListDialog":
+                ":Title": "Select Motives"
+                "/Headers":
+                    "/Text":
+                        ":Text": "Motive"
+                        ":Tooltip": "The name of the motive"
+                    "/TextInList":
+                        ":Text": "Enabled"
+                        ":Tooltip": "Whether the motive is enabled"
+                "/Options":
+                    "/TextInList":
                         ":True": "True"
                         ":False": "False"
             "/CASAgeGenderFlagListDialog":
