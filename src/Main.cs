@@ -136,10 +136,6 @@ namespace Destrospean.ExpandedHouseholdStaff
                                             TraitNames.MakesNoMesses,
                                             TraitNames.SpeedyCleaner
                                         },
-                                    Inventory = new List<IGameObject>
-                                        {
-                                            BookGeneralData.GetBookGeneralByTitle("HowToServeAndNotBeServed")
-                                        },
                                     IsImmutable = true,
                                     IsLiveInService = true,
                                     IsQuietAroundSleepingSims = true,

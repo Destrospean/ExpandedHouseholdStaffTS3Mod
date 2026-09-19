@@ -160,8 +160,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             List<ulong> mHiddenTraits = new List<ulong>();
 
-            List<IGameObject> mInventory = new List<IGameObject>();
-
             bool mIsImmutable = false;
 
             List<int> mMotives = new List<int>();
@@ -390,21 +388,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 set
                 {
                     mHiddenTraits = value.ConvertAll(x => (ulong)x);
-                }
-            }
-
-            /// <summary>
-            /// The items the service NPC spawns with.
-            /// </summary>
-            public List<IGameObject> Inventory
-            {
-                get
-                {
-                    return mInventory;
-                }
-                set
-                {
-                    mInventory = value;
                 }
             }
 
@@ -1389,7 +1372,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     GetUniformFromName = ((ServiceProfile)profile).GetUniformFromName,
                     GetUniformNameCallback = ((ServiceProfile)profile).GetUniformNameCallback,
                     HiddenTraits = new List<TraitNames>(profile.HiddenTraits),
-                    Inventory = profile.Inventory.ConvertAll(x => x.Clone()),
                     IsLiveInService = profile.IsLiveInService,
                     IsQuietAroundSleepingSims = profile.IsQuietAroundSleepingSims,
                     IsScaredOfBonehilda = profile.IsScaredOfBonehilda,

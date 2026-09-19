@@ -515,6 +515,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                             skill.ForceGainPointsForLevelUp();
                         }
                     }
+                    /*
                     if (sim.Inventory != null)
                     {
                         sim.Inventory.DestroyItems();
@@ -526,6 +527,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                             }
                         }
                     }
+                    */
                 });
         }
     }
