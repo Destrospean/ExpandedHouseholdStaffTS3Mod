@@ -1298,6 +1298,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     CancelledWhileActiveMessage = profile.CancelledWhileActiveMessage,
                     CarInstanceName = profile.CarInstanceName,
                     CarProductVersion = profile.CarProductVersion,
+                    CheckTime = profile.CheckTime,
                     DelayBeforeArriving = profile.DelayBeforeArriving,
                     DelayBeforeLeaving = profile.DelayBeforeLeaving,
                     DriveTime = profile.DriveTime,
