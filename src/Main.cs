@@ -55,14 +55,17 @@ namespace Destrospean.ExpandedHouseholdStaff
                     World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
                     if (onObjectPlacedInLotEventArgs != null)
                     {
-                        AddInteractions(GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId) as Mailbox);
+                        GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
+                        gameObject.AddInteraction(ListInteractions.Singleton, true);
+                        AddInteractions(gameObject as Mailbox);
                     }
                 };
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
-                    foreach (Mailbox mailbox in Sims3.Gameplay.Queries.GetObjects<Mailbox>())
+                    foreach (GameObject gameObject in Sims3.Gameplay.Queries.GetObjects<GameObject>())
                     {
-                        AddInteractions(mailbox);
+                        gameObject.AddInteraction(ListInteractions.Singleton, true);
+                        AddInteractions(gameObject as Mailbox);
                     }
                     foreach (IServiceProfile profile in new List<IServiceProfile>(ServiceUtils.ServiceProfiles))
                     {
@@ -166,6 +169,14 @@ namespace Destrospean.ExpandedHouseholdStaff
                                         },
                                     WaitsBeforePuttingAwayLeftovers = true
                                 });
+                        }
+                        else
+                        {
+                            int index = ServiceUtils.ServiceProfiles.FindIndex(x => x.Name == "HouseMaid");
+                            if (index > -1)
+                            {
+                                ServiceUtils.ServiceProfiles[index].DelayBeforeArriving = new ServiceUtils.ServiceProfile("DummyService", "DUMMY SERVICE").DelayBeforeArriving;
+                            }
                         }
                     }
                 });

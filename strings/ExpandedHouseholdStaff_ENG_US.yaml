@@ -280,6 +280,14 @@
                 ":Prompt": "Enter in the advertised priority value."
     "/ExpandedHouseholdStaff":
         "/Interactions":
+            "/ListInteractions":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "List Internal Data of Interactions"
+                "/Headers":
+                    ":ObjectName": "Object Name: "
+                    ":InteractionName": "Interaction Name: "
+                    ":InteractionDefinitionType": "Interaction Definition Type: "
+                    ":TargetType": "Target Type: "
             "/CreateServiceProfile":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Create Service"

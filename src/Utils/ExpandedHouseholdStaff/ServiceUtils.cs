@@ -147,7 +147,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             float mCheckTime = 5f;
 
-            float mDelayBeforeArriving = 0.5f;
+            float mDelayBeforeArriving = 0.01f;
 
             float mDelayBeforeLeaving = 0.3f;
 

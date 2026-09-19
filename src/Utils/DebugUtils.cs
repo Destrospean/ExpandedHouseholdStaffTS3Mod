@@ -27,7 +27,7 @@ namespace Destrospean.Utils
         {
             if (ShowDebugMessages)
             {
-                StyledNotification.Show(new StyledNotification.Format(message, StyledNotification.NotificationStyle.kSystemMessage));
+                StyledNotification.Show(new StyledNotification.Format(message, StyledNotification.NotificationStyle.kDebugAlert));
             }
         }
 

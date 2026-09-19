@@ -113,7 +113,8 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
         {
             get
             {
-                return Profile.DelayBeforeArriving;
+                //return Profile.DelayBeforeArriving;
+                return 0.01f;
             }
         }
 
