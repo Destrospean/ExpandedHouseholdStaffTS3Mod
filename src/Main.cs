@@ -3,7 +3,6 @@ using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Core;
-using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.ObjectComponents;
