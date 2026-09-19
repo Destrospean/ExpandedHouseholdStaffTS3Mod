@@ -1425,7 +1425,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 if (step == 0)
                 {
-                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, new List<Type>(InteractionObjectTypeUtils.InteractionDefinitionTypes.Values).ToArray(), Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:InteractionDefinition"), 1))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, new List<InteractionTuning>(InteractionTuning.sAllTunings.Values).ConvertAll(x => InteractionObjectTypeUtils.InteractionDefinitionTypes.ContainsKey(x.FullInteractionName) ? InteractionObjectTypeUtils.InteractionDefinitionTypes[x.FullInteractionName] : null).FindAll(x => x != null).ToArray(), Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:InteractionDefinition"), 1))
                     {
                         return false;
                     }
