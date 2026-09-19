@@ -471,6 +471,72 @@ namespace Destrospean.Utils
             return retVal;
         }
 
+        public static bool ShowCommodityKindListDialog(out CommodityKind[] selectedCommodityKinds, CommodityKind[] allCommodityKinds, CommodityKind[] preSelectedCommodityKinds = null, string title = null, string entryKey = null)
+        {
+            bool retVal;
+            CommodityKind[] tempSelectedCommodityKinds = null;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    List<string> allNames = new List<string>();
+                    List<string> preSelectedNames = new List<string>();
+                    foreach (KeyValuePair<string, object> entry in ParserFunctions.sCaseSensitiveEnumParsers[typeof(CommodityKind)].mLookup)
+                    {
+                        foreach (CommodityKind motive in allCommodityKinds)
+                        {
+                            if ((int)entry.Value == (int)motive)
+                            {
+                                allNames.Add(entry.Key);
+                            }
+                        }
+                        foreach (CommodityKind motive in preSelectedCommodityKinds)
+                        {
+                            if ((int)entry.Value == (int)motive)
+                            {
+                                preSelectedNames.Add(entry.Key);
+                            }
+                        }
+                    }
+                    entryKey = entryKey ?? typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "CommodityKindListDialog");
+                    List<string> nameList = new List<string>(preSelectedNames);
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        List<string> selectedNames = ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), allNames.ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<string>>
+                            {
+                                new TextColumn(entryKey, 400),
+                                new TextInListColumn(entryKey, nameList.ToArray(), 40)
+                            }, 1, out confirmed, out cancelled, true);
+                        if (cancelled)
+                        {
+                            tempSelectedCommodityKinds = null;
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            tempSelectedCommodityKinds = nameList.ConvertAll(x => (CommodityKind)ParserFunctions.sCaseSensitiveEnumParsers[typeof(CommodityKind)].mLookup[x]).ToArray();
+                            return true;
+                        }
+                        if (nameList.Contains(selectedNames[0]))
+                        {
+                            nameList.Remove(selectedNames[0]);
+                        }
+                        else
+                        {
+                            nameList.Add(selectedNames[0]);
+                        }
+                    }
+                }, out retVal))
+            {
+                selectedCommodityKinds = null;
+                return false;
+            }
+            selectedCommodityKinds = tempSelectedCommodityKinds;
+            return retVal;
+        }
+
         public static bool ShowSkillListDialog(CASAgeGenderFlags age, CASAgeGenderFlags species, List<SkillLevelPair> currentSkills, List<SkillLevelPair> allSkills = null, string title = null)
         {
             bool retVal;

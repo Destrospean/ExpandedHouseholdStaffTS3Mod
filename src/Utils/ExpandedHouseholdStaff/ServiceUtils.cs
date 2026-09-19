@@ -1128,7 +1128,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             // The following code sets the motives the service NPC will always have.
             CommodityKind[] motives;
-            if (ShowMotiveListDialog(out motives, new List<object>(ParserFunctions.sCaseSensitiveEnumParsers[typeof(CommodityKind)].mLookup.Values).FindAll(x => CommodityTest.IsMotive((CommodityKind)x)).ConvertAll(x => (CommodityKind)x).ToArray(), profile.Motives.ToArray()))
+            if (CommonUtils.ShowCommodityKindListDialog(out motives, new List<object>(ParserFunctions.sCaseSensitiveEnumParsers[typeof(CommodityKind)].mLookup.Values).FindAll(x => CommodityTest.IsMotive((CommodityKind)x)).ConvertAll(x => (CommodityKind)x).ToArray(), profile.Motives.ToArray(), null, entryKey + "MotiveListDialog"))
             {
                 profile.Motives = new List<CommodityKind>(motives);
             }
@@ -1221,72 +1221,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             ServiceProfile serviceProfile = (ServiceProfile)profile;
             string cost = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:" + (profile.IsLiveInService ? "Weekly" : "Daily")), serviceProfile.Cost.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
             serviceProfile.Cost = cost == null ? serviceProfile.Cost : int.Parse(cost);
-        }
-
-        public static bool ShowMotiveListDialog(out CommodityKind[] selectedMotives, CommodityKind[] allMotives, CommodityKind[] preSelectedMotives = null, string title = null)
-        {
-            bool retVal;
-            CommodityKind[] tempSelectedMotives = null;
-            if (DebugUtils.TryDisplayScriptError(() =>
-                {
-                    List<string> allNames = new List<string>();
-                    List<string> preSelectedNames = new List<string>();
-                    foreach (KeyValuePair<string, object> entry in ParserFunctions.sCaseSensitiveEnumParsers[typeof(CommodityKind)].mLookup)
-                    {
-                        foreach (CommodityKind motive in allMotives)
-                        {
-                            if ((int)entry.Value == (int)motive)
-                            {
-                                allNames.Add(entry.Key);
-                            }
-                        }
-                        foreach (CommodityKind motive in preSelectedMotives)
-                        {
-                            if ((int)entry.Value == (int)motive)
-                            {
-                                preSelectedNames.Add(entry.Key);
-                            }
-                        }
-                    }
-                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "MotiveListDialog");
-                    List<string> nameList = new List<string>(preSelectedNames);
-                    bool cancelled, confirmed;
-                    while (true)
-                    {
-                        List<string> selectedNames = ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + ":Title"), new List<ObjectPicker.TabInfo>
-                            {
-                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), allNames.ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
-                            }, new List<ObjectPickerDialog.CommonHeaderInfo<string>>
-                            {
-                                new TextColumn(entryKey, 400),
-                                new TextInListColumn(entryKey, nameList.ToArray(), 40)
-                            }, 1, out confirmed, out cancelled, true);
-                        if (cancelled)
-                        {
-                            tempSelectedMotives = null;
-                            return false;
-                        }
-                        if (confirmed)
-                        {
-                            tempSelectedMotives = nameList.ConvertAll(x => (CommodityKind)ParserFunctions.sCaseSensitiveEnumParsers[typeof(CommodityKind)].mLookup[x]).ToArray();
-                            return true;
-                        }
-                        if (nameList.Contains(selectedNames[0]))
-                        {
-                            nameList.Remove(selectedNames[0]);
-                        }
-                        else
-                        {
-                            nameList.Add(selectedNames[0]);
-                        }
-                    }
-                }, out retVal))
-            {
-                selectedMotives = null;
-                return false;
-            }
-            selectedMotives = tempSelectedMotives;
-            return retVal;
         }
 
         public static bool ShowServiceProfileFlagListDialog(this IServiceProfile profile, out ServiceProfileFlags flags, ServiceProfileFlags? preSelectedFlags = null)
