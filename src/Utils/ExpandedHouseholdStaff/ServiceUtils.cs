@@ -1100,6 +1100,9 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             // The following code sets phone call feedback messages when requesting and cancelling services.
             profile.TryUISetPhoneCallFeedback();
 
+            // The following code sets the cost of the service.
+            ShowCostDialog(profile);
+
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
 
             // The following code sets the valid range of ages the service NPC can be.
@@ -1122,9 +1125,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 ((ServiceProfile)profile).SetFlags(serviceProfileFlags);
             }
-
-            // The following code sets the cost of the service.
-            ShowCostDialog(profile);
 
             // The following code sets the motives the service NPC will always have.
             CommodityKind[] motives;
