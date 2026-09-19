@@ -1051,7 +1051,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         public static List<IServiceProfile> ServiceProfiles = new List<IServiceProfile>();
 
         /// <summary>
-        /// Adds a custom service with the specified profile to the savegame, requestable via the <see cref="Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions.CallForServices"/> interaction.
+        /// Adds a custom service with the specified profile to the savegame, requestable via the <see cref="Destrospean.ExpandedHouseholdStaff.Interactions.CallForServices"/> interaction.
         /// </summary>
         public static void AddServiceToSaveGame(this IServiceProfile profile)
         {
