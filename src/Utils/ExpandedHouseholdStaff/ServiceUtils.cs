@@ -564,7 +564,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 set
                 {
-                    mStrings["Name"] = value;
+                    mStrings["Name"] = value.Replace(' ', '_');
                 }
             }
 
@@ -1358,6 +1358,74 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         }
 
         /// <summary>
+        /// Tries to clone a service profile.
+        /// </summary>
+        /// <returns><c>true</c>, if a service profile was cloned, <c>false</c> otherwise.</returns>
+        public static bool TryCloneServiceProfile(this IServiceProfile profile, string newName, out IServiceProfile newProfile)
+        {
+            newProfile = null;
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "CreateServiceProfileDialog");
+            if (string.IsNullOrEmpty(newName))
+            {
+                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NameEmpty"));
+                return false;
+            }
+            if (!CanAddServiceToSaveGame(newName))
+            {
+                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
+                return false;
+            }
+            newProfile = new ServiceProfile(newName, profile.Title)
+                {
+                    Actions = profile.Actions.ConvertAll(x => new ActiveTopicAction(x.Name, x.Grouping, x.IsActive)),
+                    CancelledMessage = profile.CancelledMessage,
+                    CancelledWhileActiveMessage = profile.CancelledWhileActiveMessage,
+                    CarInstanceName = profile.CarInstanceName,
+                    CarProductVersion = profile.CarProductVersion,
+                    DelayBeforeArriving = profile.DelayBeforeArriving,
+                    DelayBeforeLeaving = profile.DelayBeforeLeaving,
+                    DriveTime = profile.DriveTime,
+                    ExtraWaitTimeAfterSocializing = profile.ExtraWaitTimeAfterSocializing,
+                    GetUniformFromName = ((ServiceProfile)profile).GetUniformFromName,
+                    GetUniformNameCallback = ((ServiceProfile)profile).GetUniformNameCallback,
+                    HiddenTraits = new List<TraitNames>(profile.HiddenTraits),
+                    Inventory = profile.Inventory.ConvertAll(x => x.Clone()),
+                    IsLiveInService = profile.IsLiveInService,
+                    IsQuietAroundSleepingSims = profile.IsQuietAroundSleepingSims,
+                    IsScaredOfBonehilda = profile.IsScaredOfBonehilda,
+                    Outputs = profile.Outputs.ConvertAll(x => new CommodityChange(x.InteractionDefinitionType, x.TargetType, x.ConstantChange, x.Locked, x.ActualValue, x.UpdateType, x.TimeDependsOnCommodityFilling, x.UpdateEvenOnFailure, x.UpdateAboveAndBelowZero)),
+                    PotentialTraitCount = profile.PotentialTraitCount,
+                    PotentialTraits = new List<TraitNames>(profile.PotentialTraits),
+                    RelationshipLevelForQuit = profile.RelationshipLevelForQuit,
+                    ReportsFires = profile.ReportsFires,
+                    RequestedMessage = profile.RequestedMessage,
+                    ServiceTuning = profile.ServiceTuning,
+                    ServiceType = profile.ServiceType,
+                    Skills = profile.Skills.ConvertAll(x => new SkillLevelPair(x.SkillName, x.SkillLevel)),
+                    TimeToSpendWorking = profile.TimeToSpendWorking,
+                    TimeWaitBeforePutawayLeftovers = profile.TimeWaitBeforePutawayLeftovers,
+                    Traits = new List<TraitNames>(profile.Traits),
+                    UseObjectInSameRoomAsSleeperMultiplier = profile.UseObjectInSameRoomAsSleeperMultiplier,
+                    ValidAges = profile.ValidAges,
+                    ValidGenders = profile.ValidGenders,
+                    WaitsBeforePuttingAwayLeftovers = profile.WaitsBeforePuttingAwayLeftovers
+                };
+            string serviceMotiveName = "Be" + newProfile.Name;
+            while (ServiceMotiveExists(newProfile.ServiceMotive))
+            {
+                serviceMotiveName = "Be" + newProfile.Name + "_" + DownloadContent.GenerateGUID();
+                newProfile.ServiceMotive = CommonUtils.GetCommodityKind(serviceMotiveName, CommodityKindType.Motive);
+            }
+            CommonUtils.AddEnumValue<CommodityKind>(serviceMotiveName, newProfile.ServiceMotive);
+            newProfile.Motives = new List<CommodityKind>
+                {
+                    newProfile.ServiceMotive
+                };
+            newProfile.AddMotives(profile.Motives.FindAll(x => x != profile.ServiceMotive).ToArray());
+            return true;
+        }
+
+        /// <summary>
         /// Opens a series of dialogs to add an action to a service topic of the specified profile.
         /// </summary>
         /// <returns><c>true</c>, if the an action was added, <c>false</c> otherwise.</returns>
@@ -1441,7 +1509,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 if (step == 0)
                 {
-                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, InteractionObjectTypeUtils.InteractionDefinitionTypes, Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:InteractionDefinition"), 1))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out interactionDefinitionTypes, new List<Type>(InteractionObjectTypeUtils.InteractionDefinitionTypes.Values).ToArray(), Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:InteractionDefinition"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:InteractionDefinition"), 1))
                     {
                         return false;
                     }
@@ -1449,7 +1517,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
                 if (step == 1)
                 {
-                    if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, new List<InteractionTuning>(InteractionTuning.sAllTunings.Values).FindAll(x => x.FullInteractionName == interactionDefinitionTypes[0].FullName).ConvertAll(x => Array.Find(InteractionObjectTypeUtils.GameObjectTypes, y => y.FullName == x.FullObjectName)).ToArray(), Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:Target"), 1))
+                    if (!CommonUtils.TryUIGetSelectedTypes(out targetTypes, new List<InteractionTuning>(InteractionTuning.sAllTunings.Values).FindAll(x => x.FullInteractionName == interactionDefinitionTypes[0].FullName).ConvertAll(x => InteractionObjectTypeUtils.GameObjectTypes[x.FullObjectName]).ToArray(), Localization.LocalizeString(entryKey + "NamespaceListDialog/Titles:Target"), Localization.LocalizeString(entryKey + "TypeListDialog/Titles:Target"), 1))
                     {
                         step--;
                         continue;
@@ -1536,7 +1604,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             string serviceMotiveName = "Be" + profile.Name;
             while (ServiceMotiveExists(profile.ServiceMotive))
             {
-                serviceMotiveName = "Be" + profile.Name + DownloadContent.GenerateGUID();
+                serviceMotiveName = "Be" + profile.Name + "_" + DownloadContent.GenerateGUID();
                 profile.ServiceMotive = CommonUtils.GetCommodityKind(serviceMotiveName, CommodityKindType.Motive);
             }
             CommonUtils.AddEnumValue<CommodityKind>(serviceMotiveName, profile.ServiceMotive);
@@ -1636,7 +1704,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     {
                         tempSelectedProfiles = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
                             {
-                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<IServiceProfile>(Array.FindAll(allProfiles, x => !x.IsImmutable)).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<IServiceProfile>(allProfiles).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<IServiceProfile>>
                             {
                                 new ServiceProfileNameColumn(entryKey),
@@ -1712,11 +1780,20 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         public static bool TryUIRemoveServicesFromSaveGame()
         {
             IServiceProfile[] selectedProfiles;
-            if (TryUIGetSelectedServiceProfiles(out selectedProfiles, ServiceProfiles.ToArray(), Localization.LocalizeString(DeleteServiceProfile.LocalizationKey + ":Name")))
+            if (TryUIGetSelectedServiceProfiles(out selectedProfiles, ServiceProfiles.FindAll(x => !x.IsImmutable).ToArray(), Localization.LocalizeString(DeleteServiceProfile.LocalizationKey + ":Name")))
             {
                 foreach (IServiceProfile profile in new List<IServiceProfile>(selectedProfiles))
                 {
                     profile.RemoveServiceFromSaveGame();
+                    foreach (OutfitAssignmentUtils.OutfitAssignment outfitAssignment in new List<OutfitAssignmentUtils.OutfitAssignment>(OutfitAssignmentUtils.OutfitAssignments))
+                    {
+                        if (outfitAssignment.ServiceName == profile.Name)
+                        {
+                            OutfitAssignmentUtils.OutfitAssignments.Remove(outfitAssignment);
+                            OutfitAssignmentUtils.AssignedOutfits.Remove(outfitAssignment.SpecialOutfitKey);
+                        }
+                    }
+                    OutfitAssignmentUtils.IndexOutfitAssignments();
                 }
                 return true;
             }

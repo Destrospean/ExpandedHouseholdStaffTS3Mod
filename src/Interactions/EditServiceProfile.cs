@@ -1,4 +1,5 @@
-﻿using Sims3.Gameplay.Actors;
+﻿using Sims3.Gameplay.Abstracts;
+using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
@@ -8,7 +9,6 @@ using Sims3.UI;
 using Destrospean.Utils;
 using Destrospean.Utils.ExpandedHouseholdStaff;
 using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
-using Sims3.Gameplay.Abstracts;
 
 namespace Destrospean.ExpandedHouseholdStaff.Interactions
 {
@@ -43,7 +43,7 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
         public override bool Run()
         {
             IServiceProfile[] profiles;
-            if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.ToArray(), null, 1))
+            if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name"), 1))
             {
                 string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "EditServiceProfileDialog");
                 profiles[0].Title = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + ":Prompt"), profiles[0].Title, -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1, -1), StringInputDialog.Validation.None, false, ModalDialog.PauseMode.PauseSimulator, false, true) ?? profiles[0].Title;

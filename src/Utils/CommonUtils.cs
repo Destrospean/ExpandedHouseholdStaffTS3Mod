@@ -93,7 +93,11 @@ namespace Destrospean.Utils
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
         public static void AddAsOutput(this CommodityKind commodityKind, Type interactionDefinitionType, Type targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
-            List<CommodityChange> outputs = AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType).mTradeoff.mOutputs;
+            List<CommodityChange> outputs = AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType)?.mTradeoff?.mOutputs;
+            if (outputs == null)
+            {
+                return;
+            }
             outputs.RemoveAll(x => x.Commodity == commodityKind && x.ConstantChange == constantChange && x.mLocked == locked && x.mActualValue == actualValue && x.mTimeDependsOnCommodityFilling == timeDependsOnCommodityFilling && x.mUpdateEvenOnFailure == updateEvenOnFailure && x.mUpdateAboveAndBelowZero == updateAboveAndBelowZero);
             outputs.Add(new CommodityChange(commodityKind, constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero));
             RefreshInteractionObjectPairs(interactionDefinitionType, targetType);
@@ -114,23 +118,19 @@ namespace Destrospean.Utils
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
         public static void AddAsOutput(this CommodityKind commodityKind, string interactionDefinitionType, string targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
-            int interactionDefinitionTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => x.FullName == interactionDefinitionType);
-            int targetTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.GameObjectTypes, x => x.FullName == targetType);
-            if (interactionDefinitionTypeIndex > -1 && targetTypeIndex > -1)
-            {
-                commodityKind.AddAsOutput(InteractionObjectTypeUtils.InteractionDefinitionTypes[interactionDefinitionTypeIndex], InteractionObjectTypeUtils.GameObjectTypes[targetTypeIndex], constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero);
-            }
+            commodityKind.AddAsOutput(InteractionObjectTypeUtils.InteractionDefinitionTypes[interactionDefinitionType], InteractionObjectTypeUtils.GameObjectTypes[targetType], constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero);
         }
 
         public static void AddEnumValue<T>(string key, object value) where T : struct
         {
             Type enumType = typeof(T);
-            EnumParser caseInsensitiveEnumParser, caseSensitiveEnumParser;
+            EnumParser caseInsensitiveEnumParser;
             if (!ParserFunctions.sCaseInsensitiveEnumParsers.TryGetValue(enumType, out caseInsensitiveEnumParser))
             {
                 caseInsensitiveEnumParser = new EnumParser(enumType, true);
                 ParserFunctions.sCaseInsensitiveEnumParsers.Add(enumType, caseInsensitiveEnumParser);
             }
+            EnumParser caseSensitiveEnumParser;
             if (!ParserFunctions.sCaseSensitiveEnumParsers.TryGetValue(enumType, out caseSensitiveEnumParser))
             {
                 caseSensitiveEnumParser = new EnumParser(enumType, false);
@@ -271,12 +271,7 @@ namespace Destrospean.Utils
         /// <param name="targetType">Target type full name.</param>
         public static void RefreshInteractionObjectPairs(string interactionDefinitionType, string targetType)
         {
-            int interactionDefinitionTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => x.FullName == interactionDefinitionType);
-            int targetTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.GameObjectTypes, x => x.FullName == targetType);
-            if (interactionDefinitionTypeIndex > -1 && targetTypeIndex > -1)
-            {
-                RefreshInteractionObjectPairs(InteractionObjectTypeUtils.InteractionDefinitionTypes[interactionDefinitionTypeIndex], InteractionObjectTypeUtils.GameObjectTypes[targetTypeIndex]);
-            }
+            RefreshInteractionObjectPairs(InteractionObjectTypeUtils.InteractionDefinitionTypes[interactionDefinitionType], InteractionObjectTypeUtils.GameObjectTypes[targetType]);
         }
 
         /// <summary>
@@ -300,11 +295,12 @@ namespace Destrospean.Utils
         public static void RemoveEnumValue<T>(string key) where T : struct
         {
             Type enumType = typeof(T);
-            EnumParser caseInsensitiveEnumParser, caseSensitiveEnumParser;
+            EnumParser caseInsensitiveEnumParser;
             if (ParserFunctions.sCaseInsensitiveEnumParsers.TryGetValue(enumType, out caseInsensitiveEnumParser) && caseInsensitiveEnumParser.mLookup.ContainsKey(key.ToLowerInvariant()))
             {
                 caseInsensitiveEnumParser.mLookup.Remove(key.ToLowerInvariant());
             }
+            EnumParser caseSensitiveEnumParser;
             if (ParserFunctions.sCaseSensitiveEnumParsers.TryGetValue(enumType, out caseSensitiveEnumParser) && caseSensitiveEnumParser.mLookup.ContainsKey(key))
             {
                 caseSensitiveEnumParser.mLookup.Remove(key);
@@ -344,7 +340,7 @@ namespace Destrospean.Utils
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
         public static void RemoveAsOutput(this CommodityKind commodityKind, Type interactionDefinitionType, Type targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
-            List<CommodityChange> outputs = AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType).mTradeoff.mOutputs;
+            List<CommodityChange> outputs = AutonomyTuning.GetTuning(interactionDefinitionType.FullName, targetType)?.mTradeoff?.mOutputs ?? new List<CommodityChange>();
             outputs.RemoveAll(x => x.Commodity == commodityKind && x.ConstantChange == constantChange && x.mLocked == locked && x.mActualValue == actualValue && x.mTimeDependsOnCommodityFilling == timeDependsOnCommodityFilling && x.mUpdateEvenOnFailure == updateEvenOnFailure && x.mUpdateAboveAndBelowZero == updateAboveAndBelowZero);
             RefreshInteractionObjectPairs(interactionDefinitionType, targetType);
         }
@@ -364,12 +360,7 @@ namespace Destrospean.Utils
         /// <param name="updateAboveAndBelowZero">Update above and below zero.</param>
         public static void RemoveAsOutput(this CommodityKind commodityKind, string interactionDefinitionType, string targetType, float constantChange, bool locked, float actualValue, OutputUpdateType updateType, bool timeDependsOnCommodityFilling = false, bool updateEvenOnFailure = false, UpdateAboveAndBelowZeroType updateAboveAndBelowZero = UpdateAboveAndBelowZeroType.Either)
         {
-            int interactionDefinitionTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.InteractionDefinitionTypes, x => x.FullName == interactionDefinitionType);
-            int targetTypeIndex = Array.FindIndex(InteractionObjectTypeUtils.GameObjectTypes, x => x.FullName == targetType);
-            if (interactionDefinitionTypeIndex > -1 && targetTypeIndex > -1)
-            {
-                commodityKind.RemoveAsOutput(InteractionObjectTypeUtils.InteractionDefinitionTypes[interactionDefinitionTypeIndex], InteractionObjectTypeUtils.GameObjectTypes[targetTypeIndex], constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero);
-            }
+            commodityKind.RemoveAsOutput(InteractionObjectTypeUtils.InteractionDefinitionTypes[interactionDefinitionType], InteractionObjectTypeUtils.GameObjectTypes[targetType], constantChange, locked, actualValue, updateType, timeDependsOnCommodityFilling, updateEvenOnFailure, updateAboveAndBelowZero);
         }
 
         /// <summary>

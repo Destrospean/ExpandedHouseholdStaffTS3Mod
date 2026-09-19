@@ -242,9 +242,14 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return sim.SimDescription.GetGlobalAssignedOutfitPrefix(isCategory);
         }
 
+        public static string GetGlobalAssignedOutfitPrefix(this CASAgeGenderFlags ageGender, bool isCategory = false)
+        {
+            return OutfitAssignmentGlobalPrefix + OutfitUtils.GetAgePrefix(ageGender & CASAgeGenderFlags.AgeMask, true) + OutfitUtils.GetGenderPrefix(ageGender & CASAgeGenderFlags.GenderMask) + (isCategory ? "_Category_" : "_");
+        }
+
         public static string GetGlobalAssignedOutfitPrefix(this SimDescription simDescription, bool isCategory = false)
         {
-            return OutfitAssignmentGlobalPrefix + OutfitUtils.GetAgePrefix(simDescription.Age, true) + OutfitUtils.GetGenderPrefix(simDescription.Gender) + (isCategory ? "_Category_" : "_");
+            return simDescription.AgeGenderSpecies.GetGlobalAssignedOutfitPrefix(isCategory);
         }
 
         public static void IndexOutfitAssignments()

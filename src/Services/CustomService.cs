@@ -326,7 +326,10 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                             }
                         }
                         service.RemoveOutputs();
-                        MotiveTuning.sTuning.Remove((int)profile.ServiceMotive);
+                        if (MotiveTuning.sTuning.ContainsKey((int)profile.ServiceMotive))
+                        {
+                            MotiveTuning.sTuning.Remove((int)profile.ServiceMotive);
+                        }
                         CommonUtils.RemoveEnumValue<CommodityKind>("Be" + profile.Name);
                         string activeTopic = profile.Name + " Service";
                         foreach (ServiceUtils.ActiveTopicAction action in profile.Actions)

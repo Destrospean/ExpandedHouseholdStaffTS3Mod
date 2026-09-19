@@ -249,6 +249,9 @@
                 ":NotUnique": "The internal name was not unique."
                 ":NameEmpty": "The internal name was not specified."
                 ":TitleEmpty": "The display name was not specified."
+            "/CloneServiceProfileDialog":
+                ":Title": "Clone Service"
+                ":Prompt": "Enter in the new internal name of the cloned service (must be unique)."
             "/EditServiceProfileDialog":
                 ":Title": "Edit Service"
                 ":Prompt": "Enter in display name of the service (what shows up in the UI)."
@@ -280,6 +283,9 @@
             "/CreateServiceProfile":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Create Service"
+            "/CloneServiceProfile":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Clone Service"
             "/DeleteServiceProfile":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Delete Services"
@@ -317,8 +323,8 @@
                 ":ServiceRequested": "Please make sure to have a bed arranged for me as I will be living at your place. Good day."
                 ":ServiceCancelled": "The personal chef service has been cancelled."
                 ":ServiceCancelledWhileActive": "We have already sent a personal chef over today, but we have cancelled your recurring service."
-            "/Housekeeper":
-                ":Title": "Housekeeper"
+            "/HouseMaid":
+                ":Title": "Housemaid"
                 ":ServiceRequested": "Please make sure to have a bed arranged for me as I will be living at your place. Good day."
-                ":ServiceCancelled": "The housekeeping service has been cancelled."
-                ":ServiceCancelledWhileActive": "We have already sent a housekeeper over today, but we have cancelled your recurring service."
+                ":ServiceCancelled": "The housemaid service has been cancelled."
+                ":ServiceCancelledWhileActive": "We have already sent a housemaid over today, but we have cancelled your recurring service."

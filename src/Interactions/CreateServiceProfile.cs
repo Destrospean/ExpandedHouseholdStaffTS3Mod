@@ -43,7 +43,7 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
             IServiceProfile profile;
             if (ServiceUtils.TryUICreateServiceProfile(out profile))
             {
-                ServiceUtils.AddServiceToSaveGame(profile);
+                profile.AddServiceToSaveGame();
             }
             return true;
         }

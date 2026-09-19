@@ -8,11 +8,11 @@ namespace Destrospean.Utils
 {
     public class InteractionObjectTypeUtils
     {
-        static Type[] sGameObjectTypes;
+        static IDictionary<string, Type> sGameObjectTypes;
 
-        static Type[] sInteractionDefinitionTypes;
+        static IDictionary<string, Type> sInteractionDefinitionTypes;
 
-        public static Type[] GameObjectTypes
+        public static IDictionary<string, Type> GameObjectTypes
         {
             get
             {
@@ -24,7 +24,7 @@ namespace Destrospean.Utils
             }
         }
 
-        public static Type[] InteractionDefinitionTypes
+        public static IDictionary<string, Type> InteractionDefinitionTypes
         {
             get
             {
@@ -38,16 +38,27 @@ namespace Destrospean.Utils
 
         public static void InitTypes()
         {
-            List<Type> gameObjectTypes = new List<Type>();
-            List<Type> interactionDefinitionTypes = new List<Type>();
+            IDictionary<string, Type> gameObjectTypes = new Dictionary<string, Type>();
+            IDictionary<string, Type> interactionDefinitionTypes = new Dictionary<string, Type>();
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                Type[] types = assembly.GetTypes();
-                gameObjectTypes.AddRange(Array.FindAll(types, x => typeof(IGameObject).IsAssignableFrom(x) && x.IsClass));
-                interactionDefinitionTypes.AddRange(Array.FindAll(types, x => typeof(InteractionDefinition).IsAssignableFrom(x) && x.IsClass));
+                foreach (Type type in assembly.GetTypes())
+                {
+                    if (type.IsClass)
+                    {
+                        if (typeof(IGameObject).IsAssignableFrom(type))
+                        {
+                            gameObjectTypes[type.FullName] = type;
+                        }
+                        if (typeof(InteractionDefinition).IsAssignableFrom(type))
+                        {
+                            interactionDefinitionTypes[type.FullName] = type;
+                        }
+                    }
+                }
             }
-            sGameObjectTypes = gameObjectTypes.ToArray();
-            sInteractionDefinitionTypes = interactionDefinitionTypes.ToArray();
+            sGameObjectTypes = gameObjectTypes;
+            sInteractionDefinitionTypes = interactionDefinitionTypes;
         }
     }
 }
