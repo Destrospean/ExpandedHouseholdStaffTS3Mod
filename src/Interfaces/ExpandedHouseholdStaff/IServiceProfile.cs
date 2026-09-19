@@ -1,13 +1,12 @@
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
-using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Services;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
-using Destrospean.Misc;
-using Destrospean.Utils.ExpandedHouseholdStaff;
 using System;
 using System.Collections.Generic;
+using Destrospean.Misc;
+using Destrospean.Utils.ExpandedHouseholdStaff;
 
 namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
 {
