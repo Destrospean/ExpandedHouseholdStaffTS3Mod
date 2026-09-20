@@ -99,6 +99,7 @@
     <Compile Include="UI\Columns\TextInListColumn.cs" />
     <Compile Include="Interactions\CloneServiceProfile.cs" />
     <Compile Include="Interactions\ListInteractions.cs" />
+    <Compile Include="Utils\FileUtils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
