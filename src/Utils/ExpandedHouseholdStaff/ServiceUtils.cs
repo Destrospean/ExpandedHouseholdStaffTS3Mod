@@ -1137,6 +1137,45 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return CanRemoveServiceFromSaveGame(profile.Name);
         }
 
+        public static IServiceProfile ClonePartially(this IServiceProfile profile, string newName)
+        {
+            return new ServiceProfile(newName, profile.Title)
+            {
+                Actions = profile.Actions.ConvertAll(x => new ActiveTopicAction(x.Name, x.Grouping, x.IsActive)),
+                CancelledMessage = profile.CancelledMessage,
+                CancelledWhileActiveMessage = profile.CancelledWhileActiveMessage,
+                CarInstanceName = profile.CarInstanceName,
+                CarProductVersion = profile.CarProductVersion,
+                CheckTime = profile.CheckTime,
+                DelayBeforeArriving = profile.DelayBeforeArriving,
+                DelayBeforeLeaving = profile.DelayBeforeLeaving,
+                DriveTime = profile.DriveTime,
+                ExtraWaitTimeAfterSocializing = profile.ExtraWaitTimeAfterSocializing,
+                GetUniformFromName = ((ServiceProfile)profile).GetUniformFromName,
+                GetUniformNameCallback = ((ServiceProfile)profile).GetUniformNameCallback,
+                HiddenTraits = new List<TraitNames>(profile.HiddenTraits),
+                IsLiveInService = profile.IsLiveInService,
+                IsQuietAroundSleepingSims = profile.IsQuietAroundSleepingSims,
+                IsScaredOfBonehilda = profile.IsScaredOfBonehilda,
+                Outputs = profile.Outputs.ConvertAll(x => new CommodityChange(x.InteractionDefinitionType, x.TargetType, x.ConstantChange, x.Locked, x.ActualValue, x.UpdateType, x.TimeDependsOnCommodityFilling, x.UpdateEvenOnFailure, x.UpdateAboveAndBelowZero)),
+                PotentialTraitCount = profile.PotentialTraitCount,
+                PotentialTraits = new List<TraitNames>(profile.PotentialTraits),
+                RelationshipLevelForQuit = profile.RelationshipLevelForQuit,
+                ReportsFires = profile.ReportsFires,
+                RequestedMessage = profile.RequestedMessage,
+                ServiceTuning = profile.ServiceTuning,
+                ServiceType = profile.ServiceType,
+                Skills = profile.Skills.ConvertAll(x => new SkillLevelPair(x.SkillName, x.SkillLevel)),
+                TimeToSpendWorking = profile.TimeToSpendWorking,
+                TimeWaitBeforePutawayLeftovers = profile.TimeWaitBeforePutawayLeftovers,
+                Traits = new List<TraitNames>(profile.Traits),
+                UseObjectInSameRoomAsSleeperMultiplier = profile.UseObjectInSameRoomAsSleeperMultiplier,
+                ValidAges = profile.ValidAges,
+                ValidGenders = profile.ValidGenders,
+                WaitsBeforePuttingAwayLeftovers = profile.WaitsBeforePuttingAwayLeftovers
+            };
+        }
+
         public static bool IsFromExpandedHouseholdStaff<Service>() where Service : Sims3.Gameplay.Services.Service
         {
             return IsFromExpandedHouseholdStaff(typeof(Service));
@@ -1193,12 +1232,11 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return false;
         }
 
-        public static void ShowCostDialog(this IServiceProfile profile)
+        public static bool ShowCostDialog(ref string costString, bool isLiveInService)
         {
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "CostDialog");
-            ServiceProfile serviceProfile = (ServiceProfile)profile;
-            string cost = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:" + (profile.IsLiveInService ? "Weekly" : "Daily")), serviceProfile.Cost.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
-            serviceProfile.Cost = cost == null ? serviceProfile.Cost : int.Parse(cost);
+            costString = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:" + (isLiveInService ? "Weekly" : "Daily")), costString, -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+            return costString != null;
         }
 
         public static bool ShowServiceProfileFlagListDialog(this IServiceProfile profile, out ServiceProfileFlags flags, ServiceProfileFlags? preSelectedFlags = null)
@@ -1244,86 +1282,18 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             {
                 return false;
             }
-            foreach (ServiceProfileFlags flag in flagArray)
+            foreach (ServiceProfileFlags flag in flagArray ?? new ServiceProfileFlags[0])
             {
                 flags |= flag;
             }
             return retVal;
         }
 
-        public static void ShowTimeToSpendWorkingDialog(this IServiceProfile profile)
+        public static bool ShowTimeToSpendWorkingDialog(ref string timeToSpendWorkingString)
         {
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "TimeToSpendWorkingDialog");
-            string timeToSpendWorking = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + ":Prompt"), profile.TimeToSpendWorking.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
-            profile.TimeToSpendWorking = timeToSpendWorking == null ? profile.TimeToSpendWorking : ParserFunctions.ParseFloat(timeToSpendWorking, profile.TimeToSpendWorking);
-        }
-
-        /// <summary>
-        /// Tries to clone a service profile.
-        /// </summary>
-        /// <returns><c>true</c>, if a service profile was cloned, <c>false</c> otherwise.</returns>
-        public static bool TryCloneServiceProfile(this IServiceProfile profile, string newName, out IServiceProfile newProfile)
-        {
-            newProfile = null;
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "CreateServiceProfileDialog");
-            if (string.IsNullOrEmpty(newName))
-            {
-                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NameEmpty"));
-                return false;
-            }
-            if (!CanAddServiceToSaveGame(newName) || Array.Exists(ReservedProfileNames, x => x == newName))
-            {
-                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
-                return false;
-            }
-            newProfile = new ServiceProfile(newName, profile.Title)
-                {
-                    Actions = profile.Actions.ConvertAll(x => new ActiveTopicAction(x.Name, x.Grouping, x.IsActive)),
-                    CancelledMessage = profile.CancelledMessage,
-                    CancelledWhileActiveMessage = profile.CancelledWhileActiveMessage,
-                    CarInstanceName = profile.CarInstanceName,
-                    CarProductVersion = profile.CarProductVersion,
-                    CheckTime = profile.CheckTime,
-                    DelayBeforeArriving = profile.DelayBeforeArriving,
-                    DelayBeforeLeaving = profile.DelayBeforeLeaving,
-                    DriveTime = profile.DriveTime,
-                    ExtraWaitTimeAfterSocializing = profile.ExtraWaitTimeAfterSocializing,
-                    GetUniformFromName = ((ServiceProfile)profile).GetUniformFromName,
-                    GetUniformNameCallback = ((ServiceProfile)profile).GetUniformNameCallback,
-                    HiddenTraits = new List<TraitNames>(profile.HiddenTraits),
-                    IsLiveInService = profile.IsLiveInService,
-                    IsQuietAroundSleepingSims = profile.IsQuietAroundSleepingSims,
-                    IsScaredOfBonehilda = profile.IsScaredOfBonehilda,
-                    Outputs = profile.Outputs.ConvertAll(x => new CommodityChange(x.InteractionDefinitionType, x.TargetType, x.ConstantChange, x.Locked, x.ActualValue, x.UpdateType, x.TimeDependsOnCommodityFilling, x.UpdateEvenOnFailure, x.UpdateAboveAndBelowZero)),
-                    PotentialTraitCount = profile.PotentialTraitCount,
-                    PotentialTraits = new List<TraitNames>(profile.PotentialTraits),
-                    RelationshipLevelForQuit = profile.RelationshipLevelForQuit,
-                    ReportsFires = profile.ReportsFires,
-                    RequestedMessage = profile.RequestedMessage,
-                    ServiceTuning = profile.ServiceTuning,
-                    ServiceType = profile.ServiceType,
-                    Skills = profile.Skills.ConvertAll(x => new SkillLevelPair(x.SkillName, x.SkillLevel)),
-                    TimeToSpendWorking = profile.TimeToSpendWorking,
-                    TimeWaitBeforePutawayLeftovers = profile.TimeWaitBeforePutawayLeftovers,
-                    Traits = new List<TraitNames>(profile.Traits),
-                    UseObjectInSameRoomAsSleeperMultiplier = profile.UseObjectInSameRoomAsSleeperMultiplier,
-                    ValidAges = profile.ValidAges,
-                    ValidGenders = profile.ValidGenders,
-                    WaitsBeforePuttingAwayLeftovers = profile.WaitsBeforePuttingAwayLeftovers
-                };
-            string serviceMotiveName = "Be" + newProfile.Name;
-            while (ServiceMotiveExists(newProfile.ServiceMotive))
-            {
-                serviceMotiveName = "Be" + newProfile.Name + "_" + DownloadContent.GenerateGUID();
-                newProfile.ServiceMotive = CommonUtils.GetCommodityKind(serviceMotiveName, CommodityKindType.Motive);
-            }
-            CommonUtils.AddEnumValue<CommodityKind>(serviceMotiveName, newProfile.ServiceMotive);
-            newProfile.Motives = new List<CommodityKind>
-                {
-                    newProfile.ServiceMotive
-                };
-            newProfile.AddMotives(profile.Motives.FindAll(x => x != profile.ServiceMotive).ToArray());
-            return true;
+            timeToSpendWorkingString = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + ":Prompt"), timeToSpendWorkingString, -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.FloatNumber, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+            return timeToSpendWorkingString != null;
         }
 
         /// <summary>
@@ -1474,48 +1444,365 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         }
 
         /// <summary>
+        /// Tries to clone a service profile.
+        /// </summary>
+        /// <returns><c>true</c>, if a service profile was cloned, <c>false</c> otherwise.</returns>
+        public static bool TryUICloneServiceProfile(this IServiceProfile profile, string newName, out IServiceProfile newProfile)
+        {
+            newProfile = null;
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "CreateServiceProfileDialog");
+            if (string.IsNullOrEmpty(newName))
+            {
+                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NameEmpty"));
+                return false;
+            }
+            if (!CanAddServiceToSaveGame(newName) || Array.Exists(ReservedProfileNames, x => x == newName))
+            {
+                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
+                return false;
+            }
+            newProfile = profile.ClonePartially(newName);
+            string serviceMotiveName = "Be" + newProfile.Name;
+            while (ServiceMotiveExists(newProfile.ServiceMotive))
+            {
+                serviceMotiveName = "Be" + newProfile.Name + "_" + DownloadContent.GenerateGUID();
+                newProfile.ServiceMotive = CommonUtils.GetCommodityKind(serviceMotiveName, CommodityKindType.Motive);
+            }
+            CommonUtils.AddEnumValue<CommodityKind>(serviceMotiveName, newProfile.ServiceMotive);
+            newProfile.Motives = new List<CommodityKind>
+                {
+                    newProfile.ServiceMotive
+                };
+            newProfile.AddMotives(profile.Motives.FindAll(x => x != profile.ServiceMotive).ToArray());
+            return true;
+        }
+
+        /// <summary>
         /// Opens a dialog to create a service profile.
         /// </summary>
         /// <returns><c>true</c>, if a service profile was created, <c>false</c> otherwise.</returns>
         public static bool TryUICreateServiceProfile(out IServiceProfile profile)
         {
-            profile = null;
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "CreateServiceProfileDialog");
-            List<string> results = TwoStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:Name"), Localization.LocalizeString(entryKey + "/Prompts:Title"), "", "", Localization.LocalizeString("Ui/Caption/Global:Accept"), Localization.LocalizeString("Ui/Caption/Global:Cancel"));
-            if (results == null)
+            profile = null;
+            string serviceMotiveName = null;
+            string name = "";
+            while (true)
             {
-                return false;
-            }
-            if (string.IsNullOrEmpty(results[0]))
-            {
-                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NameEmpty"));
-                return false;
-            }
-            if (string.IsNullOrEmpty(results[1]))
-            {
-                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":TitleEmpty"));
-                return false;
-            }
-            if (!CanAddServiceToSaveGame(results[0]) || Array.Exists(ReservedProfileNames, x => x == results[0]))
-            {
-                SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
-                return false;
-            }
-            profile = new ServiceProfile(results[0], results[1]);
-            string serviceMotiveName = "Be" + profile.Name;
-            while (ServiceMotiveExists(profile.ServiceMotive))
-            {
-                serviceMotiveName = "Be" + profile.Name + "_" + DownloadContent.GenerateGUID();
-                profile.ServiceMotive = CommonUtils.GetCommodityKind(serviceMotiveName, CommodityKindType.Motive);
-            }
-            CommonUtils.AddEnumValue<CommodityKind>(serviceMotiveName, profile.ServiceMotive);
-            profile.Motives = new List<CommodityKind>
+                if (!string.IsNullOrEmpty(serviceMotiveName))
                 {
-                    profile.ServiceMotive
+                    CommonUtils.RemoveEnumValue<CommodityKind>(serviceMotiveName);
+                }
+                name = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + "/Prompts:Name"), name, -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1, -1), StringInputDialog.Validation.None, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                if (name == null)
+                {
+                    return false;
+                }
+                if (string.IsNullOrEmpty(name))
+                {
+                    SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NameEmpty"));
+                    return false;
+                }
+                if (!CanAddServiceToSaveGame(name) || Array.Exists(ReservedProfileNames, x => x == name))
+                {
+                    SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
+                    return false;
+                }
+                profile = profile?.ClonePartially(name) ?? new ServiceProfile(name, null);
+                serviceMotiveName = "Be" + profile.Name;
+                while (ServiceMotiveExists(profile.ServiceMotive))
+                {
+                    serviceMotiveName = "Be" + profile.Name + "_" + DownloadContent.GenerateGUID();
+                    profile.ServiceMotive = CommonUtils.GetCommodityKind(serviceMotiveName, CommodityKindType.Motive);
+                }
+                CommonUtils.AddEnumValue<CommodityKind>(serviceMotiveName, profile.ServiceMotive);
+                profile.Motives = new List<CommodityKind>
+                    {
+                        profile.ServiceMotive
+                    };
+                profile.Actions = new List<ActiveTopicAction>
+                    {
+                        new ActiveTopicAction("Dismiss"),
+                        new ActiveTopicAction("Fire")
+                    };
+                if (!TryUIEditServiceProfile(profile, true))
+                {
+                    continue;
+                }
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Opens a series of dialogs to make changes to a service profile.
+        /// </summary>
+        /// <returns><c>true</c>, if the changes to the service profile were confirmed, <c>false</c> otherwise.</returns>
+        public static bool TryUIEditServiceProfile(this IServiceProfile profile, bool saveWhenCancelled = false)
+        {
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
+            ServiceProfile serviceProfile = (ServiceProfile)profile;
+
+            CASAgeGenderFlags age = profile.ValidAges;
+            string costString = serviceProfile.Cost.ToString();
+            string[] delaysAsStrings = new[]
+                {
+                    profile.DelayBeforeArriving.ToString(),
+                    profile.DelayBeforeLeaving.ToString(),
+                    profile.ExtraWaitTimeAfterSocializing.ToString()
                 };
-            profile.AddActions(new ActiveTopicAction("Dismiss"), new ActiveTopicAction("Fire"));
-            UIEditServiceProfile(profile);
-            return true;
+            CASAgeGenderFlags gender = profile.ValidGenders;
+            List<Trait> hiddenTraits = profile.HiddenTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
+            string[] messages = new[]
+                {
+                    profile.RequestedMessage,
+                    profile.CancelledMessage,
+                    profile.CancelledWhileActiveMessage
+                };
+            CommodityKind[] motives = profile.Motives.ToArray();
+            int potentialTraitCount = profile.PotentialTraitCount;
+            List<Trait> potentialTraits = profile.PotentialTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
+            ServiceProfileFlags serviceProfileFlags = serviceProfile.GetFlags();
+            List<SkillLevelPair> skills = new List<SkillLevelPair>(profile.Skills);
+            string timeToSpendWorkingString = profile.TimeToSpendWorking.ToString();
+            string title = profile.Title;
+            List<Trait> traits = profile.Traits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
+
+            sbyte step = 0;
+            while (true)
+            {
+                if (step == -1 && !saveWhenCancelled)
+                {
+                    return false;
+                }
+
+                // The following code sets the display name of the service.
+                if (step == 0)
+                {
+                    string tempTitle = StringInputDialog.Show(Localization.LocalizeString(entryKey + "EditServiceProfileDialog:Title"), Localization.LocalizeString(entryKey + "EditServiceProfileDialog:Prompt"), title, -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1, -1), StringInputDialog.Validation.None, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                    if (tempTitle == "")
+                    {
+                        SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + "EditServiceProfileDialog:TitleChangeFailed"), Localization.LocalizeString(entryKey + "CreateServiceProfileDialog:TitleEmpty"));
+                    }
+                    if (string.IsNullOrEmpty(tempTitle))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                    if (title == null)
+                    {
+                        string customServiceEntryKey = typeof(CustomService).GetLocalizationKey();
+                        messages[0] = Localization.LocalizeString(customServiceEntryKey + ":ServiceRequested", tempTitle);
+                        messages[1] = Localization.LocalizeString(customServiceEntryKey + ":ServiceCancelled", tempTitle);
+                        messages[2] = Localization.LocalizeString(customServiceEntryKey + ":ServiceCancelledWhileActive", tempTitle);
+                    }
+                    title = tempTitle;
+                }
+
+                // The following code sets phone call feedback messages when requesting and cancelling services.
+                if (step == 1)
+                {
+                    string[] tempMessages = (string[])messages.Clone();
+                    if (!TryUISetPhoneCallFeedback(ref tempMessages))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                    messages = tempMessages;
+                }
+
+                // The following code sets the delays of the arrival and departure of the service NPC.
+                if (step == 2)
+                {
+                    string[] tempDelaysAsStrings = (string[])delaysAsStrings.Clone();
+                    if (!TryUISetDelays(ref tempDelaysAsStrings))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                    delaysAsStrings = tempDelaysAsStrings;
+                }
+
+                // The following code sets the valid range of ages the service NPC can be.
+                if (step == 3)
+                {
+                    CASAgeGenderFlags tempAge;
+                    if (!CommonUtils.ShowCASAgeGenderFlagListDialog(out tempAge, age, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKey + "CASAgeGenderFlagListDialog/Titles:Age")))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                    age = tempAge;
+                }
+
+                // The following code sets the valid range of genders the service NPC can be.
+                if (step == 4)
+                {
+                    CASAgeGenderFlags tempGender;
+                    if (!CommonUtils.ShowCASAgeGenderFlagListDialog(out tempGender, gender, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey + "CASAgeGenderFlagListDialog/Titles:Gender")))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                    gender = tempGender;
+                }
+
+                // The following code sets the service profile flags.
+                if (step == 5)
+                {
+                    ServiceProfileFlags tempServiceProfileFlags;
+                    if (!profile.ShowServiceProfileFlagListDialog(out tempServiceProfileFlags))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                    serviceProfileFlags = tempServiceProfileFlags;
+                }
+
+                bool isLiveInService = (serviceProfileFlags & ServiceProfileFlags.LiveInService) == ServiceProfileFlags.LiveInService;
+
+                // The following code sets the time the service NPC spends working.
+                if (step == 6)
+                {
+                    string tempTimeToSpendWorkingString = timeToSpendWorkingString;
+                    if (!isLiveInService && !ShowTimeToSpendWorkingDialog(ref tempTimeToSpendWorkingString))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                    timeToSpendWorkingString = tempTimeToSpendWorkingString;
+                }
+
+                // The following code sets the cost of the service.
+                if (step == 7)
+                {
+                    string tempCostString = costString;
+                    if (!ShowCostDialog(ref tempCostString, isLiveInService))
+                    {
+                        step--;
+                        if (isLiveInService)
+                        {
+                            step--;
+                        }
+                        continue;
+                    }
+                    step++;
+                    costString = tempCostString;
+                }
+
+                // The following code sets the motives the service NPC will always have.
+                if (step == 8)
+                {
+                    CommodityKind[] tempMotives;
+                    if (!CommonUtils.ShowCommodityKindListDialog(out tempMotives, new List<object>(ParserFunctions.sCaseSensitiveEnumParsers[typeof(CommodityKind)].mLookup.Values).FindAll(x => CommodityTest.IsMotive((CommodityKind)x)).ConvertAll(x => (CommodityKind)x).ToArray(), motives, null, entryKey + "MotiveListDialog"))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                    motives = tempMotives;
+                }
+
+                // The following code sets the traits the service NPC will always come with.
+                if (step == 9)
+                {
+                    List<Trait> tempTraits = new List<Trait>(traits);
+                    if (!CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, tempTraits, null, Localization.LocalizeString(entryKey + "TraitListDialog/Titles:Explicit")))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                    traits = tempTraits;
+                }
+
+                // The following code sets the traits the service NPC will randomly pick from.
+                if (step == 10)
+                {
+                    List<Trait> tempTraits = new List<Trait>(potentialTraits);
+                    if (!CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, tempTraits, null, Localization.LocalizeString(entryKey + "TraitListDialog/Titles:Potential")))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                    potentialTraits = tempTraits;
+                }
+
+                // The following code sets how many of the potential traits the service NPC will randomly pick.
+                if (step == 11)
+                {
+                    if (potentialTraits.Count > 0)
+                    {
+                        string potentialTraitCountString = StringInputDialog.Show(Localization.LocalizeString(entryKey + "PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKey + "PotentialTraitCountDialog:Prompt"), potentialTraitCount.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                        if (potentialTraitCountString == null)
+                        {
+                            step--;
+                            continue;
+                        }
+                        potentialTraitCount = int.Parse(potentialTraitCountString);
+                    }
+                    step++;
+                }
+
+                // The following code sets the hidden traits the service NPC will come with.
+                if (step == 12)
+                {
+                    List<Trait> tempTraits = new List<Trait>(hiddenTraits);
+                    if (!CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, tempTraits, new List<Trait>(TraitManager.GetDictionaryTraits).FindAll(x => x.IsHidden || x.IsReward), Localization.LocalizeString(entryKey + "TraitListDialog/Titles:Hidden")))
+                    {
+                        step--;
+                        if (potentialTraits.Count == 0)
+                        {
+                            step--;
+                        }
+                        continue;
+                    }
+                    step++;
+                    hiddenTraits = tempTraits;
+
+                }
+
+                // The following code sets the skills the service NPC has.
+                if (step == 13)
+                {
+                    List<SkillLevelPair> tempSkills = new List<SkillLevelPair>(skills);
+                    if (!CommonUtils.ShowSkillListDialog(age, CASAgeGenderFlags.Human, tempSkills))
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                    skills = tempSkills;
+                }
+
+                profile.Title = title;
+                profile.RequestedMessage = string.IsNullOrEmpty(messages[0]) ? profile.RequestedMessage : messages[0];
+                profile.CancelledMessage = string.IsNullOrEmpty(messages[1]) ? profile.RequestedMessage : messages[1];
+                profile.CancelledWhileActiveMessage = string.IsNullOrEmpty(messages[2]) ? profile.RequestedMessage : messages[2];
+                profile.DelayBeforeArriving = ParserFunctions.ParseFloat(delaysAsStrings[0], profile.DelayBeforeArriving);
+                profile.DelayBeforeLeaving = ParserFunctions.ParseFloat(delaysAsStrings[1], profile.DelayBeforeLeaving);
+                profile.ExtraWaitTimeAfterSocializing = ParserFunctions.ParseFloat(delaysAsStrings[2], profile.ExtraWaitTimeAfterSocializing);
+                profile.ValidAges = age;
+                profile.ValidGenders = gender;
+                serviceProfile.SetFlags(serviceProfileFlags);
+                profile.TimeToSpendWorking = ParserFunctions.ParseFloat(timeToSpendWorkingString, profile.TimeToSpendWorking);
+                serviceProfile.Cost = int.Parse(costString);
+                profile.Motives = new List<CommodityKind>(motives);
+                profile.Traits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
+                profile.PotentialTraits = potentialTraits.ConvertAll(x => (TraitNames)x.TraitGuid);
+                profile.PotentialTraitCount = potentialTraitCount;
+                profile.HiddenTraits = hiddenTraits.ConvertAll(x => (TraitNames)x.TraitGuid);
+                profile.Skills = skills;
+
+                return step > -1;
+            }
         }
 
         public static bool TryUIGetSelectedActions(out ActiveTopicAction[] selectedActions, ActiveTopicAction[] allActions, string title = null, int selectableRowCount = int.MaxValue)
@@ -1701,137 +1988,36 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return false;
         }
 
-
-
         /// <summary>
         /// Opens a dialog to set the delays for the arrival and departure of the service NPC and the extra wait time after they socialize before they leave.
         /// </summary>
         /// <returns><c>true</c>, if the delays were set, <c>false</c> otherwise.</returns>
-        public static bool TryUISetDelays(this IServiceProfile profile)
+        public static bool TryUISetDelays(ref string[] delaysAsStrings)
         {
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "DelaysDialog");
-            string[] results = ThreeStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), new string[]
+            delaysAsStrings = ThreeStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), new string[]
                 {
                     Localization.LocalizeString(entryKey + "/Prompts:SetDelayBeforeArriving"),
                     Localization.LocalizeString(entryKey + "/Prompts:SetDelayBeforeLeaving"),
                     Localization.LocalizeString(entryKey + "/Prompts:SetExtraWaitTimeAfterSocializing")
-                },
-                new string[]
-                {
-                    profile.DelayBeforeArriving.ToString(),
-                    profile.DelayBeforeLeaving.ToString(),
-                    profile.ExtraWaitTimeAfterSocializing.ToString()
-                }, int.MaxValue, new Vector2(-1, -1), ThreeStringInputDialog.Validation.None, ModalDialog.PauseMode.PauseSimulator, false);
-            if (results == null)
-            {
-                return false;
-            }
-            profile.DelayBeforeArriving = ParserFunctions.ParseFloat(results[0], profile.DelayBeforeArriving);
-            profile.DelayBeforeLeaving = ParserFunctions.ParseFloat(results[1], profile.DelayBeforeLeaving);
-            profile.ExtraWaitTimeAfterSocializing = ParserFunctions.ParseFloat(results[2], profile.ExtraWaitTimeAfterSocializing);
-            return true;
+                }, delaysAsStrings, int.MaxValue, new Vector2(-1, -1), ThreeStringInputDialog.Validation.None, ModalDialog.PauseMode.PauseSimulator, false);
+            return delaysAsStrings != null && !Array.Exists(delaysAsStrings, string.IsNullOrEmpty);
         }
 
         /// <summary>
         /// Opens a dialog to set feedback messages for Sims requesting and cancelling services.
         /// </summary>
         /// <returns><c>true</c>, if feedback messages were set, <c>false</c> otherwise.</returns>
-        public static bool TryUISetPhoneCallFeedback(this IServiceProfile profile)
+        public static bool TryUISetPhoneCallFeedback(ref string[] messages)
         {
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "PhoneCallFeedbackDialog");
-            string[] results = ThreeStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), new string[]
+            messages = ThreeStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), new string[]
                 {
                     Localization.LocalizeString(entryKey + "/Prompts:SetRequestedMessage"),
                     Localization.LocalizeString(entryKey + "/Prompts:SetCancelledMessage"),
                     Localization.LocalizeString(entryKey + "/Prompts:SetCancelledWhileActiveMessage")
-                },
-                new string[]
-                {
-                    profile.RequestedMessage,
-                    profile.CancelledMessage,
-                    profile.CancelledWhileActiveMessage
-                }, int.MaxValue, new Vector2(-1, -1), ThreeStringInputDialog.Validation.None, ModalDialog.PauseMode.PauseSimulator, false);
-            if (results == null)
-            {
-                return false;
-            }
-            profile.RequestedMessage = results[0];
-            profile.CancelledMessage = results[1];
-            profile.CancelledWhileActiveMessage = results[2];
-            return true;
-        }
-
-        public static void UIEditServiceProfile(this IServiceProfile profile)
-        {
-            // The following code sets phone call feedback messages when requesting and cancelling services.
-            profile.TryUISetPhoneCallFeedback();
-
-            // The following code sets the delays of the arrival and departure of the service NPC.
-            profile.TryUISetDelays();
-
-            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
-
-            // The following code sets the valid range of ages the service NPC can be.
-            CASAgeGenderFlags age;
-            if (CommonUtils.ShowCASAgeGenderFlagListDialog(out age, profile.ValidAges, CASAgeGenderFlags.AgeMask ^ CASAgeGenderFlags.Baby ^ CASAgeGenderFlags.Toddler, Localization.LocalizeString(entryKey + "CASAgeGenderFlagListDialog/Titles:Age")))
-            {
-                profile.ValidAges = age;
-            }
-
-            // The following code sets the valid range of genders the service NPC can be.
-            CASAgeGenderFlags gender;
-            if (CommonUtils.ShowCASAgeGenderFlagListDialog(out gender, profile.ValidGenders, CASAgeGenderFlags.GenderMask, Localization.LocalizeString(entryKey + "CASAgeGenderFlagListDialog/Titles:Gender")))
-            {
-                profile.ValidGenders = gender;
-            }
-
-            // The following code sets the service profile flags.
-            ServiceProfileFlags serviceProfileFlags;
-            if (profile.ShowServiceProfileFlagListDialog(out serviceProfileFlags))
-            {
-                ((ServiceProfile)profile).SetFlags(serviceProfileFlags);
-            }
-
-            // The following code sets the time the service NPC spends working.
-            if (!profile.IsLiveInService)
-            {
-                profile.ShowTimeToSpendWorkingDialog();
-            }
-
-            // The following code sets the cost of the service.
-            profile.ShowCostDialog();
-
-            // The following code sets the motives the service NPC will always have.
-            CommodityKind[] motives;
-            if (CommonUtils.ShowCommodityKindListDialog(out motives, new List<object>(ParserFunctions.sCaseSensitiveEnumParsers[typeof(CommodityKind)].mLookup.Values).FindAll(x => CommodityTest.IsMotive((CommodityKind)x)).ConvertAll(x => (CommodityKind)x).ToArray(), profile.Motives.ToArray(), null, entryKey + "MotiveListDialog"))
-            {
-                profile.Motives = new List<CommodityKind>(motives);
-            }
-
-            // The following code sets the traits the service NPC will always come with.
-            List<Trait> traits = profile.Traits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKey + "TraitListDialog/Titles:Explicit"));
-            profile.Traits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
-
-            // The following code sets the traits the service NPC will randomly pick from.
-            traits = profile.PotentialTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, null, Localization.LocalizeString(entryKey + "TraitListDialog/Titles:Potential"));
-            profile.PotentialTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
-
-            // The following code sets how many of the potential traits the service NPC will randomly pick.
-            if (profile.PotentialTraits.Count > 0)
-            {
-                string potentialTraitCount = StringInputDialog.Show(Localization.LocalizeString(entryKey + "PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKey + "PotentialTraitCountDialog:Prompt"), profile.PotentialTraitCount.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
-                profile.PotentialTraitCount = potentialTraitCount == null ? profile.PotentialTraitCount : int.Parse(potentialTraitCount);
-            }
-
-            // The following code sets the hidden traits the service NPC will come with.
-            traits = profile.HiddenTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            CommonUtils.ShowTraitListDialog(age, gender, CASAgeGenderFlags.Human, traits, new List<Trait>(TraitManager.GetDictionaryTraits).FindAll(x => x.IsHidden || x.IsReward), Localization.LocalizeString(entryKey + "TraitListDialog/Titles:Hidden"));
-            profile.HiddenTraits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
-
-            // The following code sets the skills the service NPC has.
-            CommonUtils.ShowSkillListDialog(age, CASAgeGenderFlags.Human, profile.Skills);
+                }, messages, int.MaxValue, new Vector2(-1, -1), ThreeStringInputDialog.Validation.None, ModalDialog.PauseMode.PauseSimulator, false);
+            return messages != null && !Array.Exists(messages, string.IsNullOrEmpty);
         }
     }
 }

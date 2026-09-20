@@ -253,8 +253,9 @@
                 ":Title": "Clone Service"
                 ":Prompt": "Enter in the new internal name of the cloned service (must be unique)."
             "/EditServiceProfileDialog":
-                ":Title": "Edit Service"
+                ":Title": "Specify Display Name"
                 ":Prompt": "Enter in display name of the service (what shows up in the UI)."
+                ":TitleChangeFailed": "Invalid Input"
             "/PhoneCallFeedbackDialog":
                 ":Title": "Specify Phone Call Feedback"
                 "/Prompts":

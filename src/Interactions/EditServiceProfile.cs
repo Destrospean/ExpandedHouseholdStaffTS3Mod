@@ -42,14 +42,29 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
 
         public override bool Run()
         {
-            IServiceProfile[] profiles;
-            if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name"), 1))
+            IServiceProfile[] profiles = null;
+            byte step = 0;
+            while (true)
             {
-                string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "EditServiceProfileDialog");
-                profiles[0].Title = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + ":Prompt"), profiles[0].Title, -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1, -1), StringInputDialog.Validation.None, false, ModalDialog.PauseMode.PauseSimulator, false, true) ?? profiles[0].Title;
-                profiles[0].UIEditServiceProfile();
+                if (step == 0)
+                {
+                    if (!ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name"), 1))
+                    {
+                        return true;
+                    }
+                    step++;
+                }
+                if (step == 1)
+                {
+                    if (!profiles[0].TryUIEditServiceProfile())
+                    {
+                        step--;
+                        continue;
+                    }
+                    step++;
+                }
+                return true;
             }
-            return true;
         }
     }
 }

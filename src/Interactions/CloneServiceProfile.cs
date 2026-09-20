@@ -58,7 +58,7 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
                 {
                     continue;
                 }
-                if (profiles[0].TryCloneServiceProfile(name, out profile))
+                if (profiles[0].TryUICloneServiceProfile(name, out profile))
                 {
                     profile.AddServiceToSaveGame();
                     foreach (OutfitAssignmentUtils.OutfitAssignment outfitAssignment in new List<OutfitAssignmentUtils.OutfitAssignment>(OutfitAssignmentUtils.OutfitAssignments))
