@@ -21,9 +21,9 @@
                         ":Tooltip": "The class name"
             "/SkillListDialog":
                 ":Title": "Specify Skill Levels"
-                "/Titles":
+                "/SubmenuTitles":
                     ":SkillLevel": "Specify Skill Level"
-                "/Prompts":
+                "/SubmenuPrompts":
                     ":SkillLevel": "Enter in the skill level (a value greater than maximum sets it to maximum)."
                 "/Headers":
                     "/Skill":
@@ -261,11 +261,20 @@
                     ":SetCancelledMessage": "Enter in the feedback for cancelling the service."
                     ":SetCancelledWhileActiveMessage": "Enter in the feedback for cancelling the service while it's active."
                     ":SetRequestedMessage": "Enter in the feedback for requesting the service."
+            "/DelaysDialog":
+                ":Title": "Specify Arrival and Departure Delays"
+                "/Prompts":
+                    ":SetDelayBeforeArriving": "Enter in the delay (in minutes) for worker to arrive."
+                    ":SetDelayBeforeLeaving": "Enter in the delay (in minutes) for worker to leave."
+                    ":SetExtraWaitTimeAfterSocializing": "Enter in the time added to the delay (in minutes) from socializing before the worker leaves."
             "/CostDialog":
                 ":Title": "Specify Cost"
                 "/Prompts":
                     ":Daily": "Enter in the daily cost of the service."
                     ":Weekly": "Enter in the weekly cost of the service."
+            "/TimeToSpendWorkingDialog":
+                ":Title": "Specify Hours"
+                ":Prompt": "Enter in the number of hours the worker spends performing their service."
             "/PotentialTraitCountDialog":
                 ":Title": "Specify Possible Random Trait Count"
                 ":Prompt": "Enter in number of traits that will be selected randomly from the possible random traits pool."

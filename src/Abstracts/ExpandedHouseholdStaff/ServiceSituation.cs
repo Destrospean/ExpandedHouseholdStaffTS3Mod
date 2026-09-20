@@ -23,7 +23,7 @@ using Destrospean.Utils;
 namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
 {
     /// <summary>
-    /// Service situation base class from which to derive all service situations for the Expanded Household Staff Mod.
+    /// Service situation base class from which to derive all service situations for the Expanded Household Staff mod.
     /// </summary>
     public abstract class ServiceSituation<T> : ServiceSituation where T : ServiceSituation<T>
     {

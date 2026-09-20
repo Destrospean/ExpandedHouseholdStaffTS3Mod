@@ -48,7 +48,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             public override void Init(CustomServiceSituation parent)
             {
                 CustomService service = (CustomService)parent.Service;
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(service.DelayBeforeLeaving, TimeUnit.Hours, TimeToRoute, service.Profile.Name + " waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(service.DelayBeforeLeaving, TimeUnit.Minutes, TimeToRoute, service.Profile.Name + " waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public override void OnSocializedWith(Sim sim)
@@ -56,10 +56,10 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                 DebugUtils.TryDisplayScriptError(() =>
                     {
                         CustomService service = (CustomService)Parent.Service;
-                        float timeLeft = AlarmManager.GetTimeLeft(mAlarmHandle, TimeUnit.Hours);
+                        float timeLeft = AlarmManager.GetTimeLeft(mAlarmHandle, TimeUnit.Minutes);
                         if (timeLeft < service.ExtraWaitTimeAfterSocializing)
                         {
-                            AlarmManager.UpdateAlarmTime(mAlarmHandle, service.ExtraWaitTimeAfterSocializing - timeLeft, TimeUnit.Hours);
+                            AlarmManager.UpdateAlarmTime(mAlarmHandle, service.ExtraWaitTimeAfterSocializing - timeLeft, TimeUnit.Minutes);
                         }
                     });
             }
@@ -285,7 +285,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             public override void Init(CustomServiceSituation parent)
             {
                 CustomService service = (CustomService)parent.Service;
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(service.DelayBeforeArriving, TimeUnit.Hours, TimeToRoute, service.Profile.Name + " waiting to route", AlarmType.DeleteOnReset, parent.Worker));
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(service.DelayBeforeArriving, TimeUnit.Minutes, TimeToRoute, service.Profile.Name + " waiting to route", AlarmType.DeleteOnReset, parent.Worker));
             }
 
             public void TimeToRoute()

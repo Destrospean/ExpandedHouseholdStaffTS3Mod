@@ -47,7 +47,7 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
             {
                 string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "EditServiceProfileDialog");
                 profiles[0].Title = StringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), Localization.LocalizeString(entryKey + ":Prompt"), profiles[0].Title, -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1, -1), StringInputDialog.Validation.None, false, ModalDialog.PauseMode.PauseSimulator, false, true) ?? profiles[0].Title;
-                profiles[0].EditServiceProfile();
+                profiles[0].UIEditServiceProfile();
             }
             return true;
         }

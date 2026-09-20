@@ -581,7 +581,7 @@ namespace Destrospean.Utils
                             currentSkills.AddRange(skillList);
                             return true;
                         }
-                        string skillLevel = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/Titles:SkillLevel"), Localization.LocalizeString(entryKey + "/Prompts:SkillLevel"), selectedSkills[0].SkillLevel.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                        string skillLevel = StringInputDialog.Show(Localization.LocalizeString(entryKey + "/SubmenuTitles:SkillLevel"), Localization.LocalizeString(entryKey + "/SubmenuPrompts:SkillLevel"), selectedSkills[0].SkillLevel.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
                         selectedSkills[0].SkillLevel = skillLevel == null ? selectedSkills[0].SkillLevel : int.Parse(skillLevel);
                         Skill skill = SkillManager.GetStaticSkill(selectedSkills[0].SkillName);
                         if (selectedSkills[0].SkillLevel == -1)

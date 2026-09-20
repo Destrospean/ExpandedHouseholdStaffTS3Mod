@@ -25,7 +25,7 @@ using Destrospean.Utils.ExpandedHouseholdStaff;
 namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
 {
     /// <summary>
-    /// Service base class from which to derive all services for the Expanded Household Staff Mod.
+    /// Service base class from which to derive all services for the Expanded Household Staff mod.
     /// </summary>
     [Persistable]
     public abstract class Service<T> : Service, IService where T : Service<T>

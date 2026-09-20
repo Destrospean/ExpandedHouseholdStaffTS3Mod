@@ -24,7 +24,7 @@ using System.Reflection;
 namespace Destrospean.Utils.ExpandedHouseholdStaff
 {
     /// <summary>
-    /// Alternative methods for autonomy-related things. Use these methods instead of the originals for services and service situations from the Expanded Household Staff Mod.
+    /// Alternative methods for autonomy-related things. Use these methods instead of the originals for services and service situations from the Expanded Household Staff mod.
     /// </summary>
     public class AutonomyUtils
     {
@@ -370,7 +370,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         }
 
         /// <summary>
-        /// Finds the best available interaction. Use this instead of the original for service situations from the Expanded Household Staff Mod.
+        /// Finds the best available interaction. Use this instead of the original for service situations from the Expanded Household Staff mod.
         /// </summary>
         public static InteractionInstance FindBestAction(Autonomy autonomy)
         {

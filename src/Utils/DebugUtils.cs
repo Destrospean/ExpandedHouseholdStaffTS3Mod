@@ -16,7 +16,7 @@ namespace Destrospean.Utils
         {
             if (ShowDebugMessages)
             {
-                SimpleMessageDialog.Show("Expanded Household Staff Mod", message);
+                SimpleMessageDialog.Show("Expanded Household Staff", message);
             }
         }
 

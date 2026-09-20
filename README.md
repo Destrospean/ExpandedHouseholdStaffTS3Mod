@@ -1,4 +1,4 @@
-This is a the source code of the WIP Expanded Household Staff Mod.
+This is the source code of the WIP Expanded Household Staff mod.
 
 The structure is a bit newish/unorthodox compared to most Sims 3 mod repos, so I'll explain things here:
 

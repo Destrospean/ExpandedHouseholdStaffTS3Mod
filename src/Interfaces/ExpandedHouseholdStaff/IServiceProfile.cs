@@ -70,7 +70,7 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         }
 
         /// <summary>
-        /// Length of time (in hours) that the service NPC waits before routing to lot.
+        /// Length of time (in minutes) that the service NPC waits before routing to lot.
         /// </summary>
         float DelayBeforeArriving
         {
@@ -79,7 +79,7 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         }
 
         /// <summary>
-        /// Length of time (in hours) that the service NPC waits before leaving the lot, after their work is done.
+        /// Length of time (in minutes) that the service NPC waits before leaving the lot, after their work is done.
         /// </summary>
         float DelayBeforeLeaving
         {
@@ -97,7 +97,7 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         }
 
         /// <summary>
-        /// Extra time (in hours) to wait before leaving if the service NPC is socialized with.
+        /// Extra time (in minutes) to wait before leaving if the service NPC is socialized with.
         /// </summary>
         float ExtraWaitTimeAfterSocializing
         {
@@ -324,6 +324,15 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         /// The allowed range of genders that the service NPC can be.
         /// </summary>
         CASAgeGenderFlags ValidGenders
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The version string used to accommodate for changes to default values between versions of the Expanded Household Staff mod.
+        /// </summary>
+        string VersionString
         {
             get;
             set;

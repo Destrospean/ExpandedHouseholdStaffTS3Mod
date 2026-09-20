@@ -10,7 +10,6 @@ using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Objects.Electronics;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Situations;
-using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff;
@@ -23,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Destrospean.ExpandedHouseholdStaff.Interactions;
-using Destrospean.Misc;
 using Destrospean.Utils;
 using Destrospean.Utils.ExpandedHouseholdStaff;
 
@@ -31,12 +29,6 @@ namespace Destrospean.ExpandedHouseholdStaff
 {
     public class Main
     {
-        static readonly string[] sIncludedProfileNames = new string[]
-            {
-                "Chef",
-                "HouseMaid"
-            };
-
         [Tunable]
         protected static bool kInstantiator;
 
@@ -57,24 +49,32 @@ namespace Destrospean.ExpandedHouseholdStaff
                     {
                         GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
                         gameObject.AddInteraction(ListInteractions.Singleton, true);
-                        AddInteractions(gameObject as Mailbox);
+                        (gameObject as Mailbox).AddServiceProfileInteractions();
                     }
                 };
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
+                    IServiceProfile dummyProfile = new ServiceUtils.ServiceProfile("DummyService", "Dummy Service");
                     foreach (GameObject gameObject in Sims3.Gameplay.Queries.GetObjects<GameObject>())
                     {
                         gameObject.AddInteraction(ListInteractions.Singleton, true);
-                        AddInteractions(gameObject as Mailbox);
+                        (gameObject as Mailbox).AddServiceProfileInteractions();
                     }
                     foreach (IServiceProfile profile in new List<IServiceProfile>(ServiceUtils.ServiceProfiles))
                     {
-                        if (profile.IsImmutable && (!Array.Exists(sIncludedProfileNames, x => x == profile.Name) || !Tuning.kInitializeIncludedServices))
+                        if (profile.IsImmutable && (!Array.Exists(ServiceUtils.ReservedProfileNames, x => x == profile.Name) || !Tuning.kInitializeIncludedServices))
                         {
                             profile.RemoveServiceFromSaveGame();
                             continue;
                         }
                         CustomService.Init(profile);
+                        if (int.Parse(profile.VersionString) < 0)
+                        {
+                            profile.DelayBeforeArriving = dummyProfile.DelayBeforeArriving;
+                            profile.DelayBeforeLeaving = dummyProfile.DelayBeforeLeaving;
+                            profile.ExtraWaitTimeAfterSocializing = dummyProfile.ExtraWaitTimeAfterSocializing;
+                        }
+                        profile.VersionString = ServiceUtils.CurrentVersion.ToString();
                     }
                     if (Tuning.kInitializeIncludedServices)
                     {
@@ -129,9 +129,9 @@ namespace Destrospean.ExpandedHouseholdStaff
                                             new ServiceUtils.ActiveTopicAction("Dismiss"),
                                             new ServiceUtils.ActiveTopicAction("Fire")
                                         },
-                                    CarInstanceName = "CarServiceMaid",
                                     CancelledMessage = Localization.LocalizeString(entryKey + "HouseMaid:ServiceCancelled"),
                                     CancelledWhileActiveMessage = Localization.LocalizeString(entryKey + "HouseMaid:ServiceCancelledWhileActive"),
+                                    CarInstanceName = "CarServiceMaid",
                                     GetUniformFromName = true,
                                     HiddenTraits = new List<TraitNames>
                                         {
@@ -170,14 +170,6 @@ namespace Destrospean.ExpandedHouseholdStaff
                                     WaitsBeforePuttingAwayLeftovers = true
                                 });
                         }
-                        else
-                        {
-                            int index = ServiceUtils.ServiceProfiles.FindIndex(x => x.Name == "HouseMaid");
-                            if (index > -1)
-                            {
-                                ServiceUtils.ServiceProfiles[index].DelayBeforeArriving = new ServiceUtils.ServiceProfile("DummyService", "DUMMY SERVICE").DelayBeforeArriving;
-                            }
-                        }
                     }
                 });
             World.sOnWorldQuitEventHandler += (sender, e) =>
@@ -187,22 +179,6 @@ namespace Destrospean.ExpandedHouseholdStaff
                         CustomService.Deinit(service.Profile, true);
                     }
                 };
-        }
-
-        public static void AddInteractions(Mailbox mailbox)
-        {
-            if (mailbox != null)
-            {
-                mailbox.AddInteraction(CreateServiceProfile.Singleton, true);
-                mailbox.AddInteraction(CloneServiceProfile.Singleton, true);
-                mailbox.AddInteraction(DeleteServiceProfile.Singleton, true);
-                mailbox.AddInteraction(EditServiceProfile.Singleton, true);
-                mailbox.AddInteraction(EditServiceUniform.Singleton, true);
-                mailbox.AddInteraction(AddActiveTopicAction.Singleton, true);
-                mailbox.AddInteraction(RemoveActiveTopicAction.Singleton, true);
-                mailbox.AddInteraction(AddAutonomousInteraction.Singleton, true);
-                mailbox.AddInteraction(RemoveAutonomousInteraction.Singleton, true);
-            }
         }
 
         public static bool IsInServicePreventingSocialization(Sim target)
