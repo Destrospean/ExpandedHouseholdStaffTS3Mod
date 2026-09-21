@@ -31,7 +31,7 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
 
             public override bool Test(Sim actor, GameObject target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
             {
-                return !isAutonomous;
+                return target.Interactions.Exists(x => x.Tuning != null) && !isAutonomous;
             }
         }
 
@@ -41,13 +41,19 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
 
         public override bool Run()
         {
-            foreach (InteractionObjectPair interaction in Target.Interactions)
-            {
-                if (interaction.Tuning != null)
+            DebugUtils.TryDisplayScriptError(() =>
                 {
-                    StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString(LocalizationKey + "/Headers:ObjectName") + Target.GetLocalizedName() + "\n" + Localization.LocalizeString(LocalizationKey + "/Headers:InteractionName") + interaction.InteractionDefinition.GetInteractionName(Actor, Target, interaction) + "\n" + Localization.LocalizeString(LocalizationKey + "/Headers:InteractionDefinitionType") + interaction.Tuning.FullInteractionName + "\n" + Localization.LocalizeString(LocalizationKey + "/Headers:TargetType") + interaction.Tuning.FullObjectName, StyledNotification.NotificationStyle.kSystemMessage));
-                }
-            }
+                    foreach (InteractionObjectPair interaction in Target.Interactions)
+                    {
+                        if (interaction.Tuning != null)
+                        {
+                            string interactionName = null;
+                            Exception exception;
+                            DebugUtils.TryGetException(() => interactionName = interaction.InteractionDefinition.GetInteractionName(Actor, Target, interaction), out exception);
+                            StyledNotification.Show(new StyledNotification.Format(Localization.LocalizeString(LocalizationKey + "/Headers:ObjectName") + Target.GetLocalizedName() + "\n" + Localization.LocalizeString(LocalizationKey + "/Headers:InteractionName") + interactionName + "\n" + Localization.LocalizeString(LocalizationKey + "/Headers:InteractionDefinitionType") + interaction.Tuning.FullInteractionName + "\n" + Localization.LocalizeString(LocalizationKey + "/Headers:TargetType") + interaction.Tuning.FullObjectName, StyledNotification.NotificationStyle.kSystemMessage));
+                        }
+                    }
+                });
             return true;
         }
     }

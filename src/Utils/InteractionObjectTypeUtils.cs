@@ -44,16 +44,13 @@ namespace Destrospean.Utils
             {
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (type.IsClass)
+                    if (typeof(IGameObject).IsAssignableFrom(type))
                     {
-                        if (typeof(IGameObject).IsAssignableFrom(type))
-                        {
-                            gameObjectTypes[type.FullName] = type;
-                        }
-                        if (typeof(InteractionDefinition).IsAssignableFrom(type))
-                        {
-                            interactionDefinitionTypes[type.FullName] = type;
-                        }
+                        gameObjectTypes[type.FullName] = type;
+                    }
+                    if (typeof(InteractionDefinition).IsAssignableFrom(type))
+                    {
+                        interactionDefinitionTypes[type.FullName] = type;
                     }
                 }
             }
