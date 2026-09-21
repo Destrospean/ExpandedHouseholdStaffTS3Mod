@@ -370,10 +370,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     mExtraWaitTimeAfterSocializing = value;
                 }
             }
+                
+            public bool GetUniformFromName = false;
 
             public GetUniformNameDelegate GetUniformNameCallback = null;
-
-            public bool GetUniformFromName = false;
 
             /// <summary>
             /// The list of hidden traits for the service NPC.
