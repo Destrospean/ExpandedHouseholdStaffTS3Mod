@@ -420,7 +420,7 @@ namespace Destrospean.Utils
                     bool cancelled, confirmed;
                     while (true)
                     {
-                        if (flagList.Count == 0)
+                        if (flagList.Count == 0 && okayButtonAlwaysEnabled)
                         {
                             foreach (CASAgeGenderFlags flag in Enum.GetValues(typeof(CASAgeGenderFlags)))
                             {
@@ -448,6 +448,10 @@ namespace Destrospean.Utils
                         }
                         if (confirmed)
                         {
+                            if (!okayButtonAlwaysEnabled)
+                            {
+                                flagList.Add(selectedFlags[0]);
+                            }
                             flagArray = flagList.ToArray();
                             return true;
                         }

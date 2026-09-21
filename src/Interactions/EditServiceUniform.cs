@@ -55,14 +55,13 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
                     if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name"), 1))
                     {
                         string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "ServiceOutfitDemographicDialog");
-                        CASAgeGenderFlags profileAges = (profiles[0].ValidAges & CASAgeGenderFlags.YoungAdult) == 0 ? profiles[0].ValidAges : profiles[0].ValidAges ^ CASAgeGenderFlags.YoungAdult | CASAgeGenderFlags.Adult;
                         CASAgeGenderFlags age;
-                        if (!CommonUtils.ShowCASAgeGenderFlagListDialog(out age, profileAges, profileAges, Localization.LocalizeString(entryKey + "/Titles:Age"), entryKey, false))
+                        if (!CommonUtils.ShowCASAgeGenderFlagListDialog(out age, CASAgeGenderFlags.None, (profiles[0].ValidAges & CASAgeGenderFlags.YoungAdult) == 0 ? profiles[0].ValidAges : profiles[0].ValidAges ^ CASAgeGenderFlags.YoungAdult | CASAgeGenderFlags.Adult, Localization.LocalizeString(entryKey + "/Titles:Age"), entryKey, false))
                         {
                             return true;
                         }
                         CASAgeGenderFlags gender;
-                        if (!CommonUtils.ShowCASAgeGenderFlagListDialog(out gender, profiles[0].ValidGenders, profiles[0].ValidGenders, Localization.LocalizeString(entryKey + "/Titles:Gender"), entryKey, false))
+                        if (!CommonUtils.ShowCASAgeGenderFlagListDialog(out gender, CASAgeGenderFlags.None, profiles[0].ValidGenders == CASAgeGenderFlags.None ? CASAgeGenderFlags.GenderMask : profiles[0].ValidGenders, Localization.LocalizeString(entryKey + "/Titles:Gender"), entryKey, false))
                         {
                             return true;
                         }
