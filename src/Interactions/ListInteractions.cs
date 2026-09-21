@@ -31,7 +31,7 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
 
             public override bool Test(Sim actor, GameObject target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
             {
-                return target.Interactions.Exists(x => x.Tuning != null) && !isAutonomous;
+                return !isAutonomous && target.Interactions.Exists(x => x.Tuning != null);
             }
         }
 
