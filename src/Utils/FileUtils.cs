@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Destrospean.Misc;
+using Sims3.Gameplay.Utilities;
 
 namespace Destrospean.Utils.ExpandedHouseholdStaff
 {
@@ -43,7 +44,14 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                         xmlWriter.WriteStartElement("ServiceProfile");
                         xmlWriter.WriteAttributeString("version", profile.VersionString);
                         xmlWriter.WriteAttributeString("name", profile.Name);
-                        xmlWriter.WriteAttributeString("workMotive", profile.ServiceMotive.ToString());
+                        foreach (KeyValuePair<string, object> entry in ParserFunctions.sCaseSensitiveEnumParsers[typeof(CommodityKind)].mLookup)
+                        {
+                            if ((CommodityKind)entry.Value == profile.ServiceMotive)
+                            {
+                                xmlWriter.WriteAttributeString("workMotive", entry.Key);
+                                break;
+                            }
+                        }
 
                         xmlWriter.WriteStartElement("Title");
                         xmlWriter.WriteAttributeString("localize", false.ToString());
@@ -82,11 +90,14 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                         xmlWriter.WriteElementString("Cost", profile.Cost.ToString());
 
                         xmlWriter.WriteStartElement("Motives");
-                        foreach (CommodityKind motive in profile.Motives)
+                        foreach (KeyValuePair<string, object> entry in ParserFunctions.sCaseSensitiveEnumParsers[typeof(CommodityKind)].mLookup)
                         {
-                            xmlWriter.WriteStartElement("Motive");
-                            xmlWriter.WriteAttributeString("name", motive.ToString());
-                            xmlWriter.WriteEndElement();
+                            if (profile.Motives.Contains((CommodityKind)entry.Value))
+                            {
+                                xmlWriter.WriteStartElement("Motive");
+                                xmlWriter.WriteAttributeString("name", entry.Key);
+                                xmlWriter.WriteEndElement();
+                            }
                         }
                         xmlWriter.WriteFullEndElement();
 
