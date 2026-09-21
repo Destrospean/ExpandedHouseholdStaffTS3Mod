@@ -325,6 +325,9 @@
             "/RemoveAutonomousInteraction":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Remove Autonomous Interactions"
+            "/CreateServiceProfilesXml":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Export XML"
         "/Services":
             "/CustomService":
                 ":RequestService": "Hire {0.String}"
