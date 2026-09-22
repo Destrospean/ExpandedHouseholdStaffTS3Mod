@@ -18,28 +18,20 @@ using System.Xml;
 using Destrospean.Enums;
 using Destrospean.Enums.ExpandedHouseholdStaff;
 using Destrospean.Misc;
+using Destrospean.UI.Columns;
+using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
 
 namespace Destrospean.Utils.ExpandedHouseholdStaff
 {
     public class FileUtils
     {
-        public class SavedSetting
-        {
-            public string Data;
-
-            public SavedSetting(string name, string data)
-            {
-                Data = data;
-            }
-        }
-
         public static bool ExportToFile(string text)
         {
             string name = null;
             bool found = true;
             while (found)
             {
-                name = StringInputDialog.Show("Title", "Prompt", "Save Settings");
+                name = StringInputDialog.Show("[EXPORT INPUT TITLE]", "[EXPORT INPUT PROMPT]", "[DEFAULT EXPORT NAME]");
                 if (string.IsNullOrEmpty(name))
                 {
                     return false;
@@ -55,7 +47,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     }
                     if (contents.HouseholdName == name)
                     {
-                        SimpleMessageDialog.Show("Title", "Exists");
+                        SimpleMessageDialog.Show("[FILE EXISTS TITLE]", "[FILE EXISTS MESSAGE]");
                         found = true;
                         break;
                     }
@@ -66,38 +58,28 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             dummyHousehold.BioText = text;
             BinModel.Singleton.AddToExportBin(dummyHousehold);
             dummyHousehold.Destroy();
-            SimpleMessageDialog.Show("Title", "Success");
+            SimpleMessageDialog.Show("[EXPORT SUCCESS TITLE]", "[EXPORT SUCCESS]");
             return true;
         }
 
         public static string ExtractFromFile()
         {
             BinModel.Singleton.PopulateExportBin();
-            List<SavedSetting> settings = new List<SavedSetting>();
+            Dictionary<string, string> savedSettings = new Dictionary<string, string>();
             foreach (ExportBinContents contents in BinModel.Singleton.ExportBinContents)
             {
-                if (contents.HouseholdName == null)
+                if (contents.HouseholdName != null && contents.HouseholdName.Contains("Destrospean.ExpandedHouseholdStaff."))
                 {
-                    continue;
+                    savedSettings[contents.HouseholdName] = contents.HouseholdBio;
                 }
-                if (!contents.HouseholdName.Contains("Destrospean.ExpandedHouseholdStaff."))
-                {
-                    continue;
-                }
-                settings.Add(new SavedSetting(contents.HouseholdName, contents.HouseholdBio));
             }
-            if (settings.Count == 0)
+            if (savedSettings.Count == 0)
             {
-                SimpleMessageDialog.Show("Title", "Error");
+                SimpleMessageDialog.Show("[EXTRACTION ERROR TITLE]", "[EXTRACTION ERROR MESSAGE]");
                 return null;
             }
-            // WRITE SELECTOR HERE
-            SavedSetting selection = null;
-            if (selection == null)
-            {
-                return null;
-            }
-            return selection.Data;
+            string[] savedSettingsNames;
+            return TryUIGetSelectedSavedSettingsNames(out savedSettingsNames, new List<string>(savedSettings.Keys).ToArray(), null, 1) ? savedSettings[savedSettingsNames[0]] : null;
         }
 
         public static string ExtractFromTuning(string name)
@@ -396,7 +378,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 return false;
             }
             LoadServiceProfiles(xml);
-            SimpleMessageDialog.Show("Title", "Success");
+            SimpleMessageDialog.Show("[IMPORT SUCCESS TITLE]", "[IMPORT SUCCESS MESSAGE]");
             return true;
         }
 
@@ -732,6 +714,43 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     }
                 }
             }
+        }
+
+        public static bool TryUIGetSelectedSavedSettingsNames(out string[] selectedNames, string[] allNames, string title = null, int selectableRowCount = int.MaxValue)
+        {
+            bool retVal;
+            string[] tempSelectedNames = null;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
+                    Array.Sort(allNames);
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        tempSelectedNames = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "FileListDialog:Title"), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<string>(allNames).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<string>>
+                            {
+                                new TextColumn(entryKey + "FileListDialog")
+                            }, selectableRowCount, out confirmed, out cancelled) ?? new List<string>()).ToArray();
+                        if (cancelled)
+                        {
+                            tempSelectedNames = null;
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            return true;
+                        }
+                    }
+                }, out retVal))
+            {
+                selectedNames = null;
+                return false;
+            }
+            selectedNames = tempSelectedNames;
+            return retVal;
         }
     }
 }
