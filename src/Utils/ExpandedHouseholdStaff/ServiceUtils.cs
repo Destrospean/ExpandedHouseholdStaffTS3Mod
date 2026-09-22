@@ -1065,11 +1065,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
         public static Dictionary<string, Service> PredefinedInstances = new Dictionary<string, Service>();
 
-        public static readonly string[] ReservedProfileNames = new[]
-            {
-                "Chef",
-                "HouseMaid"
-            };
+        public static readonly string[] ReservedProfileNames = new string[0];
 
         public static Dictionary<Type, CommodityKind> ServiceMotives = new Dictionary<Type, CommodityKind>();
 
