@@ -608,6 +608,15 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                                     profile.CarInstanceName = profilePropertyNode.InnerText;
                                     continue;
                                 }
+                                if (profilePropertyNode.Name == "CarProductVersion")
+                                {
+                                    ProductVersion productVersion;
+                                    if (ParserFunctions.TryParseEnum(profilePropertyNode.InnerText, out productVersion, ProductVersion.Undefined))
+                                    {
+                                        profile.CarProductVersion = productVersion;
+                                    }
+                                    continue;
+                                }
                                 if (profilePropertyNode.Name == "CheckTime")
                                 {
                                     profile.CheckTime = ParserFunctions.ParseFloat(profilePropertyNode.InnerText, profile.CheckTime);
