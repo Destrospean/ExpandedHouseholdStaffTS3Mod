@@ -41,17 +41,13 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
         {
             DebugUtils.TryDisplayScriptError(() =>
                 {
-                    string xml;
-                    if (FileUtils.TryCreateServiceProfilesXml(out xml))
+                    uint fileHandle = 0u;
+                    Simulator.CreateExportFile(ref fileHandle, "ServiceProfiles");
+                    if (fileHandle != 0u)
                     {
-                        uint fileHandle = 0u;
-                        Simulator.CreateExportFile(ref fileHandle, "ServiceProfiles");
-                        if (fileHandle != 0u)
-                        {
-                            CustomXmlWriter customXmlWriter = new CustomXmlWriter(fileHandle);
-                            customXmlWriter.WriteToBuffer(xml);
-                            customXmlWriter.WriteEndDocument();
-                        }
+                        CustomXmlWriter customXmlWriter = new CustomXmlWriter(fileHandle);
+                        customXmlWriter.WriteToBuffer(FileUtils.GetXml(ServiceUtils.ServiceProfiles));
+                        customXmlWriter.WriteEndDocument();
                     }
                 });
             return true;

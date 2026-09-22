@@ -54,7 +54,6 @@ namespace Destrospean.ExpandedHouseholdStaff
                 };
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
-                    IServiceProfile dummyProfile = new ServiceUtils.ServiceProfile("DummyService", "Dummy Service");
                     foreach (GameObject gameObject in Sims3.Gameplay.Queries.GetObjects<GameObject>())
                     {
                         gameObject.AddInteraction(ListInteractions.Singleton, true);
@@ -68,13 +67,7 @@ namespace Destrospean.ExpandedHouseholdStaff
                             continue;
                         }
                         CustomService.Init(profile);
-                        if (int.Parse(profile.VersionString) < 0)
-                        {
-                            profile.DelayBeforeArriving = dummyProfile.DelayBeforeArriving;
-                            profile.DelayBeforeLeaving = dummyProfile.DelayBeforeLeaving;
-                            profile.ExtraWaitTimeAfterSocializing = dummyProfile.ExtraWaitTimeAfterSocializing;
-                        }
-                        profile.VersionString = ServiceUtils.CurrentVersion.ToString();
+                        profile.FixUp();
                     }
                     if (Tuning.kInitializeIncludedServices)
                     {

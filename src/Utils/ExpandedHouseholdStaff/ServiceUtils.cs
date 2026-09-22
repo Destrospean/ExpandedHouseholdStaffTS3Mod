@@ -1177,6 +1177,18 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             };
         }
 
+        public static void FixUp(this IServiceProfile profile)
+        {
+            IServiceProfile dummyProfile = new ServiceUtils.ServiceProfile("DummyService", "Dummy Service");
+            if (int.Parse(profile.VersionString) < 0)
+            {
+                profile.DelayBeforeArriving = dummyProfile.DelayBeforeArriving;
+                profile.DelayBeforeLeaving = dummyProfile.DelayBeforeLeaving;
+                profile.ExtraWaitTimeAfterSocializing = dummyProfile.ExtraWaitTimeAfterSocializing;
+            }
+            profile.VersionString = ServiceUtils.CurrentVersion.ToString();
+        }
+
         public static bool IsFromExpandedHouseholdStaff<Service>() where Service : Sims3.Gameplay.Services.Service
         {
             return IsFromExpandedHouseholdStaff(typeof(Service));
