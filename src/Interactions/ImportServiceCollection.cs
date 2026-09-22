@@ -3,16 +3,17 @@ using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Utilities;
+using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services;
 using Sims3.SimIFace;
 using Destrospean.Utils;
 using Destrospean.Utils.ExpandedHouseholdStaff;
 
 namespace Destrospean.ExpandedHouseholdStaff.Interactions
 {
-    public class CreateServiceProfilesXml : ImmediateInteraction<Sim, GameObject>
+    public class ImportServiceCollection : ImmediateInteraction<Sim, GameObject>
     {
         [DoesntRequireTuning]
-        public class Definition : ImmediateInteractionDefinition<Sim, GameObject, CreateServiceProfilesXml>
+        public class Definition : ImmediateInteractionDefinition<Sim, GameObject, ImportServiceCollection>
         {
             public override string GetInteractionName(Sim actor, GameObject target, InteractionObjectPair iop)
             {
@@ -29,27 +30,24 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
 
             public override bool Test(Sim actor, GameObject target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
             {
-                return !isAutonomous && ServiceUtils.ServiceProfiles.Count > 0;
+                return !isAutonomous;
             }
         }
 
-        public static readonly string LocalizationKey = typeof(CreateServiceProfilesXml).GetLocalizationKey();
+        public static readonly string LocalizationKey = typeof(ImportServiceCollection).GetLocalizationKey();
 
         public static InteractionDefinition Singleton = new Definition();
 
         public override bool Run()
         {
-            DebugUtils.TryDisplayScriptError(() =>
+            FileUtils.ImportFromFile();
+            foreach (ServiceUtils.ServiceProfile profile in ServiceUtils.ServiceProfiles)
+            {
+                if (!ServiceUtils.CustomInstances.ContainsKey(profile.Name))
                 {
-                    uint fileHandle = 0u;
-                    Simulator.CreateExportFile(ref fileHandle, "ServiceProfiles");
-                    if (fileHandle != 0u)
-                    {
-                        CustomXmlWriter customXmlWriter = new CustomXmlWriter(fileHandle);
-                        customXmlWriter.WriteToBuffer(FileUtils.GetXml(ServiceUtils.ServiceProfiles));
-                        customXmlWriter.WriteEndDocument();
-                    }
-                });
+                    CustomService.Init(profile);
+                }
+            }
             return true;
         }
     }

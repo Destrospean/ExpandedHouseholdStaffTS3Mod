@@ -12,11 +12,13 @@ using Sims3.UI;
 using Sims3.UI.Controller;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
 using Destrospean.Enums;
 using Destrospean.Enums.ExpandedHouseholdStaff;
+using Destrospean.ExpandedHouseholdStaff.Interactions;
 using Destrospean.Misc;
 using Destrospean.UI.Columns;
 using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
@@ -25,13 +27,15 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 {
     public class FileUtils
     {
+        const string kLocalizationKey = "Destrospean/UI/Dialogs";
+
         public static bool ExportToFile(string text)
         {
             string name = null;
             bool found = true;
             while (found)
             {
-                name = StringInputDialog.Show("[EXPORT INPUT TITLE]", "[EXPORT INPUT PROMPT]", "[DEFAULT EXPORT NAME]");
+                name = StringInputDialog.Show(Localization.LocalizeString(kLocalizationKey + "/ExportFilenameDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/ExportFilenameDialog:Prompt"), "");
                 if (string.IsNullOrEmpty(name))
                 {
                     return false;
@@ -47,7 +51,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     }
                     if (contents.HouseholdName == name)
                     {
-                        SimpleMessageDialog.Show("[FILE EXISTS TITLE]", "[FILE EXISTS MESSAGE]");
+                        SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/FileExistsDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/FileExistsDialog:Message"));
                         found = true;
                         break;
                     }
@@ -58,7 +62,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             dummyHousehold.BioText = text;
             BinModel.Singleton.AddToExportBin(dummyHousehold);
             dummyHousehold.Destroy();
-            SimpleMessageDialog.Show("[EXPORT SUCCESS TITLE]", "[EXPORT SUCCESS]");
+            SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/ExportSuccessDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/ExportSuccessDialog:Message"));
             return true;
         }
 
@@ -75,11 +79,11 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
             if (savedSettings.Count == 0)
             {
-                SimpleMessageDialog.Show("[EXTRACTION ERROR TITLE]", "[EXTRACTION ERROR MESSAGE]");
+                SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/NoFilesExistDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/NoFilesExistDialog:Message"));
                 return null;
             }
             string[] savedSettingsNames;
-            return TryUIGetSelectedSavedSettingsNames(out savedSettingsNames, new List<string>(savedSettings.Keys).ToArray(), null, 1) ? savedSettings[savedSettingsNames[0]] : null;
+            return TryUIGetSelectedSavedSettingsNames(out savedSettingsNames, new List<string>(savedSettings.Keys).ToArray(), Localization.LocalizeString(ImportServiceCollection.LocalizationKey + ":Name"), 1) ? savedSettings[savedSettingsNames[0]] : null;
         }
 
         public static string ExtractFromTuning(string name)
@@ -378,7 +382,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 return false;
             }
             LoadServiceProfiles(xml);
-            SimpleMessageDialog.Show("[IMPORT SUCCESS TITLE]", "[IMPORT SUCCESS MESSAGE]");
+            SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/ImportSuccessDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/ImportSuccessDialog:Message"));
             return true;
         }
 
@@ -393,8 +397,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 {
                     XmlDocument xmlDocument = new XmlDocument();
                     xmlDocument.Load(xmlReader);
-                    XmlNode rootNode = xmlDocument.SelectSingleNode("ExpandedHouseholdStaffData");
-                    foreach (XmlNode node in rootNode.ChildNodes)
+                    foreach (XmlNode node in xmlDocument.DocumentElement.ChildNodes)
                     {
                         XmlElement element = node as XmlElement;
                         if (element == null)
@@ -645,10 +648,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                                 }
                             }
                             profile.FixUp();
-                            profile.AddServiceToSaveGame();
+                            ServiceUtils.ServiceProfiles.Add(profile);
                         }
                     }
-                    foreach (XmlNode node in rootNode.ChildNodes)
+                    foreach (XmlNode node in xmlDocument.DocumentElement.ChildNodes)
                     {
                         XmlElement element = node as XmlElement;
                         if (element == null)
@@ -659,40 +662,50 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                         {
                             OutfitAssignmentUtils.AssignedOutfit assignedOutfit = new OutfitAssignmentUtils.AssignedOutfit();
                             assignedOutfit.PartOverrides.Clear();
+                            string serviceName = node.Attributes["profile"].Value;
+                            int profileIndex = ServiceUtils.ServiceProfiles.FindIndex(x => x.Name == serviceName);
+                            if (profileIndex == -1)
+                            {
+                                continue;
+                            }
+                            CASAgeGenderFlags age, gender;
+                            string specialOutfitKey = OutfitAssignmentUtils.GetGlobalAssignedOutfitPrefix((ParserFunctions.TryParseEnum(node.Attributes["age"].Value, out age, CASAgeGenderFlags.None) ? age : CASAgeGenderFlags.None) | (ParserFunctions.TryParseEnum(node.Attributes["gender"].Value, out gender, CASAgeGenderFlags.None) ? gender : CASAgeGenderFlags.None)) + serviceName;
                             foreach (XmlNode serviceUniformPropertyNode in node.ChildNodes)
                             {
-                                string serviceName = serviceUniformPropertyNode.Attributes["profile"].Value;
-                                int profileIndex = ServiceUtils.ServiceProfiles.FindIndex(x => x.Name == serviceName);
-                                if (profileIndex == -1)
-                                {
-                                    continue;
-                                }
-                                CASAgeGenderFlags age, gender;
-                                string specialOutfitKey = OutfitAssignmentUtils.GetGlobalAssignedOutfitPrefix((ParserFunctions.TryParseEnum(serviceUniformPropertyNode.Attributes["age"].Value, out age, CASAgeGenderFlags.None) ? age : CASAgeGenderFlags.None) | (ParserFunctions.TryParseEnum(serviceUniformPropertyNode.Attributes["gender"].Value, out gender, CASAgeGenderFlags.None) ? gender : CASAgeGenderFlags.None)) + serviceName;
                                 if (serviceUniformPropertyNode.Name == "Parts")
                                 {
-                                    XmlDocument document = new XmlDocument();
-                                    document.LoadXml(serviceUniformPropertyNode.InnerXml);
-                                    XmlDeclaration xmlDeclaration = document.CreateXmlDeclaration("1.0", "UTF-8", null);
-                                    document.InsertBefore(xmlDeclaration, document.DocumentElement);
-                                    StringBuilder stringBuilder = new StringBuilder();
-                                    using (Utf8StringWriter stringWriter = new Utf8StringWriter(stringBuilder))
+                                    foreach (XmlNode partNode in serviceUniformPropertyNode.ChildNodes)
                                     {
-                                        using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
-                                            {
-                                                Encoding = Encoding.UTF8,
-                                                OmitXmlDeclaration = false
-                                            }))
+                                        string[] tgi = partNode.Attributes["key"].Value.Split(':');
+                                        CASPart part = new CASPart(new ResourceKey(ulong.Parse(tgi[2], NumberStyles.HexNumber), uint.Parse(tgi[0], NumberStyles.HexNumber), uint.Parse(tgi[1], NumberStyles.HexNumber)));
+                                        if (string.IsNullOrEmpty(partNode.InnerXml))
                                         {
-
-                                            document.WriteTo(xmlWriter);
-                                            xmlWriter.Flush();
+                                            assignedOutfit.Parts.Add(new OutfitAssignmentUtils.AssignedOutfit.SavedPart(part, null));
+                                            continue;
                                         }
-                                        stringWriter.Flush();
+                                        XmlDocument document = new XmlDocument();
+                                        document.LoadXml(partNode.InnerXml);
+                                        XmlDeclaration xmlDeclaration = document.CreateXmlDeclaration("1.0", "utf-8", null);
+                                        document.InsertBefore(xmlDeclaration, document.DocumentElement);
+                                        StringBuilder stringBuilder = new StringBuilder();
+                                        using (Utf8StringWriter stringWriter = new Utf8StringWriter(stringBuilder))
+                                        {
+                                            using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
+                                                {
+                                                    Indent = true,
+                                                    IndentChars = "  ",
+                                                    Encoding = Encoding.UTF8,
+                                                    OmitXmlDeclaration = false
+                                                }))
+                                            {
+                                                document.WriteTo(xmlWriter);
+                                                xmlWriter.Flush();
+                                            }
+                                            stringWriter.Flush();
+                                        }
+                                        assignedOutfit.Parts.Add(new OutfitAssignmentUtils.AssignedOutfit.SavedPart(part, stringBuilder.ToString()));
+                                        continue;
                                     }
-                                    string[] tgi = serviceUniformPropertyNode.Attributes["key"].Value.Split(':');
-                                    assignedOutfit.Parts.Add(new OutfitAssignmentUtils.AssignedOutfit.SavedPart(new CASPart(new ResourceKey(ParserFunctions.ParseHex(tgi[2]), (uint)ParserFunctions.ParseHex(tgi[0]), (uint)ParserFunctions.ParseHex(tgi[1]))), stringBuilder.ToString()));
-                                    continue;
                                 }
                                 if (serviceUniformPropertyNode.Name == "PartOverrides")
                                 {
@@ -706,10 +719,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                                     }
                                     continue;
                                 }
-                                OutfitAssignmentUtils.OutfitAssignments.Add(new OutfitAssignmentUtils.OutfitAssignment(null, specialOutfitKey, ServiceUtils.ServiceProfiles[profileIndex]));
-                                OutfitAssignmentUtils.IndexOutfitAssignments();
-                                OutfitAssignmentUtils.AssignedOutfits[specialOutfitKey] = assignedOutfit;
                             }
+                            OutfitAssignmentUtils.OutfitAssignments.Add(new OutfitAssignmentUtils.OutfitAssignment(null, specialOutfitKey, ServiceUtils.ServiceProfiles[profileIndex]));
+                            OutfitAssignmentUtils.IndexOutfitAssignments();
+                            OutfitAssignmentUtils.AssignedOutfits[specialOutfitKey] = assignedOutfit;
                         }
                     }
                 }
@@ -722,17 +735,16 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             string[] tempSelectedNames = null;
             if (DebugUtils.TryDisplayScriptError(() =>
                 {
-                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
                     Array.Sort(allNames);
                     bool cancelled, confirmed;
                     while (true)
                     {
-                        tempSelectedNames = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "FileListDialog:Title"), new List<ObjectPicker.TabInfo>
+                        tempSelectedNames = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(kLocalizationKey + "/ServiceCollectionListDialog:Title"), new List<ObjectPicker.TabInfo>
                             {
                                 new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<string>(allNames).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
                             }, new List<ObjectPickerDialog.CommonHeaderInfo<string>>
                             {
-                                new TextColumn(entryKey + "FileListDialog")
+                                new TextColumn(kLocalizationKey + "/ServiceCollectionListDialog")
                             }, selectableRowCount, out confirmed, out cancelled) ?? new List<string>()).ToArray();
                         if (cancelled)
                         {

@@ -288,6 +288,27 @@
             "/AdvertisedValueDialog":
                 ":Title": "Specify Advertised Priority"
                 ":Prompt": "Enter in the advertised priority value."
+            "/ServiceCollectionListDialog":
+                ":Title": "Select Service Collection"
+                "/Headers":
+                    "/Text":
+                        ":Text": "Service Collection"
+                        ":Tooltip": "The name of the service collection"
+            "/ExportFilenameDialog":
+                ":Title": "Export Services"
+                ":Prompt": "Enter in the name of the service collection to export."
+            "/ImportSuccessDialog":
+                ":Title": "Import Successful"
+                ":Message": "The service collection was successfully imported."
+            "/ExportSuccessDialog":
+                ":Title": "Export Successful"
+                ":Message": "The service collection was successfully exported."
+            "/NoFilesExistDialog":
+                ":Title": "Import Failed"
+                ":Message": "No service collections currently exist."
+            "/FileExistsDialog":
+                ":Title": "Export Failed"
+                ":Message": "A service collection of this name already exists."
     "/ExpandedHouseholdStaff":
         "/Interactions":
             "/ListInteractions":
@@ -325,9 +346,12 @@
             "/RemoveAutonomousInteraction":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Remove Autonomous Interactions"
-            "/CreateServiceProfilesXml":
+            "/ImportServiceCollection":
                 ":Path": "Expanded Household Staff..."
-                ":Name": "Export XML"
+                ":Name": "Import Service Collection"
+            "/ExportServiceCollection":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Export Service Collection"
         "/Services":
             "/CustomService":
                 ":RequestService": "Hire {0.String}"

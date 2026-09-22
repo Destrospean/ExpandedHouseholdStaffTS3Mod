@@ -100,8 +100,9 @@
     <Compile Include="Interactions\CloneServiceProfile.cs" />
     <Compile Include="Interactions\ListInteractions.cs" />
     <Compile Include="Utils\FileUtils.cs" />
-    <Compile Include="Interactions\CreateServiceProfilesXml.cs" />
     <Compile Include="Misc\Utf8StringWriter.cs" />
+    <Compile Include="Interactions\ExportServiceCollection.cs" />
+    <Compile Include="Interactions\ImportServiceCollection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

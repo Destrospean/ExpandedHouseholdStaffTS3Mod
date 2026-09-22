@@ -18,7 +18,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         {
             public List<BodyTypes> PartOverrides = new List<BodyTypes>(OverridableBodyTypes);
 
-            public List<SavedPart> Parts;
+            public List<SavedPart> Parts = new List<SavedPart>();
 
             [Persistable]
             public class SavedPart
