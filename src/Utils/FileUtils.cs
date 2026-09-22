@@ -29,6 +29,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
     {
         const string kLocalizationKey = "Destrospean/UI/Dialogs";
 
+        const string kSavedSettingsPrefix = "Destrospean.ExpandedHouseholdStaff.";
+
         public static bool ExportToFile(string text)
         {
             string name = null;
@@ -40,12 +42,12 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 {
                     return false;
                 }
-                name = "Destrospean.ExpandedHouseholdStaff." + name;
+                name = kSavedSettingsPrefix + name;
                 BinModel.Singleton.PopulateExportBin();
                 found = false;
                 foreach (ExportBinContents contents in BinModel.Singleton.ExportBinContents)
                 {
-                    if (contents.HouseholdName == null || !contents.HouseholdName.Contains("Destrospean.ExpandedHouseholdStaff"))
+                    if (contents.HouseholdName == null || !contents.HouseholdName.Contains(kSavedSettingsPrefix))
                     {
                         continue;
                     }
@@ -72,7 +74,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             Dictionary<string, string> savedSettings = new Dictionary<string, string>();
             foreach (ExportBinContents contents in BinModel.Singleton.ExportBinContents)
             {
-                if (contents.HouseholdName != null && contents.HouseholdName.Contains("Destrospean.ExpandedHouseholdStaff."))
+                if (contents.HouseholdName != null && contents.HouseholdName.Contains(kSavedSettingsPrefix))
                 {
                     savedSettings[contents.HouseholdName] = contents.HouseholdBio;
                 }
@@ -83,7 +85,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 return null;
             }
             string[] savedSettingsNames;
-            return TryUIGetSelectedSavedSettingsNames(out savedSettingsNames, new List<string>(savedSettings.Keys).ToArray(), Localization.LocalizeString(ImportServiceCollection.LocalizationKey + ":Name"), 1) ? savedSettings[savedSettingsNames[0]] : null;
+            return TryUIGetSelectedSavedSettingsNames(out savedSettingsNames, new List<string>(savedSettings.Keys).ConvertAll(x => x.Replace(kSavedSettingsPrefix, "")).ToArray(), Localization.LocalizeString(ImportServiceCollection.LocalizationKey + ":Name"), 1) ? savedSettings[kSavedSettingsPrefix + savedSettingsNames[0]] : null;
         }
 
         public static string ExtractFromTuning(string name)
