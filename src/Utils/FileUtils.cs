@@ -23,11 +23,11 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 {
     public class FileUtils
     {
-        public class SaveSetting
+        public class SavedSetting
         {
             public string Data;
 
-            public SaveSetting(string name, string data)
+            public SavedSetting(string name, string data)
             {
                 Data = data;
             }
@@ -70,10 +70,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return true;
         }
 
-        public static XmlElement ExtractFromFile()
+        public static string ExtractFromFile()
         {
             BinModel.Singleton.PopulateExportBin();
-            List<SaveSetting> settings = new List<SaveSetting>();
+            List<SavedSetting> settings = new List<SavedSetting>();
             foreach (ExportBinContents contents in BinModel.Singleton.ExportBinContents)
             {
                 if (contents.HouseholdName == null)
@@ -84,31 +84,44 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 {
                     continue;
                 }
-                settings.Add(new SaveSetting(contents.HouseholdName, contents.HouseholdBio));
+                settings.Add(new SavedSetting(contents.HouseholdName, contents.HouseholdBio));
             }
             if (settings.Count == 0)
             {
                 SimpleMessageDialog.Show("Title", "Error");
                 return null;
             }
-            SaveSetting selection = null;
+            // WRITE SELECTOR HERE
+            SavedSetting selection = null;
             if (selection == null)
             {
                 return null;
             }
-            XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.LoadXml(selection.Data);
-            return xmlDocument.DocumentElement;
+            return selection.Data;
         }
 
-        public static XmlElement ExtractFromTuning(string name)
+        public static string ExtractFromTuning(string name)
         {
             XmlDocument xmlDocument = Simulator.LoadXML(name);
             if (xmlDocument == null)
             {
                 return null; 
             }
-            return xmlDocument.DocumentElement;
+            StringBuilder stringBuilder = new StringBuilder();
+            using (Utf8StringWriter stringWriter = new Utf8StringWriter(stringBuilder))
+            {
+                using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
+                    {
+                        Encoding = Encoding.UTF8,
+                        OmitXmlDeclaration = false
+                    }))
+                {
+                    xmlDocument.WriteTo(xmlWriter);
+                    xmlWriter.Flush();
+                }
+                stringWriter.Flush();
+            }
+            return stringBuilder.ToString();
         }
 
         public static string GetXml(IEnumerable<IServiceProfile> profiles)
@@ -376,12 +389,13 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return ImportSettings(ExtractFromTuning(name));
         }
 
-        public static bool ImportSettings(XmlElement element)
+        public static bool ImportSettings(string xml)
         {
-            if (element == null)
+            if (xml == null)
             {
                 return false;
             }
+            LoadServiceProfiles(xml);
             SimpleMessageDialog.Show("Title", "Success");
             return true;
         }
