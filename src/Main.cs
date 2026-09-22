@@ -60,7 +60,7 @@ namespace Destrospean.ExpandedHouseholdStaff
                     }
                     foreach (IServiceProfile profile in new List<IServiceProfile>(ServiceUtils.ServiceProfiles))
                     {
-                        if (profile.IsImmutable && (!Array.Exists(ServiceUtils.ReservedProfileNames, x => x == profile.Name) || !Tuning.kInitializeIncludedServices))
+                        if (profile.IsImmutable && (!Array.Exists(ServiceUtils.ReservedProfileNames, x => x == profile.Name)))
                         {
                             profile.RemoveServiceFromSaveGame();
                             continue;
