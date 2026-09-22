@@ -207,10 +207,7 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
                     Type waitToRouteType = DerivedType.GetNestedType("WaitToRoute");
                     SetState(waitToRouteType == null ? new WaitToRoute(this) : (Situation)Activator.CreateInstance(waitToRouteType, this));
                     ScheduleSwitchWorkerToServiceOutfit();
-                    if (ReportsFires)
-                    {
-                        AddCheckForFireAlarm();
-                    }
+                    AddCheckForFireAlarm();
                 });
         }
 
@@ -241,7 +238,7 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
 
         public void CheckForFire()
         {
-            if (ServiceTerminated)
+            if (ServiceTerminated || !ReportsFires)
             {
                 return;
             }
@@ -271,10 +268,7 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
         public override void EndService()
         {
             Worker.RemoveAlarm(IsLiveInService ? mPayLiveInServiceAlarmHandle : mTimeToFinishAlarmHandle);
-            if (ReportsFires)
-            {
-                Worker.RemoveAlarm(mCheckForFireAlarmHandle);
-            }
+            Worker.RemoveAlarm(mCheckForFireAlarmHandle);
             RestoreMotives();
             Service = null;
             mDestroyWorkerOnExit = false;

@@ -650,7 +650,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                                 }
                             }
                             profile.FixUp();
-                            ServiceUtils.ServiceProfiles.Add(profile);
+                            if (profile.CanAddServiceToSaveGame())
+                            {
+                                ServiceUtils.ServiceProfiles.Add(profile);
+                            }
                         }
                     }
                     foreach (XmlNode node in xmlDocument.DocumentElement.ChildNodes)
