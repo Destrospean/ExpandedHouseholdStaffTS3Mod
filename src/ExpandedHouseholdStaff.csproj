@@ -103,6 +103,8 @@
     <Compile Include="Misc\Utf8StringWriter.cs" />
     <Compile Include="Interactions\ExportServiceCollection.cs" />
     <Compile Include="Interactions\ImportServiceCollection.cs" />
+    <Compile Include="Interactions\HarvestHoney.cs" />
+    <Compile Include="Interactions\HarvestHarvestables.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -8,6 +8,8 @@ using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.ObjectComponents;
 using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Objects.Electronics;
+using Sims3.Gameplay.Objects.Gardening;
+using Sims3.Gameplay.Objects.Insect;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Situations;
 using Sims3.Gameplay.Socializing;
@@ -42,7 +44,7 @@ namespace Destrospean.ExpandedHouseholdStaff
             {
                 NRaasMasterControllerIntegration.Init();
             }
-            EventListener inventoryObjectAddedListener = null;
+            List<EventListener> listeners = new List<EventListener>();
             LoadSaveManager.ObjectGroupsPreLoad += () => Phone.CallForServices.Singleton = CallForServices.Singleton;
             World.OnObjectPlacedInLotEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
@@ -51,26 +53,16 @@ namespace Destrospean.ExpandedHouseholdStaff
                     {
                         GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.ObjectId);
                         gameObject.AddInteraction(ListInteractions.Singleton, true);
+                        AddInteractions(gameObject);
                         (gameObject as Mailbox).AddServiceProfileInteractions();
                     }
                 });
             World.sOnWorldLoadFinishedEventHandler += (sender, e) => DebugUtils.TryDisplayScriptError(() =>
                 {
-                    inventoryObjectAddedListener = EventTracker.AddListener(EventTypeId.kInventoryObjectAdded, evt =>
-                        {
-                            DebugUtils.TryDisplayScriptError(() =>
-                                {
-                                    Sim sim = evt.Actor as Sim;
-                                    if (sim != null && ServiceSituation.FindServiceSituationInvolving(sim) is CustomServiceSituation && evt.TargetObject.ObjectOwnerComponent.GameObjectStolenFrom == null && evt.Actor.Inventory.TryToRemove(evt.TargetObject))
-                                    {
-                                        Sim.ActiveActor.Inventory.TryToAdd(evt.TargetObject);
-                                    }
-                                });
-                            return ListenerAction.Keep;
-                        });
                     foreach (GameObject gameObject in Sims3.Gameplay.Queries.GetObjects<GameObject>())
                     {
                         gameObject.AddInteraction(ListInteractions.Singleton, true);
+                        AddInteractions(gameObject);
                         (gameObject as Mailbox).AddServiceProfileInteractions();
                     }
                     foreach (IServiceProfile profile in new List<IServiceProfile>(ServiceUtils.ServiceProfiles))
@@ -178,8 +170,11 @@ namespace Destrospean.ExpandedHouseholdStaff
                 });
             World.sOnWorldQuitEventHandler += (sender, e) =>
                 {
-                    EventTracker.RemoveListener(inventoryObjectAddedListener);
-                    inventoryObjectAddedListener = null;
+                    foreach (EventListener listener in listeners)
+                    {
+                        EventTracker.RemoveListener(listener);
+                    }
+                    listeners.Clear();
                     foreach (CustomService service in new List<CustomService>(ServiceUtils.CustomInstances.Values))
                     {
                         CustomService.Deinit(service.Profile, true);
@@ -187,9 +182,16 @@ namespace Destrospean.ExpandedHouseholdStaff
                 };
         }
 
-        public static bool IsInServicePreventingSocialization(Sim target)
+        public static void AddInteractions(GameObject gameObject)
         {
-            return target.IsPerformingAService && !VisitSituation.IsSocializing(target) && target.Service as Butler == null && target.Service as IAmSociableService == null;
+            if (gameObject is BeekeepingBox)
+            {
+                gameObject.AddInteraction(HarvestHoney.Singleton, true);
+            }
+            if (gameObject is HarvestPlant)
+            {
+                gameObject.AddInteraction(HarvestHarvestables.Singleton, true);
+            }
         }
 
         [ScoringFunction]
@@ -204,6 +206,11 @@ namespace Destrospean.ExpandedHouseholdStaff
                 return preparedFood != null && SimClock.ElapsedTime(TimeUnit.Minutes) - preparedFood.TimeOfCreation <= (float)timeWaitBeforePutawayLeftoversProperty.GetValue(null, null) ? 0 : 1;
             }
             return CleanableComponent.CleaningScoringFunction(actor, iop);
+        }
+
+        public static bool IsInServicePreventingSocialization(Sim target)
+        {
+            return target.IsPerformingAService && !VisitSituation.IsSocializing(target) && target.Service as Butler == null && target.Service as IAmSociableService == null;
         }
     }
 }

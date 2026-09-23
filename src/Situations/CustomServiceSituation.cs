@@ -7,6 +7,7 @@ using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interactions;
+using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Objects.Vehicles;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
@@ -134,6 +135,17 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                     bool retVal;
                     return !DebugUtils.TryDisplayScriptError(() =>
                         {
+                            if (Parent.mInventoryBeforeSituation == null)
+                            {
+                                Parent.mInventoryBeforeSituation = new List<IGameObject>(Parent.Worker.Inventory.FindAllOfType(typeof(IGameObject)));
+                            }
+                            foreach (IGameObject gameObject in Parent.Worker.Inventory.FindAllOfType(typeof(IGameObject)))
+                            {
+                                if (!Parent.mInventoryBeforeSituation.Contains(gameObject) && !gameObject.InUse && gameObject.ObjectOwnerComponent?.GameObjectStolenFrom == null)
+                                {
+                                    Parent.TryToAddToInventory(gameObject); 
+                                }
+                            }
                             CustomService service = Parent.Service as CustomService;
                             if (service?.Profile.IsScaredOfBonehilda ?? false)
                             {
@@ -301,6 +313,8 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             }
         }
 
+        List<IGameObject> mInventoryBeforeSituation;
+
         public override bool IsLiveInService
         {
             get
@@ -464,6 +478,30 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                         Worker.SwitchToOutfitWithoutSpin(OutfitCategories.Career);
                     }
                 });
+        }
+
+        public bool TryToAddToInventory(IGameObject gameObject)
+        {
+            if (Lot.Household != null && !(Lot.Household.SharedFridgeInventory?.Inventory?.TryToAdd(gameObject) ?? false))
+            {
+                if (Lot.Household != Sim.ActiveActor?.Household || !(Sim.ActiveActor.Inventory?.TryToAdd(gameObject) ?? false))
+                {
+                    return (Lot.Household.SharedFamilyInventory?.Inventory?.TryToAdd(gameObject) ?? false) ? true : TryToMoveToInventory(gameObject);
+                }
+            }
+            return true;
+        }
+
+        public bool TryToMoveToInventory(IGameObject gameObject)
+        {
+            if (Lot.Household != null && !(Lot.Household.SharedFridgeInventory?.Inventory?.TryToMove(gameObject) ?? false))
+            {
+                if (Lot.Household != Sim.ActiveActor?.Household || !(Sim.ActiveActor.Inventory?.TryToMove(gameObject) ?? false))
+                {
+                    return Lot.Household.SharedFamilyInventory?.Inventory?.TryToMove(gameObject) ?? false;
+                }
+            }
+            return true;
         }
     }
 }
