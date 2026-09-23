@@ -559,7 +559,7 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
                     World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
                     if (onObjectPlacedInLotEventArgs != null)
                     {
-                        GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.mObjectId);
+                        GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.ObjectId);
                         if (typeof(IAmLiveInService).IsAssignableFrom(DerivedType))
                         {
                             Bed bed = gameObject as Bed;
