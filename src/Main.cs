@@ -15,6 +15,7 @@ using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Interactions;
 using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services;
+using Sims3.Gameplay.Destrospean.Utils;
 using Sims3.SimIFace;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,6 @@ namespace Destrospean.ExpandedHouseholdStaff
         {
             CommonUtils.ReplaceMethod<Inventory, Main>("AddInternal");
             CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
-            DebugUtils.ShowDebugMessages = Settings.kShowDebugMessages;
             InteractionObjectTypeUtils.InitTypes();
             if (Array.Exists(AppDomain.CurrentDomain.GetAssemblies(), x => x.GetName().Name == "NRaasMasterController"))
             {

@@ -4,20 +4,23 @@ using NRaas.MasterControllerSpace.Sims;
 using Sims3.Gameplay;
 using Sims3.Gameplay.Abstracts;
 using Sims3.Gameplay.CAS;
-using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
+using Destrospean.Utils;
 
-namespace Destrospean.Utils
+namespace Sims3.Gameplay.Destrospean.Utils
 {
     public class NRaasMasterControllerIntegration
     {
+        [Tunable]
+        static bool kIntegrateNRaasMasterController = true;
+
         public static void Init()
         {
             OutfitExtensions.EditSpecialOutfitFunc editSpecialOutfit = OutfitExtensions.EditSpecialOutfit;
             OutfitExtensions.EditSpecialOutfit = (sim, specialOutfitKey) =>
                 {
-                    if (Settings.kIntegrateNRaasMasterController)
+                    if (kIntegrateNRaasMasterController)
                     {
                         SimDescription simDescription = sim.SimDescription;
                         if (!simDescription.HasSpecialOutfit(specialOutfitKey))

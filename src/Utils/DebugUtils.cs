@@ -3,20 +3,21 @@ using Sims3.UI;
 using System;
 using Destrospean.Delegates;
 
-namespace Destrospean.Utils
+namespace Sims3.Gameplay.Destrospean.Utils
 {
     public class DebugUtils
     {
-        public static bool ShowDebugMessages = false;
+        [Tunable]
+        static bool kShowDebugMessages;
 
         /// <summary>
         /// Shows a debug message dialog (only when <see cref="Destrospean.Utils.DebugUtils.ShowDebugMessages"/> is set to <c>true</c>).
         /// </summary>
         public static void ShowDebugMessageDialog(string message)
         {
-            if (ShowDebugMessages)
+            if (kShowDebugMessages)
             {
-                SimpleMessageDialog.Show("Expanded Household Staff", message);
+                SimpleMessageDialog.Show("Debug Message", message);
             }
         }
 
@@ -25,7 +26,7 @@ namespace Destrospean.Utils
         /// </summary>
         public static void ShowDebugMessageNotification(string message)
         {
-            if (ShowDebugMessages)
+            if (kShowDebugMessages)
             {
                 StyledNotification.Show(new StyledNotification.Format(message, StyledNotification.NotificationStyle.kDebugAlert));
             }
