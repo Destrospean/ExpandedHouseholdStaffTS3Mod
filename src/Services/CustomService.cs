@@ -511,9 +511,10 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                     foreach (SkillLevelPair skillLevelPair in Profile.Skills)
                     {
                         Skill skill = sim.SkillManager.AddElement(skillLevelPair.SkillName);
-                        for (int i = 0; i < (skillLevelPair.SkillLevel < 0 ? skill.MaxSkillLevel : skillLevelPair.SkillLevel); i++)
+                        int level = skillLevelPair.SkillLevel < 0 ? skill.MaxSkillLevel : skillLevelPair.SkillLevel;
+                        for (int i = 0; i < level && skill.SkillLevel < level; i++)
                         {
-                            skill.ForceGainPointsForLevelUp();
+                            skill.ForceSkillLevelUp(level);
                         }
                     }
                     /*

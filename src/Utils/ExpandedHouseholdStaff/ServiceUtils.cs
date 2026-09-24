@@ -14,6 +14,7 @@ using Sims3.SimIFace.CAS;
 using Sims3.SimIFace.CustomContent;
 using Sims3.UI;
 using Sims3.UI.Controller;
+using Sims3.UI.Hud;
 using System;
 using System.Collections.Generic;
 using Destrospean.Enums;
@@ -1573,7 +1574,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             int potentialTraitCount = profile.PotentialTraitCount;
             List<Trait> potentialTraits = profile.PotentialTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
             ServiceProfileFlags serviceProfileFlags = serviceProfile.GetFlags();
-            List<SkillLevelPair> skills = new List<SkillLevelPair>(profile.Skills);
+            List<SkillLevelPair> skills = profile.Skills.ConvertAll(x => new SkillLevelPair(x.SkillName, x.SkillLevel));
             string timeToSpendWorkingString = profile.TimeToSpendWorking.ToString();
             string title = profile.Title;
             List<Trait> traits = profile.Traits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
@@ -1777,13 +1778,12 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     }
                     step++;
                     hiddenTraits = tempTraits;
-
                 }
 
                 // The following code sets the skills the service NPC has.
                 if (step == 13)
                 {
-                    List<SkillLevelPair> tempSkills = new List<SkillLevelPair>(skills);
+                    List<SkillLevelPair> tempSkills = skills.ConvertAll(x => new SkillLevelPair(x.SkillName, x.SkillLevel));
                     if (!CommonUtils.ShowSkillListDialog(age, CASAgeGenderFlags.Human, tempSkills))
                     {
                         step--;
@@ -1810,7 +1810,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 profile.PotentialTraits = potentialTraits.ConvertAll(x => (TraitNames)x.TraitGuid);
                 profile.PotentialTraitCount = potentialTraitCount;
                 profile.HiddenTraits = hiddenTraits.ConvertAll(x => (TraitNames)x.TraitGuid);
-                profile.Skills = skills;
+                profile.Skills = skills.ConvertAll(x => new SkillLevelPair(x.SkillName, x.SkillLevel));
 
                 return step > -1;
             }

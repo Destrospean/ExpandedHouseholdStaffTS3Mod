@@ -549,10 +549,10 @@ namespace Destrospean.Utils
                     CASAGSAvailabilityFlags ageSpecies = CASUtils.CASAGSAvailabilityFlagsFromCASAgeGenderFlags(age | species);
                     if (allSkills == null)
                     {
-                        allSkills = new List<SkillLevelPair>();
+                        allSkills = new List<SkillLevelPair>(currentSkills);
                         foreach (Skill skill in SkillManager.SkillDictionary)
                         {
-                            if ((skill.AvailableAgeSpecies & ageSpecies) != 0)
+                            if ((skill.AvailableAgeSpecies & ageSpecies) != 0 && !allSkills.Exists(x => x.SkillName == skill.Guid))
                             {
                                 allSkills.Add(new SkillLevelPair(skill.Guid, 0));
                             }
