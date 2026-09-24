@@ -1,21 +1,16 @@
 ﻿using Sims3.Gameplay.Abstracts;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
-using Sims3.Gameplay.CAS;
-using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.Destrospean.Utils;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
-using Sims3.UI;
 using System;
 using System.Collections.Generic;
-using Destrospean.Misc;
 using Destrospean.Utils;
 using Destrospean.Utils.ExpandedHouseholdStaff;
-using Gameflow = Sims3.Gameplay.Gameflow;
 using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
 
 namespace Destrospean.ExpandedHouseholdStaff.Interactions
