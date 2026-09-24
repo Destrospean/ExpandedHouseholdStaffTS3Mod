@@ -11,7 +11,7 @@ namespace Sims3.Gameplay.Destrospean.Utils
         static bool kShowDebugMessages;
 
         /// <summary>
-        /// Shows a debug message dialog (only when <see cref="Destrospean.Utils.DebugUtils.ShowDebugMessages"/> is set to <c>true</c>).
+        /// Shows a debug message dialog (only when <see cref="Sims3.Gameplay.Destrospean.Utils.DebugUtils.kShowDebugMessages"/> is set to <c>true</c>).
         /// </summary>
         public static void ShowDebugMessageDialog(string message)
         {
@@ -22,7 +22,7 @@ namespace Sims3.Gameplay.Destrospean.Utils
         }
 
         /// <summary>
-        /// Shows a debug message notification (only when <see cref="Destrospean.Utils.DebugUtils.ShowDebugMessages"/> is set to <c>true</c>).
+        /// Shows a debug message notification (only when <see cref="Sims3.Gameplay.Destrospean.Utils.DebugUtils.kShowDebugMessages"/> is set to <c>true</c>).
         /// </summary>
         public static void ShowDebugMessageNotification(string message)
         {
