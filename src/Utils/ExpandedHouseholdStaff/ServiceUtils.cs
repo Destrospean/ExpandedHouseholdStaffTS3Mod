@@ -1065,8 +1065,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
         public static Dictionary<string, Service> PredefinedInstances = new Dictionary<string, Service>();
 
-        public static readonly string[] ReservedProfileNames = new string[0];
-
         public static Dictionary<Type, CommodityKind> ServiceMotives = new Dictionary<Type, CommodityKind>();
 
         [PersistableStatic(true)]
@@ -1466,7 +1464,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NameEmpty"));
                 return false;
             }
-            if (!CanAddServiceToSaveGame(newName) || Array.Exists(ReservedProfileNames, x => x == newName))
+            if (!CanAddServiceToSaveGame(newName))
             {
                 SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
                 return false;
@@ -1513,7 +1511,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NameEmpty"));
                     return false;
                 }
-                if (!CanAddServiceToSaveGame(name) || Array.Exists(ReservedProfileNames, x => x == name))
+                if (!CanAddServiceToSaveGame(name))
                 {
                     SimpleMessageDialog.Show(Localization.LocalizeString(entryKey + ":ServiceCreationFailed"), Localization.LocalizeString(entryKey + ":NotUnique"));
                     return false;
