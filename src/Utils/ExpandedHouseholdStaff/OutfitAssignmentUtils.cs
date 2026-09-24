@@ -186,6 +186,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                             simBuilder.SetPartPreset(savedPart.Part.Key, null, savedPart.Preset);
                         }
                     }
+                    OutfitUtils.AdjustPresetForHairColor(simBuilder, savedPart.Part, simDescription);
                 }
                 return simDescription.AddSpecialOutfit(new SimOutfit(simBuilder.CacheOutfit(specialOutfitKey + "_" + simDescription.SimDescriptionId)), specialOutfitKey) > -1;
             }
