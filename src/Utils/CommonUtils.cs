@@ -20,7 +20,6 @@ using System.Xml;
 using Destrospean.Enums;
 using Destrospean.Misc;
 using Destrospean.UI.Columns;
-using Destrospean.UI.Dialogs;
 using ComboSelectionDialog = Destrospean.UI.Dialogs.ComboSelectionDialog;
 using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
 

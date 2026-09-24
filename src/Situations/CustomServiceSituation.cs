@@ -143,7 +143,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                             {
                                 if (!Parent.mInventoryBeforeSituation.Contains(gameObject) && !gameObject.InUse && gameObject.ObjectOwnerComponent?.GameObjectStolenFrom == null)
                                 {
-                                    Parent.TryToAddToInventory(gameObject); 
+                                    Parent.TryAddToInventory(gameObject); 
                                 }
                             }
                             CustomService service = Parent.Service as CustomService;
@@ -396,6 +396,18 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             return GlobalFunctions.CreateObjectOutOfWorld(string.IsNullOrEmpty(service.Profile.CarInstanceName) ? "CarServiceSedan" : service.Profile.CarInstanceName, service.Profile.CarProductVersion, typeof(CarServiceMaidVan).FullName, null) as CarService;
         }
 
+        public static Inventory FindTargetSimInventory(Household household)
+        {
+            foreach (Sim sim in household.Sims)
+            {
+                if (sim.SimDescription.TeenOrAbove && sim.HasInventory)
+                {
+                    return sim.Inventory;
+                }
+            }
+            return null;
+        }
+
         public override void FreezeMotives()
         {
             Worker.Autonomy.Motives.MaxEverything();
@@ -480,25 +492,25 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                 });
         }
 
-        public bool TryToAddToInventory(IGameObject gameObject)
+        public bool TryAddToInventory(IGameObject gameObject)
         {
-            if (Lot.Household != null && !(Lot.Household.SharedFridgeInventory?.Inventory?.TryToAdd(gameObject) ?? false))
+            if (Lot.EffectiveHousehold != null && !(Lot.EffectiveHousehold.SharedFridgeInventory?.Inventory?.TryToAdd(gameObject) ?? false))
             {
-                if (Lot.Household != Sim.ActiveActor?.Household || !(Sim.ActiveActor.Inventory?.TryToAdd(gameObject) ?? false))
+                if (!(FindTargetSimInventory(Lot.EffectiveHousehold)?.TryToAdd(gameObject) ?? false))
                 {
-                    return (Lot.Household.SharedFamilyInventory?.Inventory?.TryToAdd(gameObject) ?? false) ? true : TryToMoveToInventory(gameObject);
+                    return Lot.EffectiveHousehold.SharedFamilyInventory?.Inventory?.TryToAdd(gameObject) ?? false ? true : TryMoveToInventory(gameObject);
                 }
             }
             return true;
         }
 
-        public bool TryToMoveToInventory(IGameObject gameObject)
+        public bool TryMoveToInventory(IGameObject gameObject)
         {
-            if (Lot.Household != null && !(Lot.Household.SharedFridgeInventory?.Inventory?.TryToMove(gameObject) ?? false))
+            if (Lot.EffectiveHousehold != null && !(Lot.EffectiveHousehold.SharedFridgeInventory?.Inventory?.TryToMove(gameObject) ?? false))
             {
-                if (Lot.Household != Sim.ActiveActor?.Household || !(Sim.ActiveActor.Inventory?.TryToMove(gameObject) ?? false))
+                if (!(FindTargetSimInventory(Lot.EffectiveHousehold)?.TryToMove(gameObject) ?? false))
                 {
-                    return Lot.Household.SharedFamilyInventory?.Inventory?.TryToMove(gameObject) ?? false;
+                    return Lot.EffectiveHousehold.SharedFamilyInventory?.Inventory?.TryToMove(gameObject) ?? false;
                 }
             }
             return true;
