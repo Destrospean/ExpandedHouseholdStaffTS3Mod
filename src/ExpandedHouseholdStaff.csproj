@@ -104,6 +104,7 @@
     <Compile Include="Interactions\DeleteServiceCollection.cs" />
     <Compile Include="Utils\ExpandedHouseholdStaff\FileUtils.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Interactions\ResetServiceUniform.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

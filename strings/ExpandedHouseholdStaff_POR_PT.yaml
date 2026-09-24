@@ -334,6 +334,9 @@
             "/EditServiceUniform":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Edit Service Uniform"
+            "/ResetServiceUniform":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Reset Service Uniform"
             "/AddActiveTopicAction":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Add Active Topic Action"

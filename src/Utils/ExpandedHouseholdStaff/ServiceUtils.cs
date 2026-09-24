@@ -1080,6 +1080,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 gameObject.AddInteraction(DeleteServiceProfile.Singleton, true);
                 gameObject.AddInteraction(EditServiceProfile.Singleton, true);
                 gameObject.AddInteraction(EditServiceUniform.Singleton, true);
+                gameObject.AddInteraction(ResetServiceUniform.Singleton, true);
                 gameObject.AddInteraction(AddActiveTopicAction.Singleton, true);
                 gameObject.AddInteraction(RemoveActiveTopicAction.Singleton, true);
                 gameObject.AddInteraction(AddAutonomousInteraction.Singleton, true);
