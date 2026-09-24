@@ -49,7 +49,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 return;
             }
             string[] savedSettingsNames;
-            if (TryUIGetSelectedSavedSettingsNames(out savedSettingsNames, new List<string>(savedSettings.Keys).ConvertAll(x => x.Replace(kSavedSettingsPrefix, "")).ToArray(), Localization.LocalizeString(ImportServiceCollection.LocalizationKey + ":Name")))
+            if (TryUIGetSelectedSavedSettingsNames(out savedSettingsNames, new List<string>(savedSettings.Keys).ConvertAll(x => x.Replace(kSavedSettingsPrefix, "")).ToArray(), Localization.LocalizeString(DeleteServiceCollection.LocalizationKey + ":Name")))
             {
                 foreach (string name in savedSettingsNames)
                 {
