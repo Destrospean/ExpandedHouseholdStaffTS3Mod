@@ -2,7 +2,9 @@
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interactions;
+using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Utilities;
+using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff;
 using Sims3.SimIFace;
 using Destrospean.Utils;
 using Destrospean.Utils.ExpandedHouseholdStaff;
@@ -39,20 +41,35 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
 
         public override bool Run()
         {
-            /*
             DebugUtils.TryDisplayScriptError(() =>
                 {
-                    uint fileHandle = 0u;
-                    Simulator.CreateExportFile(ref fileHandle, "ServiceProfiles");
-                    if (fileHandle != 0u)
+                    IServiceProfile[] profiles;
+                    if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.ToArray(), Localization.LocalizeString(LocalizationKey + ":Name")))
                     {
-                        CustomXmlWriter customXmlWriter = new CustomXmlWriter(fileHandle);
-                        customXmlWriter.WriteToBuffer(FileUtils.GetXml(ServiceUtils.ServiceProfiles));
-                        customXmlWriter.WriteEndDocument();
+                        string xml = FileUtils.GetXml(profiles);
+                        FileUtils.ExportToFile(xml);
+                        if (Settings.kExportServiceCollectionsAsXMLs)
+                        {
+                            uint fileHandle = 0u;
+                            Simulator.CreateExportFile(ref fileHandle, "ServiceProfiles");
+                            if (fileHandle != 0u)
+                            {
+                                CustomXmlWriter customXmlWriter = new CustomXmlWriter(fileHandle);
+                                int postDeclarationIndex = xml.IndexOf("\r\n");
+                                int lineEndingLength = 2;
+                                if (postDeclarationIndex == -1)
+                                {
+                                    postDeclarationIndex = xml.IndexOf("\n");
+                                    lineEndingLength = 1;
+                                }
+                                customXmlWriter.WriteToBuffer(xml.Remove(postDeclarationIndex + lineEndingLength));
+                                customXmlWriter.WriteComment(" These XMLs are only exported when `kExportServiceCollectionsAsXMLs` is enabled in the tuning. ");
+                                customXmlWriter.WriteToBuffer(xml.Substring(postDeclarationIndex + lineEndingLength));
+                                customXmlWriter.WriteEndDocument();
+                            }
+                        }
                     }
                 });
-            */
-            DebugUtils.TryDisplayScriptError(() => FileUtils.ExportToFile(FileUtils.GetXml(ServiceUtils.ServiceProfiles)));
             return true;
         }
     }

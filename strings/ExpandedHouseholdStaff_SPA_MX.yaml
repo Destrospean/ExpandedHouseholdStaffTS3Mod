@@ -352,6 +352,9 @@
             "/ExportServiceCollection":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Export Service Collection"
+            "/DeleteServiceCollection":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Delete Service Collection"
         "/Services":
             "/CustomService":
                 ":RequestService": "Hire {0.String}"

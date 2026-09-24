@@ -66,7 +66,6 @@
     <Compile Include="Interfaces\ExpandedHouseholdStaff\IServiceProfile.cs" />
     <Compile Include="UI\Dialogs\ComboSelectionDialog.cs" />
     <Compile Include="Misc\DummyComparer.cs" />
-    <Compile Include="Tuning.cs" />
     <Compile Include="Interactions\CreateServiceProfile.cs" />
     <Compile Include="Interactions\DeleteServiceProfile.cs" />
     <Compile Include="Interactions\AddAutonomousInteraction.cs" />
@@ -99,10 +98,12 @@
     <Compile Include="UI\Columns\TextInListColumn.cs" />
     <Compile Include="Interactions\CloneServiceProfile.cs" />
     <Compile Include="Interactions\ListInteractions.cs" />
-    <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Misc\Utf8StringWriter.cs" />
     <Compile Include="Interactions\ExportServiceCollection.cs" />
     <Compile Include="Interactions\ImportServiceCollection.cs" />
+    <Compile Include="Interactions\DeleteServiceCollection.cs" />
+    <Compile Include="Utils\ExpandedHouseholdStaff\FileUtils.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

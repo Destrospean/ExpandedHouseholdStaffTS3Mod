@@ -31,6 +31,32 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
         const string kSavedSettingsPrefix = "Destrospean.ExpandedHouseholdStaff.";
 
+        public static void DeleteFile()
+        {
+            BinModel.Singleton.PopulateExportBin();
+            Dictionary<string, ulong> savedSettings = new Dictionary<string, ulong>();
+            foreach (ExportBinContents contents in BinModel.Singleton.ExportBinContents)
+            {
+                if (contents.HouseholdName != null && contents.HouseholdName.Contains(kSavedSettingsPrefix))
+                {
+                    savedSettings[contents.HouseholdName] = contents.ContentId;
+                }
+            }
+            if (savedSettings.Count == 0)
+            {
+                SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/NoFilesExistDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/NoFilesExistDialog:Message"));
+                return;
+            }
+            string[] savedSettingsNames;
+            if (TryUIGetSelectedSavedSettingsNames(out savedSettingsNames, new List<string>(savedSettings.Keys).ConvertAll(x => x.Replace(kSavedSettingsPrefix, "")).ToArray(), Localization.LocalizeString(ImportServiceCollection.LocalizationKey + ":Name")))
+            {
+                foreach (string name in savedSettingsNames)
+                {
+                    BinModel.Singleton.DeleteFromExportBin(savedSettings[kSavedSettingsPrefix + name]);
+                }
+            }
+        }
+
         public static bool ExportToFile(string text)
         {
             string name = null;
@@ -377,20 +403,20 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             return ImportSettings(ExtractFromTuning(name));
         }
 
-        public static bool ImportSettings(string xml)
+        public static bool ImportSettings(string text)
         {
-            if (xml == null)
+            if (text == null)
             {
                 return false;
             }
-            LoadServiceProfiles(xml);
+            LoadServiceProfiles(text);
             SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/ImportSuccessDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/ImportSuccessDialog:Message"));
             return true;
         }
 
-        public static void LoadServiceProfiles(string xml)
+        public static void LoadServiceProfiles(string text)
         {
-            using (StringReader stringReader = new StringReader(xml))
+            using (StringReader stringReader = new StringReader(text))
             {
                 using (XmlReader xmlReader = XmlReader.Create(stringReader, new XmlReaderSettings
                     {
