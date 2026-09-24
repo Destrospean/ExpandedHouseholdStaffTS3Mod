@@ -4,6 +4,4 @@
   <resource name="*.stbl" type="0x220557DA"/>
   <resource name="ExpandedHouseholdStaff_ServiceMotive" type="0x0333406C"/>
   <resource name="PutAwayLeftovers_ServingContainer" type="0x03B33DDF"/>
-  <resource name="ExpandedHouseholdStaff_HarvestHarvestables_HarvestPlant" type="0x03B33DDF"/>
-  <resource name="ExpandedHouseholdStaff_HarvestHoney_BeekeepingBox" type="0x03B33DDF"/>
 </resources>

@@ -1,3 +1,4 @@
+using Sims3.Gameplay;
 using Sims3.Gameplay.Abstracts;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
@@ -8,8 +9,6 @@ using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.ObjectComponents;
 using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Objects.Electronics;
-using Sims3.Gameplay.Objects.Gardening;
-using Sims3.Gameplay.Objects.Insect;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Situations;
 using Sims3.Gameplay.Socializing;
@@ -32,11 +31,78 @@ namespace Destrospean.ExpandedHouseholdStaff
 {
     public class Main
     {
+        public class Inventory : Sims3.Gameplay.Inventory
+        {
+            public new InventoryItem AddInternal(IGameObject gameObject, uint stackNumber, InventoryStack stack, bool testPurge)
+            {
+                if (testPurge && gameObject as INonPurgeableFromNPCInventory == null)
+                {
+                    Sim sim = Owner as Sim;
+                    if (sim != null && sim.IsNPC && !sim.Service.IsFromExpandedHouseholdStaff())
+                    {
+                        gameObject.Destroy();
+                        if (stack.List == null)
+                        {
+                            mItems.Remove(stackNumber);
+                        }
+                        return null;
+                    }
+                }
+                GameObject gameObjectNonInventory = gameObject as GameObject;
+                if (stack.List != null)
+                {
+                    foreach (InventoryItem item in stack.List)
+                    {
+                        if (item.Object == gameObjectNonInventory)
+                        {
+                            return item;
+                        }
+                    }
+                }
+                InventoryItem inventoryItem = new InventoryItem(gameObjectNonInventory, stackNumber);
+                InventoryEvent inventoryEvent = stack.AddItem(inventoryItem);
+                RemoveItemFromWorld(gameObjectNonInventory);
+                World.ObjectSetOpacity(gameObjectNonInventory.ObjectId, 1f, 0f);
+                gameObjectNonInventory.AddFlags(GameObject.FlagField.InInventory);
+                if (gameObjectNonInventory.ItemComp != null)
+                {
+                    gameObjectNonInventory.ItemComp.InventoryParent = this;
+                    UpdateBuffCounters(gameObjectNonInventory.ItemComp.InventoryBuffs, gameObjectNonInventory.ItemComp.Reaction, 1, gameObjectNonInventory);
+                }
+                gameObjectNonInventory.SetCommodityInteractionMap(null);
+                if (gameObjectNonInventory.ItemComp != null)
+                {
+                    gameObjectNonInventory.ItemComp.TriggerOnAddToInventoryEvent(this);
+                }
+                CallEventCallbacks(stackNumber, inventoryEvent, gameObjectNonInventory);
+                if (gameObjectNonInventory.ItemComp == null || gameObjectNonInventory.ItemComp != null && gameObjectNonInventory.ItemComp.ShouldAddChildren(UnparentingStyle))
+                {
+                    foreach (Slot slotName in gameObjectNonInventory.GetContainmentSlots())
+                    {
+                        IGameObject containedObject = gameObjectNonInventory.GetContainedObject(slotName);
+                        if (containedObject != null && containedObject as IUnparentableWhenInInventory == null && containedObject.HandToolAllowUserPickupBase())
+                        {
+                            containedObject.UnParent();
+                            uint tempStackNumber = 0u;
+                            if (CanStack(gameObjectNonInventory, containedObject))
+                            {
+                                tempStackNumber = stackNumber;
+                            }
+                            AddInternal(containedObject, tempStackNumber, true);
+                        }
+                    }
+                }
+                SetLotOwner(gameObjectNonInventory);
+                return inventoryItem;
+            }
+        }
+
         [Tunable]
         protected static bool kInstantiator;
 
         static Main()
         {
+            CommonUtils.ReplaceMethod<Sims3.Gameplay.Inventory, Inventory>("AddInternal");
             CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
             DebugUtils.ShowDebugMessages = Tuning.kShowDebugMessages;
             InteractionObjectTypeUtils.InitTypes();
@@ -53,7 +119,6 @@ namespace Destrospean.ExpandedHouseholdStaff
                     {
                         GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.ObjectId);
                         gameObject.AddInteraction(ListInteractions.Singleton, true);
-                        AddInteractions(gameObject);
                         (gameObject as Mailbox).AddServiceProfileInteractions();
                     }
                 });
@@ -62,7 +127,6 @@ namespace Destrospean.ExpandedHouseholdStaff
                     foreach (GameObject gameObject in Sims3.Gameplay.Queries.GetObjects<GameObject>())
                     {
                         gameObject.AddInteraction(ListInteractions.Singleton, true);
-                        AddInteractions(gameObject);
                         (gameObject as Mailbox).AddServiceProfileInteractions();
                     }
                     foreach (IServiceProfile profile in new List<IServiceProfile>(ServiceUtils.ServiceProfiles))
@@ -180,18 +244,6 @@ namespace Destrospean.ExpandedHouseholdStaff
                         CustomService.Deinit(service.Profile, true);
                     }
                 };
-        }
-
-        public static void AddInteractions(GameObject gameObject)
-        {
-            if (gameObject is BeekeepingBox)
-            {
-                gameObject.AddInteraction(HarvestHoney.Singleton, true);
-            }
-            if (gameObject is HarvestPlant)
-            {
-                gameObject.AddInteraction(HarvestHarvestables.Singleton, true);
-            }
         }
 
         [ScoringFunction]
