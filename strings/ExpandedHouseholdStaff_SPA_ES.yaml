@@ -357,7 +357,7 @@
                 ":Name": "Export Service Collection"
             "/DeleteServiceCollection":
                 ":Path": "Expanded Household Staff..."
-                ":Name": "Delete Service Collection"
+                ":Name": "Delete Service Collections"
         "/Services":
             "/CustomService":
                 ":RequestService": "Hire {0.String}"
@@ -369,13 +369,3 @@
                 "/SetUnsetServiceBed":
                     ":SetInteractionName": "Set as {1.String} {0.SimFirstName}'s Bed"
                     ":UnsetInteractionName": "Unset as {1.String} {0.SimFirstName}'s Bed"
-            "/Chef":
-                ":Title": "Personal Chef"
-                ":ServiceRequested": "Please make sure to have a bed arranged for me as I will be living at your place. Good day."
-                ":ServiceCancelled": "The personal chef service has been cancelled."
-                ":ServiceCancelledWhileActive": "We have already sent a personal chef over today, but we have cancelled your recurring service."
-            "/HouseMaid":
-                ":Title": "Housemaid"
-                ":ServiceRequested": "Please make sure to have a bed arranged for me as I will be living at your place. Good day."
-                ":ServiceCancelled": "The housemaid service has been cancelled."
-                ":ServiceCancelledWhileActive": "We have already sent a housemaid over today, but we have cancelled your recurring service."

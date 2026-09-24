@@ -33,6 +33,7 @@ namespace Destrospean.ExpandedHouseholdStaff
 
         static Main()
         {
+            CommonUtils.ReplaceMethod<Main, Inventory>("AddInternal_Original", "AddInternal");
             CommonUtils.ReplaceMethod<Inventory, Main>("AddInternal");
             CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
             InteractionObjectTypeUtils.InitTypes();
@@ -86,61 +87,16 @@ namespace Destrospean.ExpandedHouseholdStaff
 
         public InventoryItem AddInternal(IGameObject gameObject, uint stackNumber, InventoryStack stack, bool testPurge)
         {
-            Inventory self = (Inventory)(object)this;
-            if (testPurge && gameObject as INonPurgeableFromNPCInventory == null)
+            if ((((Inventory)(object)this).Owner as Sim)?.Service?.IsFromExpandedHouseholdStaff() ?? false)
             {
-                Sim sim = self.Owner as Sim;
-                if (sim != null && sim.IsNPC && !sim.Service.IsFromExpandedHouseholdStaff())
-                {
-                    gameObject.Destroy();
-                    if (stack.List == null)
-                    {
-                        self.mItems.Remove(stackNumber);
-                    }
-                    return null;
-                }
+                testPurge = false;
             }
-            GameObject obj = gameObject as GameObject;
-            if (stack.List != null)
-            {
-                foreach (InventoryItem item in stack.List)
-                {
-                    if (item.Object == obj)
-                    {
-                        return item;
-                    }
-                }
-            }
-            InventoryItem inventoryItem = new InventoryItem(obj, stackNumber);
-            InventoryEvent inventoryEvent = stack.AddItem(inventoryItem);
-            Inventory.RemoveItemFromWorld(obj);
-            World.ObjectSetOpacity(obj.ObjectId, 1f, 0f);
-            obj.AddFlags(GameObject.FlagField.InInventory);
-            if (obj.ItemComp != null)
-            {
-                obj.ItemComp.InventoryParent = self;
-                self.UpdateBuffCounters(obj.ItemComp.InventoryBuffs, obj.ItemComp.Reaction, 1, obj);
-            }
-            obj.SetCommodityInteractionMap(null);
-            if (obj.ItemComp != null)
-            {
-                obj.ItemComp.TriggerOnAddToInventoryEvent(self);
-            }
-            self.CallEventCallbacks(stackNumber, inventoryEvent, obj);
-            if (obj.ItemComp == null || obj.ItemComp != null && obj.ItemComp.ShouldAddChildren(self.UnparentingStyle))
-            {
-                foreach (Slot slotName in obj.GetContainmentSlots())
-                {
-                    IGameObject containedObject = obj.GetContainedObject(slotName);
-                    if (containedObject != null && containedObject as IUnparentableWhenInInventory == null && containedObject.HandToolAllowUserPickupBase())
-                    {
-                        containedObject.UnParent();
-                        self.AddInternal(containedObject, self.CanStack(obj, containedObject) ? stackNumber : 0u, true);
-                    }
-                }
-            }
-            self.SetLotOwner(obj);
-            return inventoryItem;
+            return AddInternal_Original(gameObject, stackNumber, stack, testPurge);
+        }
+
+        public InventoryItem AddInternal_Original(IGameObject gameObject, uint stackNumber, InventoryStack stack, bool testPurge)
+        {
+            throw new NotImplementedException();
         }
 
         [ScoringFunction]
