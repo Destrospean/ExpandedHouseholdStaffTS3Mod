@@ -5,10 +5,8 @@ using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace;
-using Sims3.UI;
 using Destrospean.Utils;
 using Destrospean.Utils.ExpandedHouseholdStaff;
-using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
 
 namespace Destrospean.ExpandedHouseholdStaff.Interactions
 {
