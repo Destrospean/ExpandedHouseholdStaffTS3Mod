@@ -27,7 +27,6 @@ using Destrospean.Misc;
 using Destrospean.UI.Columns;
 using Destrospean.UI.Columns.ExpandedHouseholdStaff;
 using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
-using Sims3.Metadata;
 
 namespace Destrospean.Utils.ExpandedHouseholdStaff
 {
