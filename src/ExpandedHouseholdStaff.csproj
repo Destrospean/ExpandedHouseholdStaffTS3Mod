@@ -108,6 +108,10 @@
     <Compile Include="Interactions\AddInventoryObject.cs" />
     <Compile Include="Misc\InventoryObjectCreationParameters.cs" />
     <Compile Include="Interactions\AddInventoryObjectToService.cs" />
+    <Compile Include="UI\Columns\ExpandedHouseholdStaff\InventoryObjectCreationParameters\InventoryObjectInstanceNameColumn.cs" />
+    <Compile Include="UI\Columns\ExpandedHouseholdStaff\InventoryObjectCreationParameters\InventoryObjectGroupColumn.cs" />
+    <Compile Include="UI\Columns\ExpandedHouseholdStaff\InventoryObjectCreationParameters\InventoryObjectCountColumn.cs" />
+    <Compile Include="Interactions\RemoveInventoryObject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

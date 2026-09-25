@@ -1108,6 +1108,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 gameObject.AddInteraction(AddAutonomousInteraction.Singleton, true);
                 gameObject.AddInteraction(RemoveAutonomousInteraction.Singleton, true);
                 gameObject.AddInteraction(AddInventoryObject.Singleton, true);
+                gameObject.AddInteraction(RemoveInventoryObject.Singleton, true);
                 gameObject.AddInteraction(ImportServiceCollection.Singleton, true);
                 gameObject.AddInteraction(ExportServiceCollection.Singleton, true);
                 gameObject.AddInteraction(DeleteServiceCollection.Singleton, true);
@@ -1902,6 +1903,44 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 return false;
             }
             selectedActions = tempSelectedActions;
+            return retVal;
+        }
+
+        public static bool TryUIGetSelectedInventoryObjects(out InventoryObjectCreationParameters[] selectedInventoryObjects, InventoryObjectCreationParameters[] allInventoryObjects, string title = null, int selectableRowCount = int.MaxValue)
+        {
+            bool retVal;
+            InventoryObjectCreationParameters[] tempSelectedInventoryObjects = null;
+            if (DebugUtils.TryDisplayScriptError(() =>
+                {
+                    string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "InventoryObjectListDialog");
+                    bool cancelled, confirmed;
+                    while (true)
+                    {
+                        tempSelectedInventoryObjects = (ObjectPickerDialog.Show(title ?? Responder.Instance.LocalizationModel.LocalizeString(entryKey + "/Titles:" + (selectableRowCount == 1 ? "Singular" : "Plural")), new List<ObjectPicker.TabInfo>
+                            {
+                                new ObjectPicker.TabInfo("shop_all_r2", Responder.Instance.LocalizationModel.LocalizeString("Ui/Caption/ObjectPicker:All"), new List<InventoryObjectCreationParameters>(allInventoryObjects).ConvertAll(x => new ObjectPicker.RowInfo(x, new List<ObjectPicker.ColumnInfo>())))
+                            }, new List<ObjectPickerDialog.CommonHeaderInfo<InventoryObjectCreationParameters>>
+                            {
+                                new InventoryObjectInstanceNameColumn(entryKey),
+                                new InventoryObjectGroupColumn(entryKey),
+                                new InventoryObjectCountColumn(entryKey)
+                            }, selectableRowCount, out confirmed, out cancelled) ?? new List<InventoryObjectCreationParameters>()).ToArray();
+                        if (cancelled)
+                        {
+                            tempSelectedInventoryObjects = null;
+                            return false;
+                        }
+                        if (confirmed)
+                        {
+                            return true;
+                        }
+                    }
+                }, out retVal))
+            {
+                selectedInventoryObjects = null;
+                return false;
+            }
+            selectedInventoryObjects = tempSelectedInventoryObjects;
             return retVal;
         }
 

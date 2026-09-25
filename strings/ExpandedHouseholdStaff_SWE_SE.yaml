@@ -240,6 +240,20 @@
                     "/TargetType":
                         ":Text": "Target Type"
                         ":Tooltip": "The namespace + class name of the target object type"
+            "/InventoryObjectListDialog":
+                "/Titles":
+                    ":Singular": "Select Inventory Item"
+                    ":Plural": "Select Inventory Items"
+                "/Headers":
+                    "/InstanceName":
+                        ":Text": "Instance Name"
+                        ":Tooltip": "The instance name of the inventory item"
+                    "/Group":
+                        ":Text": "Group"
+                        ":Tooltip": "The group ID of the inventory item"
+                    "/Count":
+                        ":Text": "Count"
+                        ":Tooltip": "The number of instances of the inventory item"
             "/CreateServiceProfileDialog":
                 ":Title": "Create Service"
                 "/Prompts":
