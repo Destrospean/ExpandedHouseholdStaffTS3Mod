@@ -1,7 +1,9 @@
-﻿using Sims3.Gameplay.Abstracts;
+﻿using Sims3.Gameplay;
+using Sims3.Gameplay.Abstracts;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
+using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
@@ -17,6 +19,7 @@ using Sims3.UI.Controller;
 using Sims3.UI.Hud;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Destrospean.Enums;
 using Destrospean.Enums.ExpandedHouseholdStaff;
 using Destrospean.ExpandedHouseholdStaff.Interactions;
@@ -24,6 +27,7 @@ using Destrospean.Misc;
 using Destrospean.UI.Columns;
 using Destrospean.UI.Columns.ExpandedHouseholdStaff;
 using ObjectPickerDialog = Destrospean.UI.Dialogs.ObjectPickerDialog;
+using Sims3.Metadata;
 
 namespace Destrospean.Utils.ExpandedHouseholdStaff
 {
@@ -161,6 +165,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             ulong mFlags = 0uL;
 
             List<ulong> mHiddenTraits = new List<ulong>();
+
+            List<InventoryObjectCreationParameters> mInventory = new List<InventoryObjectCreationParameters>();
 
             bool mIsImmutable = false;
 
@@ -390,6 +396,21 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 set
                 {
                     mHiddenTraits = value.ConvertAll(x => (ulong)x);
+                }
+            }
+
+            /// <summary>
+            /// The items the service NPC spawns with.
+            /// </summary>
+            public List<InventoryObjectCreationParameters> Inventory
+            {
+                get
+                {
+                    return mInventory;
+                }
+                set
+                {
+                    mInventory = value;
                 }
             }
 
@@ -1086,6 +1107,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 gameObject.AddInteraction(RemoveActiveTopicAction.Singleton, true);
                 gameObject.AddInteraction(AddAutonomousInteraction.Singleton, true);
                 gameObject.AddInteraction(RemoveAutonomousInteraction.Singleton, true);
+                gameObject.AddInteraction(AddInventoryObject.Singleton, true);
                 gameObject.AddInteraction(ImportServiceCollection.Singleton, true);
                 gameObject.AddInteraction(ExportServiceCollection.Singleton, true);
                 gameObject.AddInteraction(DeleteServiceCollection.Singleton, true);
@@ -1373,6 +1395,35 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 CommonUtils.AddActions(profile.Name + " Service", grouping, isActive, name);
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Opens a dialog to add an item to the inventory that the service NPC spawns with.
+        /// </summary>
+        /// <returns><c>true</c>, if an item was added, <c>false</c> otherwise.</returns>
+        public static bool TryUIAddInventoryObject(this IServiceProfile profile)
+        {
+            string[] results = new[]
+                {
+                    "",
+                    "0x00000000",
+                    "1"
+                };
+            string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "AddInventoryObjectDialog");
+            results = ThreeStringInputDialog.Show(Localization.LocalizeString(entryKey + ":Title"), new string[]
+                {
+                    Localization.LocalizeString(entryKey + "/Prompts:SetInstanceName"),
+                    Localization.LocalizeString(entryKey + "/Prompts:SetGroup"),
+                    Localization.LocalizeString(entryKey + "/Prompts:SetCount")
+                }, results, int.MaxValue, new Vector2(-1, -1), ThreeStringInputDialog.Validation.None, ModalDialog.PauseMode.PauseSimulator, false);
+            uint group;
+            int count;
+            if (results == null || Array.Exists(results, string.IsNullOrEmpty) || !uint.TryParse(results[1].Replace("0x", ""), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out group) || !int.TryParse(results[2], out count))
+            {
+                return false;
+            }
+            profile.Inventory.Add(new InventoryObjectCreationParameters(results[0], ResourceUtils.GroupIdToProductVersion(group), count));
+            return true;
         }
 
         /// <summary>

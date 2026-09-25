@@ -50,6 +50,7 @@ namespace Destrospean.ExpandedHouseholdStaff
                     {
                         GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.ObjectId);
                         gameObject.AddInteraction(ListInteractions.Singleton, true);
+                        gameObject.AddInteraction(AddInventoryObjectToService.Singleton, true);
                         (gameObject as Mailbox).AddServiceProfileInteractions();
                     }
                 });
@@ -58,6 +59,7 @@ namespace Destrospean.ExpandedHouseholdStaff
                     foreach (GameObject gameObject in Sims3.Gameplay.Queries.GetObjects<GameObject>())
                     {
                         gameObject.AddInteraction(ListInteractions.Singleton, true);
+                        gameObject.AddInteraction(AddInventoryObjectToService.Singleton, true);
                         (gameObject as Mailbox).AddServiceProfileInteractions();
                     }
                     foreach (IServiceProfile profile in new List<IServiceProfile>(ServiceUtils.ServiceProfiles))

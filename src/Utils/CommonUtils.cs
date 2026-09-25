@@ -9,14 +9,17 @@ using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.Destrospean.Utils;
+using Sims3.Metadata;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
 using Sims3.UI;
 using Sims3.UI.Controller;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Xml;
 using Destrospean.Enums;
 using Destrospean.Misc;
@@ -143,6 +146,171 @@ namespace Destrospean.Utils
             }
         }
 
+        public static void ApplyPreset(this IGameObject gameObject, string preset)
+        {
+            DebugUtils.TryDisplayScriptError(() =>
+                {
+                    SortedList<string, bool> enabledStencils = new SortedList<string, bool>();
+                    Complate.SetupDesignSwap(gameObject.ObjectId, ExtractPatterns(preset, enabledStencils), false, enabledStencils)?.ApplyToObject();
+                });
+        }
+
+        public static bool ChangePreset(DesignModeSwap swap, SortedList<string, Complate> patterns, ref string preset, bool bUndoable, SortedList<string, bool> enabledStencils)
+        {
+            if (string.IsNullOrEmpty(preset))
+            {
+                return false;
+            }
+            Dictionary<string, Complate> dictionary = new Dictionary<string, Complate>();
+            string text = Complate.ProcessPreset(preset, dictionary);
+            if (string.IsNullOrEmpty(text))
+            {
+                return false;
+            }
+            Complate value = null;
+            if (!dictionary.TryGetValue(text, out value))
+            {
+                return false;
+            }
+            List<Complate.Variable> list = new List<Complate.Variable>();
+            bool result = false;
+            Complate.Variable[] variables = value.Variables;
+            foreach (Complate.Variable variable in variables)
+            {
+                if (enabledStencils != null && variable.Type == Complate.Variable.Types.Bool)
+                {
+                    if (enabledStencils.TryGetValue(variable.Name, out result))
+                    {
+                        variable.Value = result.ToString();
+                    }
+                }
+                else
+                {
+                    if (variable.Type != Complate.Variable.Types.Pattern)
+                    {
+                        continue;
+                    }
+                    string enabled = variable[Complate.kEnabledAttribute];
+                    if (enabled != string.Empty)
+                    {
+                        enabled = value[enabled];
+                        result = false;
+                        if (!bool.TryParse(enabled, out result) || !result)
+                        {
+                            continue;
+                        }
+                    }
+                    list.Add(variable);
+                    if (enabledStencils == null && list.Count == 4)
+                    {
+                        break;
+                    }
+                }
+            }
+            if (list.Count == 0)
+            {
+                return false;
+            }
+            Complate.TexturePart[] parts = value.Parts;
+            foreach (Complate.TexturePart texturePart in parts)
+            {
+                Complate.TextureDestination[] destinations = texturePart.Destinations;
+                foreach (Complate.TextureDestination textureDestination in destinations)
+                {
+                    Complate.TextureStep[] steps = textureDestination.Steps;
+                    foreach (Complate.TextureStep textureStep in steps)
+                    {
+                        if (textureStep[Complate.kTypeAttribute] == "DrawFabric")
+                        {
+                            string variableName = textureStep["pattern"];
+                            if (variableName.StartsWith("($daeFileName)"))
+                            {
+                                variableName = variableName.Remove(0, 14);
+                            }
+                            textureStep["patternkey"] = swap.GetPatternKey(variableName).ToString();
+                        }
+                    }
+                }
+            }
+            foreach (KeyValuePair<string, Complate> pattern in patterns)
+            {
+                if (dictionary.ContainsKey(pattern.Key))
+                {
+                    dictionary[pattern.Key] = pattern.Value;
+                }
+            }
+            for (int i = 0; i < list.Count; i++)
+            {
+                Complate complate;
+                if (!dictionary.TryGetValue(list[i].Name, out complate))
+                {
+                    swap.Dispose();
+                    return false;
+                }
+                complate.Process();
+                TextureCompositor textureCompositor = complate.CreateTextureCompositor(null, null, 0u);
+                if (textureCompositor != null)
+                {
+                    byte[] data = textureCompositor.ExportData(null, null, null);
+                    swap.SetNewPattern(list[i].Name, data);
+                }
+            }
+            value.Process();
+            Hashtable hashtable = value.CreateTextureCompositors(0u);
+            foreach (DictionaryEntry item in hashtable)
+            {
+                string key = (item.Key as string).ToLower();
+                if (key.EndsWith("diffusemap"))
+                {
+                    byte[] data = ((TextureCompositor)item.Value).ExportData(null, null, null);
+                    swap.SetNewCompositor("diffusemap", data);
+                }
+                else if (key.EndsWith("specmap"))
+                {
+                    byte[] data = ((TextureCompositor)item.Value).ExportData(null, null, null);
+                    swap.SetNewCompositor("specularmap", data);
+                }
+            }
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml("<preset />");
+            value.AddToPreset(xmlDocument, dictionary);
+            Complate.ConvertPresetToResourceKeys(xmlDocument, null);
+            preset = xmlDocument.OuterXml;
+            return true;
+        }
+
+        public static SortedList<string, Complate> ExtractPatterns(string preset, SortedList<string, bool> enabledStencils)
+        {
+            if (string.IsNullOrEmpty(preset))
+            {
+                return new SortedList<string, Complate>();
+            }
+            Dictionary<string, Complate> dictionary = new Dictionary<string, Complate>();
+            string text = Complate.ProcessPreset(preset, dictionary);
+            if (string.IsNullOrEmpty(text))
+            {
+                return new SortedList<string, Complate>();
+            }
+            Complate value;
+            if (enabledStencils != null && dictionary.TryGetValue(text, out value))
+            {
+                Complate.Variable[] variables = value.Variables;
+                foreach (Complate.Variable variable in variables)
+                {
+                    if (variable.Type == Complate.Variable.Types.Bool)
+                    {
+                        string variableName = variable.Name.ToLower();
+                        if (variableName.StartsWith("stencil ") && variableName.EndsWith(" enabled"))
+                        {
+                            enabledStencils.Add(variable.Name, bool.Parse(variable.Value));
+                        }
+                    }
+                }
+            }
+            dictionary.Remove(text);
+            return new SortedList<string, Complate>(dictionary);
+        }
+
         /// <summary>
         /// Gets a valid commodity kind value from a string.
         /// </summary>
@@ -171,6 +339,41 @@ namespace Destrospean.Utils
                     break;
             }
             return (CommodityKind)retVal;
+        }
+
+        public static string GetCurrentPreset(this IGameObject gameObject)
+        {
+            string preset = ObjectDesigner.GetObjectDesignPreset(gameObject.ObjectId);
+            if (string.IsNullOrEmpty(preset))
+            {
+                return null;
+            }
+            DesignModeSwap designModeSwap = new DesignModeSwap();
+            designModeSwap.SetSourceObject(gameObject.ObjectId);
+            SortedList<string, bool> enabledStencils = new SortedList<string, bool>();
+            if (ChangePreset(designModeSwap, Complate.ExtractPatterns(gameObject.ObjectId, enabledStencils), ref preset, false, enabledStencils))
+            {
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(preset);
+                XmlDeclaration xmlDeclaration = xmlDocument.CreateXmlDeclaration("1.0", "utf-8", null);
+                xmlDocument.InsertBefore(xmlDeclaration, xmlDocument.DocumentElement);
+                StringBuilder stringBuilder = new StringBuilder();
+                Utf8StringWriter stringWriter = new Utf8StringWriter(stringBuilder);
+                XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
+                    {
+                        Encoding = Encoding.UTF8,
+                        Indent = true,
+                        IndentChars = "  ",
+                        OmitXmlDeclaration = false
+                    });
+                xmlDocument.WriteTo(xmlWriter);
+                xmlWriter.Flush();
+                xmlWriter.Close();
+                stringWriter.Flush();
+                stringWriter.Close();
+                preset = stringBuilder.ToString();
+            }
+            return preset;
         }
 
         /// <summary>

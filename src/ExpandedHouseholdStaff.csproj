@@ -105,6 +105,9 @@
     <Compile Include="Utils\ExpandedHouseholdStaff\FileUtils.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Interactions\ResetServiceUniform.cs" />
+    <Compile Include="Interactions\AddInventoryObject.cs" />
+    <Compile Include="Misc\InventoryObjectCreationParameters.cs" />
+    <Compile Include="Interactions\AddInventoryObjectToService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

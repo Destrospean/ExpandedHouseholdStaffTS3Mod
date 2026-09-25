@@ -517,19 +517,27 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                             skill.ForceSkillLevelUp(level);
                         }
                     }
-                    /*
                     if (sim.Inventory != null)
                     {
-                        sim.Inventory.DestroyItems();
-                        foreach (IGameObject item in Profile.Inventory)
+                        //sim.Inventory.DestroyItems();
+                        foreach (InventoryObjectCreationParameters inventoryObjectCreationParameters in Profile.Inventory)
                         {
-                            if (!sim.Inventory.TryToAdd(item))
+                            IGameObject dummyItem = inventoryObjectCreationParameters.Instantiate();
+                            foreach (IGameObject inventoryObject in inventoryObjectCreationParameters.InstantiateMany(inventoryObjectCreationParameters.Count - (sim.Inventory.mInventoryItems?.FindAll(x => (x.Object as GameObject)?.ObjectInstanceName == inventoryObjectCreationParameters.InstanceName).Count ?? 0)))
                             {
-                                item.Destroy();
+                                if (sim.Inventory.TryToAdd(inventoryObject))
+                                {
+                                    if (!string.IsNullOrEmpty(inventoryObjectCreationParameters.Preset))
+                                    {
+                                        inventoryObject.ApplyPreset(inventoryObjectCreationParameters.Preset);
+                                    }
+                                    continue;
+                                }
+                                inventoryObject.Destroy();
                             }
+                            dummyItem.Destroy();
                         }
                     }
-                    */
                 });
         }
     }
