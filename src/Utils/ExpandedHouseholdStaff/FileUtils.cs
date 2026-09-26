@@ -284,7 +284,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                         {
                             xmlWriter.WriteStartElement("InventoryObject");
                             xmlWriter.WriteAttributeString("instanceName", inventoryObjectCreationParameters.InstanceName);
-                            xmlWriter.WriteAttributeString("group", ResourceUtils.ProductVersionToGroupId(inventoryObjectCreationParameters.ProductVersion).ToString("X8"));
+                            xmlWriter.WriteAttributeString("instance", inventoryObjectCreationParameters.InstanceId.ToString("X16"));
+                            xmlWriter.WriteAttributeString("group", inventoryObjectCreationParameters.GroupId.ToString("X8"));
                             xmlWriter.WriteAttributeString("count", inventoryObjectCreationParameters.Count.ToString());
                             xmlWriter.WriteRaw(inventoryObjectCreationParameters.Preset?.Substring(inventoryObjectCreationParameters.Preset.IndexOf("\n")) ?? "");
                             xmlWriter.WriteEndElement();
@@ -293,7 +294,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
                         xmlWriter.WriteStartElement("Car");
                         xmlWriter.WriteAttributeString("instanceName", profile.CarInstanceName ?? "");
-                        xmlWriter.WriteAttributeString("group", ResourceUtils.ProductVersionToGroupId(profile.CarProductVersion).ToString("X8"));
+                        xmlWriter.WriteAttributeString("instance", profile.CarInstanceId.ToString("X16"));
+                        xmlWriter.WriteAttributeString("group", profile.CarGroupId.ToString("X8"));
                         xmlWriter.WriteRaw(profile.CarPreset?.Substring(profile.CarPreset.IndexOf("\n")) ?? "");
                         xmlWriter.WriteEndElement();
 
@@ -648,15 +650,17 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                                 {
                                     foreach (XmlNode inventoryObjectNode in profilePropertyNode.ChildNodes)
                                     {
-                                        profile.Inventory.Add(new InventoryObjectCreationParameters(inventoryObjectNode.Attributes["instanceName"].Value, ResourceUtils.GroupIdToProductVersion(uint.Parse(inventoryObjectNode.Attributes["group"].Value, NumberStyles.HexNumber)), int.Parse(inventoryObjectNode.Attributes["count"].Value), WrapInnerXmlAsDocument(profilePropertyNode)));
+                                        string instanceName = inventoryObjectNode.Attributes["instanceName"].Value;
+                                        profile.Inventory.Add(new InventoryObjectCreationParameters(instanceName, ulong.Parse((inventoryObjectNode as XmlElement)?.GetAttribute("instance") ?? NameGuidMap.GetGuidByName(instanceName).ToString("X16"), NumberStyles.HexNumber), uint.Parse(inventoryObjectNode.Attributes["group"].Value, NumberStyles.HexNumber), int.Parse(inventoryObjectNode.Attributes["count"].Value), WrapInnerXmlAsDocument(profilePropertyNode)));
                                     }
                                     continue;
                                 }
                                 if (profilePropertyNode.Name == "Car")
                                 {
                                     profile.CarInstanceName = profilePropertyElement.GetAttribute("instanceName");
+                                    profile.CarInstanceId = ulong.Parse(profilePropertyElement.GetAttribute("instance") ?? NameGuidMap.GetGuidByName(profile.CarInstanceName).ToString("X16"), NumberStyles.HexNumber);
+                                    profile.CarGroupId = uint.Parse(profilePropertyElement.GetAttribute("group"), NumberStyles.HexNumber);
                                     profile.CarPreset = WrapInnerXmlAsDocument(profilePropertyNode);
-                                    profile.CarProductVersion = ResourceUtils.GroupIdToProductVersion(uint.Parse(profilePropertyElement.GetAttribute("group"), NumberStyles.HexNumber));
                                     continue;
                                 }
                                 if (profilePropertyNode.Name == "CheckTime")

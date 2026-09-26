@@ -8,6 +8,7 @@ using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.ObjectComponents;
 using Sims3.Gameplay.Objects.Electronics;
+using Sims3.Gameplay.Objects.Vehicles;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Situations;
 using Sims3.Gameplay.Socializing;
@@ -51,6 +52,7 @@ namespace Destrospean.ExpandedHouseholdStaff
                         GameObject gameObject = GameObject.GetObject(onObjectPlacedInLotEventArgs.ObjectId);
                         gameObject.AddInteraction(ListInteractions.Singleton, true);
                         gameObject.AddInteraction(AddInventoryObjectToService.Singleton, true);
+                        (gameObject as Car)?.AddInteraction(AssignCarToService.Singleton, true);
                         (gameObject as Mailbox).AddServiceProfileInteractions();
                     }
                 });
@@ -60,6 +62,7 @@ namespace Destrospean.ExpandedHouseholdStaff
                     {
                         gameObject.AddInteraction(ListInteractions.Singleton, true);
                         gameObject.AddInteraction(AddInventoryObjectToService.Singleton, true);
+                        (gameObject as Car)?.AddInteraction(AssignCarToService.Singleton, true);
                         (gameObject as Mailbox).AddServiceProfileInteractions();
                     }
                     foreach (IServiceProfile profile in new List<IServiceProfile>(ServiceUtils.ServiceProfiles))

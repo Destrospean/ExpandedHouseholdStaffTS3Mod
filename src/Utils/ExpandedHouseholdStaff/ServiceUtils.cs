@@ -149,7 +149,9 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         {
             List<ActiveTopicAction> mActions = new List<ActiveTopicAction>();
 
-            uint mCarProductVersion = 0u;
+            uint mCarGroupId = 0x00000000;
+
+            ulong mCarInstanceId = 0x0000000000000000;
 
             float mCheckTime = 5f;
 
@@ -271,6 +273,37 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
 
             /// <summary>
+            /// The group ID of the car the service NPC arrives in. This is for when the car is a Store, expansion pack, or stuff pack item.
+            /// </summary>
+            public uint CarGroupId
+            {
+                get
+                {
+                    return mCarGroupId;
+                }
+                set
+                {
+                    mCarGroupId = value;
+                }
+            }
+
+            /// <summary>
+            /// The instance ID of the car the service NPC arrives in.
+            /// </summary>
+            public ulong CarInstanceId
+            {
+                get
+                {
+                    ulong nameGuid = NameGuidMap.GetGuidByName(string.IsNullOrEmpty(CarInstanceName) ? "CarServiceSedan" : CarInstanceName);
+                    return nameGuid == NameGuidMap.kInvalidNameGuid ? mCarInstanceId : nameGuid;
+                }
+                set
+                {
+                    mCarInstanceId = value;
+                }
+            }
+
+            /// <summary>
             /// The instance name of the car the service NPC arrives in. If <c>null</c> or empty, the service NPC will arrive and leave by foot.
             /// </summary>
             public string CarInstanceName
@@ -299,21 +332,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 set
                 {
                     mStrings["CarPreset"] = value;
-                }
-            }
-
-            /// <summary>
-            /// The product version of the car the service NPC arrives in. This is for when the car is a Store, expansion pack, or stuff pack item.
-            /// </summary>
-            public ProductVersion CarProductVersion
-            {
-                get
-                {
-                    return (ProductVersion)mCarProductVersion;
-                }
-                set
-                {
-                    mCarProductVersion = (uint)value;
                 }
             }
 
@@ -1118,6 +1136,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 gameObject.AddInteraction(EditServiceProfile.Singleton, true);
                 gameObject.AddInteraction(EditServiceUniform.Singleton, true);
                 gameObject.AddInteraction(ResetServiceUniform.Singleton, true);
+                gameObject.AddInteraction(ResetServiceCar.Singleton, true);
                 gameObject.AddInteraction(AddActiveTopicAction.Singleton, true);
                 gameObject.AddInteraction(RemoveActiveTopicAction.Singleton, true);
                 gameObject.AddInteraction(AddAutonomousInteraction.Singleton, true);
@@ -1182,8 +1201,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 Actions = profile.Actions.ConvertAll(x => new ActiveTopicAction(x.Name, x.Grouping, x.IsActive)),
                 CancelledMessage = profile.CancelledMessage,
                 CancelledWhileActiveMessage = profile.CancelledWhileActiveMessage,
+                CarGroupId = profile.CarGroupId,
                 CarInstanceName = profile.CarInstanceName,
-                CarProductVersion = profile.CarProductVersion,
                 CheckTime = profile.CheckTime,
                 DelayBeforeArriving = profile.DelayBeforeArriving,
                 DelayBeforeLeaving = profile.DelayBeforeLeaving,
@@ -1432,13 +1451,13 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     Localization.LocalizeString(entryKey + "/Prompts:SetGroup"),
                     Localization.LocalizeString(entryKey + "/Prompts:SetCount")
                 }, results, int.MaxValue, new Vector2(-1, -1), ThreeStringInputDialog.Validation.None, ModalDialog.PauseMode.PauseSimulator, false);
-            uint group;
+            uint groupId;
             int count;
-            if (results == null || Array.Exists(results, string.IsNullOrEmpty) || !uint.TryParse(results[1].Replace("0x", ""), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out group) || !int.TryParse(results[2], out count))
+            if (results == null || Array.Exists(results, string.IsNullOrEmpty) || !uint.TryParse(results[1].Replace("0x", ""), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out groupId) || !int.TryParse(results[2], out count))
             {
                 return false;
             }
-            profile.Inventory.Add(new InventoryObjectCreationParameters(results[0], ResourceUtils.GroupIdToProductVersion(group), count));
+            profile.Inventory.Add(new InventoryObjectCreationParameters(results[0], NameGuidMap.GetGuidByName(results[0]), groupId, count));
             return true;
         }
 

@@ -112,6 +112,8 @@
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\InventoryObjectCreationParameters\InventoryObjectGroupColumn.cs" />
     <Compile Include="UI\Columns\ExpandedHouseholdStaff\InventoryObjectCreationParameters\InventoryObjectCountColumn.cs" />
     <Compile Include="Interactions\RemoveInventoryObject.cs" />
+    <Compile Include="Interactions\ResetServiceCar.cs" />
+    <Compile Include="Interactions\AssignCarToService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

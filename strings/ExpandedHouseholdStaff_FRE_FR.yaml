@@ -360,6 +360,12 @@
             "/ResetServiceUniform":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Reset Service Uniform"
+            "/AssignCarToService":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Assign Car to Service"
+            "/ResetServiceCar":
+                ":Path": "Expanded Household Staff..."
+                ":Name": "Reset Service Car"
             "/AddActiveTopicAction":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Add Active Topic Action"

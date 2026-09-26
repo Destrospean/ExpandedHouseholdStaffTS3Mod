@@ -7,36 +7,27 @@ namespace Destrospean.Misc
     [Persistable]
     public class InventoryObjectCreationParameters
     {
-        uint mProductVersion = 0u;
+        public int Count = 0;
 
-        public int Count;
+        public uint GroupId = 0x00000000;
+
+        public ulong InstanceId = 0x0000000000000000;
 
         public string InstanceName;
 
         public string Preset;
 
-        public ProductVersion ProductVersion
-        {
-            get
-            {
-                return (ProductVersion)mProductVersion;
-            }
-            set
-            {
-                mProductVersion = (uint)value;
-            }
-        }
-
         protected InventoryObjectCreationParameters()
         {
         }
 
-        public InventoryObjectCreationParameters(string instanceName, ProductVersion productVersion, int count, string preset = null)
+        public InventoryObjectCreationParameters(string instanceName, ulong instanceId, uint groupId, int count, string preset = null)
         {
             Count = count;
+            GroupId = groupId;
+            InstanceId = instanceId;
             InstanceName = instanceName;
             Preset = preset;
-            ProductVersion = productVersion;
         }
 
         public IGameObject Instantiate()
@@ -58,7 +49,8 @@ namespace Destrospean.Misc
             IGameObject[] results = new IGameObject[count];
             for (int i = 0; i < count; i++)
             {
-                results[i] = GlobalFunctions.CreateObjectOutOfWorld(InstanceName, ProductVersion);
+                ulong nameGuid = NameGuidMap.GetGuidByName(InstanceName);
+                results[i] = GlobalFunctions.CreateObjectOutOfWorld(new ResourceKey(nameGuid == NameGuidMap.kInvalidNameGuid ? InstanceId : nameGuid, 0x319E4F1D, GroupId));
             }
             return results;
         }

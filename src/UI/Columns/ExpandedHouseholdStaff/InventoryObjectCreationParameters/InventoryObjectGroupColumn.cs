@@ -12,7 +12,7 @@ namespace Destrospean.UI.Columns.ExpandedHouseholdStaff
 
         public override ObjectPicker.ColumnInfo GetValue(InventoryObjectCreationParameters inventoryObjectCreationParameters)
         {
-            return new ObjectPicker.TextColumn("0x" + ResourceUtils.ProductVersionToGroupId(inventoryObjectCreationParameters?.ProductVersion ?? ProductVersion.Undefined).ToString("X8"));
+            return new ObjectPicker.TextColumn("0x" + (inventoryObjectCreationParameters?.GroupId ?? 0x00000000).ToString("X8"));
         }
     }
 }

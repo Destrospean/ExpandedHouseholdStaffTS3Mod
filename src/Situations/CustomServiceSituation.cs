@@ -394,7 +394,12 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
         public override CarService CreateServiceCar()
         {
             CustomService service = (CustomService)Service;
-            return GlobalFunctions.CreateObjectOutOfWorld(string.IsNullOrEmpty(service.Profile.CarInstanceName) ? "CarServiceSedan" : service.Profile.CarInstanceName, service.Profile.CarProductVersion, typeof(CarServiceMaidVan).FullName, null) as CarService;
+            CarService car = GlobalFunctions.CreateObjectOutOfWorld(new ResourceKey(service.Profile.CarInstanceId, 0x319E4F1D, service.Profile.CarGroupId), typeof(CarServiceMaidVan).FullName, null) as CarService;
+            if (!string.IsNullOrEmpty(service.Profile.CarPreset))
+            {
+                car.ApplyPreset(service.Profile.CarPreset);
+            }
+            return car;
         }
 
         public static Inventory FindTargetSimInventory(Household household)

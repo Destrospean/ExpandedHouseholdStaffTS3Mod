@@ -4,18 +4,16 @@ using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Utilities;
-using Sims3.Gameplay.Destrospean.Utils;
 using Sims3.SimIFace;
-using Destrospean.Misc;
 using Destrospean.Utils;
 using Destrospean.Utils.ExpandedHouseholdStaff;
 
 namespace Destrospean.ExpandedHouseholdStaff.Interactions
 {
-    public class AddInventoryObjectToService : ImmediateInteraction<Sim, GameObject>
+    public class ResetServiceCar : ImmediateInteraction<Sim, GameObject>
     {
         [DoesntRequireTuning]
-        public class Definition : ImmediateInteractionDefinition<Sim, GameObject, AddInventoryObjectToService>
+        public class Definition : ImmediateInteractionDefinition<Sim, GameObject, ResetServiceCar>
         {
             public override string GetInteractionName(Sim actor, GameObject target, InteractionObjectPair iop)
             {
@@ -32,24 +30,27 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
 
             public override bool Test(Sim actor, GameObject target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
             {
-                return !isAutonomous && ServiceUtils.ServiceProfiles.Exists(x => !x.IsImmutable);
+                return !isAutonomous && ServiceUtils.ServiceProfiles.Exists(x => !x.IsImmutable && !string.IsNullOrEmpty(x.CarInstanceName));
             }
         }
 
-        public static readonly string LocalizationKey = typeof(AddInventoryObjectToService).GetLocalizationKey();
+        public static readonly string LocalizationKey = typeof(ResetServiceCar).GetLocalizationKey();
 
         public static InteractionDefinition Singleton = new Definition();
 
         public override bool Run()
         {
-            DebugUtils.TryDisplayScriptError(() =>
+            IServiceProfile[] profiles;
+            if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable && !string.IsNullOrEmpty(x.CarInstanceName)).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name")))
+            {
+                foreach (IServiceProfile profile in profiles)
                 {
-                    IServiceProfile[] profiles;
-                    if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name"), 1))
-                    {
-                        profiles[0].Inventory.Add(new InventoryObjectCreationParameters(Target.ObjectInstanceName, Target.Product.ProductResourceKey.InstanceId, Target.Product.ProductResourceKey.GroupId, 1, Target.GetCurrentPreset()));
-                    }
-                });
+                    profiles[0].CarInstanceName = null;
+                    profiles[0].CarInstanceId = 0x00000000;
+                    profiles[0].CarGroupId = 0x00000000;
+                    profiles[0].CarPreset = null;
+                }
+            }
             return true;
         }
     }

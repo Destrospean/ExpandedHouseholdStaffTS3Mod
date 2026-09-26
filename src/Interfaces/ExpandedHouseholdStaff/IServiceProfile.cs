@@ -43,6 +43,24 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         }
 
         /// <summary>
+        /// The group ID of the car the service NPC arrives in. This is for when the car is a Store, expansion pack, or stuff pack item.
+        /// </summary>
+        uint CarGroupId
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The instance ID of the car the service NPC arrives in.
+        /// </summary>
+        ulong CarInstanceId
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// The instance name of the car the service NPC arrives in. If <c>null</c> or empty, the service NPC will arrive and leave by foot.
         /// </summary>
         string CarInstanceName
@@ -55,15 +73,6 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         /// The preset of the car the service NPC arrives in.
         /// </summary>
         string CarPreset
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The product version of the car the service NPC arrives in. This is for when the car is a Store, expansion pack, or stuff pack item.
-        /// </summary>
-        ProductVersion CarProductVersion
         {
             get;
             set;

@@ -6,16 +6,15 @@ using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Utilities;
 using Sims3.Gameplay.Destrospean.Utils;
 using Sims3.SimIFace;
-using Destrospean.Misc;
 using Destrospean.Utils;
 using Destrospean.Utils.ExpandedHouseholdStaff;
 
 namespace Destrospean.ExpandedHouseholdStaff.Interactions
 {
-    public class AddInventoryObjectToService : ImmediateInteraction<Sim, GameObject>
+    public class AssignCarToService : ImmediateInteraction<Sim, GameObject>
     {
         [DoesntRequireTuning]
-        public class Definition : ImmediateInteractionDefinition<Sim, GameObject, AddInventoryObjectToService>
+        public class Definition : ImmediateInteractionDefinition<Sim, GameObject, AssignCarToService>
         {
             public override string GetInteractionName(Sim actor, GameObject target, InteractionObjectPair iop)
             {
@@ -36,7 +35,7 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
             }
         }
 
-        public static readonly string LocalizationKey = typeof(AddInventoryObjectToService).GetLocalizationKey();
+        public static readonly string LocalizationKey = typeof(AssignCarToService).GetLocalizationKey();
 
         public static InteractionDefinition Singleton = new Definition();
 
@@ -47,7 +46,10 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
                     IServiceProfile[] profiles;
                     if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name"), 1))
                     {
-                        profiles[0].Inventory.Add(new InventoryObjectCreationParameters(Target.ObjectInstanceName, Target.Product.ProductResourceKey.InstanceId, Target.Product.ProductResourceKey.GroupId, 1, Target.GetCurrentPreset()));
+                        profiles[0].CarInstanceName = Target.ObjectInstanceName;
+                        profiles[0].CarInstanceId = Target.Product.ProductResourceKey.InstanceId;
+                        profiles[0].CarGroupId = Target.Product.ProductResourceKey.GroupId;
+                        profiles[0].CarPreset = Target.GetCurrentPreset();
                     }
                 });
             return true;
