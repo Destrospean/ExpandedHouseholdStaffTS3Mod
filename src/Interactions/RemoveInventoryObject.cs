@@ -42,7 +42,7 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
         public override bool Run()
         {
             IServiceProfile[] profiles;
-            if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name"), 1))
+            if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable && x.Inventory.Count > 0).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name"), 1))
             {
                 InventoryObjectCreationParameters[] inventoryObjects;
                 if (ServiceUtils.TryUIGetSelectedInventoryObjects(out inventoryObjects, profiles[0].Inventory.ToArray(), Localization.LocalizeString(LocalizationKey + ":Name")))

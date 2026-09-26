@@ -9,7 +9,7 @@
                 "/Headers":
                     "/Text":
                         ":Text": "Namespace"
-                        ":Tooltip": "The namespace"
+                        ":Tooltip": "The namespace of the class"
             "/TypeListDialog":
                 ":Title": "Class"
                 "/Titles":
@@ -18,7 +18,7 @@
                 "/Headers":
                     "/Type":
                         ":Text": "Class"
-                        ":Tooltip": "The class name"
+                        ":Tooltip": "The name of the class"
             "/SkillListDialog":
                 ":Title": "Specify Skill Levels"
                 "/SubmenuTitles":
@@ -69,8 +69,8 @@
                     ":Gender": "Select Allowed Genders"
                 "/Headers":
                     "/CASAgeGenderFlag":
-                        ":Text": "Demographic"
-                        ":Tooltip": "The name of the demographic"
+                        ":Text": "Setting"
+                        ":Tooltip": "The name of the setting corresponding to the demographic to allow"
                     "/Enabled":
                         ":Text": "Enabled"
                         ":Tooltip": "Whether the demographic is allowed"
@@ -314,19 +314,22 @@
                     "/Text":
                         ":Text": "Service Collection"
                         ":Tooltip": "The name of the service collection"
-            "/ExportFilenameDialog":
+            "/ExportServiceCollectionFilenameDialog":
                 ":Title": "Export Services"
                 ":Prompt": "Enter in the name of the service collection to export."
-            "/ImportSuccessDialog":
+            "/ImportServiceCollectionSuccessDialog":
                 ":Title": "Import Successful"
-                ":Message": "The service collection was successfully imported."
-            "/ExportSuccessDialog":
+                ":Message": "The selected service collection was successfully imported."
+            "/ExportServiceCollectionSuccessDialog":
                 ":Title": "Export Successful"
                 ":Message": "The service collection was successfully exported."
-            "/NoFilesExistDialog":
+            "/DeleteServiceCollectionSuccessDialog":
+                ":Title": "Deletion Successful"
+                ":Message": "The selected service collections were successfully deleted."
+            "/NoServiceCollectionsExistDialog":
                 ":Title": "Import Failed"
                 ":Message": "No service collections currently exist."
-            "/FileExistsDialog":
+            "/ServiceCollectionExistsDialog":
                 ":Title": "Export Failed"
                 ":Message": "A service collection of this name already exists."
     "/ExpandedHouseholdStaff":

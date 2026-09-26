@@ -45,7 +45,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
             if (savedSettings.Count == 0)
             {
-                SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/NoFilesExistDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/NoFilesExistDialog:Message"));
+                SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/NoServiceCollectionsExistDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/NoServiceCollectionsExistDialog:Message"));
                 return;
             }
             string[] savedSettingsNames;
@@ -55,6 +55,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 {
                     BinModel.Singleton.DeleteFromExportBin(savedSettings[kSavedSettingsPrefix + name]);
                 }
+                SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/DeleteServiceCollectionSuccessDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/DeleteServiceCollectionSuccessDialog:Message"));
             }
         }
 
@@ -64,7 +65,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             bool found = true;
             while (found)
             {
-                name = StringInputDialog.Show(Localization.LocalizeString(kLocalizationKey + "/ExportFilenameDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/ExportFilenameDialog:Prompt"), "");
+                name = StringInputDialog.Show(Localization.LocalizeString(kLocalizationKey + "/ExportServiceCollectionFilenameDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/ExportServiceCollectionFilenameDialog:Prompt"), "");
                 if (string.IsNullOrEmpty(name))
                 {
                     return false;
@@ -80,7 +81,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     }
                     if (contents.HouseholdName == name)
                     {
-                        SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/FileExistsDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/FileExistsDialog:Message"));
+                        SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/ServiceCollectionExistsDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/ServiceCollectionExistsDialog:Message"));
                         found = true;
                         break;
                     }
@@ -91,7 +92,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             dummyHousehold.BioText = text;
             BinModel.Singleton.AddToExportBin(dummyHousehold);
             dummyHousehold.Destroy();
-            SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/ExportSuccessDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/ExportSuccessDialog:Message"));
+            SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/ExportServiceCollectionSuccessDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/ExportServiceCollectionSuccessDialog:Message"));
             return true;
         }
 
@@ -108,7 +109,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
             if (savedSettings.Count == 0)
             {
-                SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/NoFilesExistDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/NoFilesExistDialog:Message"));
+                SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/NoServiceCollectionsExistDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/NoServiceCollectionsExistDialog:Message"));
                 return null;
             }
             string[] savedSettingsNames;
@@ -423,7 +424,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 return false;
             }
             LoadServiceProfiles(text);
-            SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/ImportSuccessDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/ImportSuccessDialog:Message"));
+            SimpleMessageDialog.Show(Localization.LocalizeString(kLocalizationKey + "/ImportServiceCollectionSuccessDialog:Title"), Localization.LocalizeString(kLocalizationKey + "/ImportServiceCollectionSuccessDialog:Message"));
             return true;
         }
 
