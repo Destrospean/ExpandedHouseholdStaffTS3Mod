@@ -45,10 +45,10 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
             {
                 foreach (IServiceProfile profile in profiles)
                 {
-                    profiles[0].CarInstanceName = null;
-                    profiles[0].CarInstanceId = 0x0000000000000000;
-                    profiles[0].CarGroupId = 0x00000000;
-                    profiles[0].CarPreset = null;
+                    profile.CarInstanceName = null;
+                    profile.CarInstanceId = 0x0000000000000000;
+                    profile.CarGroupId = 0x00000000;
+                    profile.CarPreset = null;
                 }
             }
             return true;

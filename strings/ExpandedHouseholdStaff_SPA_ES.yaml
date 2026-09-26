@@ -365,7 +365,7 @@
                 ":Name": "Assign Car to Service"
             "/ResetServiceCar":
                 ":Path": "Expanded Household Staff..."
-                ":Name": "Reset Service Car"
+                ":Name": "Reset Service Cars"
             "/AddActiveTopicAction":
                 ":Path": "Expanded Household Staff..."
                 ":Name": "Add Active Topic Action"
