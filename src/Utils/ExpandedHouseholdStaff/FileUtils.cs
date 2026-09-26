@@ -271,7 +271,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                             xmlWriter.WriteAttributeString("advertised", output.ConstantChange.ToString());
                             xmlWriter.WriteAttributeString("locked", output.Locked.ToString());
                             xmlWriter.WriteAttributeString("actual", output.ActualValue.ToString());
-                            xmlWriter.WriteAttributeString("updateType", output.UpdateType == OutputUpdateType.ContinuousFlow ? OutputUpdateType.ContinuousFlow.ToString() : output.UpdateType.ToString());
+                            xmlWriter.WriteAttributeString("updateType", output.UpdateType == OutputUpdateType.ContinuousFlow ? "ContinuousFlow" : output.UpdateType.ToString());
                             xmlWriter.WriteAttributeString("timeDependsOnCommodityFilling", output.TimeDependsOnCommodityFilling.ToString());
                             xmlWriter.WriteAttributeString("updateEvenOnFailure", output.UpdateEvenOnFailure.ToString());
                             xmlWriter.WriteAttributeString("updateAboveAndBelowZero", output.UpdateAboveAndBelowZero.ToString());
