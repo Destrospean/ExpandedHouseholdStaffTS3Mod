@@ -33,7 +33,7 @@ namespace Destrospean.Utils
     {
         const string kAuthorName = "Destrospean";
 
-        static bool ChangePreset(DesignModeSwap swap, SortedList<string, Complate> patterns, ref string presetXml, bool bUndoable, SortedList<string, bool> enabledStencils)
+        static bool ChangePreset(DesignModeSwap swap, SortedList<string, Complate> patterns, ref string presetXml, bool undoable, SortedList<string, bool> enabledStencils)
         {
             if (string.IsNullOrEmpty(presetXml))
             {
