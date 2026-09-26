@@ -33,6 +33,123 @@ namespace Destrospean.Utils
     {
         const string kAuthorName = "Destrospean";
 
+        static bool ChangePreset(DesignModeSwap swap, SortedList<string, Complate> patterns, ref string presetXml, bool bUndoable, SortedList<string, bool> enabledStencils)
+        {
+            if (string.IsNullOrEmpty(presetXml))
+            {
+                return false;
+            }
+            Dictionary<string, Complate> patternComplates = new Dictionary<string, Complate>();
+            string processedPreset = Complate.ProcessPreset(presetXml, patternComplates);
+            if (string.IsNullOrEmpty(processedPreset))
+            {
+                return false;
+            }
+            Complate presetComplate = null;
+            if (!patternComplates.TryGetValue(processedPreset, out presetComplate))
+            {
+                return false;
+            }
+            List<Complate.Variable> variables = new List<Complate.Variable>();
+            bool result = false;
+            foreach (Complate.Variable variable in presetComplate.Variables)
+            {
+                if (enabledStencils != null && variable.Type == Complate.Variable.Types.Bool)
+                {
+                    if (enabledStencils.TryGetValue(variable.Name, out result))
+                    {
+                        variable.Value = result.ToString();
+                    }
+                }
+                else
+                {
+                    if (variable.Type != Complate.Variable.Types.Pattern)
+                    {
+                        continue;
+                    }
+                    string enabled = variable[Complate.kEnabledAttribute];
+                    if (enabled != "")
+                    {
+                        enabled = presetComplate[enabled];
+                        result = false;
+                        if (!bool.TryParse(enabled, out result) || !result)
+                        {
+                            continue;
+                        }
+                    }
+                    variables.Add(variable);
+                    if (enabledStencils == null && variables.Count == 4)
+                    {
+                        break;
+                    }
+                }
+            }
+            if (variables.Count == 0)
+            {
+                return false;
+            }
+            foreach (Complate.TexturePart texturePart in presetComplate.Parts)
+            {
+                foreach (Complate.TextureDestination textureDestination in texturePart.Destinations)
+                {
+                    foreach (Complate.TextureStep textureStep in textureDestination.Steps)
+                    {
+                        if (textureStep[Complate.kTypeAttribute] == "DrawFabric")
+                        {
+                            string variableName = textureStep["pattern"];
+                            if (variableName.StartsWith("($daeFileName)"))
+                            {
+                                variableName = variableName.Remove(0, 14);
+                            }
+                            textureStep["patternkey"] = swap.GetPatternKey(variableName).ToString();
+                        }
+                    }
+                }
+            }
+            foreach (KeyValuePair<string, Complate> pattern in patterns)
+            {
+                if (patternComplates.ContainsKey(pattern.Key))
+                {
+                    patternComplates[pattern.Key] = pattern.Value;
+                }
+            }
+            for (int i = 0; i < variables.Count; i++)
+            {
+                Complate pattern;
+                if (!patternComplates.TryGetValue(variables[i].Name, out pattern))
+                {
+                    swap.Dispose();
+                    return false;
+                }
+                pattern.Process();
+                TextureCompositor textureCompositor = pattern.CreateTextureCompositor(null, null, 0u);
+                if (textureCompositor != null)
+                {
+                    swap.SetNewPattern(variables[i].Name, textureCompositor.ExportData(null, null, null));
+                }
+            }
+            presetComplate.Process();
+            Hashtable hashtable = presetComplate.CreateTextureCompositors(0u);
+            foreach (DictionaryEntry entry in hashtable)
+            {
+                string key = ((string)entry.Key).ToLower();
+                if (key.EndsWith("diffusemap"))
+                {
+                    swap.SetNewCompositor("diffusemap", ((TextureCompositor)entry.Value).ExportData(null, null, null));
+                }
+                else if (key.EndsWith("specmap"))
+                {
+                    swap.SetNewCompositor("specularmap", ((TextureCompositor)entry.Value).ExportData(null, null, null));
+                }
+            }
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml("<preset />");
+            presetComplate.AddToPreset(xmlDocument, patternComplates);
+            Complate.ConvertPresetToResourceKeys(xmlDocument, null);
+            presetXml = xmlDocument.OuterXml;
+            return true;
+        }
+
         /// <summary>
         /// Adds actions to an active topic.
         /// </summary>
@@ -146,156 +263,31 @@ namespace Destrospean.Utils
             }
         }
 
-        public static void ApplyPreset(this IGameObject gameObject, string preset)
+        public static void ApplyPreset(this IGameObject gameObject, string presetXml)
         {
             DebugUtils.TryDisplayScriptError(() =>
                 {
                     SortedList<string, bool> enabledStencils = new SortedList<string, bool>();
-                    Complate.SetupDesignSwap(gameObject.ObjectId, ExtractPatterns(preset, enabledStencils), false, enabledStencils)?.ApplyToObject();
+                    Complate.SetupDesignSwap(gameObject.ObjectId, ExtractPatterns(presetXml, enabledStencils), false, enabledStencils)?.ApplyToObject();
                 });
         }
 
-        public static bool ChangePreset(DesignModeSwap swap, SortedList<string, Complate> patterns, ref string preset, bool bUndoable, SortedList<string, bool> enabledStencils)
+        public static SortedList<string, Complate> ExtractPatterns(string presetXml, SortedList<string, bool> enabledStencils)
         {
-            if (string.IsNullOrEmpty(preset))
-            {
-                return false;
-            }
-            Dictionary<string, Complate> dictionary = new Dictionary<string, Complate>();
-            string text = Complate.ProcessPreset(preset, dictionary);
-            if (string.IsNullOrEmpty(text))
-            {
-                return false;
-            }
-            Complate value = null;
-            if (!dictionary.TryGetValue(text, out value))
-            {
-                return false;
-            }
-            List<Complate.Variable> list = new List<Complate.Variable>();
-            bool result = false;
-            Complate.Variable[] variables = value.Variables;
-            foreach (Complate.Variable variable in variables)
-            {
-                if (enabledStencils != null && variable.Type == Complate.Variable.Types.Bool)
-                {
-                    if (enabledStencils.TryGetValue(variable.Name, out result))
-                    {
-                        variable.Value = result.ToString();
-                    }
-                }
-                else
-                {
-                    if (variable.Type != Complate.Variable.Types.Pattern)
-                    {
-                        continue;
-                    }
-                    string enabled = variable[Complate.kEnabledAttribute];
-                    if (enabled != string.Empty)
-                    {
-                        enabled = value[enabled];
-                        result = false;
-                        if (!bool.TryParse(enabled, out result) || !result)
-                        {
-                            continue;
-                        }
-                    }
-                    list.Add(variable);
-                    if (enabledStencils == null && list.Count == 4)
-                    {
-                        break;
-                    }
-                }
-            }
-            if (list.Count == 0)
-            {
-                return false;
-            }
-            Complate.TexturePart[] parts = value.Parts;
-            foreach (Complate.TexturePart texturePart in parts)
-            {
-                Complate.TextureDestination[] destinations = texturePart.Destinations;
-                foreach (Complate.TextureDestination textureDestination in destinations)
-                {
-                    Complate.TextureStep[] steps = textureDestination.Steps;
-                    foreach (Complate.TextureStep textureStep in steps)
-                    {
-                        if (textureStep[Complate.kTypeAttribute] == "DrawFabric")
-                        {
-                            string variableName = textureStep["pattern"];
-                            if (variableName.StartsWith("($daeFileName)"))
-                            {
-                                variableName = variableName.Remove(0, 14);
-                            }
-                            textureStep["patternkey"] = swap.GetPatternKey(variableName).ToString();
-                        }
-                    }
-                }
-            }
-            foreach (KeyValuePair<string, Complate> pattern in patterns)
-            {
-                if (dictionary.ContainsKey(pattern.Key))
-                {
-                    dictionary[pattern.Key] = pattern.Value;
-                }
-            }
-            for (int i = 0; i < list.Count; i++)
-            {
-                Complate complate;
-                if (!dictionary.TryGetValue(list[i].Name, out complate))
-                {
-                    swap.Dispose();
-                    return false;
-                }
-                complate.Process();
-                TextureCompositor textureCompositor = complate.CreateTextureCompositor(null, null, 0u);
-                if (textureCompositor != null)
-                {
-                    byte[] data = textureCompositor.ExportData(null, null, null);
-                    swap.SetNewPattern(list[i].Name, data);
-                }
-            }
-            value.Process();
-            Hashtable hashtable = value.CreateTextureCompositors(0u);
-            foreach (DictionaryEntry item in hashtable)
-            {
-                string key = (item.Key as string).ToLower();
-                if (key.EndsWith("diffusemap"))
-                {
-                    byte[] data = ((TextureCompositor)item.Value).ExportData(null, null, null);
-                    swap.SetNewCompositor("diffusemap", data);
-                }
-                else if (key.EndsWith("specmap"))
-                {
-                    byte[] data = ((TextureCompositor)item.Value).ExportData(null, null, null);
-                    swap.SetNewCompositor("specularmap", data);
-                }
-            }
-            XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.LoadXml("<preset />");
-            value.AddToPreset(xmlDocument, dictionary);
-            Complate.ConvertPresetToResourceKeys(xmlDocument, null);
-            preset = xmlDocument.OuterXml;
-            return true;
-        }
-
-        public static SortedList<string, Complate> ExtractPatterns(string preset, SortedList<string, bool> enabledStencils)
-        {
-            if (string.IsNullOrEmpty(preset))
+            if (string.IsNullOrEmpty(presetXml))
             {
                 return new SortedList<string, Complate>();
             }
-            Dictionary<string, Complate> dictionary = new Dictionary<string, Complate>();
-            string text = Complate.ProcessPreset(preset, dictionary);
-            if (string.IsNullOrEmpty(text))
+            Dictionary<string, Complate> patternComplates = new Dictionary<string, Complate>();
+            string processedPreset = Complate.ProcessPreset(presetXml, patternComplates);
+            if (string.IsNullOrEmpty(processedPreset))
             {
                 return new SortedList<string, Complate>();
             }
-            Complate value;
-            if (enabledStencils != null && dictionary.TryGetValue(text, out value))
+            Complate patternComplate;
+            if (enabledStencils != null && patternComplates.TryGetValue(processedPreset, out patternComplate))
             {
-                Complate.Variable[] variables = value.Variables;
-                foreach (Complate.Variable variable in variables)
+                foreach (Complate.Variable variable in patternComplate.Variables)
                 {
                     if (variable.Type == Complate.Variable.Types.Bool)
                     {
@@ -307,8 +299,8 @@ namespace Destrospean.Utils
                     }
                 }
             }
-            dictionary.Remove(text);
-            return new SortedList<string, Complate>(dictionary);
+            patternComplates.Remove(processedPreset);
+            return new SortedList<string, Complate>(patternComplates);
         }
 
         /// <summary>

@@ -287,6 +287,22 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
 
             /// <summary>
+            /// The preset of the car the service NPC arrives in.
+            /// </summary>
+            public string CarPreset
+            {
+                get
+                {
+                    string value;
+                    return mStrings.TryGetValue("CarPreset", out value) ? value : null;
+                }
+                set
+                {
+                    mStrings["CarPreset"] = value;
+                }
+            }
+
+            /// <summary>
             /// The product version of the car the service NPC arrives in. This is for when the car is a Store, expansion pack, or stuff pack item.
             /// </summary>
             public ProductVersion CarProductVersion

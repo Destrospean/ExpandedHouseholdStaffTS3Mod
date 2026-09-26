@@ -52,6 +52,15 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         }
 
         /// <summary>
+        /// The preset of the car the service NPC arrives in.
+        /// </summary>
+        string CarPreset
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// The product version of the car the service NPC arrives in. This is for when the car is a Store, expansion pack, or stuff pack item.
         /// </summary>
         ProductVersion CarProductVersion

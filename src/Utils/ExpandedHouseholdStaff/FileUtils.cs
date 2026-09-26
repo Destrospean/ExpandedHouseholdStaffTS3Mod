@@ -278,11 +278,23 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                         }
                         xmlWriter.WriteFullEndElement();
 
-                        xmlWriter.WriteStartElement("CarInstanceName");
-                        xmlWriter.WriteString(profile.CarInstanceName ?? "");
+                        xmlWriter.WriteStartElement("Inventory");
+                        foreach (InventoryObjectCreationParameters inventoryObjectCreationParameters in profile.Inventory)
+                        {
+                            xmlWriter.WriteStartElement("InventoryObject");
+                            xmlWriter.WriteAttributeString("instanceName", inventoryObjectCreationParameters.InstanceName);
+                            xmlWriter.WriteAttributeString("group", ResourceUtils.ProductVersionToGroupId(inventoryObjectCreationParameters.ProductVersion).ToString("X8"));
+                            xmlWriter.WriteAttributeString("count", inventoryObjectCreationParameters.Count.ToString());
+                            xmlWriter.WriteRaw(inventoryObjectCreationParameters.Preset?.Substring(inventoryObjectCreationParameters.Preset.IndexOf("\n")) ?? "");
+                            xmlWriter.WriteEndElement();
+                        }
                         xmlWriter.WriteFullEndElement();
 
-                        xmlWriter.WriteElementString("CarProductVersion", profile.CarProductVersion.ToString());
+                        xmlWriter.WriteStartElement("Car");
+                        xmlWriter.WriteAttributeString("instanceName", profile.CarInstanceName ?? "");
+                        xmlWriter.WriteAttributeString("group", ResourceUtils.ProductVersionToGroupId(profile.CarProductVersion).ToString("X8"));
+                        xmlWriter.WriteRaw(profile.CarPreset?.Substring(profile.CarPreset.IndexOf("\n")) ?? "");
+                        xmlWriter.WriteEndElement();
 
                         xmlWriter.WriteElementString("CheckTime", profile.CheckTime.ToString());
 
@@ -631,18 +643,19 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                                     }
                                     continue;
                                 }
-                                if (profilePropertyNode.Name == "CarInstanceName")
+                                if (profilePropertyNode.Name == "Inventory")
                                 {
-                                    profile.CarInstanceName = profilePropertyNode.InnerText;
+                                    foreach (XmlNode inventoryObjectNode in profilePropertyNode.ChildNodes)
+                                    {
+                                        profile.Inventory.Add(new InventoryObjectCreationParameters(inventoryObjectNode.Attributes["instanceName"].Value, ResourceUtils.GroupIdToProductVersion(uint.Parse(inventoryObjectNode.Attributes["group"].Value, NumberStyles.HexNumber)), int.Parse(inventoryObjectNode.Attributes["count"].Value), WrapInnerXmlAsDocument(profilePropertyNode)));
+                                    }
                                     continue;
                                 }
-                                if (profilePropertyNode.Name == "CarProductVersion")
+                                if (profilePropertyNode.Name == "Car")
                                 {
-                                    ProductVersion productVersion;
-                                    if (ParserFunctions.TryParseEnum(profilePropertyNode.InnerText, out productVersion, ProductVersion.Undefined))
-                                    {
-                                        profile.CarProductVersion = productVersion;
-                                    }
+                                    profile.CarInstanceName = profilePropertyElement.GetAttribute("instanceName");
+                                    profile.CarPreset = WrapInnerXmlAsDocument(profilePropertyNode);
+                                    profile.CarProductVersion = ResourceUtils.GroupIdToProductVersion(uint.Parse(profilePropertyElement.GetAttribute("group"), NumberStyles.HexNumber));
                                     continue;
                                 }
                                 if (profilePropertyNode.Name == "CheckTime")
@@ -673,7 +686,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                                 if (profilePropertyNode.Name == "UseObjectInSameRoomAsSleeperMultiplier")
                                 {
                                     profile.UseObjectInSameRoomAsSleeperMultiplier = ParserFunctions.ParseFloat(profilePropertyNode.InnerText, profile.UseObjectInSameRoomAsSleeperMultiplier);
-                                    continue;
                                 }
                             }
                             profile.FixUp();
@@ -700,42 +712,13 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                             {
                                 continue;
                             }
-                            CASAgeGenderFlags age, gender;
-                            string specialOutfitKey = OutfitAssignmentUtils.GetGlobalAssignedOutfitPrefix((ParserFunctions.TryParseEnum(node.Attributes["age"].Value, out age, CASAgeGenderFlags.None) ? age : CASAgeGenderFlags.None) | (ParserFunctions.TryParseEnum(node.Attributes["gender"].Value, out gender, CASAgeGenderFlags.None) ? gender : CASAgeGenderFlags.None)) + serviceName;
                             foreach (XmlNode serviceUniformPropertyNode in node.ChildNodes)
                             {
                                 if (serviceUniformPropertyNode.Name == "Parts")
                                 {
                                     foreach (XmlNode partNode in serviceUniformPropertyNode.ChildNodes)
                                     {
-                                        string[] tgi = partNode.Attributes["key"].Value.Split(':');
-                                        CASPart part = new CASPart(new ResourceKey(ulong.Parse(tgi[2], NumberStyles.HexNumber), uint.Parse(tgi[0], NumberStyles.HexNumber), uint.Parse(tgi[1], NumberStyles.HexNumber)));
-                                        if (string.IsNullOrEmpty(partNode.InnerXml))
-                                        {
-                                            assignedOutfit.Parts.Add(new OutfitAssignmentUtils.AssignedOutfit.SavedPart(part, null));
-                                            continue;
-                                        }
-                                        XmlDocument document = new XmlDocument();
-                                        document.LoadXml(partNode.InnerXml);
-                                        XmlDeclaration xmlDeclaration = document.CreateXmlDeclaration("1.0", "utf-8", null);
-                                        document.InsertBefore(xmlDeclaration, document.DocumentElement);
-                                        StringBuilder stringBuilder = new StringBuilder();
-                                        using (Utf8StringWriter stringWriter = new Utf8StringWriter(stringBuilder))
-                                        {
-                                            using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
-                                                {
-                                                    Indent = true,
-                                                    IndentChars = "  ",
-                                                    Encoding = Encoding.UTF8,
-                                                    OmitXmlDeclaration = false
-                                                }))
-                                            {
-                                                document.WriteTo(xmlWriter);
-                                                xmlWriter.Flush();
-                                            }
-                                            stringWriter.Flush();
-                                        }
-                                        assignedOutfit.Parts.Add(new OutfitAssignmentUtils.AssignedOutfit.SavedPart(part, stringBuilder.ToString()));
+                                        assignedOutfit.Parts.Add(new OutfitAssignmentUtils.AssignedOutfit.SavedPart(new CASPart(ResourceKey.FromString(partNode.Attributes["key"].Value)), WrapInnerXmlAsDocument(partNode)));
                                         continue;
                                     }
                                 }
@@ -749,9 +732,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                                             assignedOutfit.PartOverrides.Add(partType);
                                         }
                                     }
-                                    continue;
                                 }
                             }
+                            CASAgeGenderFlags age, gender;
+                            string specialOutfitKey = OutfitAssignmentUtils.GetGlobalAssignedOutfitPrefix((ParserFunctions.TryParseEnum(node.Attributes["age"].Value, out age, CASAgeGenderFlags.None) ? age : CASAgeGenderFlags.None) | (ParserFunctions.TryParseEnum(node.Attributes["gender"].Value, out gender, CASAgeGenderFlags.None) ? gender : CASAgeGenderFlags.None)) + serviceName;
                             OutfitAssignmentUtils.OutfitAssignments.Add(new OutfitAssignmentUtils.OutfitAssignment(null, specialOutfitKey, ServiceUtils.ServiceProfiles[profileIndex]));
                             OutfitAssignmentUtils.IndexOutfitAssignments();
                             OutfitAssignmentUtils.AssignedOutfits[specialOutfitKey] = assignedOutfit;
@@ -795,6 +779,35 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
             selectedNames = tempSelectedNames;
             return retVal;
+        }
+
+        public static string WrapInnerXmlAsDocument(XmlNode node)
+        {
+            if (string.IsNullOrEmpty(node.InnerXml))
+            {
+                return null;
+            }
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(node.InnerXml);
+            XmlDeclaration xmlDeclaration = xmlDocument.CreateXmlDeclaration("1.0", "utf-8", null);
+            xmlDocument.InsertBefore(xmlDeclaration, xmlDocument.DocumentElement);
+            StringBuilder stringBuilder = new StringBuilder();
+            using (Utf8StringWriter stringWriter = new Utf8StringWriter(stringBuilder))
+            {
+                using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
+                    {
+                        Encoding = Encoding.UTF8,
+                        Indent = true,
+                        IndentChars = "  ",
+                        OmitXmlDeclaration = false
+                    }))
+                {
+                    xmlDocument.WriteTo(xmlWriter);
+                    xmlWriter.Flush();
+                }
+                stringWriter.Flush();
+            }
+            return stringBuilder.ToString();
         }
     }
 }
