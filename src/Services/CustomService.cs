@@ -519,13 +519,22 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                     }
                     if (sim.Inventory != null)
                     {
-                        foreach (IGameObject inventoryObject in sim.Inventory.FindAll<IGameObject>(true))
+                        // The following code corrects items with the wrong presets.
+                        List<InventoryObjectCreationParameters> tempInventory = Profile.Inventory.ConvertAll(x => new InventoryObjectCreationParameters(x.InstanceName, x.InstanceId, x.GroupId, x.Count, x.Preset));
+                        foreach (GameObject inventoryObject in sim.Inventory.FindAll<GameObject>(false))
                         {
-                            if (inventoryObject.ObjectOwnerComponent?.GameObjectStolenFrom == null)
+                            for (int i = 0; i < tempInventory.Count; i++)
                             {
-                                inventoryObject.Destroy();
+                                if (!string.IsNullOrEmpty(tempInventory[i].Preset) && tempInventory[i].Count > 0 && tempInventory[i].InstanceId == inventoryObject.Product?.ProductResourceKey.InstanceId && tempInventory[i].GroupId == inventoryObject.Product?.ProductResourceKey.GroupId && sim.Inventory.FindAll<GameObject>(false).FindAll(x => x.GetCurrentPreset() == tempInventory[i].Preset).Count < Profile.Inventory[i].Count)
+                                {
+                                    inventoryObject.ApplyPreset(tempInventory[i].Preset);
+                                    tempInventory[i].Count--;
+                                    break;
+                                }
                             }
                         }
+
+                        // The following code adds items in the inventory when they do not exist.
                         foreach (InventoryObjectCreationParameters inventoryObjectCreationParameters in Profile.Inventory)
                         {
                             IGameObject dummyItem = inventoryObjectCreationParameters.Instantiate();
