@@ -1255,6 +1255,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 GetUniformFromName = ((ServiceProfile)profile).GetUniformFromName,
                 GetUniformNameCallback = ((ServiceProfile)profile).GetUniformNameCallback,
                 HiddenTraits = new List<TraitNames>(profile.HiddenTraits),
+                Inventory = profile.Inventory.ConvertAll(x => new InventoryObjectCreationParameters(x.InstanceName, x.InstanceId, x.GroupId, x.Count, x.Preset)),
                 IsLiveInService = profile.IsLiveInService,
                 IsQuietAroundSleepingSims = profile.IsQuietAroundSleepingSims,
                 IsScaredOfBonehilda = profile.IsScaredOfBonehilda,
