@@ -179,7 +179,7 @@
                         ":EmergencyService": "Emergency Service"
                         ":AlwaysTryToSendTheSameSim": "Always Try to Send the Same Sim"
                         ":BabysittingService": "Cares for Babies, Toddlers, and Children"
-                        ":RequireBeInSameRoom": "Must Be in the Same Room As Babies, Toddler, and Children"
+                        ":RequireBeInSameRoom": "Must Be in the Same Room As Babies, Toddlers, and Children"
                     "/Enabled":
                         ":True": "True"
                         ":False": "False"
