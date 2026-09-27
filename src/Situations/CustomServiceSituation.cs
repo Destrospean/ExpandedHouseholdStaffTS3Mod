@@ -514,7 +514,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Energy, CommodityKind.Hygiene);
         }
 
-        private List<Sim> GetExtendedHouseholdSims()
+        public List<Sim> GetExtendedHouseholdSims()
         {
             return Babysitter.GetExtendedHouseholdSims(Lot);
         }
