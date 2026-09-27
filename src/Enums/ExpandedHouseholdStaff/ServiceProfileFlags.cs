@@ -12,6 +12,8 @@ namespace Destrospean.Enums.ExpandedHouseholdStaff
         WaitsBeforePuttingAwayLeftovers = 0x10uL,
         Recurrent = 0x20uL,
         EmergencyService = 0x40uL,
-        AlwaysTryToSendTheSameSim = 0x80uL
+        AlwaysTryToSendTheSameSim = 0x80uL,
+        BabysittingService = 0x100uL,
+        RequireBeInSameRoom = 0x200uL
     }
 }

@@ -152,6 +152,15 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         }
 
         /// <summary>
+        /// If set to <c>true</c>, the service NPC will care for babies, toddlers, and children.
+        /// </summary>
+        bool IsBabysittingService
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// If set to <c>true</c>, the service NPC will stay with the household that requested them.
         /// Interactions for setting/unsetting their bed will be available to the service NPC with this property set to <c>true</c>.
         /// </summary>
@@ -248,6 +257,15 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         /// The message that shows when a service NPC is requested.
         /// </summary>
         string RequestedMessage
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// If set to <c>true</c>, the service NPC is required to be in the same room as a Sim they are caring for.
+        /// </summary>
+        bool RequireBeInSameRoom
         {
             get;
             set;

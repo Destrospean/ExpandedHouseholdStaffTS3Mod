@@ -8,6 +8,7 @@ using Sims3.Gameplay.Core;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
+using Sims3.Gameplay.Objects;
 using Sims3.Gameplay.Objects.HobbiesSkills;
 using Sims3.Gameplay.Objects.Vehicles;
 using Sims3.Gameplay.Services;
@@ -189,6 +190,73 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                 DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(service.CheckTime, TimeUnit.Minutes, CheckForDuties, service.CheckTime, TimeUnit.Minutes, "Time for " + service.Profile.Name + " to check if everything is done", AlarmType.AlwaysPersisted));
             }
 
+            public void CheckForChild()
+            {
+                if (Parent.ServiceTerminated || !Parent.IsBabysittingService)
+                {
+                    return;
+                }
+                bool attendingToChild = false;
+                bool currentInteractionSatisfiesHunger = false;
+                List<Sim> extendedHouseholdSims = Parent.GetExtendedHouseholdSims();
+                if (Parent.Worker.CurrentInteraction != null)
+                {
+                    if (Parent.Worker.CurrentInteraction.SatisfiesCommodity(CommodityKind.Hunger))
+                    {
+                        currentInteractionSatisfiesHunger = true;
+                    }
+                    Sim sim = Parent.Worker.CurrentInteraction.Target as Sim;
+                    if (sim == null || !sim.SimDescription.ChildOrBelow || !extendedHouseholdSims.Contains(sim))
+                    {
+                        GameObject gameObject = Parent.Worker.CurrentInteraction.Target as GameObject;
+                        if (gameObject != null)
+                        {
+                            foreach (Sim item in gameObject.ActorsUsingMe)
+                            {
+                                if (extendedHouseholdSims.Contains(item) && item.SimDescription.ChildOrBelow)
+                                {
+                                    attendingToChild = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (Parent.Worker.CurrentInteraction.GetPriority().Level <= InteractionPriorityLevel.Autonomous)
+                        {
+                            InteractionInstance interactionInstance = Parent.Worker.Autonomy.FindBestAction();
+                            if (interactionInstance != null && Parent.IsInteractionBetterThanCurrent(interactionInstance))
+                            {
+                                Parent.Worker.AddExitReason(ExitReason.CanceledByScript);
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        attendingToChild = true;
+                    }
+                }
+                bool isInSameRoom = false;
+                foreach (Sim sim in extendedHouseholdSims)
+                {
+                    if (sim.IsAtHome && sim.SimDescription.ChildOrBelow && sim.RoomId == Parent.Worker.RoomId)
+                    {
+                        isInSameRoom = true;
+                    }
+                    if (Babysitter.CanAttendToSim(sim) && Babysitter.AttendToNeedsOfSim(Parent.Worker, sim, attendingToChild, currentInteractionSatisfiesHunger))
+                    {
+                        return;
+                    }
+                }
+                if (Parent.RequireBeInSameRoom && !isInSameRoom && !currentInteractionSatisfiesHunger && Parent.Worker.CurrentInteraction != null)
+                {
+                    if (Parent.Worker.CurrentInteraction.Id == Parent.LastInteractionId)
+                    {
+                        Parent.Worker.AddExitReason(ExitReason.Finished);
+                    }
+                    Parent.LastInteractionId = Parent.Worker.CurrentInteraction.Id;
+                }
+            }
+
             public void CheckForDuties()
             {
                 DebugUtils.TryDisplayScriptError(() =>
@@ -197,6 +265,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                         {
                             Parent.SetState(new HangAroundBeforeLeaving(Parent));
                         }
+                        CheckForChild();
                     });
             }
 
@@ -308,11 +377,27 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
 
         List<IGameObject> mProtectedInventory;
 
+        public bool IsBabysittingService
+        {
+            get
+            {
+                return (Service as CustomService)?.Profile.IsBabysittingService ?? false;
+            }
+        }
+
         public override bool IsLiveInService
         {
             get
             {
                 return (Service as CustomService)?.Profile.IsLiveInService ?? false;
+            }
+        }
+
+        public bool RequireBeInSameRoom
+        {
+            get
+            {
+                return (Service as CustomService)?.Profile.RequireBeInSameRoom ?? false;
             }
         }
 
@@ -354,6 +439,22 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
 
         public CustomServiceSituation(Service<CustomService> service, Lot lot, Sim worker, int cost) : base(service, lot, worker, cost)
         {
+        }
+
+        public bool AttendToNeedsOfSim(Sim sim, bool attendingToChild, bool preparingFood)
+        {
+            if (!preparingFood && !sim.SimDescription.ToddlerOrBelow && ShouldStartPreparingFoodFor(sim) && Babysitter.NumFoodOnLot(Worker, Quality.Neutral) < Babysitter.ValidHungryHouseholdMembers(Worker).Count && Babysitter.PrepareFood(Worker, true))
+            {
+                return true;
+            }
+            if (sim.Motives.IsLonely() && !attendingToChild && !preparingFood && (sim.Conversation == null || !sim.Conversation.ContainsSim(Worker)))
+            {
+                Worker.AddExitReason(ExitReason.Finished);
+                InteractionPriority priority = new InteractionPriority(InteractionPriorityLevel.NonCriticalNPCBehavior, GetNewInteractionPriorityValue());
+                Worker.InteractionQueue.AddNext(new SocialInteractionA.Definition("Chat", new string[0], null, false).CreateInstance(sim, Worker, priority, true, true));
+                return true;
+            }
+            return false;
         }
 
         public override void ChargeForService(Callback callbackOnCompletion)
@@ -413,6 +514,11 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Energy, CommodityKind.Hygiene);
         }
 
+        private List<Sim> GetExtendedHouseholdSims()
+        {
+            return Babysitter.GetExtendedHouseholdSims(Lot);
+        }
+
         public override string GetUniformName(SimDescription simDescription)
         {
             ServiceUtils.ServiceProfile profile = (Service as CustomService)?.Profile as ServiceUtils.ServiceProfile;
@@ -462,6 +568,11 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             {
                 base.SetToFire(serviceSim, firer);
             }
+        }
+
+        public virtual bool ShouldStartPreparingFoodFor(Sim sim)
+        {
+            return sim.Motives.IsHungry();
         }
 
         public override void SwitchWorkerToServiceOutfit()

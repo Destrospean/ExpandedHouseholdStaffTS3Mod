@@ -448,6 +448,28 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
 
             /// <summary>
+            /// If set to <c>true</c>, the service NPC will care for babies, toddlers, and children.
+            /// </summary>
+            public bool IsBabysittingService
+            {
+                get
+                {
+                    return (mFlags & (ulong)ServiceProfileFlags.BabysittingService) != 0uL;
+                }
+                set
+                {
+                    if (value)
+                    {
+                        mFlags |= (ulong)ServiceProfileFlags.BabysittingService;
+                    }
+                    else
+                    {
+                        mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.BabysittingService;
+                    }
+                }
+            }
+
+            /// <summary>
             /// If set to <c>true</c>, this service charges <see cref="mCost"/> only if falsely called.
             /// </summary>
             public bool IsEmergencyService
@@ -703,6 +725,28 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 set
                 {
                     mStrings["RequestedMessage"] = value;
+                }
+            }
+
+            /// <summary>
+            /// If set to <c>true</c>, the service NPC is required to be in the same room as a Sim they are caring for.
+            /// </summary>
+            public bool RequireBeInSameRoom
+            {
+                get
+                {
+                    return (mFlags & (ulong)ServiceProfileFlags.RequireBeInSameRoom) != 0uL;
+                }
+                set
+                {
+                    if (value)
+                    {
+                        mFlags |= (ulong)ServiceProfileFlags.RequireBeInSameRoom;
+                    }
+                    else
+                    {
+                        mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.RequireBeInSameRoom;
+                    }
                 }
             }
                 
