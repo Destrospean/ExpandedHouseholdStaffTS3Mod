@@ -49,8 +49,12 @@ namespace Destrospean.Misc
             IGameObject[] results = new IGameObject[count];
             for (int i = 0; i < count; i++)
             {
-                ulong nameGuid = NameGuidMap.GetGuidByName(InstanceName);
-                results[i] = GlobalFunctions.CreateObjectOutOfWorld(new ResourceKey(nameGuid == NameGuidMap.kInvalidNameGuid ? InstanceId : nameGuid, 0x319E4F1D, GroupId));
+                results[i] = GlobalFunctions.CreateObjectOutOfWorld(new ResourceKey(InstanceId, 0x319E4F1D, GroupId));
+                if (results[i].ObjectId == ObjectGuid.InvalidObjectGuid)
+                {
+                    results[i].Destroy();
+                    results[i] = GlobalFunctions.CreateObjectOutOfWorld(new ResourceKey(NameGuidMap.GetGuidByName(InstanceName), 0x319E4F1D, GroupId));
+                }
             }
             return results;
         }
