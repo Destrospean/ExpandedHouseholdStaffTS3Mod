@@ -50,6 +50,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
 
             public override void Init(CustomServiceSituation parent)
             {
+                parent.MoveAllPossibleToTargetInventory();
                 CustomService service = (CustomService)parent.Service;
                 DebugUtils.TryDisplayScriptError(() => mAlarmHandle = AlarmManager.AddAlarm(service.DelayBeforeLeaving, TimeUnit.Minutes, TimeToRoute, service.Profile.Name + " waiting to leave", AlarmType.DeleteOnReset, parent.Worker));
             }
@@ -375,7 +376,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                 }
                 Lot.EffectiveHousehold.ModifyFamilyFunds(-totalCost);
             }
-            mProtectedInventory = Worker.Inventory.FindAll<IGameObject>(false);
+            MoveAllPossibleToTargetInventory();
             mbHasCharged = true;
             if (callbackOnCompletion != null)
             {
