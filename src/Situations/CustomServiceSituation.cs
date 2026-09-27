@@ -429,6 +429,10 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
 
         public void MoveAllPossibleToTargetInventory()
         {
+            if (mProtectedInventory == null)
+            {
+                mProtectedInventory = Worker.Inventory.FindAll<IGameObject>(false);
+            }
             Worker.Inventory.FindAll<IGameObject>(true, (IGameObject gameObject, object customData) => !mProtectedInventory.Contains(gameObject) && gameObject.ObjectOwnerComponent?.Thief != Worker && !Lot.EffectiveHousehold.Sims.Contains(gameObject.ObjectOwnerComponent?.GameObjectStolenFrom as Sim) && gameObject.ObjectOwnerComponent?.GameObjectStolenFrom != Lot && !((gameObject as MusicalInstrument)?.IsInBeingPlayedInteraction ?? false)).ForEach(x => TryMoveToTargetInventory(x));
         }
 
