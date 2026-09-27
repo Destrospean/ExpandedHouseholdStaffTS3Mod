@@ -519,7 +519,14 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
                     }
                     if (sim.Inventory != null)
                     {
-                        //sim.Inventory.DestroyItems();
+                        sim.Inventory.DestroyItems();
+                        foreach (IGameObject inventoryObject in sim.Inventory.FindAll<IGameObject>(true))
+                        {
+                            if (inventoryObject.ObjectOwnerComponent?.GameObjectStolenFrom == null)
+                            {
+                                inventoryObject.Destroy();
+                            }
+                        }
                         foreach (InventoryObjectCreationParameters inventoryObjectCreationParameters in Profile.Inventory)
                         {
                             IGameObject dummyItem = inventoryObjectCreationParameters.Instantiate();

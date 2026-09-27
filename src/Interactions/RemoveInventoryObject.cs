@@ -4,6 +4,7 @@ using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Utilities;
+using Sims3.Gameplay.Destrospean.Utils;
 using Sims3.SimIFace;
 using Destrospean.Misc;
 using Destrospean.Utils;
@@ -41,18 +42,21 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
 
         public override bool Run()
         {
-            IServiceProfile[] profiles;
-            if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable && x.Inventory.Count > 0).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name"), 1))
-            {
-                InventoryObjectCreationParameters[] inventoryObjects;
-                if (ServiceUtils.TryUIGetSelectedInventoryObjects(out inventoryObjects, profiles[0].Inventory.ToArray(), Localization.LocalizeString(LocalizationKey + ":Name")))
+            DebugUtils.TryDisplayScriptError(() =>
                 {
-                    foreach (InventoryObjectCreationParameters inventoryObjectCreationParameters in inventoryObjects)
+                    IServiceProfile[] profiles;
+                    if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable && x.Inventory.Count > 0).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name"), 1))
                     {
-                        profiles[0].Inventory.Remove(inventoryObjectCreationParameters);
+                        InventoryObjectCreationParameters[] inventoryObjects;
+                        if (ServiceUtils.TryUIGetSelectedInventoryObjects(out inventoryObjects, profiles[0].Inventory.ToArray(), Localization.LocalizeString(LocalizationKey + ":Name")))
+                        {
+                            foreach (InventoryObjectCreationParameters inventoryObjectCreationParameters in inventoryObjects)
+                            {
+                                profiles[0].Inventory.Remove(inventoryObjectCreationParameters);
+                            }
+                        }
                     }
-                }
-            }
+                });
             return true;
         }
     }

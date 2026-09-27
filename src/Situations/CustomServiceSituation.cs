@@ -8,6 +8,7 @@ using Sims3.Gameplay.Core;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
+using Sims3.Gameplay.Objects.HobbiesSkills;
 using Sims3.Gameplay.Objects.Vehicles;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Socializing;
@@ -99,7 +100,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
 
             public void OnFinished(Sim actor, float x)
             {
-                actor.Service.ClearServiceForLot(Parent.Lot);
+                actor.Service.ClearServiceForLot(Lot);
                 actor.Service.EndService(actor.SimDescription);
             }
         }
@@ -136,17 +137,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                     bool retVal;
                     return !DebugUtils.TryDisplayScriptError(() =>
                         {
-                            if (Parent.mInventoryBeforeSituation == null)
-                            {
-                                Parent.mInventoryBeforeSituation = new List<IGameObject>(Parent.Worker.Inventory.FindAllOfType(typeof(IGameObject)));
-                            }
-                            foreach (IGameObject gameObject in Parent.Worker.Inventory.FindAllOfType(typeof(IGameObject)))
-                            {
-                                if (!Parent.mInventoryBeforeSituation.Contains(gameObject) && !gameObject.InUse && gameObject.ObjectOwnerComponent?.GameObjectStolenFrom == null)
-                                {
-                                    Parent.TryAddToInventory(gameObject); 
-                                }
-                            }
+                            Parent.MoveAllPossibleToTargetInventory();
                             CustomService service = Parent.Service as CustomService;
                             if (service?.Profile.IsScaredOfBonehilda ?? false)
                             {
@@ -169,10 +160,9 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                                     return false;
                                 }
                             }
-                            InteractionQueue interactionQueue = Parent.Worker.InteractionQueue;
-                            if (interactionQueue != null)
+                            if (Parent.Worker.InteractionQueue != null)
                             {
-                                InteractionInstance headInteraction = interactionQueue.GetHeadInteraction();
+                                InteractionInstance headInteraction = Parent.Worker.InteractionQueue.GetHeadInteraction();
                                 if (headInteraction != null && service != null && headInteraction.SatisfiesCommodity(service.ServiceMotive))
                                 {
                                     return true;
@@ -248,7 +238,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             public void OnFinished(Sim actor, float x)
             {
                 actor.UnrequestWalkStyle(Sim.WalkStyle.OnFire);
-                actor.Service.ClearServiceForLot(Parent.Lot);
+                actor.Service.ClearServiceForLot(Lot);
                 actor.Service.EndService(actor.SimDescription);
             }
         }
@@ -305,6 +295,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             {
                 DebugUtils.TryDisplayScriptError(() =>
                     {
+                        Parent.mProtectedInventory = Parent.Worker.Inventory.FindAll<IGameObject>(false);
                         Parent.OnServiceStarting();
                         CustomService service = (CustomService)Parent.Service;
                         RouteToLot<CustomServiceSituation, StartPerformingDuties> routeToLot = string.IsNullOrEmpty(service.Profile.CarInstanceName) ? new WalkToLot<CustomServiceSituation, StartPerformingDuties>(Parent) : new RouteToLot<CustomServiceSituation, StartPerformingDuties>(Parent);
@@ -314,7 +305,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             }
         }
 
-        List<IGameObject> mInventoryBeforeSituation;
+        List<IGameObject> mProtectedInventory;
 
         public override bool IsLiveInService
         {
@@ -328,11 +319,11 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
         {
             get
             {
-                if (Lot.Household == null)
+                if (Lot.EffectiveHousehold == null)
                 {
                     return true;
                 }
-                foreach (Sim sim in Lot.Household.Sims)
+                foreach (Sim sim in Lot.EffectiveHousehold.Sims)
                 {
                     if (sim.SimDescription.YoungAdultOrAbove)
                     {
@@ -384,6 +375,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                 }
                 Lot.EffectiveHousehold.ModifyFamilyFunds(-totalCost);
             }
+            mProtectedInventory = Worker.Inventory.FindAll<IGameObject>(false);
             mbHasCharged = true;
             if (callbackOnCompletion != null)
             {
@@ -433,6 +425,11 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             base.OnArriveOnLot();
         }
         */
+
+        public void MoveAllPossibleToTargetInventory()
+        {
+            Worker.Inventory.FindAll<IGameObject>(true, (IGameObject gameObject, object customData) => !mProtectedInventory.Contains(gameObject) && gameObject.ObjectOwnerComponent?.Thief != Worker && !Lot.EffectiveHousehold.Sims.Contains(gameObject.ObjectOwnerComponent?.GameObjectStolenFrom as Sim) && gameObject.ObjectOwnerComponent?.GameObjectStolenFrom != Lot && !((gameObject as MusicalInstrument)?.IsInBeingPlayedInteraction ?? false)).ForEach(x => TryMoveToTargetInventory(x));
+        }
 
         public override void SetMotivesAndCommodities()
         {
@@ -498,23 +495,11 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                 });
         }
 
-        public bool TryAddToInventory(IGameObject gameObject)
+        public bool TryMoveToTargetInventory(IGameObject gameObject)
         {
-            if (Lot.EffectiveHousehold != null && !(Lot.EffectiveHousehold.SharedFridgeInventory?.Inventory?.TryToAdd(gameObject) ?? false))
+            if (Lot.EffectiveHousehold != null && !(FindTargetSimInventory(Lot.EffectiveHousehold)?.TryToMove(gameObject) ?? false))
             {
-                if (!(FindTargetSimInventory(Lot.EffectiveHousehold)?.TryToAdd(gameObject) ?? false))
-                {
-                    return Lot.EffectiveHousehold.SharedFamilyInventory?.Inventory?.TryToAdd(gameObject) ?? false ? true : TryMoveToInventory(gameObject);
-                }
-            }
-            return true;
-        }
-
-        public bool TryMoveToInventory(IGameObject gameObject)
-        {
-            if (Lot.EffectiveHousehold != null && !(Lot.EffectiveHousehold.SharedFridgeInventory?.Inventory?.TryToMove(gameObject) ?? false))
-            {
-                if (!(FindTargetSimInventory(Lot.EffectiveHousehold)?.TryToMove(gameObject) ?? false))
+                if (!(Lot.EffectiveHousehold.SharedFridgeInventory?.Inventory?.TryToMove(gameObject) ?? false))
                 {
                     return Lot.EffectiveHousehold.SharedFamilyInventory?.Inventory?.TryToMove(gameObject) ?? false;
                 }
