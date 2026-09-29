@@ -112,7 +112,7 @@ namespace Destrospean.ExpandedHouseholdStaff
 
         public static bool IsInServicePreventingSocialization(Sim target)
         {
-            return ((target.Service as CustomService)?.Profile.PreventSocialization ?? true) && target.Service as IAmSociableService == null && IsInServicePreventingSocialization_Original(target);
+            return ((target.Service as CustomService)?.Profile.PreventSocialization ?? target.Service as IAmSociableService == null) && IsInServicePreventingSocialization_Original(target);
         }
 
         public static bool IsInServicePreventingSocialization_Original(Sim target)
