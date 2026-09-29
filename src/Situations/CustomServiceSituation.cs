@@ -450,8 +450,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             if (sim.Motives.IsLonely() && !attendingToChild && !preparingFood && (sim.Conversation == null || !sim.Conversation.ContainsSim(Worker)))
             {
                 Worker.AddExitReason(ExitReason.Finished);
-                InteractionPriority priority = new InteractionPriority(InteractionPriorityLevel.NonCriticalNPCBehavior, GetNewInteractionPriorityValue());
-                Worker.InteractionQueue.AddNext(new SocialInteractionA.Definition("Chat", new string[0], null, false).CreateInstance(sim, Worker, priority, true, true));
+                Worker.InteractionQueue.AddNext(new SocialInteractionA.Definition("Chat", new string[0], null, false).CreateInstance(sim, Worker, new InteractionPriority(InteractionPriorityLevel.NonCriticalNPCBehavior, GetNewInteractionPriorityValue()), true, true));
                 return true;
             }
             return false;
