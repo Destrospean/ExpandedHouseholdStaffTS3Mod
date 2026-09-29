@@ -172,14 +172,15 @@
                     "/ServiceProfileFlag":
                         ":LiveInService": "Live-In Service"
                         ":QuietAroundSleepingSims": "Quiet Around Sleeping Sims"
-                        ":ReportsFires": "Reports Fires to the Fire Department"
+                        ":ReportsFires": "Report Fires to the Fire Department"
                         ":ScaredOfBonehilda": "Scared of Bonehilda"
-                        ":WaitsBeforePuttingAwayLeftovers": "Waits Before Putting Away Leftovers"
+                        ":WaitsBeforePuttingAwayLeftovers": "Wait Before Putting Away Leftovers"
                         ":Recurrent": "Recurring"
                         ":EmergencyService": "Emergency Service"
                         ":AlwaysTryToSendTheSameSim": "Always Try to Send the Same Sim"
-                        ":BabysittingService": "Cares for Babies, Toddlers, and Children"
+                        ":BabysittingService": "Care for Babies, Toddlers, and Children"
                         ":RequireBeInSameRoom": "Must Be in the Same Room As Babies, Toddlers, and Children"
+                        ":PreventSocialization": "Prevent Socializing"
                     "/Enabled":
                         ":True": "True"
                         ":False": "False"

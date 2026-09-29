@@ -5,15 +5,16 @@ namespace Destrospean.Enums.ExpandedHouseholdStaff
     [Flags]
     public enum ServiceProfileFlags : ulong
     {
-        LiveInService = 0x1uL,
-        QuietAroundSleepingSims = 0x2uL,
-        ReportsFires = 0x4uL,
-        ScaredOfBonehilda = 0x8uL,
-        WaitsBeforePuttingAwayLeftovers = 0x10uL,
-        Recurrent = 0x20uL,
-        EmergencyService = 0x40uL,
-        AlwaysTryToSendTheSameSim = 0x80uL,
-        BabysittingService = 0x100uL,
-        RequireBeInSameRoom = 0x200uL
+        LiveInService = 0x1,
+        QuietAroundSleepingSims = 0x2,
+        ReportsFires = 0x4,
+        ScaredOfBonehilda = 0x8,
+        WaitsBeforePuttingAwayLeftovers = 0x10,
+        Recurrent = 0x20,
+        EmergencyService = 0x40,
+        AlwaysTryToSendTheSameSim = 0x80,
+        BabysittingService = 0x100,
+        RequireBeInSameRoom = 0x200,
+        PreventSocialization = 0x400
     }
 }

@@ -2,6 +2,7 @@ using Sims3.Gameplay;
 using Sims3.Gameplay.Abstracts;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.Autonomy;
+using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Core;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Interfaces;
@@ -36,7 +37,12 @@ namespace Destrospean.ExpandedHouseholdStaff
         {
             CommonUtils.ReplaceMethod<Main, Inventory>("AddInternal_Original", "AddInternal");
             CommonUtils.ReplaceMethod<Inventory, Main>("AddInternal");
+            CommonUtils.ReplaceMethod<Main, SocialComponent>("IsInServicePreventingSocialization_Original", "IsInServicePreventingSocialization");
             CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
+            CommonUtils.ReplaceMethod<Main, SimDescription>("IsPerformingAnyServiceOfType_Original", "IsPerformingAnyServiceOfType");
+            CommonUtils.ReplaceMethod<SimDescription, Main>("IsPerformingAnyServiceOfType");
+            CommonUtils.ReplaceMethod<Main, CleanableComponent>("PutAwayLeftOversScoringFunction_Original", "PutAwayLeftOversScoringFunction");
+            CommonUtils.ReplaceMethod<CleanableComponent, Main>("PutAwayLeftOversScoringFunction");
             InteractionObjectTypeUtils.InitTypes();
             if (Array.Exists(AppDomain.CurrentDomain.GetAssemblies(), x => x.GetName().Name == "NRaasMasterController"))
             {
@@ -104,23 +110,41 @@ namespace Destrospean.ExpandedHouseholdStaff
             throw new NotImplementedException();
         }
 
-        [ScoringFunction]
-        public static float ExpandedHouseholdStaff_PutAwayLeftOversScoringFunction(Sim actor, InteractionObjectPair iop)
+        public static bool IsInServicePreventingSocialization(Sim target)
+        {
+            return (target.Service as CustomService)?.Profile.PreventSocialization ?? target.Service as IAmSociableService == null && IsInServicePreventingSocialization_Original(target);
+        }
+
+        public static bool IsInServicePreventingSocialization_Original(Sim target)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsPerformingAnyServiceOfType(ServiceType serviceType)
+        {
+            return serviceType == ServiceType.ChildCareServices && ((((SimDescription)(object)this).Service as CustomService)?.Profile.IsBabysittingService ?? false) || IsPerformingAnyServiceOfType_Original(serviceType);
+        }
+
+        public bool IsPerformingAnyServiceOfType_Original(ServiceType serviceType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static float PutAwayLeftOversScoringFunction(Sim actor, InteractionObjectPair iop)
         {
             Type serviceDataType = actor.Service.GetType();
-            bool serviceIsFromThisMod = actor.Service.IsFromExpandedHouseholdStaff();
             PropertyInfo timeWaitBeforePutawayLeftoversProperty = serviceDataType.GetProperty("TimeWaitBeforePutawayLeftovers");
-            if (!serviceIsFromThisMod && actor.Service.ServiceType == ServiceType.Butler || serviceIsFromThisMod && (bool)serviceDataType.GetProperty("WaitsBeforePuttingAwayLeftovers").GetValue(actor.Service, null) && timeWaitBeforePutawayLeftoversProperty != null && timeWaitBeforePutawayLeftoversProperty.PropertyType == typeof(float))
+            if (actor.Service.IsFromExpandedHouseholdStaff() && (bool)serviceDataType.GetProperty("WaitsBeforePuttingAwayLeftovers").GetValue(actor.Service, null) && timeWaitBeforePutawayLeftoversProperty != null && timeWaitBeforePutawayLeftoversProperty.PropertyType == typeof(float))
             {
                 IPreparedFood preparedFood = iop.Target as IPreparedFood;
                 return preparedFood != null && SimClock.ElapsedTime(TimeUnit.Minutes) - preparedFood.TimeOfCreation <= (float)timeWaitBeforePutawayLeftoversProperty.GetValue(null, null) ? 0 : 1;
             }
-            return CleanableComponent.CleaningScoringFunction(actor, iop);
+            return PutAwayLeftOversScoringFunction_Original(actor, iop);
         }
 
-        public static bool IsInServicePreventingSocialization(Sim target)
+        public static float PutAwayLeftOversScoringFunction_Original(Sim actor, InteractionObjectPair iop)
         {
-            return target.IsPerformingAService && !VisitSituation.IsSocializing(target) && target.Service as Butler == null && target.Service as IAmSociableService == null;
+            throw new NotImplementedException();
         }
     }
 }

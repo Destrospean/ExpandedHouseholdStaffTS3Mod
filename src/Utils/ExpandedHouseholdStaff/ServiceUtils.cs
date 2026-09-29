@@ -675,6 +675,28 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
             }
 
+            /// <summary>
+            /// If set to <c>true</c>, the service NPC will have standard social interactions unavailable.
+            /// </summary>
+            public bool PreventSocialization
+            {
+                get
+                {
+                    return (mFlags & (ulong)ServiceProfileFlags.PreventSocialization) != 0uL;
+                }
+                set
+                {
+                    if (value)
+                    {
+                        mFlags |= (ulong)ServiceProfileFlags.PreventSocialization;
+                    }
+                    else
+                    {
+                        mFlags &= ulong.MaxValue ^ (ulong)ServiceProfileFlags.PreventSocialization;
+                    }
+                }
+            }
+
             // <summary>
             /// If the service NPC's relationship with any YAE falls below this level, they will quit.
             /// </summary>

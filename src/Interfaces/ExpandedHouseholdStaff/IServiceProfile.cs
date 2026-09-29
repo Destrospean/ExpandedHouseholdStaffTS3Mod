@@ -236,6 +236,15 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         }
 
         /// <summary>
+        /// If set to <c>true</c>, the service NPC will have standard social interactions unavailable.
+        /// </summary>
+        bool PreventSocialization
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// If the service NPC's relationship with any YAE falls below this level, they will quit.
         /// </summary>
         float RelationshipLevelForQuit
