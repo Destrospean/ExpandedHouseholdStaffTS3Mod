@@ -21,7 +21,6 @@ using Sims3.Gameplay.Destrospean.Utils;
 using Sims3.SimIFace;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Destrospean.ExpandedHouseholdStaff.Interactions;
 using Destrospean.Utils;
 using Destrospean.Utils.ExpandedHouseholdStaff;
