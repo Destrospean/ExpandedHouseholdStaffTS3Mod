@@ -41,8 +41,6 @@ namespace Destrospean.ExpandedHouseholdStaff
             CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
             CommonUtils.ReplaceMethod<Main, SimDescription>("IsPerformingAnyServiceOfType_Original", "IsPerformingAnyServiceOfType");
             CommonUtils.ReplaceMethod<SimDescription, Main>("IsPerformingAnyServiceOfType");
-            CommonUtils.ReplaceMethod<Main, CleanableComponent>("PutAwayLeftOversScoringFunction_Original", "PutAwayLeftOversScoringFunction");
-            CommonUtils.ReplaceMethod<CleanableComponent, Main>("PutAwayLeftOversScoringFunction");
             InteractionObjectTypeUtils.InitTypes();
             if (Array.Exists(AppDomain.CurrentDomain.GetAssemblies(), x => x.GetName().Name == "NRaasMasterController"))
             {
@@ -130,21 +128,21 @@ namespace Destrospean.ExpandedHouseholdStaff
             throw new NotImplementedException();
         }
 
-        public static float PutAwayLeftOversScoringFunction(Sim actor, InteractionObjectPair iop)
+        [ScoringFunction]
+        public static float PutAwayLeftOversScoringFunction_EHSPatch(Sim actor, InteractionObjectPair iop)
         {
-            Type serviceDataType = actor.Service.GetType();
-            PropertyInfo timeWaitBeforePutawayLeftoversProperty = serviceDataType.GetProperty("TimeWaitBeforePutawayLeftovers");
-            if (actor.Service.IsFromExpandedHouseholdStaff() && (bool)serviceDataType.GetProperty("WaitsBeforePuttingAwayLeftovers").GetValue(actor.Service, null) && timeWaitBeforePutawayLeftoversProperty != null && timeWaitBeforePutawayLeftoversProperty.PropertyType == typeof(float))
-            {
-                IPreparedFood preparedFood = iop.Target as IPreparedFood;
-                return preparedFood != null && SimClock.ElapsedTime(TimeUnit.Minutes) - preparedFood.TimeOfCreation <= (float)timeWaitBeforePutawayLeftoversProperty.GetValue(null, null) ? 0 : 1;
-            }
-            return PutAwayLeftOversScoringFunction_Original(actor, iop);
-        }
-
-        public static float PutAwayLeftOversScoringFunction_Original(Sim actor, InteractionObjectPair iop)
-        {
-            throw new NotImplementedException();
+            float retVal = 1f;
+            DebugUtils.TryDisplayScriptError(() =>
+                {
+                    CustomService customService = actor.Service as CustomService;
+                    if (actor.IsPerformingAService && (customService?.WaitsBeforePuttingAwayLeftovers ?? false))
+                    {
+                        IPreparedFood preparedFood = iop.Target as IPreparedFood;
+                        return preparedFood != null && SimClock.ElapsedTime(TimeUnit.Minutes) - preparedFood.TimeOfCreation <= customService.TimeWaitBeforePutawayLeftovers ? 0f : 1f;
+                    }
+                    return CleanableComponent.PutAwayLeftOversScoringFunction(actor, iop);
+                }, out retVal);
+            return retVal;
         }
     }
 }
