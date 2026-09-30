@@ -77,28 +77,36 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services
 
             public override bool Run()
             {
-                Sim simActiveOnLot = ((Definition)InteractionDefinition).Service.GetSimActiveOnLot(Actor.LotHome);
-                if (simActiveOnLot != null)
-                {
-                    Bed bed = Target.FindOwnedBed(simActiveOnLot);
-                    if (bed == Target)
+                bool retVal;
+                return !DebugUtils.TryDisplayScriptError(() =>
                     {
-                        Target.RelinquishOwnership(simActiveOnLot);
-                        return true;
-                    }
-                    if (Target.PartComponent != null && Target.PartComponent.PartDataList != null)
-                    {
-                        foreach (BedData value in Target.PartComponent.PartDataList.Values)
+                        CustomService service = ((Definition)InteractionDefinition).Service;
+                        Sim simActiveOnLot = service.GetSimActiveOnLot(Actor.LotHome);
+                        if (simActiveOnLot != null)
                         {
-                            if (value != null)
+                            Bed bed = Target.FindOwnedBed(simActiveOnLot);
+                            if (bed == Target)
                             {
-                                Target.ClaimOwnership(simActiveOnLot, value);
-                                break;
+                                Target.RelinquishOwnership(simActiveOnLot);
+                                return true;
+                            }
+                            if (Target.PartComponent != null && Target.PartComponent.PartDataList != null)
+                            {
+                                foreach (BedData value in Target.PartComponent.PartDataList.Values)
+                                {
+                                    if (value != null)
+                                    {
+                                        ServiceType currentServiceType = service.ServiceType;
+                                        service.Profile.ServiceType = ServiceType.Butler;
+                                        Target.ClaimOwnership(simActiveOnLot, value);
+                                        service.Profile.ServiceType = currentServiceType;
+                                        break;
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-                return true;
+                        return true;
+                    }, out retVal) && retVal;
             }
         }
 

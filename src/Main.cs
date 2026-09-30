@@ -119,7 +119,8 @@ namespace Destrospean.ExpandedHouseholdStaff
 
         public bool IsPerformingAnyServiceOfType(ServiceType serviceType)
         {
-            return serviceType == ServiceType.ChildCareServices && ((((SimDescription)(object)this).Service as CustomService)?.Profile.IsBabysittingService ?? false) || IsPerformingAnyServiceOfType_Original(serviceType);
+            CustomService customService = ((SimDescription)(object)this).Service as CustomService;
+            return serviceType == ServiceType.Butler && (customService?.Profile.IsLiveInService ?? false) || serviceType == ServiceType.ChildCareServices && (customService?.Profile.IsBabysittingService ?? false) || IsPerformingAnyServiceOfType_Original(serviceType);
         }
 
         public bool IsPerformingAnyServiceOfType_Original(ServiceType serviceType)
