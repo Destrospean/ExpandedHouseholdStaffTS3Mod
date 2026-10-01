@@ -9,6 +9,7 @@ using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.ObjectComponents;
 using Sims3.Gameplay.Objects.Electronics;
+using Sims3.Gameplay.Objects.Gardening;
 using Sims3.Gameplay.Objects.Vehicles;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Situations;
@@ -36,6 +37,8 @@ namespace Destrospean.ExpandedHouseholdStaff
         {
             CommonUtils.ReplaceMethod<Main, Inventory>("AddInternal_Original", "AddInternal");
             CommonUtils.ReplaceMethod<Inventory, Main>("AddInternal");
+            CommonUtils.ReplaceMethod<Main, Plant>("GardenInteractionLotValidityTest_Original", "GardenInteractionLotValidityTest");
+            CommonUtils.ReplaceMethod<Plant, Main>("GardenInteractionLotValidityTest");
             CommonUtils.ReplaceMethod<Main, SocialComponent>("IsInServicePreventingSocialization_Original", "IsInServicePreventingSocialization");
             CommonUtils.ReplaceMethod<SocialComponent, Main>("IsInServicePreventingSocialization");
             CommonUtils.ReplaceMethod<Main, SimDescription>("IsPerformingAnyServiceOfType_Original", "IsPerformingAnyServiceOfType");
@@ -103,6 +106,16 @@ namespace Destrospean.ExpandedHouseholdStaff
         }
 
         public InventoryItem AddInternal_Original(IGameObject gameObject, uint stackNumber, InventoryStack stack, bool testPurge)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GardenInteractionLotValidityTest(Sim sim)
+        {
+            return (sim?.Service?.IsFromExpandedHouseholdStaff() ?? false) && ServiceSituation.FindServiceSituationInvolving(sim)?.Lot == ((Plant)(object)this).LotCurrent || GardenInteractionLotValidityTest_Original(sim);
+        }
+
+        public bool GardenInteractionLotValidityTest_Original(Sim sim)
         {
             throw new NotImplementedException();
         }

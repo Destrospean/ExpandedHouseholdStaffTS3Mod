@@ -153,7 +153,11 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                                     }
                                 }
                             }
-                            if (Parent.Worker.CurrentInteraction != null && Parent.Worker.CurrentInteraction.GetPriority().Level <= InteractionPriorityLevel.Autonomous)
+                            if (Parent.Worker.CurrentInteraction == null)
+                            {
+                                PushSwitchToServiceUniform();
+                            }
+                            else if (Parent.Worker.CurrentInteraction.GetPriority().Level <= InteractionPriorityLevel.Autonomous)
                             {
                                 InteractionInstance interactionInstance = AutonomyUtils.FindBestAction(Parent.Worker.Autonomy);
                                 if (interactionInstance != null && Parent.IsInteractionBetterThanCurrent(interactionInstance))
@@ -181,13 +185,6 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
 
             public PerformDuties(CustomServiceSituation parent) : base(parent)
             {
-            }
-
-            public override void Init(CustomServiceSituation parent)
-            {
-                CustomService service = (CustomService)parent.Service;
-                parent.Worker.GreetSimOnLot(parent.Lot);
-                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(service.CheckTime, TimeUnit.Minutes, CheckForDuties, service.CheckTime, TimeUnit.Minutes, "Time for " + service.Profile.Name + " to check if everything is done", AlarmType.AlwaysPersisted));
             }
 
             public void CheckForChild()
@@ -281,6 +278,23 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                         AlarmManager.RemoveAlarm(mAlarmHandle);
                         base.CleanUp();
                     });
+            }
+
+            public override void Init(CustomServiceSituation parent)
+            {
+                CustomService service = (CustomService)parent.Service;
+                parent.Worker.GreetSimOnLot(parent.Lot);
+                DebugUtils.TryDisplayScriptError(() => mAlarmHandle = parent.Worker.AddAlarmRepeating(service.CheckTime, TimeUnit.Minutes, CheckForDuties, service.CheckTime, TimeUnit.Minutes, "Time for " + service.Profile.Name + " to check if everything is done", AlarmType.AlwaysPersisted));
+            }
+
+            public void PushSwitchToServiceUniform()
+            {
+                CustomService service = Parent.Service as CustomService;
+                OutfitAssignmentUtils.OutfitAssignment outfitAssignment;
+                if (service?.Profile != null && OutfitAssignmentUtils.TryGetGlobalOutfitAssignment(Parent.Worker.SimDescription, service.Profile, out outfitAssignment) && Parent.Worker.CurrentOutfitCategory != OutfitCategories.Career)
+                {
+                    Parent.Worker.PushSwitchToOutfitInteraction(Sim.ClothesChangeReason.Force, OutfitCategories.Career, new InteractionPriority(InteractionPriorityLevel.Autonomous, 50f));
+                }
             }
         }
 
@@ -510,7 +524,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
         public override void FreezeMotives()
         {
             Worker.Autonomy.Motives.MaxEverything();
-            Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Energy, CommodityKind.Hygiene);
+            Worker.Autonomy.Motives.FreezeDecayEverythingExcept(Service.ServiceMotives.ToArray());
         }
 
         public List<Sim> GetExtendedHouseholdSims()
@@ -545,7 +559,6 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
         {
             CustomService service = (CustomService)Service;
             CommonUtils.UpdateMotiveTunings(Worker, service.ServiceMotive);
-            Worker.Motives.MaxEverything();
             Worker.WorkMotive = service.ServiceMotive;
             foreach (CommodityKind motive in service.ServiceMotives)
             {
