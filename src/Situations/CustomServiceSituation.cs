@@ -524,7 +524,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
         public override void FreezeMotives()
         {
             Worker.Autonomy.Motives.MaxEverything();
-            Worker.Autonomy.Motives.FreezeDecayEverythingExcept(Service.ServiceMotives.ToArray());
+            Worker.Autonomy.Motives.FreezeDecayEverythingExcept(CommodityKind.Energy, CommodityKind.Hygiene);
         }
 
         public List<Sim> GetExtendedHouseholdSims()
