@@ -93,7 +93,9 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
                             {
                                 if (value != null)
                                 {
+                                    Instance.mServiceType = ServiceType.Butler;
                                     Target.ClaimOwnership(simActiveOnLot, value);
+                                    Instance.mServiceType = default(ServiceType);
                                     break;
                                 }
                             }
@@ -105,6 +107,8 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
         }
 
         readonly List<ServiceUtils.CommodityChange> mOutputs = new List<ServiceUtils.CommodityChange>();
+
+        ServiceType mServiceType;
 
         public static Type DerivedType
         {
@@ -182,7 +186,7 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
         {
             get
             {
-                return (ServiceType)(DerivedType.GetProperty("ServiceTypeStatic")?.GetValue(null, null) ?? ServiceTypeStatic);
+                return mServiceType == default(ServiceType) ? (ServiceType)(DerivedType.GetProperty("ServiceTypeStatic")?.GetValue(null, null) ?? ServiceTypeStatic) : mServiceType;
             }
         }
 

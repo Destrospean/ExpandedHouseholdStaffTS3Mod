@@ -119,17 +119,15 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
             }
         }
 
+        AlarmHandle mCheckForFireAlarmHandle = AlarmHandle.kInvalidHandle;
+
         int mDateLastPaid;
 
-        AlarmHandle mCheckForFireAlarmHandle = AlarmHandle.kInvalidHandle;
+        bool mInformedFireDepartment;
 
         AlarmHandle mPayLiveInServiceAlarmHandle = AlarmHandle.kInvalidHandle;
 
         AlarmHandle mTimeToFinishAlarmHandle = AlarmHandle.kInvalidHandle;
-
-        bool mInformedFireDepartment;
-
-        public ulong LastInteractionId;
 
         public virtual float DelayBeforeArriving
         {
@@ -154,6 +152,8 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
                 return Service is IAmLiveInService;
             }
         }
+
+        public ulong LastInteractionId;
 
         public int NumDaysSinceLastPayment
         {
