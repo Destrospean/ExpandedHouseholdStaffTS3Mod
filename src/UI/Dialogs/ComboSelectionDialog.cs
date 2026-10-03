@@ -1,5 +1,6 @@
 ﻿using Sims3.SimIFace;
 using Sims3.UI;
+using System;
 ﻿using System.Collections.Generic;
 
 namespace Destrospean.UI.Dialogs
@@ -46,8 +47,8 @@ namespace Destrospean.UI.Dialogs
             float y = position.y;
             if (x < 0 && y < 0)
             {
-                x = (float)System.Math.Round((mModalDialogWindow.Parent.Area.Width - mModalDialogWindow.Area.Width) / 2);
-                y = (float)System.Math.Round((mModalDialogWindow.Parent.Area.Height - mModalDialogWindow.Area.Height) / 2);
+                x = (float)Math.Round((mModalDialogWindow.Parent.Area.Width - mModalDialogWindow.Area.Width) / 2);
+                y = (float)Math.Round((mModalDialogWindow.Parent.Area.Height - mModalDialogWindow.Area.Height) / 2);
             }
             mModalDialogWindow.Area = new Rect(x, y, x + mModalDialogWindow.Area.Width, y + mModalDialogWindow.Area.Height);
             mOkayButton = mModalDialogWindow.GetChildByID(3u, false) as Button;
