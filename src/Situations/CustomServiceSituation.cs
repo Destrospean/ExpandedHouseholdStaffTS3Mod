@@ -407,6 +407,14 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             }
         }
 
+        public override bool ReportsFires
+        {
+            get
+            {
+                return (Service as CustomService)?.Profile.ReportsFires ?? false;
+            }
+        }
+
         public bool RequireBeInSameRoom
         {
             get
