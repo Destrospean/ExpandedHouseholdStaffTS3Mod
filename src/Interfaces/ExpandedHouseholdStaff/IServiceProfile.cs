@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using Destrospean.Misc;
 using Destrospean.Utils.ExpandedHouseholdStaff;
+using Destrospean.Enums.ExpandedHouseholdStaff;
 
 namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
 {
@@ -415,6 +416,8 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
 
         void AddTraits(params TraitNames[] traits);
 
+        ServiceProfileFlags GetFlags();
+
         void RemoveActions(params ServiceUtils.ActiveTopicAction[] actions);
 
         void RemoveActions(Predicate<ServiceUtils.ActiveTopicAction> predicate);
@@ -442,5 +445,7 @@ namespace Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff
         void RemoveTraits(Predicate<TraitNames> predicate);
 
         void RemoveTraits(params TraitNames[] traits);
+
+        void SetFlags(ServiceProfileFlags flags);
     }
 }

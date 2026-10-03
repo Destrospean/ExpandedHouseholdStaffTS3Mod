@@ -614,7 +614,7 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
                         }
                         return;
                     }
-                    if (((ServiceUtils.ServiceProfile)service.Profile).GetUniformFromName)
+                    if ((service.Profile as ServiceUtils.ServiceProfile)?.GetUniformFromName ?? false)
                     {
                         base.SwitchWorkerToServiceOutfit();
                         return;

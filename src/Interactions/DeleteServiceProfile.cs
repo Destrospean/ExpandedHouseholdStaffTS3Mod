@@ -39,7 +39,7 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
 
         public override bool Run()
         {
-            ServiceUtils.TryUIRemoveServicesFromSaveGame();
+            ServiceUtils.TryUIRemoveServicesFromSaveGame(Localization.LocalizeString(LocalizationKey + ":Name"));
             return true;
         }
     }

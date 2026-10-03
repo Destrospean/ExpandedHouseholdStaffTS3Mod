@@ -470,7 +470,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             }
 
             /// <summary>
-            /// If set to <c>true</c>, this service charges <see cref="mCost"/> only if falsely called.
+            /// If set to <c>true</c>, this service charges <see cref="Cost"/> only if falsely called.
             /// </summary>
             public bool IsEmergencyService
             {
@@ -1276,8 +1276,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 DelayBeforeLeaving = profile.DelayBeforeLeaving,
                 DriveTime = profile.DriveTime,
                 ExtraWaitTimeAfterSocializing = profile.ExtraWaitTimeAfterSocializing,
-                GetUniformFromName = ((ServiceProfile)profile).GetUniformFromName,
-                GetUniformNameCallback = ((ServiceProfile)profile).GetUniformNameCallback,
+                GetUniformFromName = (profile as ServiceProfile)?.GetUniformFromName ?? false,
+                GetUniformNameCallback = (profile as ServiceProfile)?.GetUniformNameCallback,
                 HiddenTraits = profile.HiddenTraits,
                 Inventory = profile.Inventory.ConvertAll(x => new InventoryObjectCreationParameters(x.InstanceName, x.InstanceId, x.GroupId, x.Count, x.Preset)),
                 IsBabysittingService = profile.IsBabysittingService,
@@ -1308,14 +1308,14 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
         public static void FixUp(this IServiceProfile profile)
         {
-            IServiceProfile dummyProfile = new ServiceUtils.ServiceProfile("DummyService", "Dummy Service");
+            IServiceProfile dummyProfile = new ServiceProfile("DummyService", "Dummy Service");
             if (int.Parse(profile.VersionString) < 0)
             {
                 profile.DelayBeforeArriving = dummyProfile.DelayBeforeArriving;
                 profile.DelayBeforeLeaving = dummyProfile.DelayBeforeLeaving;
                 profile.ExtraWaitTimeAfterSocializing = dummyProfile.ExtraWaitTimeAfterSocializing;
             }
-            profile.VersionString = ServiceUtils.CurrentVersion.ToString();
+            profile.VersionString = CurrentVersion.ToString();
         }
 
         public static bool IsFromExpandedHouseholdStaff<Service>() where Service : Sims3.Gameplay.Services.Service
@@ -1442,7 +1442,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// Opens a series of dialogs to add an action to a service topic of the specified profile.
         /// </summary>
         /// <returns><c>true</c>, if the an action was added, <c>false</c> otherwise.</returns>
-        public static bool TryUIAddAction(this IServiceProfile profile)
+        public static bool TryUIAddAction(this IServiceProfile profile, string title)
         {
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
             string name = null;
@@ -1471,7 +1471,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                         }
                     }
                     ActiveTopicAction[] actions;
-                    if (!TryUIGetSelectedActions(out actions, allActions.ToArray(), Localization.LocalizeString(AddActiveTopicAction.LocalizationKey + ":Name"), 1))
+                    if (!TryUIGetSelectedActions(out actions, allActions.ToArray(), title, 1))
                     {
                         return false;
                     }
@@ -1636,7 +1636,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             string serviceMotiveName = "Be" + newProfile.Name;
             while (ServiceMotiveExists(newProfile.ServiceMotive))
             {
-                serviceMotiveName = "Be" + newProfile.Name + "_" + DownloadContent.GenerateGUID();
                 newProfile.ServiceMotive = CommonUtils.GetCommodityKind(serviceMotiveName, CommodityKindType.Motive);
             }
             CommonUtils.AddEnumValue<CommodityKind>(serviceMotiveName, newProfile.ServiceMotive);
@@ -1683,7 +1682,6 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 serviceMotiveName = "Be" + profile.Name;
                 while (ServiceMotiveExists(profile.ServiceMotive))
                 {
-                    serviceMotiveName = "Be" + profile.Name + "_" + DownloadContent.GenerateGUID();
                     profile.ServiceMotive = CommonUtils.GetCommodityKind(serviceMotiveName, CommodityKindType.Motive);
                 }
                 CommonUtils.AddEnumValue<CommodityKind>(serviceMotiveName, profile.ServiceMotive);
@@ -1711,10 +1709,9 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         public static bool TryUIEditServiceProfile(this IServiceProfile profile, bool saveWhenCancelled = false)
         {
             string entryKey = typeof(ObjectPickerDialog).GetLocalizationKey().Replace("ObjectPickerDialog", "");
-            ServiceProfile serviceProfile = (ServiceProfile)profile;
 
             CASAgeGenderFlags age = profile.ValidAges;
-            string costString = serviceProfile.Cost.ToString();
+            string costString = profile.ServiceTuning.kCost.ToString();
             string[] delaysAsStrings = new[]
                 {
                     profile.DelayBeforeArriving.ToString(),
@@ -1730,9 +1727,9 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     profile.CancelledWhileActiveMessage
                 };
             CommodityKind[] motives = profile.Motives.ToArray();
-            int potentialTraitCount = profile.PotentialTraitCount;
+            string potentialTraitCountString = profile.PotentialTraitCount.ToString();
             List<Trait> potentialTraits = profile.PotentialTraits.ConvertAll(x => TraitManager.GetTraitFromDictionary(x));
-            ServiceProfileFlags serviceProfileFlags = serviceProfile.GetFlags();
+            ServiceProfileFlags serviceProfileFlags = profile.GetFlags();
             List<SkillLevelPair> skills = profile.Skills.ConvertAll(x => new SkillLevelPair(x.SkillName, x.SkillLevel));
             string timeToSpendWorkingString = profile.TimeToSpendWorking.ToString();
             string title = profile.Title;
@@ -1911,13 +1908,13 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 {
                     if (potentialTraits.Count > 0)
                     {
-                        string potentialTraitCountString = StringInputDialog.Show(Localization.LocalizeString(entryKey + "PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKey + "PotentialTraitCountDialog:Prompt"), potentialTraitCount.ToString(), -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
-                        if (potentialTraitCountString == null)
+                        string tempPotentialTraitCountString = StringInputDialog.Show(Localization.LocalizeString(entryKey + "PotentialTraitCountDialog:Title"), Localization.LocalizeString(entryKey + "PotentialTraitCountDialog:Prompt"), potentialTraitCountString, -1, ThumbnailKey.kInvalidThumbnailKey, new Vector2(-1f, -1f), StringInputDialog.Validation.Number, false, ModalDialog.PauseMode.PauseSimulator, false, true);
+                        if (tempPotentialTraitCountString == null)
                         {
                             step--;
                             continue;
                         }
-                        potentialTraitCount = int.Parse(potentialTraitCountString);
+                        potentialTraitCountString = tempPotentialTraitCountString;
                     }
                     step++;
                 }
@@ -1961,13 +1958,13 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 profile.ExtraWaitTimeAfterSocializing = ParserFunctions.ParseFloat(delaysAsStrings[2], profile.ExtraWaitTimeAfterSocializing);
                 profile.ValidAges = age;
                 profile.ValidGenders = gender;
-                serviceProfile.SetFlags(serviceProfileFlags);
+                profile.SetFlags(serviceProfileFlags);
                 profile.TimeToSpendWorking = ParserFunctions.ParseFloat(timeToSpendWorkingString, profile.TimeToSpendWorking);
-                serviceProfile.Cost = int.Parse(costString);
+                profile.ServiceTuning = new Service.ServiceTuning(profile.ServiceTuning.kMaxNumNPCsInPool, int.Parse(costString), profile.ServiceTuning.kIsEmergencyService, profile.ServiceTuning.kIsRecurrent, profile.ServiceTuning.kAlwaysTryToSendSameSim);
                 profile.Motives = new List<CommodityKind>(motives);
                 profile.Traits = traits.ConvertAll(x => (TraitNames)x.TraitGuid);
                 profile.PotentialTraits = potentialTraits.ConvertAll(x => (TraitNames)x.TraitGuid);
-                profile.PotentialTraitCount = potentialTraitCount;
+                profile.PotentialTraitCount = int.Parse(potentialTraitCountString);
                 profile.HiddenTraits = hiddenTraits.ConvertAll(x => (TraitNames)x.TraitGuid);
                 profile.Skills = skills.ConvertAll(x => new SkillLevelPair(x.SkillName, x.SkillLevel));
 
@@ -2129,10 +2126,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// Opens a series of dialogs to remove an action from a service topic of the specified profile.
         /// </summary>
         /// <returns><c>true</c>, if the an action was removed, <c>false</c> otherwise.</returns>
-        public static bool TryUIRemoveAction(this IServiceProfile profile)
+        public static bool TryUIRemoveAction(this IServiceProfile profile, string title)
         {
             ActiveTopicAction[] actions;
-            if (TryUIGetSelectedActions(out actions, profile.Actions.ToArray(), Localization.LocalizeString(RemoveActiveTopicAction.LocalizationKey + ":Name")))
+            if (TryUIGetSelectedActions(out actions, profile.Actions.ToArray(), title))
             {
                 foreach (ActiveTopicAction action in actions)
                 {
@@ -2148,10 +2145,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// Opens a series of dialogs to remove an output from an interaction for a service motive of the specified profile.
         /// </summary>
         /// <returns><c>true</c>, if the an output was removed, <c>false</c> otherwise.</returns>
-        public static bool TryUIRemoveOutput(this IServiceProfile profile)
+        public static bool TryUIRemoveOutput(this IServiceProfile profile, string title)
         {
             CommodityChange[] outputs;
-            if (TryUIGetSelectedOutputs(out outputs, profile.Outputs.ToArray(), Localization.LocalizeString(RemoveAutonomousInteraction.LocalizationKey + ":Name")))
+            if (TryUIGetSelectedOutputs(out outputs, profile.Outputs.ToArray(), title))
             {
                 CustomService service;
                 bool serviceInSaveGame = CustomInstances.TryGetValue(profile.Name, out service);
@@ -2173,10 +2170,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
         /// Opens a dialog to remove custom services from the savegame.
         /// </summary>
         /// <returns><c>true</c>, if any custom services were removed from the savegame, <c>false</c> otherwise.</returns>
-        public static bool TryUIRemoveServicesFromSaveGame()
+        public static bool TryUIRemoveServicesFromSaveGame(string title)
         {
             IServiceProfile[] selectedProfiles;
-            if (TryUIGetSelectedServiceProfiles(out selectedProfiles, ServiceProfiles.FindAll(x => !x.IsImmutable).ToArray(), Localization.LocalizeString(DeleteServiceProfile.LocalizationKey + ":Name")))
+            if (TryUIGetSelectedServiceProfiles(out selectedProfiles, ServiceProfiles.FindAll(x => !x.IsImmutable).ToArray(), title))
             {
                 foreach (IServiceProfile profile in new List<IServiceProfile>(selectedProfiles))
                 {

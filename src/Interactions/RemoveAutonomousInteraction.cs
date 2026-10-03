@@ -43,7 +43,7 @@ namespace Destrospean.ExpandedHouseholdStaff.Interactions
             IServiceProfile[] profiles;
             if (ServiceUtils.TryUIGetSelectedServiceProfiles(out profiles, ServiceUtils.ServiceProfiles.FindAll(x => !x.IsImmutable && x.Outputs.Count > 0).ToArray(), Localization.LocalizeString(LocalizationKey + ":Name"), 1))
             {
-                profiles[0].TryUIRemoveOutput();
+                profiles[0].TryUIRemoveOutput(Localization.LocalizeString(LocalizationKey + ":Name"));
             }
             return true;
         }
