@@ -8,6 +8,27 @@ namespace Destrospean.UI.Dialogs
 {
     public class ObjectPickerDialog : ModalDialog
     {
+        public abstract class CommonHeaderInfo<T> : ObjectPicker.HeaderInfo
+        {
+            public virtual bool IsStub
+            {
+                get
+                {
+                    return false;
+                }
+            }
+
+            public CommonHeaderInfo(string headerKey, string tooltipKey, int width) : base(headerKey, tooltipKey, width)
+            {
+            }
+
+            public CommonHeaderInfo(string headerKey, string tooltipKey, int width, bool textIsImage) : base(headerKey, tooltipKey, width, textIsImage)
+            {
+            }
+
+            public abstract ObjectPicker.ColumnInfo GetValue(T item);
+        }
+
         Button mOkayButton;
 
         bool mOkayButtonAlwaysEnabled;
@@ -28,27 +49,6 @@ namespace Destrospean.UI.Dialogs
             {
                 return mResult;
             }
-        }
-
-        public abstract class CommonHeaderInfo<T> : ObjectPicker.HeaderInfo
-        {
-            public virtual bool IsStub
-            {
-                get
-                {
-                    return false;
-                }
-            }
-
-            public CommonHeaderInfo(string headerKey, string tooltipKey, int width) : base(headerKey, tooltipKey, width)
-            {
-            }
-
-            public CommonHeaderInfo(string headerKey, string tooltipKey, int width, bool textIsImage) : base(headerKey, tooltipKey, width, textIsImage)
-            {
-            }
-
-            public abstract ObjectPicker.ColumnInfo GetValue(T item);
         }
 
         public ObjectPickerDialog(string title, List<ObjectPicker.TabInfo> tabs, List<ObjectPicker.HeaderInfo> headers, int selectableRowCount, List<ObjectPicker.RowInfo> preSelectedRows, bool okayButtonAlwaysEnabled = false) : base("UiObjectPicker", 1, true, PauseMode.PauseSimulator, null)
