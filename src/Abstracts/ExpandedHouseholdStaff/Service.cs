@@ -293,11 +293,11 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
                     string decayTypeAttribute = tuningElement.GetAttribute("decayType");
                     DecayType decayType;
                     ParserFunctions.TryParseEnum<DecayType>(decayTypeAttribute, out decayType, DecayType.DecayFromAutoSatisfy);
-                    float decayValue = ParserFunctions.ParseFloat(tuningElement.GetAttribute("decayValue"), 0);
+                    float decayValue = ParserFunctions.ParseFloat(tuningElement.GetAttribute("decayValue"), 0f);
                     decayValue = MotiveTuning.HackToFixupCertainMotiveDecayRates(commodityKind, decayValue);
-                    float initialMin = ParserFunctions.ParseFloat(tuningElement.GetAttribute("initialMin"), -100);
-                    float initialMax = ParserFunctions.ParseFloat(tuningElement.GetAttribute("initialMax"), 100);
-                    float timeRandomness = ParserFunctions.ParseFloat(tuningElement.GetAttribute("timeRandomness"), 0);
+                    float initialMin = ParserFunctions.ParseFloat(tuningElement.GetAttribute("initialMin"), -100f);
+                    float initialMax = ParserFunctions.ParseFloat(tuningElement.GetAttribute("initialMax"), 100f);
+                    float timeRandomness = ParserFunctions.ParseFloat(tuningElement.GetAttribute("timeRandomness"), 0f);
                     bool hasDefaultValue = ParserFunctions.ParseBool(tuningElement.GetAttribute("hasDefaultValue"));
                     int intensity = ParserFunctions.ParseInt(tuningElement.GetAttribute("intensity"), 1);
                     XmlNodeList intensityElements = motiveElement.GetElementsByTagName("Intensity");
@@ -308,8 +308,8 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
                     int index = 0;
                     foreach (XmlElement pointElement in pointElements)
                     {
-                        float x = ParserFunctions.ParseFloat(pointElement.GetAttribute("x"), 0);
-                        float y = ParserFunctions.ParseFloat(pointElement.GetAttribute("y"), 0) * (float)intensity;
+                        float x = ParserFunctions.ParseFloat(pointElement.GetAttribute("x"), 0f);
+                        float y = ParserFunctions.ParseFloat(pointElement.GetAttribute("y"), 0f) * intensity;
                         Vector2 vector = new Vector2(x, y);
                         coordinates[index] = vector;
                         index++;
@@ -329,9 +329,9 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
                     foreach (XmlElement buffTriggerElement in buffTriggerElements)
                     {
                         MotiveTuning.MotiveBuffTrigger motiveBuffTrigger = new MotiveTuning.MotiveBuffTrigger();
-                        motiveBuffTrigger.mTriggerValueStart = ParserFunctions.ParseFloat(buffTriggerElement.GetAttribute("TriggerValueStart"), -1000);
-                        motiveBuffTrigger.mTriggerValueEnd = ParserFunctions.ParseFloat(buffTriggerElement.GetAttribute("TriggerValueEnd"), -1000);
-                        motiveBuffTrigger.mDecay = ParserFunctions.ParseFloat(buffTriggerElement.GetAttribute("Decay"), 0);
+                        motiveBuffTrigger.mTriggerValueStart = ParserFunctions.ParseFloat(buffTriggerElement.GetAttribute("TriggerValueStart"), -1000f);
+                        motiveBuffTrigger.mTriggerValueEnd = ParserFunctions.ParseFloat(buffTriggerElement.GetAttribute("TriggerValueEnd"), -1000f);
+                        motiveBuffTrigger.mDecay = ParserFunctions.ParseFloat(buffTriggerElement.GetAttribute("Decay"), 0f);
                         motiveBuffTrigger.mDecay = MotiveTuning.HackToFixupCertainMotiveDecayRates(commodityKind, motiveBuffTrigger.mDecay);
                         ParserFunctions.TryParseEnum<BuffNames>(buffTriggerElement.GetAttribute("AddBuff"), out motiveBuffTrigger.mAddBuff, BuffNames.Undefined);
                         ParserFunctions.TryParseCommaSeparatedList<BuffNames>(buffTriggerElement.GetAttribute("RemoveBuff"), out motiveBuffTrigger.mRemoveBuff, BuffNames.Undefined);
@@ -346,7 +346,7 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
                         motiveTunings = (MotiveTuning.sTuning[(int)commodityKind] = new List<MotiveTuning>());
                     }
                     motiveTunings.Add(motiveTuning);
-                    Commodities.NewType(commodityKind, 1, motiveTuning.Min, motiveTuning.Max, 0, true, -100, 100);
+                    Commodities.NewType(commodityKind, 1, motiveTuning.Min, motiveTuning.Max, 0f, true, -100f, 100f);
                 }
             }
         }
@@ -584,7 +584,7 @@ namespace Sims3.Gameplay.Abstracts.Destrospean.ExpandedHouseholdStaff
                         string activeTopic = DerivedType.Name + " Service";
                         if (!ActiveTopicData.Exists(activeTopic))
                         {
-                            ActiveTopicData.Add(new ActiveTopicData(activeTopic, false, 1000, "", true, true, false, true, null, 0, "", false));
+                            ActiveTopicData.Add(new ActiveTopicData(activeTopic, false, 1000, "", true, true, false, true, null, 0f, "", false));
                         }
                         CommonUtils.AddActions(activeTopic, LongTermRelationshipTypes.Default, false, "Dismiss", "Fire");
                         ServiceUtils.LoadedTypes.Add(DerivedType);

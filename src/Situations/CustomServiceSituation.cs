@@ -389,6 +389,57 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Situations
             }
         }
 
+        public new class WalkToLot<ParentSituation, NextSituation> : RouteToLot<ParentSituation, NextSituation> where ParentSituation : CustomServiceSituation where NextSituation : ChildSituation<ParentSituation>
+        {
+            public class DoWalkToLot : Interaction<Sim, Lot>
+            {
+                [DoesntRequireTuning]
+                public class Definition : InteractionDefinition<Sim, Lot, DoWalkToLot>
+                {
+                    public override string GetInteractionName(Sim actor, Lot target, InteractionObjectPair iop)
+                    {
+                        return string.IsNullOrEmpty(target.Name) ? LocalizeString(actor.IsFemale, target.GetMetaAutonomyVenueType().ToString(), new object[0]) : LocalizeString(actor.IsFemale, "VisitNamedLot", new object[]
+                            {
+                                target.Name
+                            });
+                    }
+
+                    public override bool Test(Sim actor, Lot target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
+                    {
+                        return true;
+                    }
+                }
+
+                public static InteractionDefinition Singleton = new Definition();
+
+                public static string LocalizeString(bool isFemale, string name, params object[] parameters)
+                {
+                    return Localization.LocalizeString(isFemale, "Gameplay/Core/VisitCommunityLot:" + name, parameters);
+                }
+
+                public override bool Run()
+                {
+                    Route route = Actor.CreateRoute();
+                    //route.SetOption(Route.RouteOption.EnablePlanningAsCar, false);
+                    Target.PlanToLot(route);
+                    return Actor.DoRoute(route);
+                }
+            }
+
+            public WalkToLot()
+            {
+            }
+
+            public WalkToLot(ParentSituation parent) : base(parent)
+            {
+            }
+
+            public override void Init(ParentSituation parent)
+            {
+                ForceSituationSpecificInteraction(Lot, parent.Worker, DoWalkToLot.Singleton, null, OnRouteSucceeded, OnRouteFailed);
+            }
+        }
+
         List<IGameObject> mProtectedInventory;
 
         public bool IsBabysittingService

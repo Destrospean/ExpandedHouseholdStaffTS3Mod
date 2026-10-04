@@ -58,7 +58,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
 
             public string Name;
 
-            protected ActiveTopicAction()
+            public ActiveTopicAction()
             {
             }
 
@@ -122,7 +122,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
             }
 
-            protected CommodityChange()
+            public CommodityChange()
             {
             }
 
@@ -985,7 +985,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 }
             }
 
-            protected ServiceProfile()
+            public ServiceProfile()
             {
             }
 
