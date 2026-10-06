@@ -23,7 +23,7 @@ namespace Destrospean.Misc
             }
         }
 
-        protected SkillLevelPair()
+        public SkillLevelPair()
         {
         }
 

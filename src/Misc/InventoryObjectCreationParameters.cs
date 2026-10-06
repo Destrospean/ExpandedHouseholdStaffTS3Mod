@@ -17,7 +17,7 @@ namespace Destrospean.Misc
 
         public string Preset;
 
-        protected InventoryObjectCreationParameters()
+        public InventoryObjectCreationParameters()
         {
         }
 
