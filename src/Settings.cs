@@ -6,5 +6,8 @@ namespace Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff
     {
         [Tunable]
         public static bool kExportServiceCollectionsAsXMLs;
+
+        [Tunable]
+        public static bool kShowAdvancedOutputDialogs;
     }
 }

@@ -3,12 +3,14 @@ using Sims3.Gameplay.Abstracts;
 using Sims3.Gameplay.ActorSystems;
 using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.CAS;
+using Sims3.Gameplay.InteractionsShared;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Interfaces.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Services;
 using Sims3.Gameplay.Skills;
 using Sims3.Gameplay.Socializing;
 using Sims3.Gameplay.Utilities;
+using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff;
 using Sims3.Gameplay.Destrospean.ExpandedHouseholdStaff.Services;
 using Sims3.Gameplay.Destrospean.Utils;
 using Sims3.SimIFace;
@@ -1545,7 +1547,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
             Type[] targetTypes = null;
             string advertisedString = null;
             string actualString = null;
-            OutputUpdateType updateType = 0;
+            OutputUpdateType updateType = OutputUpdateType.ImmediateDelta;
             byte step = 0;
             while (true)
             {
@@ -1574,7 +1576,7 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                         step--;
                         continue;
                     }
-                    step++;
+                    step += (byte)(Settings.kShowAdvancedOutputDialogs ? 1 : 3);
                 }
                 if (step == 3)
                 {
@@ -1601,8 +1603,8 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                 {
                     service.RemoveOutputs();
                 }
-                float actual = ParserFunctions.ParseFloat(actualString, 200f);
                 float advertised = ParserFunctions.ParseFloat(advertisedString, 200f);
+                float actual = ParserFunctions.ParseFloat(actualString, advertised);
                 bool locked = actual == advertised;
                 profile.RemoveOutputs(x => x.InteractionDefinitionType == interactionDefinitionTypes[0].FullName && x.TargetType == targetTypes[0].FullName && x.ConstantChange == advertised && x.Locked == locked && x.ActualValue == actual && x.UpdateType == updateType);
                 profile.AddOutputs(new CommodityChange(interactionDefinitionTypes[0], targetTypes[0], advertised, locked, actual, updateType));
@@ -1693,6 +1695,10 @@ namespace Destrospean.Utils.ExpandedHouseholdStaff
                     {
                         new ActiveTopicAction("Dismiss"),
                         new ActiveTopicAction("Fire")
+                    };
+                profile.Outputs = new List<CommodityChange>
+                    {
+                        new CommodityChange(typeof(SitAndWait.Definition), typeof(GameObject), 1f, true, 1f, OutputUpdateType.ImmediateDelta)
                     };
                 if (!TryUIEditServiceProfile(profile, true))
                 {
